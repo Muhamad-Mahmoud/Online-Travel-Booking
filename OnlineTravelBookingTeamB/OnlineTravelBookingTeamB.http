@@ -1,0 +1,6 @@
+@OnlineTravelBookingTeamB_HostAddress = http://localhost:5091
+
+GET {{OnlineTravelBookingTeamB_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
