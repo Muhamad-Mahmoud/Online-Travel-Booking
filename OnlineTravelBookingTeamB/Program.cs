@@ -1,9 +1,16 @@
+using OnlineTravel.Application.DependencyInjection;
+using OnlineTravel.Infrastructure;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Add Infrastructure Services (Database)
+builder.Services.AddInfrastructure(builder.Configuration);
 
+// Add Application Services 
+builder.Services.AddApplication();
+
+// Add API Services
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
@@ -15,9 +22,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
