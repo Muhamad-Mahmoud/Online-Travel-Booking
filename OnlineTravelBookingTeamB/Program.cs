@@ -1,5 +1,6 @@
 using OnlineTravel.Application.DependencyInjection;
 using OnlineTravel.Infrastructure;
+using OnlineTravelBookingTeamB.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,14 +16,22 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
+// A
+await app.ApplyDatabaseMigrationsAsync();
+
+
 // Configure the HTTP request pipeline.
+app.UseMiddleware<OnlineTravelBookingTeamB.Middlewares.ExceptionMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
 app.UseHttpsRedirection();
+app.UseStatusCodePagesWithReExecute("/errors/{0}");
 app.UseAuthorization();
+
 app.MapControllers();
 
 app.Run();

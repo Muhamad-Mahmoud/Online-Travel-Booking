@@ -16,7 +16,7 @@ public class Favorite : BaseEntity
 
     // Navigation Properties
 
-    public virtual User User { get; set; } = null!;
+    public virtual AppUser User { get; set; } = null!;
 
     public virtual Category Category { get; set; } = null!;
 }
