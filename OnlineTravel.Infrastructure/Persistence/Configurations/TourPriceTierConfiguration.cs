@@ -10,21 +10,9 @@ public class TourPriceTierConfiguration : IEntityTypeConfiguration<TourPriceTier
     {
         builder.ToTable("TourPriceTiers", "tours");
 
-        builder.OwnsOne(e => e.AdultPrice, m =>
+        builder.OwnsOne(e => e.Price, m =>
         {
-            m.Property(p => p.Amount).HasColumnName("AdultPrice");
-            m.Property(p => p.Currency).HasColumnName("Currency").HasDefaultValue("USD");
-        });
-
-        builder.OwnsOne(e => e.ChildPrice, m =>
-        {
-            m.Property(p => p.Amount).HasColumnName("ChildPrice");
-            m.Property(p => p.Currency).HasColumnName("Currency").HasDefaultValue("USD");
-        });
-
-        builder.OwnsOne(e => e.InfantPrice, m =>
-        {
-            m.Property(p => p.Amount).HasColumnName("InfantPrice");
+            m.Property(p => p.Amount).HasColumnName("Price");
             m.Property(p => p.Currency).HasColumnName("Currency").HasDefaultValue("USD");
         });
 
