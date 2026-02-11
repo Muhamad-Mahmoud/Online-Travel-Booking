@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Domain.ErrorHandling;
-using OnlineTravel.Domain.Exceptions;
+using OnlineTravel.Domain.ErrorHandling;
+using OnlineTravelBookingTeamB.Errors;
 
 namespace OnlineTravelBookingTeamB.Extensions;
 
@@ -26,6 +26,20 @@ public static class ResultExtension
         };
 
         return new ObjectResult(problemDetails);
+    }
+
+    public static ActionResult ToResponse<T>(this Result<T> result, int statusCode = 200)
+    {
+        return result.IsSuccess
+            ? new ObjectResult(new ApiResponse<T>(statusCode, result.Value)) { StatusCode = statusCode }
+            : result.ToProblem();
+    }
+
+    public static ActionResult ToResponse(this Result result, int statusCode = 200)
+    {
+        return result.IsSuccess
+            ? new ObjectResult(new ApiResponse(statusCode, isSuccess: true)) { StatusCode = statusCode }
+            : result.ToProblem();
     }
 }
 

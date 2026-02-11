@@ -9,14 +9,14 @@ public class BookingDetail : BaseEntity
     public Guid BookingId { get; private set; }
     public Guid CategoryId { get; private set; }
     public Guid ItemId { get; private set; }
-    public DateRange StayRange { get; private set; } = null!;
+    public DateTimeRange StayRange { get; private set; } = null!;
 
     public virtual BookingEntity Booking { get; private set; } = null!;
     public virtual Category Category { get; private set; } = null!;
 
     protected BookingDetail() { } // For EF
 
-    public static BookingDetail Create(Guid categoryId, Guid itemId, DateRange stayRange)
+    public static BookingDetail Create(Guid categoryId, Guid itemId, DateTimeRange stayRange)
     {
         return new BookingDetail
         {

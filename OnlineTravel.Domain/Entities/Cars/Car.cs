@@ -26,7 +26,7 @@ public class Car : SoftDeletableEntity
 
     public List<string> Features { get; set; } = new();
 
-    public List<DateRange> AvailableDates { get; set; } = new();
+    public List<DateTimeRange> AvailableDates { get; set; } = new();
 
     public string? CancellationPolicy { get; set; }
 

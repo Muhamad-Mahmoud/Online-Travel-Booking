@@ -14,7 +14,7 @@ public static class WebApplicationExtensions
         try
         {
             var context = services.GetRequiredService<OnlineTravelDbContext>();
-            var userManager = services.GetRequiredService<UserManager<User>>();
+            var userManager = services.GetRequiredService<UserManager<AppUser>>();
             var roleManager = services.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
             await DbInitializer.SeedAsync(context, userManager, roleManager);
         }

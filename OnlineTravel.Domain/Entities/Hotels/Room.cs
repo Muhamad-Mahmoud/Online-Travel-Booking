@@ -28,7 +28,7 @@ public class Room : BaseEntity
 
     public virtual Hotel Hotel { get; set; } = null!;
 
-    public bool IsBookable(DateRange stayRange, IEnumerable<DateRange> conflictingSlots)
+    public bool IsBookable(DateTimeRange stayRange, IEnumerable<DateRange> conflictingSlots)
     {
         if (Status != RoomStatus.Active)
             return false;
@@ -36,12 +36,10 @@ public class Room : BaseEntity
         if (MinimumStayNights.HasValue && stayRange.TotalNights < MinimumStayNights.Value)
             return false;
 
-        // check against conflicting slots
-        // conflictingSlots are assumed to be ranges that CANNOT coexist with new booking
-        // usually fetched from existing bookings
+        var stayDateRange = new DateRange(DateOnly.FromDateTime(stayRange.Start), DateOnly.FromDateTime(stayRange.End));
         foreach (var slot in conflictingSlots)
         {
-            if (stayRange.OverlapsWith(slot))
+            if (stayDateRange.OverlapsWith(slot))
                 return false;
         }
 

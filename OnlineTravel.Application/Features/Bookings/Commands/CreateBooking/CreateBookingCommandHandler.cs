@@ -11,13 +11,15 @@ using OnlineTravel.Domain.Entities.Tours;
 using OnlineTravel.Domain.Entities.Flights;
 using OnlineTravel.Domain.Entities.Users;
 using OnlineTravel.Domain.Enums;
+using OnlineTravel.Domain.ErrorHandling;
+using Error = OnlineTravel.Domain.ErrorHandling.Error;
 
 namespace OnlineTravel.Application.Features.Bookings.Commands.CreateBooking;
 
-public sealed class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand, Guid>
+public sealed class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand, Result<Guid>>
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly UserManager<User> _userManager;
+    private readonly UserManager<AppUser> _userManager;
     private readonly HotelBookingPricing _hotelPricing;
     private readonly TourBookingPricing _tourPricing;
     private readonly FlightBookingPricing _flightPricing;
@@ -25,7 +27,7 @@ public sealed class CreateBookingCommandHandler : IRequestHandler<CreateBookingC
 
     public CreateBookingCommandHandler(
         IUnitOfWork unitOfWork,
-        UserManager<User> userManager,
+        UserManager<AppUser> userManager,
         HotelBookingPricing hotelPricing,
         TourBookingPricing tourPricing,
         FlightBookingPricing flightPricing,
@@ -39,38 +41,43 @@ public sealed class CreateBookingCommandHandler : IRequestHandler<CreateBookingC
         _carPricing = carPricing;
     }
 
-    public async Task<Guid> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Guid>> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
     {
         // Validate User
         var user = await _userManager.FindByIdAsync(request.UserId.ToString());
         if (user == null)
-            throw new NotFoundException(nameof(User), request.UserId);
+            return Result<Guid>.Failure(Error.NotFound($"User {request.UserId} was not found."));
 
         // Validate Category
         var category = await _unitOfWork.Repository<Category>().GetByIdAsync(request.CategoryId);
         if (category == null)
-            throw new NotFoundException(nameof(Category), request.CategoryId);
+            return Result<Guid>.Failure(Error.NotFound($"Category {request.CategoryId} was not found."));
 
         //  Calculate Price & Validate Availability
-        Money totalPrice;
+        Result<Money> priceResult;
 
         switch (category.Type)
         {
             case CategoryType.Hotel:
-                totalPrice = await _hotelPricing.CalculateAsync(request.ItemId, request.StayRange);
+                priceResult = await _hotelPricing.CalculateAsync(request.ItemId, request.StayRange);
                 break;
             case CategoryType.Tour:
-                totalPrice = await _tourPricing.CalculateAsync(request.ItemId, request.StayRange);
+                priceResult = await _tourPricing.CalculateAsync(request.ItemId, request.StayRange);
                 break;
             case CategoryType.Flight:
-                totalPrice = await _flightPricing.CalculateAsync(request.ItemId, request.StayRange);
+                priceResult = await _flightPricing.CalculateAsync(request.ItemId, request.StayRange);
                 break;
             case CategoryType.Car:
-                totalPrice = await _carPricing.CalculateAsync(request.ItemId, request.StayRange);
+                priceResult = await _carPricing.CalculateAsync(request.ItemId, request.StayRange);
                 break;
             default:
-                throw new BadRequestException($"Unsupported category type: {category.Type}");
+                return Result<Guid>.Failure(Error.Validation($"Unsupported category type: {category.Type}"));
         }
+
+        if (priceResult.IsFailure)
+            return Result<Guid>.Failure(priceResult.Error);
+
+        var totalPrice = priceResult.Value;
 
         // Create Booking
         var reference = new BookingReference($"BK-{Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper()}");
@@ -84,13 +91,17 @@ public sealed class CreateBookingCommandHandler : IRequestHandler<CreateBookingC
         // Update Inventory
         if (category.Type == CategoryType.Tour)
         {
+            var startDate = DateOnly.FromDateTime(request.StayRange.Start);
+            var endDate = DateOnly.FromDateTime(request.StayRange.End);
+
             var schedule = await _unitOfWork.Repository<TourSchedule>()
-                .FindAsync(s => s.TourId == request.ItemId && s.DateRange.Start <= request.StayRange.Start && s.DateRange.End >= request.StayRange.End);
+                .FindAsync(s => s.TourId == request.ItemId && s.DateRange.Start <= startDate && s.DateRange.End >= endDate);
 
             if (schedule != null)
             {
                 schedule.AvailableSlots -= 1;
-                if (schedule.AvailableSlots < 0) throw new BadRequestException("Tour is fully booked.");
+                if (schedule.AvailableSlots < 0)
+                    return Result<Guid>.Failure(Error.Validation("Tour is fully booked."));
                 _unitOfWork.Repository<TourSchedule>().Update(schedule);
             }
         }
@@ -123,7 +134,7 @@ public sealed class CreateBookingCommandHandler : IRequestHandler<CreateBookingC
         await _unitOfWork.Repository<BookingEntity>().AddAsync(booking);
         await _unitOfWork.Complete();
 
-        return booking.Id;
+        return Result<Guid>.Success(booking.Id);
     }
 }
 

@@ -1,4 +1,5 @@
-using OnlineTravel.Application.Common.Exceptions;
+using OnlineTravel.Domain.ErrorHandling;
+using Error = OnlineTravel.Domain.ErrorHandling.Error;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Application.Specifications.BookingSpec;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
@@ -16,21 +17,22 @@ namespace OnlineTravel.Application.Features.Bookings.Pricing
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Money> CalculateAsync(Guid roomId, DateRange stayRange)
+        public async Task<Result<Money>> CalculateAsync(Guid roomId, DateTimeRange stayRange)
         {
-            var room = await _unitOfWork.Repository<Room>().GetByIdAsync(roomId)
-                       ?? throw new NotFoundException(nameof(Room), roomId);
+            var room = await _unitOfWork.Repository<Room>().GetByIdAsync(roomId);
+            if (room == null)
+                return Result<Money>.Failure(Error.NotFound($"Room {roomId} was not found."));
 
             // Fetch conflicting bookings
-            var spec = new BookingDetailsByItemSpec(roomId, stayRange.Start, stayRange.End);
+            var spec = new BookingDetailsByItemSpec(roomId, DateOnly.FromDateTime(stayRange.Start), DateOnly.FromDateTime(stayRange.End));
             var existingBookings = await _unitOfWork.Repository<BookingDetail>().GetAllWithSpecAsync(spec);
-            var conflictingSlots = existingBookings.Select(b => b.StayRange);
+            var conflictingSlots = existingBookings.Select(b => new DateRange(DateOnly.FromDateTime(b.StayRange.Start), DateOnly.FromDateTime(b.StayRange.End)));
 
             if (!room.IsBookable(stayRange, conflictingSlots))
-                throw new BadRequestException($"Room {room.RoomNumber} is currently unavailable for the selected dates.");
+                return Result<Money>.Failure(Error.Validation($"Room {room.RoomNumber} is currently unavailable for the selected dates."));
 
             var nights = Math.Max(stayRange.TotalNights, 1);
-            return room.BasePrice * nights;
+            return Result<Money>.Success(room.BasePrice * nights);
         }
     }
 }

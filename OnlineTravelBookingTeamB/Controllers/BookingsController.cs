@@ -1,6 +1,8 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using OnlineTravel.Application.Features.Bookings.Commands.CreateBooking;
+using OnlineTravelBookingTeamB.Extensions;
+using OnlineTravel.Domain.ErrorHandling;
 
 namespace OnlineTravelBookingTeamB.Controllers
 {
@@ -16,10 +18,10 @@ namespace OnlineTravelBookingTeamB.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Guid>> Create([FromBody] CreateBookingCommand command)
+        public async Task<ActionResult> Create([FromBody] CreateBookingCommand command)
         {
             var result = await _mediator.Send(command);
-            return Ok(result);
+            return result.ToResponse(201);
         }
 
     }

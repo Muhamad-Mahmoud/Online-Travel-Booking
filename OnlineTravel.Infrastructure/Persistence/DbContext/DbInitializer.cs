@@ -18,7 +18,7 @@ namespace OnlineTravel.Infrastructure.Persistence.DbContext;
 
 public static class DbInitializer
 {
-    public static async Task SeedAsync(OnlineTravelDbContext context, UserManager<User> userManager, RoleManager<IdentityRole<Guid>> roleManager)
+    public static async Task SeedAsync(OnlineTravelDbContext context, UserManager<AppUser> userManager, RoleManager<IdentityRole<Guid>> roleManager)
     {
         await context.Database.MigrateAsync();
 
@@ -44,11 +44,11 @@ public static class DbInitializer
         }
     }
 
-    private static async Task SeedUsersAsync(UserManager<User> userManager)
+    private static async Task SeedUsersAsync(UserManager<AppUser> userManager)
     {
         if (!await userManager.Users.AnyAsync(u => u.UserName == "admin@onlinetravel.com"))
         {
-            var admin = new User
+            var admin = new AppUser
             {
                 UserName = "admin@onlinetravel.com",
                 Email = "admin@onlinetravel.com",
@@ -61,7 +61,7 @@ public static class DbInitializer
 
         if (!await userManager.Users.AnyAsync(u => u.UserName == "customer@onlinetravel.com"))
         {
-            var customer = new User
+            var customer = new AppUser
             {
                 UserName = "customer@onlinetravel.com",
                 Email = "customer@onlinetravel.com",
@@ -430,15 +430,6 @@ public static class DbInitializer
                 PricePerHour = car.Model == "Camry" ? new Money(10, "USD") : new Money(25, "USD")
             };
             await context.CarPricingTiers.AddAsync(pricingTier);
-
-            var extra = new CarExtra
-            {
-                CarId = car.Id,
-                Name = "Full Insurance",
-                PricePerDay = new Money(15, "USD"),
-                Available = true
-            };
-            await context.CarExtras.AddAsync(extra);
         }
         await context.SaveChangesAsync();
     }

@@ -10,7 +10,7 @@ public class CreateBookingCommandValidator : AbstractValidator<CreateBookingComm
         RuleFor(x => x.CategoryId).NotEmpty();
         RuleFor(x => x.ItemId).NotEmpty();
         RuleFor(x => x.StayRange).NotNull();
-        RuleFor(x => x.StayRange.Start).GreaterThanOrEqualTo(DateOnly.FromDateTime(DateTime.Today));
+        RuleFor(x => x.StayRange.Start).GreaterThanOrEqualTo(DateTime.Today);
         RuleFor(x => x.StayRange.End).GreaterThan(cmd => cmd.StayRange.Start);
     }
 }

@@ -22,7 +22,7 @@ public class BookingEntity : BaseEntity
 
     public DateTime BookingDate { get; private set; } = DateTime.UtcNow;
 
-    public virtual User User { get; private set; } = null!;
+    public virtual AppUser User { get; private set; } = null!;
 
     public virtual ICollection<BookingDetail> Details { get; private set; } = new List<BookingDetail>();
 

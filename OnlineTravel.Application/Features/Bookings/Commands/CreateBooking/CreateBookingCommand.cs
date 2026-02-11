@@ -1,3 +1,4 @@
+using OnlineTravel.Domain.ErrorHandling;
 using MediatR;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 
@@ -7,5 +8,5 @@ public sealed record CreateBookingCommand(
     Guid UserId,
     Guid CategoryId,
     Guid ItemId,
-    DateRange StayRange
-) : IRequest<Guid>;
+    DateTimeRange StayRange
+) : IRequest<Result<Guid>>;
