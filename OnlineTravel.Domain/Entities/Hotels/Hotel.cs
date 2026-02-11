@@ -12,16 +12,15 @@ public class Hotel : SoftDeletableEntity
     public string? Description { get; set; }
 
     public Address Address { get; set; } = null!;
+    public ContactInfo? ContactInfo { get; set; }
 
     public ImageUrl? MainImage { get; set; }
 
     public List<ImageUrl> Gallery { get; set; } = new();
 
-    public List<string> Amenities { get; set; } = new();
-
+ 
     public StarRating? StarRating { get; set; }
 
-    public ContactInfo? ContactInfo { get; set; }
 
     public Guid CategoryId { get; set; }
 

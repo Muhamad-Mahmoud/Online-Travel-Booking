@@ -11,19 +11,15 @@ public class Room : BaseEntity
 
     public string RoomType { get; set; } = string.Empty; // Single, Double, Suite
 
-    public Money BasePrice { get; set; } = null!;
-
-    public int MaxGuests { get; set; } = 2;
+    public Money PricePerNight { get; private set; }
 
     public List<DateRange> AvailableDates { get; set; } = new();
-
-    public bool Refundable { get; set; } = false;
-
+    
     public List<string> Extras { get; set; } = new();
 
     public int? MinimumStayNights { get; set; }
 
-    public bool IsAvailable { get; set; } = true;
+    public bool IsAvailable { get; private set; }
 
     // Navigation Properties
 

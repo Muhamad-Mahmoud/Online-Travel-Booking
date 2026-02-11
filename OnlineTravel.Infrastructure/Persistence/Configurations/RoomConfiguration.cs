@@ -12,12 +12,6 @@ public class RoomConfiguration : IEntityTypeConfiguration<Room>
     {
         builder.ToTable("Rooms", "hotels");
 
-        builder.OwnsOne(e => e.BasePrice, m =>
-        {
-            m.Property(p => p.Amount).HasColumnName("BasePrice");
-            m.Property(p => p.Currency).HasColumnName("Currency");
-        });
-
         builder.HasIndex(e => new { e.HotelId, e.RoomNumber });
 
         builder.Property(e => e.AvailableDates)
