@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities.Users;
 using OnlineTravel.Infrastructure.Persistence.Context;
 
@@ -28,6 +29,9 @@ public static class DependencyInjection
         })
         .AddRoles<IdentityRole<Guid>>()
         .AddEntityFrameworkStores<OnlineTravelDbContext>();
+
+        // Add UnitOfWork
+        services.AddScoped<IUnitOfWork, OnlineTravel.Infrastructure.Persistence.UnitOfWork.UnitOfWork>();
 
         return services;
     }

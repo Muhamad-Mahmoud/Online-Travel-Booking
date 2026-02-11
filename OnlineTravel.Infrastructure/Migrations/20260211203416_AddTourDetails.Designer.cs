@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using OnlineTravel.Infrastructure.Persistence.Context;
@@ -12,9 +13,11 @@ using OnlineTravel.Infrastructure.Persistence.Context;
 namespace OnlineTravel.Infrastructure.Migrations
 {
     [DbContext(typeof(OnlineTravelDbContext))]
-    partial class OnlineTravelDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260211203416_AddTourDetails")]
+    partial class AddTourDetails
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -832,6 +835,11 @@ namespace OnlineTravel.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("HighlightsJson");
 
+                    b.Property<string>("Images")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("ImagesJson");
+
                     b.Property<bool>("Recommended")
                         .HasColumnType("bit");
 
@@ -884,36 +892,6 @@ namespace OnlineTravel.Infrastructure.Migrations
                     b.HasIndex("TourId");
 
                     b.ToTable("TourActivities", (string)null);
-                });
-
-            modelBuilder.Entity("OnlineTravel.Domain.Entities.Tours.TourImage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("AltText")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("TourId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TourId");
-
-                    b.ToTable("TourImages", "tours");
                 });
 
             modelBuilder.Entity("OnlineTravel.Domain.Entities.Tours.TourPriceTier", b =>
@@ -2084,17 +2062,6 @@ namespace OnlineTravel.Infrastructure.Migrations
                     b.Navigation("Tour");
                 });
 
-            modelBuilder.Entity("OnlineTravel.Domain.Entities.Tours.TourImage", b =>
-                {
-                    b.HasOne("OnlineTravel.Domain.Entities.Tours.Tour", "Tour")
-                        .WithMany("Images")
-                        .HasForeignKey("TourId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Tour");
-                });
-
             modelBuilder.Entity("OnlineTravel.Domain.Entities.Tours.TourPriceTier", b =>
                 {
                     b.HasOne("OnlineTravel.Domain.Entities.Tours.Tour", "Tour")
@@ -2265,8 +2232,6 @@ namespace OnlineTravel.Infrastructure.Migrations
             modelBuilder.Entity("OnlineTravel.Domain.Entities.Tours.Tour", b =>
                 {
                     b.Navigation("Activities");
-
-                    b.Navigation("Images");
 
                     b.Navigation("PriceTiers");
                 });

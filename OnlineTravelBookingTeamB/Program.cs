@@ -1,5 +1,7 @@
 using OnlineTravel.Application.DependencyInjection;
+using OnlineTravel.Application.Interfaces.Services;
 using OnlineTravel.Infrastructure;
+using OnlineTravel.Infrastructure.Services;
 using OnlineTravelBookingTeamB.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,9 +16,13 @@ builder.Services.AddApplication();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
+// Add File Service
+var webRootPath = builder.Environment.WebRootPath ?? Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
+builder.Services.AddScoped<IFileService>(_ => new FileService(webRootPath));
+
 var app = builder.Build();
 
-// A
+// Apply Migrations
 await app.ApplyDatabaseMigrationsAsync();
 
 
@@ -28,6 +34,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseStaticFiles();
 app.UseHttpsRedirection();
 app.UseStatusCodePagesWithReExecute("/errors/{0}");
 app.UseAuthorization();

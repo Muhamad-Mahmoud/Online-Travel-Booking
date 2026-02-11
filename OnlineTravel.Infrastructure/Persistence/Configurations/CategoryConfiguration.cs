@@ -9,7 +9,8 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
     public void Configure(EntityTypeBuilder<Category> builder)
     {
         builder.ToTable("Categories", "infra");
-        builder.HasIndex(e => e.Key).IsUnique();
+        builder.HasIndex(e => e.Type).IsUnique();
+        builder.Property(e => e.Type).HasConversion<string>();
 
         builder.OwnsOne(e => e.Image, i =>
         {
