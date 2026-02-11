@@ -16,7 +16,7 @@ namespace OnlineTravel.Infrastructure.Persistence.Context;
 /// <summary>
 /// Entity Framework Core DbContext for Travel Marketplace.
 /// </summary>
-public class OnlineTravelDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
+public class OnlineTravelDbContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Guid>
 {
     public OnlineTravelDbContext(DbContextOptions<OnlineTravelDbContext> options)
         : base(options)

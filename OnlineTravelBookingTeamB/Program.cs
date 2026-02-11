@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Identity;
 using OnlineTravel.Application.DependencyInjection;
 using OnlineTravel.Infrastructure;
+using OnlineTravel.Infrastructure.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +24,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+await IdentityBootstrapper.InitializeAsync(app.Services);
+
+
+app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 
 app.Run();
