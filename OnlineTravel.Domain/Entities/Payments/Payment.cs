@@ -1,6 +1,5 @@
 using OnlineTravel.Domain.Entities._Base;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
-using OnlineTravel.Domain.Entities.Bookings;
 using OnlineTravel.Domain.Enums;
 
 namespace OnlineTravel.Domain.Entities.Payments;
@@ -25,7 +24,7 @@ public class Payment : BaseEntity
 
     // Navigation Properties
 
-    public virtual Booking Booking { get; set; } = null!;
+    public virtual Bookings.BookingEntity Booking { get; set; } = null!;
 }
 
 

@@ -1,6 +1,5 @@
 using System.Collections;
 using OnlineTravel.Application.Interfaces.Persistence;
-using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities._Base;
 using OnlineTravel.Infrastructure.Persistence.Context;
 using OnlineTravel.Infrastructure.Persistence.Repositories;
@@ -75,8 +74,5 @@ namespace OnlineTravel.Infrastructure.Persistence.UnitOfWork
                 _transaction = null;
             }
         }
-
-
     }
 }
-

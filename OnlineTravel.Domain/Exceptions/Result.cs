@@ -1,6 +1,6 @@
-﻿using Domain.ErrorHandling;
+﻿using OnlineTravel.Domain.ErrorHandling;
 
-namespace Domain.ErrorHandling
+namespace OnlineTravel.Domain.ErrorHandling
 {
     public class Result
     {
@@ -35,6 +35,8 @@ namespace Domain.ErrorHandling
 
         public TValue Value => IsSuccess ? _value! : throw new InvalidOperationException("Failure results cannot have value");
 
+        public static implicit operator Result<TValue>(TValue value) => Success(value);
+        public static implicit operator Result<TValue>(Error error) => Failure(error);
 
         public static Result<TValue> Success(TValue value) => new(value, true, Error.None);
         public static new Result<TValue> Failure(Error error) => new(default, false, error);

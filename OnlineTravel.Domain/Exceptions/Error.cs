@@ -1,4 +1,4 @@
-﻿namespace Domain.ErrorHandling;
+﻿namespace OnlineTravel.Domain.ErrorHandling;
 
 public record Error(string Code, string Description, int? StatusCode)
 {

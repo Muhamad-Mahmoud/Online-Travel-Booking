@@ -25,13 +25,15 @@ var app = builder.Build();
 // Apply Migrations
 await app.ApplyDatabaseMigrationsAsync();
 
-
 // Configure the HTTP request pipeline.
-app.UseMiddleware<OnlineTravelBookingTeamB.Middlewares.ExceptionMiddleware>();
+app.UseMiddleware<OnlineTravelBookingTeamB.Middleware.ExceptionMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+
+    // Data Seeding
+    await app.SeedDatabaseAsync();
 }
 
 app.UseStaticFiles();

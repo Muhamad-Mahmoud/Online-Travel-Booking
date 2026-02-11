@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities.Users;
 using OnlineTravel.Infrastructure.Persistence.Context;
+using OnlineTravel.Infrastructure.Persistence.UnitOfWork;
 
 namespace OnlineTravel.Infrastructure;
 
@@ -31,7 +32,7 @@ public static class DependencyInjection
         .AddEntityFrameworkStores<OnlineTravelDbContext>();
 
         // Add UnitOfWork
-        services.AddScoped<IUnitOfWork, OnlineTravel.Infrastructure.Persistence.UnitOfWork.UnitOfWork>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;
     }
@@ -48,7 +49,4 @@ public static class DependencyInjection
                 b => b.MigrationsAssembly(typeof(DependencyInjection).Assembly.FullName)
                       .UseNetTopologySuite()));
     }
-
 }
-
-

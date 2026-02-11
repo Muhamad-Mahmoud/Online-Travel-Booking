@@ -532,8 +532,8 @@ public static class ApplicationDbContextSeed
                 Amenities = new List<string> { "Pool", "Spa", "Gym", "WiFi" },
                 Rooms = new List<Room>
                 {
-                     new Room { RoomNumber = "101", RoomType = "Standard King", BasePrice = new Money(300, "USD"), MaxGuests = 2, IsAvailable = true },
-                     new Room { RoomNumber = "102", RoomType = "Double Queen", BasePrice = new Money(350, "USD"), MaxGuests = 4, IsAvailable = true }
+                     new Room { RoomNumber = "101", RoomType = "Standard King", BasePrice = new Money(300, "USD"), MaxGuests = 2 },
+                     new Room { RoomNumber = "102", RoomType = "Double Queen", BasePrice = new Money(350, "USD"), MaxGuests = 4 }
                 }
             },
             new Hotel
@@ -547,7 +547,7 @@ public static class ApplicationDbContextSeed
                 Amenities = new List<string> { "Beach Access", "Pool", "Bar" },
                  Rooms = new List<Room>
                 {
-                     new Room { RoomNumber = "201", RoomType = "Ocean View", BasePrice = new Money(400, "USD"), MaxGuests = 2, IsAvailable = true }
+                     new Room { RoomNumber = "201", RoomType = "Ocean View", BasePrice = new Money(400, "USD"), MaxGuests = 2 }
                 }
             }
         };

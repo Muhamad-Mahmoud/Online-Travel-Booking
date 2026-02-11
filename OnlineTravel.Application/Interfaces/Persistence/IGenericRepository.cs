@@ -6,7 +6,7 @@ namespace OnlineTravel.Application.Interfaces.Persistence
     public interface IGenericRepository<T>
     {
         Task<IReadOnlyList<T>> GetAllAsync();
-        Task<T?> GetByIdAsync(int id);
+        Task<T?> GetByIdAsync(Guid id);
         Task<IReadOnlyList<T>> GetAllWithSpecAsync(ISpecification<T> spec);
         Task<T?> GetEntityWithAsync(ISpecification<T> spec);
         Task<int> GetCountAsync(ISpecification<T> spec);
