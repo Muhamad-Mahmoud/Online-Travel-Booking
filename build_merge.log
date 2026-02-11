@@ -1,0 +1,17 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  OnlineTravel.Domain -> H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Domain\bin\Debug\net9.0\OnlineTravel.Domain.dll
+  OnlineTravel.Application -> H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Application\bin\Debug\net9.0\OnlineTravel.Application.dll
+H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Infrastructure\Persistence\Configurations\CategoryConfiguration.cs(12,1): error CS8300: Merge conflict marker encountered [H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Infrastructure\OnlineTravel.Infrastructure.csproj]
+H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Infrastructure\Persistence\Configurations\CategoryConfiguration.cs(15,1): error CS8300: Merge conflict marker encountered [H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Infrastructure\OnlineTravel.Infrastructure.csproj]
+H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Infrastructure\Persistence\Configurations\CategoryConfiguration.cs(21,1): error CS8300: Merge conflict marker encountered [H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Infrastructure\OnlineTravel.Infrastructure.csproj]
+
+Build FAILED.
+
+H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Infrastructure\Persistence\Configurations\CategoryConfiguration.cs(12,1): error CS8300: Merge conflict marker encountered [H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Infrastructure\OnlineTravel.Infrastructure.csproj]
+H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Infrastructure\Persistence\Configurations\CategoryConfiguration.cs(15,1): error CS8300: Merge conflict marker encountered [H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Infrastructure\OnlineTravel.Infrastructure.csproj]
+H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Infrastructure\Persistence\Configurations\CategoryConfiguration.cs(21,1): error CS8300: Merge conflict marker encountered [H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Infrastructure\OnlineTravel.Infrastructure.csproj]
+    0 Warning(s)
+    3 Error(s)
+
+Time Elapsed 00:00:00.94

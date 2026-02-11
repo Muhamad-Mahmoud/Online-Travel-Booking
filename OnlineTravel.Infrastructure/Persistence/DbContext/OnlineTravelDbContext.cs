@@ -28,7 +28,10 @@ public class OnlineTravelDbContext : IdentityDbContext <AppUser, IdentityRole<Gu
 
     // Tours
     public DbSet<Tour> Tours => Set<Tour>();
+
     public DbSet<TourSchedule> TourSchedules => Set<TourSchedule>();
+    public DbSet<TourActivity> TourActivities => Set<TourActivity>();
+
     public DbSet<TourPriceTier> TourPriceTiers => Set<TourPriceTier>();
 
     // Flights

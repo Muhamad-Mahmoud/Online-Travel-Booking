@@ -74,8 +74,5 @@ namespace OnlineTravel.Infrastructure.Persistence.UnitOfWork
                 _transaction = null;
             }
         }
-
-
     }
 }
-

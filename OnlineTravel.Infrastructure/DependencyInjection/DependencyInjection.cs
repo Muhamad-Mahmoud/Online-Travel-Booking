@@ -31,6 +31,7 @@ public static class DependencyInjection
         .AddRoles<IdentityRole<Guid>>()
         .AddEntityFrameworkStores<OnlineTravelDbContext>();
 
+        // Add UnitOfWork
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;
