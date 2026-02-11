@@ -1,4 +1,4 @@
-namespace OnlineTravel.Domain.Exceptions
+namespace OnlineTravel.Domain.ErrorHandling
 {
     public class BadRequestException : Exception
     {

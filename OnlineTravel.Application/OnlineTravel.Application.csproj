@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Features\Booking\**" />
+    <EmbeddedResource Remove="Features\Booking\**" />
+    <None Remove="Features\Booking\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\OnlineTravel.Domain\OnlineTravel.Domain.csproj" />
   </ItemGroup>
 
@@ -14,6 +20,10 @@
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="MediatR" Version="12.2.0" />
     <PackageReference Include="FluentValidation" Version="11.8.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Features\Bookings\Queries\" />
   </ItemGroup>
 
 </Project>

@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 using OnlineTravel.Application.Interfaces.Specifications;
 using OnlineTravel.Domain.Entities._Base;
 
-namespace MedLink.Application.Specifications
+namespace OnlineTravel.Application.Specifications
 {
     public class BaseSpecification<T> : ISpecification<T> where T : BaseEntity
     {
@@ -38,9 +38,7 @@ namespace MedLink.Application.Specifications
         public void AddOrderBy(Expression<Func<T, object>> orderByExpression)
         {
             OrderBy = orderByExpression;
-
         }
-
 
         public void AddOrderByDesc(Expression<Func<T, object>> orderByDescExpression)
         {

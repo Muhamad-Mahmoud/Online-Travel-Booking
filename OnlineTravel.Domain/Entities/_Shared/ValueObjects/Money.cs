@@ -19,6 +19,30 @@ public record Money
     }
 
     public static Money Zero(string currency = "USD") => new(0, currency);
+
+    public static Money operator +(Money left, Money right)
+    {
+        if (left.Currency != right.Currency)
+            throw new InvalidOperationException($"Cannot add money with different currencies: {left.Currency} and {right.Currency}");
+        return new Money(left.Amount + right.Amount, left.Currency);
+    }
+
+    public static Money operator -(Money left, Money right)
+    {
+        if (left.Currency != right.Currency)
+            throw new InvalidOperationException($"Cannot subtract money with different currencies: {left.Currency} and {right.Currency}");
+        return new Money(left.Amount - right.Amount, left.Currency);
+    }
+
+    public static Money operator *(Money left, int multiplier)
+    {
+        return new Money(left.Amount * multiplier, left.Currency);
+    }
+
+    public static Money operator *(Money left, decimal multiplier)
+    {
+        return new Money(left.Amount * multiplier, left.Currency);
+    }
 }
 
 

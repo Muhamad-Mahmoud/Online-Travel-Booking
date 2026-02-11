@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 using NetTopologySuite.Geometries;
 
 #nullable disable
@@ -122,7 +121,7 @@ namespace OnlineTravel.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Key = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -950,10 +949,10 @@ namespace OnlineTravel.Infrastructure.Migrations
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Categories_Key",
+                name: "IX_Categories_Type",
                 schema: "infra",
                 table: "Categories",
-                column: "Key",
+                column: "Type",
                 unique: true);
 
             migrationBuilder.CreateIndex(

@@ -1,9 +1,6 @@
 using OnlineTravel.Application.DependencyInjection;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Infrastructure;
-using OnlineTravel.Infrastructure.Persistence.UnitOfWork;
-using OnlineTravelBookingTeamB.Middleware;
-using OnlineTravelBookingTeamB.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +27,9 @@ app.UseMiddleware<OnlineTravelBookingTeamB.Middlewares.ExceptionMiddleware>();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+
+    // Data Seeding
+    await app.SeedDatabaseAsync();
 }
 
 app.UseHttpsRedirection();

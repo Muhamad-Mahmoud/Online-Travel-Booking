@@ -9,16 +9,18 @@ public record DateTimeRange
 
     public DateTimeRange(DateTime start, DateTime end)
     {
-        if (end < start) throw new ArgumentException("End date-time cannot be before start date-time");
+        if (end < start) throw new ArgumentException("End date cannot be before start date");
         Start = start;
         End = end;
     }
 
-    public TimeSpan Duration => End - Start;
+    public double TotalHours => (End - Start).TotalHours;
+    public int TotalDays => (int)Math.Ceiling((End - Start).TotalDays);
+    public int TotalNights => (End.Date - Start.Date).Days;
 
     public bool OverlapsWith(DateTimeRange other) => Start < other.End && other.Start < End;
+
+    public bool Contains(DateTime date) => date >= Start && date <= End;
+
+    public override string ToString() => $"{Start:yyyy-MM-dd HH:mm} to {End:yyyy-MM-dd HH:mm}";
 }
-
-
-
-

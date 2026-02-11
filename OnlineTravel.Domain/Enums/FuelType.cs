@@ -8,7 +8,8 @@ public enum FuelType
 
     Electric = 2,
 
-    Hybrid = 3
+    Hybrid = 3,
+    Gasoline = 4
 }
 
 

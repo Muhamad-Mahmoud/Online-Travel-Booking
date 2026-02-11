@@ -50,7 +50,7 @@ public class OnlineTravelDbContext : IdentityDbContext <AppUser, IdentityRole<Gu
     public DbSet<Room> Rooms => Set<Room>();
 
     // Bookings
-    public DbSet<Booking> Bookings => Set<Booking>();
+    public DbSet<BookingEntity> Bookings => Set<BookingEntity>();
     public DbSet<BookingDetail> BookingDetails => Set<BookingDetail>();
 
     // Payments
