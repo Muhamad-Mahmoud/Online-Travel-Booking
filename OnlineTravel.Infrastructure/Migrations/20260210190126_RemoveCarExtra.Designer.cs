@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using OnlineTravel.Infrastructure.Persistence.Context;
@@ -12,9 +13,11 @@ using OnlineTravel.Infrastructure.Persistence.Context;
 namespace OnlineTravel.Infrastructure.Migrations
 {
     [DbContext(typeof(OnlineTravelDbContext))]
-    partial class OnlineTravelDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260210190126_RemoveCarExtra")]
+    partial class RemoveCarExtra
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -831,6 +834,11 @@ namespace OnlineTravel.Infrastructure.Migrations
                     b.Property<bool>("Recommended")
                         .HasColumnType("bit");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.Property<string>("Tags")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
@@ -861,6 +869,9 @@ namespace OnlineTravel.Infrastructure.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -896,6 +907,11 @@ namespace OnlineTravel.Infrastructure.Migrations
 
                     b.Property<Guid>("PriceTierId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -1989,14 +2005,14 @@ namespace OnlineTravel.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("OnlineTravel.Domain.Entities._Shared.ValueObjects.Money", "Price", b1 =>
+                    b.OwnsOne("OnlineTravel.Domain.Entities._Shared.ValueObjects.Money", "AdultPrice", b1 =>
                         {
                             b1.Property<Guid>("TourPriceTierId")
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<decimal>("Amount")
                                 .HasColumnType("decimal(10,2)")
-                                .HasColumnName("Price");
+                                .HasColumnName("AdultPrice");
 
                             b1.Property<string>("Currency")
                                 .IsRequired()
@@ -2013,7 +2029,61 @@ namespace OnlineTravel.Infrastructure.Migrations
                                 .HasForeignKey("TourPriceTierId");
                         });
 
-                    b.Navigation("Price")
+                    b.OwnsOne("OnlineTravel.Domain.Entities._Shared.ValueObjects.Money", "ChildPrice", b1 =>
+                        {
+                            b1.Property<Guid>("TourPriceTierId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasColumnType("decimal(10,2)")
+                                .HasColumnName("ChildPrice");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("nvarchar(max)")
+                                .HasDefaultValue("USD")
+                                .HasColumnName("Currency");
+
+                            b1.HasKey("TourPriceTierId");
+
+                            b1.ToTable("TourPriceTiers", "tours");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TourPriceTierId");
+                        });
+
+                    b.OwnsOne("OnlineTravel.Domain.Entities._Shared.ValueObjects.Money", "InfantPrice", b1 =>
+                        {
+                            b1.Property<Guid>("TourPriceTierId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasColumnType("decimal(10,2)")
+                                .HasColumnName("InfantPrice");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("nvarchar(max)")
+                                .HasDefaultValue("USD")
+                                .HasColumnName("Currency");
+
+                            b1.HasKey("TourPriceTierId");
+
+                            b1.ToTable("TourPriceTiers", "tours");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TourPriceTierId");
+                        });
+
+                    b.Navigation("AdultPrice")
+                        .IsRequired();
+
+                    b.Navigation("ChildPrice")
+                        .IsRequired();
+
+                    b.Navigation("InfantPrice")
                         .IsRequired();
 
                     b.Navigation("Tour");

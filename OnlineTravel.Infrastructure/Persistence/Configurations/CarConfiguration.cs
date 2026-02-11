@@ -24,10 +24,7 @@ public class CarConfiguration : IEntityTypeConfiguration<Car>
             .HasForeignKey(p => p.CarId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasMany(e => e.Extras)
-            .WithOne(e => e.Car)
-            .HasForeignKey(e => e.CarId)
-            .OnDelete(DeleteBehavior.Cascade);
+
 
         builder.Ignore(e => e.Location);
 

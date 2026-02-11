@@ -22,7 +22,6 @@ public class Tour : SoftDeletableEntity
 
     public Guid CategoryId { get; set; }
 
-    public byte[]? RowVersion { get; set; }
 
     // Navigation Properties
 
