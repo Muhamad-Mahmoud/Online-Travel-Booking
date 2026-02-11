@@ -2,8 +2,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities.Users;
 using OnlineTravel.Infrastructure.Persistence.Context;
+using OnlineTravel.Infrastructure.Persistence.UnitOfWork;
 
 namespace OnlineTravel.Infrastructure;
 
@@ -29,6 +31,8 @@ public static class DependencyInjection
         .AddRoles<IdentityRole<Guid>>()
         .AddEntityFrameworkStores<OnlineTravelDbContext>();
 
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+
         return services;
     }
 
@@ -44,7 +48,4 @@ public static class DependencyInjection
                 b => b.MigrationsAssembly(typeof(DependencyInjection).Assembly.FullName)
                       .UseNetTopologySuite()));
     }
-
 }
-
-

@@ -4,3 +4,39 @@ GET {{OnlineTravelBookingTeamB_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
+
+# Get Seed Data IDs
+GET {{OnlineTravelBookingTeamB_HostAddress}}/api/dev/seed-data
+Accept: application/json
+
+###
+
+# Create a Hotel Booking (Replace IDs with those from seed-data)
+POST {{OnlineTravelBookingTeamB_HostAddress}}/api/bookings
+Content-Type: application/json
+
+{
+  "userId": "REPLACE_WITH_USER_ID",
+  "categoryId": "REPLACE_WITH_HOTEL_CATEGORY_ID",
+  "itemId": "REPLACE_WITH_ROOM_ID",
+  "stayRange": {
+    "start": "2026-03-01",
+    "end": "2026-03-05"
+  }
+}
+
+###
+
+# Create a Tour Booking (Replace IDs with those from seed-data)
+POST {{OnlineTravelBookingTeamB_HostAddress}}/api/bookings
+Content-Type: application/json
+
+{
+  "userId": "REPLACE_WITH_USER_ID",
+  "categoryId": "REPLACE_WITH_TOUR_CATEGORY_ID",
+  "itemId": "REPLACE_WITH_TOUR_ID",
+  "stayRange": {
+    "start": "2026-03-10",
+    "end": "2026-03-15"
+  }
+}

@@ -9,12 +9,7 @@ public class TourPriceTier : BaseEntity
 
     public string Name { get; set; } = string.Empty;
 
-    public Money AdultPrice { get; set; } = null!;
-
-    public Money ChildPrice { get; set; } = null!;
-
-    public Money InfantPrice { get; set; } = null!;
-
+    public Money Price { get; set; } = null!;
 
     public string? Description { get; set; }
 

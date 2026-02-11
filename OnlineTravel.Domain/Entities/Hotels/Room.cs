@@ -1,5 +1,6 @@
 using OnlineTravel.Domain.Entities._Base;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
+using OnlineTravel.Domain.Enums;
 
 namespace OnlineTravel.Domain.Entities.Hotels;
 
@@ -15,7 +16,7 @@ public class Room : BaseEntity
 
     public int MaxGuests { get; set; } = 2;
 
-    public List<DateRange> AvailableDates { get; set; } = new();
+    public RoomStatus Status { get; set; } = RoomStatus.Active;
 
     public bool Refundable { get; set; } = false;
 
@@ -23,9 +24,27 @@ public class Room : BaseEntity
 
     public int? MinimumStayNights { get; set; }
 
-    public bool IsAvailable { get; set; } = true;
-
     // Navigation Properties
 
     public virtual Hotel Hotel { get; set; } = null!;
+
+    public bool IsBookable(DateRange stayRange, IEnumerable<DateRange> conflictingSlots)
+    {
+        if (Status != RoomStatus.Active)
+            return false;
+
+        if (MinimumStayNights.HasValue && stayRange.TotalNights < MinimumStayNights.Value)
+            return false;
+
+        // check against conflicting slots
+        // conflictingSlots are assumed to be ranges that CANNOT coexist with new booking
+        // usually fetched from existing bookings
+        foreach (var slot in conflictingSlots)
+        {
+            if (stayRange.OverlapsWith(slot))
+                return false;
+        }
+
+        return true;
+    }
 }

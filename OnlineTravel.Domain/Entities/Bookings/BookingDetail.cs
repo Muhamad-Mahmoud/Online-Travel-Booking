@@ -6,17 +6,26 @@ namespace OnlineTravel.Domain.Entities.Bookings;
 
 public class BookingDetail : BaseEntity
 {
-    public Guid BookingId { get; set; }
+    public Guid BookingId { get; private set; }
+    public Guid CategoryId { get; private set; }
+    public Guid ItemId { get; private set; }
+    public DateRange StayRange { get; private set; } = null!;
 
-    public Guid CategoryId { get; set; }
+    public virtual BookingEntity Booking { get; private set; } = null!;
+    public virtual Category Category { get; private set; } = null!;
 
-    public Guid ItemId { get; set; }
+    protected BookingDetail() { } // For EF
 
-    public DateRange StayRange { get; set; } = null!;
-
-    public virtual Booking Booking { get; set; } = null!;
-
-    public virtual Category Category { get; set; } = null!;
+    public static BookingDetail Create(Guid categoryId, Guid itemId, DateRange stayRange)
+    {
+        return new BookingDetail
+        {
+            Id = Guid.NewGuid(),
+            CategoryId = categoryId,
+            ItemId = itemId,
+            StayRange = stayRange
+        };
+    }
 }
 
 

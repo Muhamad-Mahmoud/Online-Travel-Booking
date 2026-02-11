@@ -13,13 +13,13 @@ public class CarExtraConfiguration : IEntityTypeConfiguration<CarExtra>
         builder.OwnsOne(e => e.PricePerDay, m =>
         {
             m.Property(p => p.Amount).HasColumnName("PricePerDay");
-            m.Property(p => p.Currency).HasColumnName("Currency");
+            m.Property(p => p.Currency).HasColumnName("PricePerDayCurrency");
         });
 
         builder.OwnsOne(e => e.PricePerRental, m =>
         {
             m.Property(p => p.Amount).HasColumnName("PricePerRental");
-            m.Property(p => p.Currency).HasColumnName("Currency");
+            m.Property(p => p.Currency).HasColumnName("PricePerRentalCurrency");
         });
     }
 

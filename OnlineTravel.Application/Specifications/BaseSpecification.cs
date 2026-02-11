@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 using OnlineTravel.Application.Interfaces.Specifications;
 using OnlineTravel.Domain.Entities._Base;
 
-namespace MedLink.Application.Specifications
+namespace OnlineTravel.Application.Specifications
 {
     public class BaseSpecification<T> : ISpecification<T> where T : BaseEntity
     {

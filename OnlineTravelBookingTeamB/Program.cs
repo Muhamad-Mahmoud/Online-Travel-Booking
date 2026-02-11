@@ -1,5 +1,6 @@
 using OnlineTravel.Application.DependencyInjection;
 using OnlineTravel.Infrastructure;
+using OnlineTravelBookingTeamB.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +20,9 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+
+    // Data Seeding
+    await app.SeedDatabaseAsync();
 }
 
 app.UseHttpsRedirection();
