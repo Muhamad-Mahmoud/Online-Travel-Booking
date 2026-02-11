@@ -2,7 +2,7 @@
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities._Base;
 
-namespace MedLink.Application.Interfaces.Persistence
+namespace OnlineTravel.Application.Interfaces.Persistence
 {
     public interface IUnitOfWork : IDisposable
     {

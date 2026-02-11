@@ -4,9 +4,9 @@ using OnlineTravel.Domain.Entities.Users;
 
 namespace OnlineTravel.Infrastructure.Persistence.Configurations;
 
-public class UserConfiguration : IEntityTypeConfiguration<User>
+public class UserConfiguration : IEntityTypeConfiguration<AppUser>
 {
-    public void Configure(EntityTypeBuilder<User> builder)
+    public void Configure(EntityTypeBuilder<AppUser> builder)
     {
         builder.ToTable("Users", "identity");
         builder.HasIndex(e => e.Email).IsUnique();

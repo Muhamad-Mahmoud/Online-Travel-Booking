@@ -16,7 +16,7 @@ public class TourScheduleConfiguration : IEntityTypeConfiguration<TourSchedule>
             dr.Property(p => p.End).HasColumnName("EndDate");
         });
 
-        builder.Property(e => e.RowVersion).IsRowVersion();
+
 
         builder.HasOne(e => e.Tour)
             .WithMany()
