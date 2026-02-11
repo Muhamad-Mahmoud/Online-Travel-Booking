@@ -16,9 +16,6 @@ public class TourPriceTierConfiguration : IEntityTypeConfiguration<TourPriceTier
             m.Property(p => p.Currency).HasColumnName("Currency").HasDefaultValue("USD");
         });
 
-        builder.Property(e => e.Name).HasMaxLength(200).IsRequired();
-        builder.Property(e => e.Description).HasMaxLength(1000);
-
         builder.HasMany(e => e.Schedules)
             .WithOne(s => s.PriceTier)
             .HasForeignKey(s => s.PriceTierId)

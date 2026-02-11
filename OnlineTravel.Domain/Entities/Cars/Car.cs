@@ -45,7 +45,7 @@ public class Car : SoftDeletableEntity
 
     public List<ImageUrl> Images { get; set; } = new();
 
-    public virtual ICollection<CarExtra> Extras { get; set; } = new List<CarExtra>();
+
 }
 
 

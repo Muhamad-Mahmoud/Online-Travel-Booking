@@ -13,8 +13,6 @@ public class TourPriceTier : BaseEntity
 
     public string? Description { get; set; }
 
-    public int DisplayOrder { get; set; } = 0;
-
     public bool IsActive { get; set; } = true;
 
     // Navigation Properties

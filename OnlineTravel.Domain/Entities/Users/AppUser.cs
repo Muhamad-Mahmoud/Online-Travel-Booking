@@ -4,7 +4,7 @@ using OnlineTravel.Domain.Enums;
 
 namespace OnlineTravel.Domain.Entities.Users;
 
-public class User : IdentityUser<Guid>
+public class AppUser : IdentityUser<Guid>
 {
     public string Name { get; set; } = string.Empty;
 

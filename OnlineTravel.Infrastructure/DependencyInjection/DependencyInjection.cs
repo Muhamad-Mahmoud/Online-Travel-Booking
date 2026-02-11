@@ -19,7 +19,7 @@ public static class DependencyInjection
         AddDatabaseContext(services, configuration);
 
         // Add Identity
-        services.AddIdentityCore<User>(options =>
+        services.AddIdentityCore<AppUser>(options =>
         {
             // Configure identity options if needed
             options.Password.RequireDigit = false;
