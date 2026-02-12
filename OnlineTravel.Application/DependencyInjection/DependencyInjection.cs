@@ -13,7 +13,6 @@ public static class DependencyInjection
         services.AddMediatR(cfg =>
             cfg.RegisterServicesFromAssemblies(typeof(DependencyInjection).Assembly));
 
-        // Register AutoMapper profiles
         services.AddAutoMapper(typeof(DependencyInjection).Assembly);
 
         // Register FluentValidation validators manually

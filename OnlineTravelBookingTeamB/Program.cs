@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Identity;
 using OnlineTravel.Application.DependencyInjection;
 using OnlineTravel.Application.Interfaces.Services;
 using OnlineTravel.Infrastructure;
+using OnlineTravel.Infrastructure.Identity;
 using OnlineTravel.Infrastructure.Services;
 using OnlineTravelBookingTeamB.Extensions;
 
@@ -38,6 +40,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseStaticFiles();
 app.UseHttpsRedirection();
+
+await IdentityBootstrapper.InitializeAsync(app.Services);
+
+
+app.UseAuthentication();
 app.UseStatusCodePagesWithReExecute("/errors/{0}");
 app.UseAuthorization();
 
