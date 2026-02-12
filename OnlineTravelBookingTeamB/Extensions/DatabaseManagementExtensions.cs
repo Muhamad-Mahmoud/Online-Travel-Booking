@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using OnlineTravel.Domain.Entities.Users;
 using OnlineTravel.Infrastructure.Persistence.Context;
+using OnlineTravel.Infrastructure.Persistence.Seed;
 
 namespace Microsoft.AspNetCore.Builder
 {
@@ -17,12 +18,11 @@ namespace Microsoft.AspNetCore.Builder
                 {
                     var context = services.GetRequiredService<OnlineTravelDbContext>();
                     var userManager = services.GetRequiredService<UserManager<AppUser>>();
-                    //var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-
+                    var roleManager = services.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
+                    
                     await context.Database.MigrateAsync();
-
-                    // Uncomment when seeding is needed
-                    // await ApplicationDbContextSeed.SeedAsync(context, userManager, roleManager);
+                    
+                    await ApplicationDbContextSeed.SeedAsync(context, userManager, roleManager);
                 }
                 catch (Exception ex)
                 {

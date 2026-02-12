@@ -2,8 +2,8 @@ namespace OnlineTravel.Domain.Enums;
 
 public enum CategoryType
 {
-    Car,
-    Hotel,
+    Tour,
     Flight,
-    Tour
+    Hotel,
+    Car
 }

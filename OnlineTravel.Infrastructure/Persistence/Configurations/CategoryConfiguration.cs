@@ -20,11 +20,5 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
             i.Property(p => p.Url).HasColumnName("ImageUrl");
             i.Property(p => p.AltText).HasColumnName("ImageAlt");
         });
-
-
     }
 }
-
-
-
-
