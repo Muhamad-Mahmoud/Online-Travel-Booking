@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using OnlineTravel.Domain.Entities.Users;
 using OnlineTravel.Infrastructure.Persistence.Context;
 
-namespace OnlineTravelBookingTeamB.Extensions
+namespace Microsoft.AspNetCore.Builder
 {
-      public static class DatabaseManagementExtensions
+    public static class DatabaseManagementExtensions
     {
         public static async Task ApplyDatabaseMigrationsAsync(this WebApplication app)
         {
@@ -18,9 +18,9 @@ namespace OnlineTravelBookingTeamB.Extensions
                     var context = services.GetRequiredService<OnlineTravelDbContext>();
                     var userManager = services.GetRequiredService<UserManager<AppUser>>();
                     //var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-                    
+
                     await context.Database.MigrateAsync();
-                    
+
                     // Uncomment when seeding is needed
                     // await ApplicationDbContextSeed.SeedAsync(context, userManager, roleManager);
                 }

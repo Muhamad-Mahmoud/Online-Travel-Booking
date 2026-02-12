@@ -10,7 +10,6 @@ public class AppUser : IdentityUser<Guid>
 
     public Address? Address { get; set; }
 
-
     public string? ProfilePicture { get; set; }
 
     public UserStatus Status { get; set; } = UserStatus.Active;
@@ -21,7 +20,3 @@ public class AppUser : IdentityUser<Guid>
 
     public DateTime? DeletedAt { get; set; }
 }
-
-
-
-

@@ -3,7 +3,7 @@ using OnlineTravel.Domain.Entities.Users;
 using OnlineTravel.Infrastructure.Persistence.Context;
 using OnlineTravel.Infrastructure.Persistence.DbContext;
 
-namespace OnlineTravelBookingTeamB.Extensions;
+namespace Microsoft.AspNetCore.Builder;
 
 public static class WebApplicationExtensions
 {

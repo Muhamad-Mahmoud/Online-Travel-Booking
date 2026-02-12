@@ -9,6 +9,7 @@ public class TourScheduleConfiguration : IEntityTypeConfiguration<TourSchedule>
     public void Configure(EntityTypeBuilder<TourSchedule> builder)
     {
         builder.ToTable("TourSchedules", "tours");
+        builder.Property(e => e.RowVersion).IsRowVersion();
 
         builder.OwnsOne(e => e.DateRange, dr =>
         {
