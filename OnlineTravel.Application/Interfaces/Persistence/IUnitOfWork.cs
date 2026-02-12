@@ -11,5 +11,6 @@ namespace OnlineTravel.Application.Interfaces.Persistence
         Task BeginTransactionAsync();
         Task CommitTransactionAsync();
         Task RollbackTransactionAsync();
+        Task SaveChangesAsync();
     }
 }

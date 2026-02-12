@@ -75,6 +75,10 @@ namespace OnlineTravel.Infrastructure.Persistence.UnitOfWork
             }
         }
 
+        public async Task SaveChangesAsync()
+        {
+            await _dbContext.SaveChangesAsync();
+        }
 
     }
 }

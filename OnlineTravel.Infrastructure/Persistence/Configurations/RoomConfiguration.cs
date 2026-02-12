@@ -4,8 +4,6 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 using OnlineTravel.Domain.Entities.Hotels;
 
-namespace OnlineTravel.Infrastructure.Persistence.Configurations;
-
 public class RoomConfiguration : IEntityTypeConfiguration<Room>
 {
     public void Configure(EntityTypeBuilder<Room> builder)
@@ -33,9 +31,12 @@ public class RoomConfiguration : IEntityTypeConfiguration<Room>
                 (c1, c2) => c1!.SequenceEqual(c2!),
                 c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
                 c => c.ToList()));
+
+        // ÅÖÇÝÉ ÇáÜ PricePerNight
+        builder.OwnsOne(r => r.PricePerNight, pp =>
+        {
+            pp.Property(p => p.Amount).HasColumnName("PriceAmount");
+            pp.Property(p => p.Currency).HasColumnName("PriceCurrency");
+        });
     }
 }
-
-
-
-
