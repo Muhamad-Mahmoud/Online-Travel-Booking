@@ -13,8 +13,8 @@ using OnlineTravel.Infrastructure.Persistence.Context;
 namespace OnlineTravel.Infrastructure.Migrations
 {
     [DbContext(typeof(OnlineTravelDbContext))]
-    [Migration("20260209232316_IntialCreate")]
-    partial class IntialCreate
+    [Migration("20260210193851_RenameUserToAppUser")]
+    partial class RenameUserToAppUser
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -966,7 +966,7 @@ namespace OnlineTravel.Infrastructure.Migrations
                     b.ToTable("TourSchedules", "tours");
                 });
 
-            modelBuilder.Entity("OnlineTravel.Domain.Entities.Users.User", b =>
+            modelBuilder.Entity("OnlineTravel.Domain.Entities.Users.AppUser", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1068,7 +1068,7 @@ namespace OnlineTravel.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
-                    b.HasOne("OnlineTravel.Domain.Entities.Users.User", null)
+                    b.HasOne("OnlineTravel.Domain.Entities.Users.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1077,7 +1077,7 @@ namespace OnlineTravel.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.HasOne("OnlineTravel.Domain.Entities.Users.User", null)
+                    b.HasOne("OnlineTravel.Domain.Entities.Users.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1092,7 +1092,7 @@ namespace OnlineTravel.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("OnlineTravel.Domain.Entities.Users.User", null)
+                    b.HasOne("OnlineTravel.Domain.Entities.Users.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1101,7 +1101,7 @@ namespace OnlineTravel.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.HasOne("OnlineTravel.Domain.Entities.Users.User", null)
+                    b.HasOne("OnlineTravel.Domain.Entities.Users.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1110,7 +1110,7 @@ namespace OnlineTravel.Infrastructure.Migrations
 
             modelBuilder.Entity("OnlineTravel.Domain.Entities.Bookings.Booking", b =>
                 {
-                    b.HasOne("OnlineTravel.Domain.Entities.Users.User", "User")
+                    b.HasOne("OnlineTravel.Domain.Entities.Users.AppUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1954,7 +1954,7 @@ namespace OnlineTravel.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("OnlineTravel.Domain.Entities.Users.User", "User")
+                    b.HasOne("OnlineTravel.Domain.Entities.Users.AppUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1978,7 +1978,7 @@ namespace OnlineTravel.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("OnlineTravel.Domain.Entities.Users.User", "User")
+                    b.HasOne("OnlineTravel.Domain.Entities.Users.AppUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -2225,11 +2225,11 @@ namespace OnlineTravel.Infrastructure.Migrations
                     b.Navigation("Tour");
                 });
 
-            modelBuilder.Entity("OnlineTravel.Domain.Entities.Users.User", b =>
+            modelBuilder.Entity("OnlineTravel.Domain.Entities.Users.AppUser", b =>
                 {
                     b.OwnsOne("OnlineTravel.Domain.Entities._Shared.ValueObjects.Address", "Address", b1 =>
                         {
-                            b1.Property<Guid>("UserId")
+                            b1.Property<Guid>("AppUserId")
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<string>("City")
@@ -2255,12 +2255,12 @@ namespace OnlineTravel.Infrastructure.Migrations
                             b1.Property<string>("Street")
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.HasKey("UserId");
+                            b1.HasKey("AppUserId");
 
                             b1.ToTable("Users", "identity");
 
                             b1.WithOwner()
-                                .HasForeignKey("UserId");
+                                .HasForeignKey("AppUserId");
                         });
 
                     b.Navigation("Address")

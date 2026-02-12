@@ -7,6 +7,9 @@ using OnlineTravel.Application.Features.Flight.Airport.GetAllAirports;
 using OnlineTravel.Application.Features.Flight.Airport.UpdateAirport;
 using OnlineTravel.Application.Features.Flight.Airport.GetAirportById;
 using OnlineTravel.Application.Features.Flight.Airport.GetAllAirports;
+using OnlineTravel.Application.Features.Flight.CreateAirport;
+using OnlineTravelBookingTeamB.Extensions;
+using OnlineTravel.Domain.ErrorHandling;
 
 namespace OnlineTravelBookingTeamB.Controllers
 {
@@ -22,9 +25,8 @@ namespace OnlineTravelBookingTeamB.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<CreateAirportResponse>> Create(CreateAirportCommand command)
+        public async Task<ActionResult> Create(CreateAirportCommand command)
         {
-           
             var result = await _mediator.Send(command);
 
             return Ok(result);
@@ -49,6 +51,7 @@ namespace OnlineTravelBookingTeamB.Controllers
 
             var result = await _mediator.Send(command);
             return Ok(result);
+            return result.ToResponse();
         }
     }
 }

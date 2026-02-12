@@ -20,17 +20,27 @@ public class Tour : SoftDeletableEntity
 
     public bool Recommended { get; set; } = false;
 
+    public int DurationDays { get; set; }
+
+    public int DurationNights { get; set; }
+
+    public string? BestTimeToVisit { get; set; }
+
     public Guid CategoryId { get; set; }
 
-    public byte[]? RowVersion { get; set; }
+
 
     // Navigation Properties
 
     public virtual Category Category { get; set; } = null!;
 
-    public List<ImageUrl> Images { get; set; } = new();
+    public virtual ICollection<TourImage> Images { get; set; } = new List<TourImage>();
+
+    public virtual ICollection<TourActivity> Activities { get; set; } = new List<TourActivity>();
 
     public virtual ICollection<TourPriceTier> PriceTiers { get; set; } = new List<TourPriceTier>();
+
+
 }
 
 

@@ -9,6 +9,7 @@ public class TourScheduleConfiguration : IEntityTypeConfiguration<TourSchedule>
     public void Configure(EntityTypeBuilder<TourSchedule> builder)
     {
         builder.ToTable("TourSchedules", "tours");
+        builder.Property(e => e.RowVersion).IsRowVersion();
 
         builder.OwnsOne(e => e.DateRange, dr =>
         {
@@ -16,7 +17,7 @@ public class TourScheduleConfiguration : IEntityTypeConfiguration<TourSchedule>
             dr.Property(p => p.End).HasColumnName("EndDate");
         });
 
-        builder.Property(e => e.RowVersion).IsRowVersion();
+
 
         builder.HasOne(e => e.Tour)
             .WithMany()

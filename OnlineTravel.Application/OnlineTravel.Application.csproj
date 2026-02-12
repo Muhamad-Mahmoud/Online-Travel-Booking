@@ -7,6 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Features\Bookings\Queries\**" />
+    <Compile Remove="Features\Booking\**" />
+    <EmbeddedResource Remove="Features\Bookings\Queries\**" />
+    <EmbeddedResource Remove="Features\Booking\**" />
+    <None Remove="Features\Bookings\Queries\**" />
+    <None Remove="Features\Booking\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\OnlineTravel.Domain\OnlineTravel.Domain.csproj" />
   </ItemGroup>
 
