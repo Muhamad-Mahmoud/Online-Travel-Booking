@@ -5,6 +5,8 @@ using OnlineTravel.Infrastructure;
 using OnlineTravel.Infrastructure.Persistence.UnitOfWork;
 using OnlineTravelBookingTeamB.Extensions;
 using OnlineTravelBookingTeamB.Middleware;
+using OnlineTravel.Infrastructure.Identity;
+using OnlineTravel.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
