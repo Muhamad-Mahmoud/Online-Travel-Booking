@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
-using MediatR;
+﻿using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OnlineTravel.Application.Features.Flight.Flights.CreateFlight;
+using OnlineTravel.Application.Features.Flight.Flights.SearchFlights;
 
 namespace OnlineTravelBookingTeamB.Controllers
 {
@@ -18,6 +19,19 @@ namespace OnlineTravelBookingTeamB.Controllers
         public async Task<ActionResult<Guid>> Create(CreateFlightCommand command)
         {
             return Ok(await _mediator.Send(command));
+        }
+        [HttpGet("search")]
+        public async Task<ActionResult<List<SearchFlightsDto>>> Search([FromQuery] SearchFlightsQuery query)
+        {
+           
+            var result = await _mediator.Send(query);
+
+            if (result == null || !result.Any())
+            {
+                return NotFound("No flights found matching your criteria.");
+            }
+
+            return Ok(result);
         }
     }
 }

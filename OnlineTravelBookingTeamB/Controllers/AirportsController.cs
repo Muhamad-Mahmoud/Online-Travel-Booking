@@ -1,15 +1,10 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using OnlineTravel.Application.Features.Flight.Airport.CreateAirport;
 using OnlineTravel.Application.Features.Flight.Airport.GetAirportById;
 using OnlineTravel.Application.Features.Flight.Airport.GetAllAirports;
 using OnlineTravel.Application.Features.Flight.Airport.UpdateAirport;
-using OnlineTravel.Application.Features.Flight.Airport.GetAirportById;
-using OnlineTravel.Application.Features.Flight.Airport.GetAllAirports;
-using OnlineTravel.Application.Features.Flight.CreateAirport;
 using OnlineTravelBookingTeamB.Extensions;
-using OnlineTravel.Domain.ErrorHandling;
+using OnlineTravel.Application.Features.Flight.CreateAirport;
 
 namespace OnlineTravelBookingTeamB.Controllers
 {
@@ -51,7 +46,6 @@ namespace OnlineTravelBookingTeamB.Controllers
 
             var result = await _mediator.Send(command);
             return Ok(result);
-            return result.ToResponse();
         }
     }
 }

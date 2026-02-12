@@ -7,7 +7,7 @@ using NetTopologySuite.Geometries;
 namespace OnlineTravel.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class IntialCreate : Migration
+    public partial class newMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -369,8 +369,10 @@ namespace OnlineTravel.Infrastructure.Migrations
                     HighlightsJson = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TagsJson = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Recommended = table.Column<bool>(type: "bit", nullable: false),
+                    DurationDays = table.Column<int>(type: "int", nullable: false),
+                    DurationNights = table.Column<int>(type: "int", nullable: false),
+                    BestTimeToVisit = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ImagesJson = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -651,6 +653,55 @@ namespace OnlineTravel.Infrastructure.Migrations
                         column: x => x.HotelId,
                         principalSchema: "hotels",
                         principalTable: "Hotels",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TourActivities",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ImageAlt = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    TourId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TourActivities", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TourActivities_Tours_TourId",
+                        column: x => x.TourId,
+                        principalSchema: "tours",
+                        principalTable: "Tours",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TourImages",
+                schema: "tours",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AltText = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    TourId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TourImages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TourImages_Tours_TourId",
+                        column: x => x.TourId,
+                        principalSchema: "tours",
+                        principalTable: "Tours",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -1021,6 +1072,17 @@ namespace OnlineTravel.Infrastructure.Migrations
                 columns: new[] { "HotelId", "RoomNumber" });
 
             migrationBuilder.CreateIndex(
+                name: "IX_TourActivities_TourId",
+                table: "TourActivities",
+                column: "TourId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TourImages_TourId",
+                schema: "tours",
+                table: "TourImages",
+                column: "TourId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TourPriceTiers_TourId",
                 schema: "tours",
                 table: "TourPriceTiers",
@@ -1122,6 +1184,13 @@ namespace OnlineTravel.Infrastructure.Migrations
             migrationBuilder.DropTable(
                 name: "Rooms",
                 schema: "hotels");
+
+            migrationBuilder.DropTable(
+                name: "TourActivities");
+
+            migrationBuilder.DropTable(
+                name: "TourImages",
+                schema: "tours");
 
             migrationBuilder.DropTable(
                 name: "TourSchedules",

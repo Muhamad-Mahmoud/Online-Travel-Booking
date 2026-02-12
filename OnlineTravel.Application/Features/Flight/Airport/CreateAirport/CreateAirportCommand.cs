@@ -4,9 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MediatR;
-
-
-namespace OnlineTravel.Application.Features.Flight.Airport.CreateAirport
+using OnlineTravel.Application.Features.Flight.Airport.CreateAirport;
 using OnlineTravel.Domain.ErrorHandling;
 
 namespace OnlineTravel.Application.Features.Flight.CreateAirport
