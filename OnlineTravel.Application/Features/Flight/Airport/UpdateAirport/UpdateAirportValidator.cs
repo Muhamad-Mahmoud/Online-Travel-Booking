@@ -1,0 +1,21 @@
+﻿using FluentValidation;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace OnlineTravel.Application.Features.Flight.Airport.UpdateAirport
+{
+    public class UpdateAirportValidator:AbstractValidator<UpdateAirportCommand>
+    {
+        public UpdateAirportValidator()
+        {
+            RuleFor(v => v.Id).NotEmpty().WithMessage("Airport ID is required for update.");
+            RuleFor(v => v.Name).NotEmpty().MaximumLength(200);
+            RuleFor(v => v.Code).NotEmpty().Length(3);
+            RuleFor(v => v.City).NotEmpty();
+            RuleFor(v => v.Country).NotEmpty();
+        }
+    }
+}

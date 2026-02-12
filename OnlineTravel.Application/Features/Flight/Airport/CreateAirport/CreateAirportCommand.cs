@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using MediatR;
 
 
-namespace OnlineTravel.Application.Features.Flight.CreateAirport
+namespace OnlineTravel.Application.Features.Flight.Airport.CreateAirport
 {
     public class CreateAirportCommand:IRequest<CreateAirportResponse>
     {
