@@ -7,6 +7,8 @@ using OnlineTravel.Domain.Entities.Users;
 using OnlineTravel.Infrastructure.Persistence.Context;
 using OnlineTravel.Infrastructure.Security;
 using OnlineTravel.Infrastructure.Security.Jwt;
+using OnlineTravel.Application.Interfaces.Persistence;
+using OnlineTravel.Infrastructure.Persistence.UnitOfWork;
 
 namespace OnlineTravel.Infrastructure;
 
@@ -47,6 +49,9 @@ public static class DependencyInjection
         services.AddScoped<IJwtService, JwtService>();
 
         //Add AutoMapper
+        // Add UnitOfWork
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+
         return services;
     }
 
@@ -62,7 +67,4 @@ public static class DependencyInjection
                 b => b.MigrationsAssembly(typeof(DependencyInjection).Assembly.FullName)
                       .UseNetTopologySuite()));
     }
-
 }
-
-

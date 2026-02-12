@@ -1,5 +1,4 @@
 using System.Collections;
-using MedLink.Application.Interfaces.Persistence;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities._Base;
 using OnlineTravel.Infrastructure.Persistence.Context;
@@ -75,8 +74,5 @@ namespace OnlineTravel.Infrastructure.Persistence.UnitOfWork
                 _transaction = null;
             }
         }
-
-
     }
 }
-

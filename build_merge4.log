@@ -1,0 +1,12 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  OnlineTravel.Domain -> H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Domain\bin\Debug\net9.0\OnlineTravel.Domain.dll
+  OnlineTravel.Application -> H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Application\bin\Debug\net9.0\OnlineTravel.Application.dll
+  OnlineTravel.Infrastructure -> H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Infrastructure\bin\Debug\net9.0\OnlineTravel.Infrastructure.dll
+  OnlineTravelBookingTeamB -> H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravelBookingTeamB\bin\Debug\net9.0\OnlineTravelBookingTeamB.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.51

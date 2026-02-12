@@ -1,0 +1,24 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  OnlineTravel.Domain -> H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Domain\bin\Debug\net9.0\OnlineTravel.Domain.dll
+  OnlineTravel.Application -> H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Application\bin\Debug\net9.0\OnlineTravel.Application.dll
+H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Infrastructure\Persistence\UnitOfWork\UnitOfWork.cs(16,16): warning CS8618: Non-nullable field '_repositories' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the field as nullable. [H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Infrastructure\OnlineTravel.Infrastructure.csproj]
+H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Infrastructure\Persistence\UnitOfWork\UnitOfWork.cs(16,16): warning CS8618: Non-nullable field '_transaction' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the field as nullable. [H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Infrastructure\OnlineTravel.Infrastructure.csproj]
+H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Infrastructure\Persistence\UnitOfWork\UnitOfWork.cs(33,20): warning CS8603: Possible null reference return. [H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Infrastructure\OnlineTravel.Infrastructure.csproj]
+H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Infrastructure\Persistence\UnitOfWork\UnitOfWork.cs(61,32): warning CS8625: Cannot convert null literal to non-nullable reference type. [H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Infrastructure\OnlineTravel.Infrastructure.csproj]
+H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Infrastructure\Persistence\UnitOfWork\UnitOfWork.cs(74,32): warning CS8625: Cannot convert null literal to non-nullable reference type. [H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Infrastructure\OnlineTravel.Infrastructure.csproj]
+  OnlineTravel.Infrastructure -> H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Infrastructure\bin\Debug\net9.0\OnlineTravel.Infrastructure.dll
+H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravelBookingTeamB\Program.cs(29,44): error CS0234: The type or namespace name 'Middlewares' does not exist in the namespace 'OnlineTravelBookingTeamB' (are you missing an assembly reference?) [H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravelBookingTeamB\OnlineTravelBookingTeamB.csproj]
+
+Build FAILED.
+
+H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Infrastructure\Persistence\UnitOfWork\UnitOfWork.cs(16,16): warning CS8618: Non-nullable field '_repositories' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the field as nullable. [H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Infrastructure\OnlineTravel.Infrastructure.csproj]
+H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Infrastructure\Persistence\UnitOfWork\UnitOfWork.cs(16,16): warning CS8618: Non-nullable field '_transaction' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the field as nullable. [H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Infrastructure\OnlineTravel.Infrastructure.csproj]
+H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Infrastructure\Persistence\UnitOfWork\UnitOfWork.cs(33,20): warning CS8603: Possible null reference return. [H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Infrastructure\OnlineTravel.Infrastructure.csproj]
+H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Infrastructure\Persistence\UnitOfWork\UnitOfWork.cs(61,32): warning CS8625: Cannot convert null literal to non-nullable reference type. [H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Infrastructure\OnlineTravel.Infrastructure.csproj]
+H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Infrastructure\Persistence\UnitOfWork\UnitOfWork.cs(74,32): warning CS8625: Cannot convert null literal to non-nullable reference type. [H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravel.Infrastructure\OnlineTravel.Infrastructure.csproj]
+H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravelBookingTeamB\Program.cs(29,44): error CS0234: The type or namespace name 'Middlewares' does not exist in the namespace 'OnlineTravelBookingTeamB' (are you missing an assembly reference?) [H:\Huma-Volve\OnlineTravelBookingTeamB\OnlineTravelBookingTeamB\OnlineTravelBookingTeamB.csproj]
+    5 Warning(s)
+    1 Error(s)
+
+Time Elapsed 00:00:02.70

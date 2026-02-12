@@ -28,7 +28,10 @@ public class OnlineTravelDbContext : IdentityDbContext<AppUser, IdentityRole<Gui
 
     // Tours
     public DbSet<Tour> Tours => Set<Tour>();
+
     public DbSet<TourSchedule> TourSchedules => Set<TourSchedule>();
+    public DbSet<TourActivity> TourActivities => Set<TourActivity>();
+
     public DbSet<TourPriceTier> TourPriceTiers => Set<TourPriceTier>();
 
     // Flights
@@ -43,14 +46,14 @@ public class OnlineTravelDbContext : IdentityDbContext<AppUser, IdentityRole<Gui
     public DbSet<CarBrand> CarBrands => Set<CarBrand>();
     public DbSet<Car> Cars => Set<Car>();
     public DbSet<CarPricingTier> CarPricingTiers => Set<CarPricingTier>();
-    public DbSet<CarExtra> CarExtras => Set<CarExtra>();
+
 
     // Hotels
     public DbSet<Hotel> Hotels => Set<Hotel>();
     public DbSet<Room> Rooms => Set<Room>();
 
     // Bookings
-    public DbSet<Booking> Bookings => Set<Booking>();
+    public DbSet<BookingEntity> Bookings => Set<BookingEntity>();
     public DbSet<BookingDetail> BookingDetails => Set<BookingDetail>();
 
     // Payments

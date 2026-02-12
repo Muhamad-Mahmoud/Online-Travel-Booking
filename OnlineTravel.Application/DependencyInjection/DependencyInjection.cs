@@ -13,7 +13,6 @@ public static class DependencyInjection
         services.AddMediatR(cfg =>
             cfg.RegisterServicesFromAssemblies(typeof(DependencyInjection).Assembly));
 
-        // AutoMapper
         services.AddAutoMapper(typeof(DependencyInjection).Assembly);
 
         // Register FluentValidation validators manually
@@ -37,6 +36,13 @@ public static class DependencyInjection
         // Register Pipeline Behaviors for automatic validation
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
+        // Register Business Services
+        services.AddScoped<Features.Bookings.Pricing.HotelBookingPricing>();
+        services.AddScoped<Features.Bookings.Pricing.TourBookingPricing>();
+        services.AddScoped<Features.Bookings.Pricing.FlightBookingPricing>();
+        services.AddScoped<Features.Bookings.Pricing.CarBookingPricing>();
+
         return services;
     }
 }
+

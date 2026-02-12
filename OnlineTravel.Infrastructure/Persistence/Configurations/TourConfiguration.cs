@@ -11,7 +11,7 @@ public class TourConfiguration : IEntityTypeConfiguration<Tour>
     public void Configure(EntityTypeBuilder<Tour> builder)
     {
         builder.ToTable("Tours", "tours");
-        builder.Property(e => e.RowVersion).IsRowVersion();
+
 
         builder.OwnsOne(e => e.MainImage, i =>
         {
@@ -19,15 +19,7 @@ public class TourConfiguration : IEntityTypeConfiguration<Tour>
             i.Property(p => p.AltText).HasColumnName("MainImageAlt");
         });
 
-        builder.Property(e => e.Images)
-            .HasColumnName("ImagesJson")
-            .HasConversion(
-                v => System.Text.Json.JsonSerializer.Serialize(v, (System.Text.Json.JsonSerializerOptions?)null),
-                v => System.Text.Json.JsonSerializer.Deserialize<List<ImageUrl>>(v, (System.Text.Json.JsonSerializerOptions?)null) ?? new List<ImageUrl>())
-            .Metadata.SetValueComparer(new ValueComparer<List<ImageUrl>>(
-                (c1, c2) => c1!.SequenceEqual(c2!),
-                c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
-                c => c.ToList()));
+
 
 
         builder.OwnsOne(e => e.Address, a =>

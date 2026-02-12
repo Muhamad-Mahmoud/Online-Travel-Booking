@@ -4,9 +4,9 @@ using OnlineTravel.Domain.Entities.Bookings;
 
 namespace OnlineTravel.Infrastructure.Persistence.Configurations;
 
-public class BookingConfiguration : IEntityTypeConfiguration<Booking>
+public class BookingConfiguration : IEntityTypeConfiguration<BookingEntity>
 {
-    public void Configure(EntityTypeBuilder<Booking> builder)
+    public void Configure(EntityTypeBuilder<BookingEntity> builder)
     {
         builder.ToTable("Bookings", "bookings");
 
@@ -30,7 +30,3 @@ public class BookingConfiguration : IEntityTypeConfiguration<Booking>
             .OnDelete(DeleteBehavior.Cascade);
     }
 }
-
-
-
-
