@@ -2,6 +2,7 @@ using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using OnlineTravel.Application.Common.Behaviors;
+using OnlineTravel.Application.Features.Bookings.Strategies;
 
 namespace OnlineTravel.Application.DependencyInjection;
 
@@ -37,10 +38,10 @@ public static class DependencyInjection
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
         // Register Business Services
-        services.AddScoped<Features.Bookings.Pricing.HotelBookingPricing>();
-        services.AddScoped<Features.Bookings.Pricing.TourBookingPricing>();
-        services.AddScoped<Features.Bookings.Pricing.FlightBookingPricing>();
-        services.AddScoped<Features.Bookings.Pricing.CarBookingPricing>();
+        services.AddScoped<IBookingStrategy, HotelBookingStrategy>();
+        services.AddScoped<IBookingStrategy, TourBookingStrategy>();
+        services.AddScoped<IBookingStrategy, FlightBookingStrategy>();
+        services.AddScoped<IBookingStrategy, CarBookingStrategy>();
 
         return services;
     }

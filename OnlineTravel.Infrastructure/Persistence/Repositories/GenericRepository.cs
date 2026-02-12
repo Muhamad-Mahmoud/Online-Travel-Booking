@@ -19,33 +19,33 @@ namespace OnlineTravel.Infrastructure.Persistence.Repositories
         }
 
 
-        public async Task<IReadOnlyList<T>> GetAllAsync()
+        public async Task<IReadOnlyList<T>> GetAllAsync(CancellationToken cancellationToken = default)
         {
-            return await _dbContext.Set<T>().ToListAsync();
+            return await _dbContext.Set<T>().ToListAsync(cancellationToken);
         }
 
 
 
-        public async Task<T?> GetByIdAsync(Guid id)
+        public async Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            return await _dbContext.Set<T>().FindAsync(id);
+            return await _dbContext.Set<T>().FindAsync(new object[] { id }, cancellationToken);
         }
 
-        public async Task<IReadOnlyList<T>> GetAllWithSpecAsync(ISpecification<T> spec)
+        public async Task<IReadOnlyList<T>> GetAllWithSpecAsync(ISpecification<T> spec, CancellationToken cancellationToken = default)
         {
-            return await ApplySpecifications(spec).ToListAsync();
+            return await ApplySpecifications(spec).ToListAsync(cancellationToken);
         }
 
 
-        public async Task<T?> GetEntityWithAsync(ISpecification<T> spec)
+        public async Task<T?> GetEntityWithAsync(ISpecification<T> spec, CancellationToken cancellationToken = default)
         {
-            return await ApplySpecifications(spec).FirstOrDefaultAsync();
+            return await ApplySpecifications(spec).FirstOrDefaultAsync(cancellationToken);
 
         }
 
-        public async Task<T?> FindAsync(Expression<Func<T, bool>> predicate)
+        public async Task<T?> FindAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
         {
-            return await _dbContext.Set<T>().FirstOrDefaultAsync(predicate);
+            return await _dbContext.Set<T>().FirstOrDefaultAsync(predicate, cancellationToken);
         }
 
 
@@ -61,14 +61,14 @@ namespace OnlineTravel.Infrastructure.Persistence.Repositories
             _dbContext.Set<T>().Update(entity);
         }
 
-        public async Task AddAsync(T entity)
+        public async Task AddAsync(T entity, CancellationToken cancellationToken = default)
         {
-            await _dbContext.Set<T>().AddAsync(entity);
+            await _dbContext.Set<T>().AddAsync(entity, cancellationToken);
         }
 
-        public async Task<int> GetCountAsync(ISpecification<T> spec)
+        public async Task<int> GetCountAsync(ISpecification<T> spec, CancellationToken cancellationToken = default)
         {
-            return await ApplySpecifications(spec).CountAsync();
+            return await ApplySpecifications(spec).CountAsync(cancellationToken);
         }
 
 

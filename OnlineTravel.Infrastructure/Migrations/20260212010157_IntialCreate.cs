@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 using NetTopologySuite.Geometries;
 
 #nullable disable
@@ -369,7 +370,6 @@ namespace OnlineTravel.Infrastructure.Migrations
                     TagsJson = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Recommended = table.Column<bool>(type: "bit", nullable: false),
                     CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: true),
                     ImagesJson = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -537,34 +537,6 @@ namespace OnlineTravel.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CarExtras",
-                schema: "cars",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CarId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PricePerDay = table.Column<decimal>(type: "decimal(10,2)", nullable: true),
-                    Currency = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PricePerRental = table.Column<decimal>(type: "decimal(10,2)", nullable: true),
-                    Available = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CarExtras", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_CarExtras_Cars_CarId",
-                        column: x => x.CarId,
-                        principalSchema: "cars",
-                        principalTable: "Cars",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "CarPricingTiers",
                 schema: "cars",
                 columns: table => new
@@ -635,6 +607,7 @@ namespace OnlineTravel.Infrastructure.Migrations
                     IsAvailable = table.Column<bool>(type: "bit", nullable: false),
                     ExtraCharge = table.Column<decimal>(type: "decimal(10,2)", nullable: true),
                     Currency = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -662,11 +635,11 @@ namespace OnlineTravel.Infrastructure.Migrations
                     BasePrice = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     Currency = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     MaxGuests = table.Column<int>(type: "int", nullable: false),
-                    AvailableDatesJson = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
                     Refundable = table.Column<bool>(type: "bit", nullable: false),
                     ExtrasJson = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     MinimumStayNights = table.Column<int>(type: "int", nullable: true),
-                    IsAvailable = table.Column<bool>(type: "bit", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -690,12 +663,9 @@ namespace OnlineTravel.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TourId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AdultPrice = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     Currency = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "USD"),
-                    ChildPrice = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    InfantPrice = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DisplayOrder = table.Column<int>(type: "int", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -721,8 +691,8 @@ namespace OnlineTravel.Infrastructure.Migrations
                     BookingId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ItemId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CheckInDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    CheckOutDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    CheckInDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CheckOutDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -917,12 +887,6 @@ namespace OnlineTravel.Infrastructure.Migrations
                 table: "CarBrands",
                 column: "Name",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CarExtras_CarId",
-                schema: "cars",
-                table: "CarExtras",
-                column: "CarId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CarPricingTiers_CarId",
@@ -1130,10 +1094,6 @@ namespace OnlineTravel.Infrastructure.Migrations
             migrationBuilder.DropTable(
                 name: "BookingDetails",
                 schema: "bookings");
-
-            migrationBuilder.DropTable(
-                name: "CarExtras",
-                schema: "cars");
 
             migrationBuilder.DropTable(
                 name: "CarPricingTiers",

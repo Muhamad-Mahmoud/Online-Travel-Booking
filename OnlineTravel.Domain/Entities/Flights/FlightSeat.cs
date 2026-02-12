@@ -18,6 +18,8 @@ public class FlightSeat : BaseEntity
 
     public Money? ExtraCharge { get; set; }
 
+    public byte[]? RowVersion { get; set; }
+
     // Navigation Properties
 
     public virtual Flight Flight { get; set; } = null!;

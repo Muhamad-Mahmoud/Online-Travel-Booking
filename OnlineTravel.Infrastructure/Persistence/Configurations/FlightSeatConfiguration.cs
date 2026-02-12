@@ -10,6 +10,7 @@ public class FlightSeatConfiguration : IEntityTypeConfiguration<FlightSeat>
     public void Configure(EntityTypeBuilder<FlightSeat> builder)
     {
         builder.ToTable("FlightSeats", "flights");
+        builder.Property(e => e.RowVersion).IsRowVersion();
         builder.HasIndex(e => new { e.FlightId, e.SeatLabel }).IsUnique();
 
         builder.OwnsOne(e => e.ExtraCharge, m =>
