@@ -1,3 +1,4 @@
+using Serilog;
 using Microsoft.AspNetCore.Identity;
 using OnlineTravel.Application.DependencyInjection;
 using OnlineTravel.Application.Interfaces.Services;
@@ -7,10 +8,12 @@ using OnlineTravel.Infrastructure.Persistence.UnitOfWork;
 using OnlineTravel.Infrastructure.Services;
 using OnlineTravelBookingTeamB.Extensions;
 using OnlineTravelBookingTeamB.Middleware;
-using OnlineTravel.Infrastructure.Identity;
-using OnlineTravel.Infrastructure.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure Serilog Logging
+builder.ConfigureSerilog();
 
 // Add Infrastructure Services 
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -22,35 +25,28 @@ builder.Services.AddApplication();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
+// Add Health Checks
+builder.Services.AddAppHealthChecks();
+
 // Add File Service
 var webRootPath = builder.Environment.WebRootPath ?? Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
 builder.Services.AddScoped<IFileService>(_ => new FileService(webRootPath));
 
 var app = builder.Build();
 
+// Enable Serilog Request Logging 
+app.UseSerilogRequestLogging();
+
 // Configure the HTTP request pipeline.
 app.UseMiddleware<ExceptionMiddleware>();
 
-await app.ApplyDatabaseMigrationsAsync();
-
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-
-    // Data Seeding
-    await app.SeedDatabaseAsync();
-}
-
-app.UseStaticFiles();
-app.UseHttpsRedirection();
-
-await IdentityBootstrapper.InitializeAsync(app.Services);
-
+await app.ApplyDatabaseSetupAsync();
 
 app.UseAuthentication();
 app.UseStatusCodePagesWithReExecute("/errors/{0}");
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHealthChecks("/health");
 
 app.Run();

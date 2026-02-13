@@ -5,19 +5,16 @@ using OnlineTravel.Application.Specifications;
 namespace OnlineTravel.Application.Features.Bookings.Specifications.Availability
 {
     /// <summary>
-    /// Filters BookingDetails for a specific item that overlap
-    /// with the requested date range and are still active.
+    /// Filters BookingDetails for a specific item (like a FlightSeat) that are still active.
+    /// This is used for items that are single-use/event-based and don't depend on a date range overlap.
     /// </summary>
-
-    public class OverlappingBookingDetailsSpec : BaseSpecification<BookingDetail>
+    public class ActiveBookingDetailsByItemSpec : BaseSpecification<BookingDetail>
     {
-        public OverlappingBookingDetailsSpec(Guid itemId, DateTime start, DateTime end, DateTime now)
+        public ActiveBookingDetailsByItemSpec(Guid itemId, DateTime now)
             : base(bd => bd.ItemId == itemId &&
-                         bd.StayRange.Start < end &&
-                         bd.StayRange.End > start && // Check for any overlap
                          bd.Booking.Status != BookingStatus.Cancelled &&
                          bd.Booking.Status != BookingStatus.Refunded &&
-                         // Expired pending bookings are not considered overlapping
+                         // Expired pending bookings are not considered active
                          !(bd.Booking.Status == BookingStatus.Pending && now > bd.Booking.ExpiresAt))
         {
         }

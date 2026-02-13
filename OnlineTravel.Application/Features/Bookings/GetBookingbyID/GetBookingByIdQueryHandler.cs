@@ -8,6 +8,7 @@ using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities.Bookings;
 using OnlineTravel.Domain.Entities.Users;
 using OnlineTravel.Domain.ErrorHandling;
+using Microsoft.Extensions.Logging;
 
 namespace OnlineTravel.Application.Features.Bookings.GetBookingById;
 
@@ -15,22 +16,28 @@ public sealed class GetBookingByIdQueryHandler : IRequestHandler<GetBookingByIdQ
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
+    private readonly ILogger<GetBookingByIdQueryHandler> _logger;
 
     public GetBookingByIdQueryHandler(
         IUnitOfWork unitOfWork,
-        IMapper mapper)
+        IMapper mapper,
+        ILogger<GetBookingByIdQueryHandler> logger)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _logger = logger;
     }
 
     public async Task<Result<BookingResponse>> Handle(GetBookingByIdQuery request, CancellationToken cancellationToken)
     {
+        _logger.LogDebug("Fetching booking details for BookingId {BookingId}", request.BookingId);
+
         var spec = new GetBookingByIdSpec(request.BookingId);
         var booking = await _unitOfWork.Repository<BookingEntity>().GetEntityWithAsync(spec, cancellationToken);
 
         if (booking is null)
         {
+            _logger.LogWarning("Booking {BookingId} not found", request.BookingId);
             return Result<BookingResponse>.Failure(Error.NotFound("The specified booking does not exist."));
         }
 

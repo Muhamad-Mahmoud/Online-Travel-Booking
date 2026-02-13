@@ -1,7 +1,7 @@
-using OnlineTravel.Application.Interfaces.Persistence;
-using OnlineTravel.Application.Specifications;
-using OnlineTravel.Application.Features.Bookings.Specifications.Pricing;
+using Microsoft.Extensions.Logging;
 using OnlineTravel.Application.Features.Bookings.Specifications.Availability;
+using OnlineTravel.Application.Features.Bookings.Specifications.Pricing;
+using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 using OnlineTravel.Domain.Entities.Bookings;
 using OnlineTravel.Domain.Entities.Cars;
@@ -13,48 +13,66 @@ namespace OnlineTravel.Application.Features.Bookings.Strategies;
 
 public class CarBookingStrategy : IBookingStrategy
 {
-    private readonly IUnitOfWork _unitOfWork;
+	private readonly IUnitOfWork _unitOfWork;
+	private readonly ILogger<CarBookingStrategy> _logger;
 
-    public CarBookingStrategy(IUnitOfWork unitOfWork)
-    {
-        _unitOfWork = unitOfWork;
-    }
+	public CarBookingStrategy(IUnitOfWork unitOfWork, ILogger<CarBookingStrategy> logger)
+	{
+		_unitOfWork = unitOfWork;
+		_logger = logger;
+	}
 
-    public CategoryType Type => CategoryType.Car;
+	public CategoryType Type => CategoryType.Car;
 
-    public async Task<Result<BookingProcessResult>> ProcessBookingAsync(Guid itemId, DateTimeRange stayRange, CancellationToken cancellationToken)
-    {
-        var car = await _unitOfWork.Repository<Car>().GetByIdAsync(itemId, cancellationToken);
-        if (car == null)
-            return Result<BookingProcessResult>.Failure(Error.NotFound($"Car {itemId} was not found."));
+	public async Task<Result<BookingProcessResult>> ProcessBookingAsync(Guid itemId, DateTimeRange stayRange, CancellationToken cancellationToken)
+	{
+		_logger.LogDebug("Checking availability for Car {CarId}", itemId);
 
-        // Validate Availability against Booking Table 
-        var overlappingSpec = new OverlappingBookingDetailsSpec(itemId, DateOnly.FromDateTime(stayRange.Start), DateOnly.FromDateTime(stayRange.End), DateTime.UtcNow);
-        var overlappingBookings = await _unitOfWork.Repository<BookingDetail>().GetAllWithSpecAsync(overlappingSpec, cancellationToken);
+		var car = await _unitOfWork.Repository<Car>().GetByIdAsync(itemId, cancellationToken);
+		if (car == null)
+		{
+			_logger.LogWarning("Car {CarId} not found", itemId);
+			return Result<BookingProcessResult>.Failure(Error.NotFound($"Car {itemId} was not found."));
+		}
 
-        if (overlappingBookings.Any())
-            return Result<BookingProcessResult>.Failure(Error.Validation($"Car {car.Make} {car.Model} is already booked for the selected dates."));
+		// Validate Availability against Booking Table 
+		var overlappingSpec = new OverlappingBookingDetailsSpec(itemId, stayRange.Start, stayRange.End, DateTime.UtcNow);
+		var overlappingBookings = await _unitOfWork.Repository<BookingDetail>().GetAllWithSpecAsync(overlappingSpec, cancellationToken);
 
-        car.LastReservedAt = DateTime.UtcNow;
-        _unitOfWork.Repository<Car>().Update(car);
+		if (overlappingBookings.Any())
+		{
+			_logger.LogWarning("Car {CarModel} is already booked", car.Model);
+			return Result<BookingProcessResult>.Failure(Error.Validation($"Car {car.Make} {car.Model} is already booked for the selected dates."));
+		}
 
-        var spec = new CarPricingTierByCarSpec(itemId);
-        var carTiers = await _unitOfWork.Repository<CarPricingTier>().GetAllWithSpecAsync(spec, cancellationToken);
+		// Update reservation timestamp to ensure EF issues an UPDATE
+		// and triggers optimistic concurrency via RowVersion 
+		car.Reserve();
+		_unitOfWork.Repository<Car>().Update(car);
 
-        if (!carTiers.Any())
-            return Result<BookingProcessResult>.Failure(Error.Validation($"No pricing tiers found for Car {car.Make} {car.Model}."));
+		var spec = new CarPricingTierByCarSpec(itemId);
+		var carTiers = await _unitOfWork.Repository<CarPricingTier>().GetAllWithSpecAsync(spec, cancellationToken);
 
-        var hours = Math.Ceiling(stayRange.TotalHours);
-        if (hours <= 0)
-            return Result<BookingProcessResult>.Failure(Error.Validation("Invalid booking duration. Minimum duration is 1 hour."));
+		if (!carTiers.Any())
+		{
+			_logger.LogError("No pricing tiers found for Car {CarModel}", car.Model);
+			return Result<BookingProcessResult>.Failure(Error.Validation($"No pricing tiers found for Car {car.Make} {car.Model}."));
+		}
 
-        // Find tier matching duration
-        var tier = carTiers.FirstOrDefault(t => hours >= t.FromHours && hours <= t.ToHours);
+		var hours = Math.Ceiling(stayRange.TotalHours);
+		if (hours <= 0)
+			return Result<BookingProcessResult>.Failure(Error.Validation("Invalid booking duration. Minimum duration is 1 hour."));
 
-        if (tier == null)
-            return Result<BookingProcessResult>.Failure(Error.Validation($"No pricing tier matches the selected duration ({hours} hours) for {car.Make} {car.Model}."));
+		// Find tier matching duration
+		var tier = carTiers.FirstOrDefault(t => hours >= t.FromHours && hours <= t.ToHours);
 
-        var totalPrice = tier.PricePerHour * (decimal)hours;
-        return Result<BookingProcessResult>.Success(new BookingProcessResult(totalPrice, car.Id.ToString()));
-    }
+		if (tier == null)
+		{
+			_logger.LogWarning("No pricing tier matches duration {Duration} hours for Car {CarModel}", hours, car.Model);
+			return Result<BookingProcessResult>.Failure(Error.Validation($"No pricing tier matches the selected duration ({hours} hours) for {car.Make} {car.Model}."));
+		}
+
+		var totalPrice = tier.PricePerHour * (decimal)hours;
+		return Result<BookingProcessResult>.Success(new BookingProcessResult(totalPrice, car.Id.ToString()));
+	}
 }

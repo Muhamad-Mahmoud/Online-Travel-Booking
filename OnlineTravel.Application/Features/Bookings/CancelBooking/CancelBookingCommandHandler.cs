@@ -13,15 +13,16 @@ using OnlineTravel.Domain.Entities.Bookings;
 using OnlineTravel.Domain.Entities.Users;
 using OnlineTravel.Domain.Enums;
 using OnlineTravel.Domain.ErrorHandling;
+using Microsoft.Extensions.Logging;
 
 namespace OnlineTravel.Application.Features.Bookings.CancelBooking;
 
 public sealed class CancelBookingCommandHandler : IRequestHandler<CancelBookingCommand, Result<Guid>>
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly Microsoft.Extensions.Logging.ILogger<CancelBookingCommandHandler> _logger;
+    private readonly ILogger<CancelBookingCommandHandler> _logger;
 
-    public CancelBookingCommandHandler(IUnitOfWork unitOfWork, Microsoft.Extensions.Logging.ILogger<CancelBookingCommandHandler> logger)
+    public CancelBookingCommandHandler(IUnitOfWork unitOfWork, ILogger<CancelBookingCommandHandler> logger)
     {
         _unitOfWork = unitOfWork;
         _logger = logger;
@@ -29,16 +30,20 @@ public sealed class CancelBookingCommandHandler : IRequestHandler<CancelBookingC
 
     public async Task<Result<Guid>> Handle(CancelBookingCommand request, CancellationToken cancellationToken)
     {
+        _logger.LogInformation("Attempting to cancel booking {BookingId} for User {UserId}", request.BookingId, request.UserId);
+
         var spec = new GetBookingByIdSpec(request.BookingId);
         var Booking = await _unitOfWork.Repository<BookingEntity>().GetEntityWithAsync(spec, cancellationToken);
 
         if (Booking == null)
         {
+            _logger.LogWarning("Cancel failed: Booking {BookingId} not found", request.BookingId);
             return Result<Guid>.Failure(Error.NotFound($"Booking {request.BookingId} Not Found"));
         }
 
         if (Booking.UserId != request.UserId)
         {
+            _logger.LogWarning("Cancel failed: Unauthorized attempt by User {UserId} to cancel Booking {BookingId}", request.UserId, request.BookingId);
             return Result<Guid>.Failure(Error.Validation("You are not authorized to cancel this booking."));
         }
 
@@ -49,10 +54,12 @@ public sealed class CancelBookingCommandHandler : IRequestHandler<CancelBookingC
         try
         {
             await _unitOfWork.Complete();
+            _logger.LogInformation("Booking {BookingId} cancelled successfully", request.BookingId);
             return Result<Guid>.Success(request.BookingId);
         }
-        catch (DbUpdateConcurrencyException)
+        catch (DbUpdateConcurrencyException ex)
         {
+             _logger.LogError(ex, "Concurrency error canceling Booking {BookingId}", request.BookingId);
             return Result<Guid>.Failure(Error.Validation("The item is no longer available. Someone else might have booked it just now. Please try again."));
         }
 
