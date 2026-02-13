@@ -1,9 +1,11 @@
+using Ecommerce_Project.Extensions;
 using OnlineTravel.Application.DependencyInjection;
 using OnlineTravel.Application.Interfaces.Persistence;
+using OnlineTravel.Application.Mapping;
 using OnlineTravel.Infrastructure;
 using OnlineTravel.Infrastructure.Persistence.UnitOfWork;
-using OnlineTravelBookingTeamB.Middleware;
 using OnlineTravelBookingTeamB.Extensions;
+using OnlineTravelBookingTeamB.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +18,8 @@ builder.Services.AddApplication();
 // Add API Services
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
-
+MapsterConfig.Register();
+builder.Services.AddSwaggerGenJwtAuth();
 var app = builder.Build();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
@@ -29,7 +32,8 @@ app.UseMiddleware<OnlineTravelBookingTeamB.Middlewares.ExceptionMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
