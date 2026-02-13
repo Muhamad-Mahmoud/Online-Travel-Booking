@@ -13,13 +13,8 @@ using OnlineTravel.Infrastructure.Persistence.Context;
 namespace OnlineTravel.Infrastructure.Migrations
 {
     [DbContext(typeof(OnlineTravelDbContext))]
-<<<<<<<< HEAD:OnlineTravel.Infrastructure/Migrations/20260213195437_SyncReviewsModel.Designer.cs
-    [Migration("20260213195437_SyncReviewsModel")]
-    partial class SyncReviewsModel
-========
     [Migration("20260210193851_RenameUserToAppUser")]
     partial class RenameUserToAppUser
->>>>>>>> origin/main:OnlineTravel.Infrastructure/Migrations/20260210193851_RenameUserToAppUser.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1244,66 +1239,7 @@ namespace OnlineTravel.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-<<<<<<<< HEAD:OnlineTravel.Infrastructure/Migrations/20260213195437_SyncReviewsModel.Designer.cs
-            modelBuilder.Entity("OnlineTravel.Domain.Entities.Bookings.BookingEntity", b =>
-                {
-                    b.HasOne("OnlineTravel.Domain.Entities.Users.AppUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
-                    b.OwnsOne("OnlineTravel.Domain.Entities._Shared.ValueObjects.Money", "TotalPrice", b1 =>
-                        {
-                            b1.Property<Guid>("BookingEntityId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<decimal>("Amount")
-                                .HasColumnType("decimal(10,2)")
-                                .HasColumnName("TotalPrice");
-
-                            b1.Property<string>("Currency")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)")
-                                .HasColumnName("Currency");
-
-                            b1.HasKey("BookingEntityId");
-
-                            b1.ToTable("Bookings", "bookings");
-
-                            b1.WithOwner()
-                                .HasForeignKey("BookingEntityId");
-                        });
-
-                    b.OwnsOne("OnlineTravel.Domain.Entities.Bookings.ValueObjects.BookingReference", "BookingReference", b1 =>
-                        {
-                            b1.Property<Guid>("BookingEntityId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)")
-                                .HasColumnName("BookingReference");
-
-                            b1.HasKey("BookingEntityId");
-
-                            b1.ToTable("Bookings", "bookings");
-
-                            b1.WithOwner()
-                                .HasForeignKey("BookingEntityId");
-                        });
-
-                    b.Navigation("BookingReference")
-                        .IsRequired();
-
-                    b.Navigation("TotalPrice")
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-========
->>>>>>>> origin/main:OnlineTravel.Infrastructure/Migrations/20260210193851_RenameUserToAppUser.Designer.cs
             modelBuilder.Entity("OnlineTravel.Domain.Entities.Cars.Car", b =>
                 {
                     b.HasOne("OnlineTravel.Domain.Entities.Cars.CarBrand", "Brand")

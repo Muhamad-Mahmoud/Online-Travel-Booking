@@ -10,10 +10,10 @@ namespace OnlineTravelBookingTeamB.Controllers;
 public class ToursController : BaseApiController
 {
     [HttpGet]
-    [ProducesResponseType(typeof(IReadOnlyList<TourResponse>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetAll()
+    [ProducesResponseType(typeof(OnlineTravel.Application.Common.PagedResult<TourResponse>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAll([FromQuery] OnlineTravel.Application.Common.PaginationParams paginationParams)
     {
-        var result = await Mediator.Send(new GetAllToursQuery());
+        var result = await Mediator.Send(new GetAllToursQuery(paginationParams.PageIndex, paginationParams.PageSize));
         return Ok(result);
     }
 

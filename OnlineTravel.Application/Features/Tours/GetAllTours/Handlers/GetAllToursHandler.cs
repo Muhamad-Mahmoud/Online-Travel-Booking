@@ -1,4 +1,5 @@
 using MediatR;
+using OnlineTravel.Application.Common;
 using OnlineTravel.Application.Features.Tours.GetAllTours.DTOs;
 using OnlineTravel.Application.Features.Tours.GetAllTours.Queries;
 using OnlineTravel.Application.Features.Tours.Specifications;
@@ -7,7 +8,7 @@ using OnlineTravel.Domain.Entities.Tours;
 
 namespace OnlineTravel.Application.Features.Tours.GetAllTours.Handlers;
 
-public class GetAllToursHandler : IRequestHandler<GetAllToursQuery, IReadOnlyList<TourResponse>>
+public class GetAllToursHandler : IRequestHandler<GetAllToursQuery, PagedResult<TourResponse>>
 {
     private readonly IUnitOfWork _unitOfWork;
 
@@ -16,12 +17,16 @@ public class GetAllToursHandler : IRequestHandler<GetAllToursQuery, IReadOnlyLis
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<IReadOnlyList<TourResponse>> Handle(GetAllToursQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<TourResponse>> Handle(GetAllToursQuery request, CancellationToken cancellationToken)
     {
-        var spec = new AllToursWithPricingSpecification();
-        var tours = await _unitOfWork.Repository<Tour>().GetAllWithSpecAsync(spec);
+        var countSpec = new AllToursWithPricingSpecification();
+        var totalCount = await _unitOfWork.Repository<Tour>().GetCountAsync(countSpec);
 
-        var response = tours.Select(tour =>
+        var dataSpec = new AllToursWithPricingSpecification();
+        dataSpec.ApplyPagination(request.PageSize * (request.PageIndex - 1), request.PageSize);
+        var tours = await _unitOfWork.Repository<Tour>().GetAllWithSpecAsync(dataSpec);
+
+        var data = tours.Select(tour =>
         {
             var lowestPrice = tour.PriceTiers
                 .OrderBy(p => p.Price.Amount)
@@ -40,6 +45,6 @@ public class GetAllToursHandler : IRequestHandler<GetAllToursQuery, IReadOnlyLis
             };
         }).ToList();
 
-        return response;
+        return new PagedResult<TourResponse>(data, totalCount, request.PageIndex, request.PageSize);
     }
 }

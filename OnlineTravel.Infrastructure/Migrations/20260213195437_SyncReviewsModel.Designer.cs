@@ -13,13 +13,8 @@ using OnlineTravel.Infrastructure.Persistence.Context;
 namespace OnlineTravel.Infrastructure.Migrations
 {
     [DbContext(typeof(OnlineTravelDbContext))]
-<<<<<<<< HEAD:OnlineTravel.Infrastructure/Migrations/20260213195437_SyncReviewsModel.Designer.cs
     [Migration("20260213195437_SyncReviewsModel")]
     partial class SyncReviewsModel
-========
-    [Migration("20260210193851_RenameUserToAppUser")]
-    partial class RenameUserToAppUser
->>>>>>>> origin/main:OnlineTravel.Infrastructure/Migrations/20260210193851_RenameUserToAppUser.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1244,7 +1239,7 @@ namespace OnlineTravel.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-<<<<<<<< HEAD:OnlineTravel.Infrastructure/Migrations/20260213195437_SyncReviewsModel.Designer.cs
+
             modelBuilder.Entity("OnlineTravel.Domain.Entities.Bookings.BookingEntity", b =>
                 {
                     b.HasOne("OnlineTravel.Domain.Entities.Users.AppUser", "User")
@@ -1302,8 +1297,7 @@ namespace OnlineTravel.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-========
->>>>>>>> origin/main:OnlineTravel.Infrastructure/Migrations/20260210193851_RenameUserToAppUser.Designer.cs
+
             modelBuilder.Entity("OnlineTravel.Domain.Entities.Cars.Car", b =>
                 {
                     b.HasOne("OnlineTravel.Domain.Entities.Cars.CarBrand", "Brand")

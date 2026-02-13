@@ -3,4 +3,6 @@ using OnlineTravel.Application.Features.Tours.GetAllTours.DTOs;
 
 namespace OnlineTravel.Application.Features.Tours.GetAllTours.Queries;
 
-public record GetAllToursQuery() : IRequest<IReadOnlyList<TourResponse>>;
+using OnlineTravel.Application.Common;
+
+public record GetAllToursQuery(int PageIndex, int PageSize) : IRequest<PagedResult<TourResponse>>;
