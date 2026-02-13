@@ -1,6 +1,7 @@
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Application.Specifications;
-using OnlineTravel.Application.Specifications.BookingSpec;
+using OnlineTravel.Application.Features.Bookings.Specifications.Pricing;
+using OnlineTravel.Application.Features.Bookings.Specifications.Availability;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 using OnlineTravel.Domain.Entities.Bookings;
 using OnlineTravel.Domain.Entities.Tours;
@@ -34,13 +35,13 @@ public class TourBookingStrategy : IBookingStrategy
             return Result<BookingProcessResult>.Failure(Error.NotFound($"Tour for schedule {itemId} was not found."));
 
         // Check for slots availability 
-        var overlappingSpec = new OverlappingBookingDetailsSpec(itemId, DateOnly.FromDateTime(stayRange.Start), DateOnly.FromDateTime(stayRange.End));
+        var overlappingSpec = new OverlappingBookingDetailsSpec(itemId, DateOnly.FromDateTime(stayRange.Start), DateOnly.FromDateTime(stayRange.End), DateTime.UtcNow);
         var overlappingBookings = await _unitOfWork.Repository<BookingDetail>().GetAllWithSpecAsync(overlappingSpec, cancellationToken);
 
         if (overlappingBookings.Count() >= schedule.TotalCapacity)
             return Result<BookingProcessResult>.Failure(Error.Validation($"The tour '{tour.Title}' for this schedule is fully booked."));
 
-        // Touch the entity to trigger RowVersion check on Save
+        schedule.LastReservedAt = DateTime.UtcNow;
         _unitOfWork.Repository<TourSchedule>().Update(schedule);
 
         // Calculate Price

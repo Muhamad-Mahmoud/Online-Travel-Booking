@@ -18,6 +18,9 @@ public class Car : SoftDeletableEntity
 
     public CarCategory CarType { get; set; }
 
+    public byte[]? RowVersion { get; set; }
+    public DateTime? LastReservedAt { get; set; }
+
     public int SeatsCount { get; set; }
 
     public FuelType FuelType { get; set; }
@@ -35,7 +38,6 @@ public class Car : SoftDeletableEntity
 
     public Point Location { get; set; } = null!;
 
-    public byte[]? RowVersion { get; set; }
 
     // Navigation Properties
 

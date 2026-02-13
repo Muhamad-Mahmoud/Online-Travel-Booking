@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using OnlineTravel.Infrastructure.Persistence.Context;
@@ -12,9 +13,11 @@ using OnlineTravel.Infrastructure.Persistence.Context;
 namespace OnlineTravel.Infrastructure.Migrations
 {
     [DbContext(typeof(OnlineTravelDbContext))]
-    partial class OnlineTravelDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260212225550_AddConcurrencyToResources")]
+    partial class AddConcurrencyToResources
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -196,9 +199,6 @@ namespace OnlineTravel.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("ExpiresAt")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("PaymentStatus")

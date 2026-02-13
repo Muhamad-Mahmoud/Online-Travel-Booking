@@ -6,6 +6,9 @@ namespace OnlineTravel.Domain.Entities.Hotels;
 
 public class Room : BaseEntity
 {
+    public byte[]? RowVersion { get; set; }
+    public DateTime? LastReservedAt { get; set; }
+
     public Guid HotelId { get; set; }
 
     public string RoomNumber { get; set; } = string.Empty;
@@ -28,5 +31,4 @@ public class Room : BaseEntity
 
     public virtual Hotel Hotel { get; set; } = null!;
 
-    public byte[]? RowVersion { get; set; }
 }

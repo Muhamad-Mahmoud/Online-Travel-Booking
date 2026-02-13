@@ -20,6 +20,7 @@ public class TourSchedule : BaseEntity
     public TourScheduleStatus Status { get; set; } = TourScheduleStatus.Active;
 
     public byte[]? RowVersion { get; set; }
+    public DateTime? LastReservedAt { get; set; }
 
     // Navigation Properties
 

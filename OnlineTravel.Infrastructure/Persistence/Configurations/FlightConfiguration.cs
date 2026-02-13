@@ -10,6 +10,10 @@ public class FlightConfiguration : IEntityTypeConfiguration<Flight>
     public void Configure(EntityTypeBuilder<Flight> builder)
     {
         builder.ToTable("Flights", "flights");
+        builder.Property(e => e.RowVersion).IsRowVersion();
+
+        builder.Property(e => e.RowVersion).IsRowVersion();
+
 
         builder.OwnsOne(e => e.FlightNumber, fn =>
         {

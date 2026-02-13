@@ -1,6 +1,7 @@
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Application.Specifications;
-using OnlineTravel.Application.Specifications.BookingSpec;
+using OnlineTravel.Application.Features.Bookings.Specifications.Pricing;
+using OnlineTravel.Application.Features.Bookings.Specifications.Availability;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 using OnlineTravel.Domain.Entities.Bookings;
 using OnlineTravel.Domain.Entities.Cars;
@@ -28,13 +29,13 @@ public class CarBookingStrategy : IBookingStrategy
             return Result<BookingProcessResult>.Failure(Error.NotFound($"Car {itemId} was not found."));
 
         // Validate Availability against Booking Table 
-        var overlappingSpec = new OverlappingBookingDetailsSpec(itemId, DateOnly.FromDateTime(stayRange.Start), DateOnly.FromDateTime(stayRange.End));
+        var overlappingSpec = new OverlappingBookingDetailsSpec(itemId, DateOnly.FromDateTime(stayRange.Start), DateOnly.FromDateTime(stayRange.End), DateTime.UtcNow);
         var overlappingBookings = await _unitOfWork.Repository<BookingDetail>().GetAllWithSpecAsync(overlappingSpec, cancellationToken);
 
         if (overlappingBookings.Any())
             return Result<BookingProcessResult>.Failure(Error.Validation($"Car {car.Make} {car.Model} is already booked for the selected dates."));
 
-        // Touch the entity to trigger RowVersion check on Save
+        car.LastReservedAt = DateTime.UtcNow;
         _unitOfWork.Repository<Car>().Update(car);
 
         var spec = new CarPricingTierByCarSpec(itemId);

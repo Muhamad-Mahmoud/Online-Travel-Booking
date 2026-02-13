@@ -2,7 +2,9 @@ using Microsoft.AspNetCore.Identity;
 using OnlineTravel.Application.DependencyInjection;
 using OnlineTravel.Application.Interfaces.Services;
 using OnlineTravel.Infrastructure;
+using OnlineTravel.Infrastructure.Identity;
 using OnlineTravel.Infrastructure.Persistence.UnitOfWork;
+using OnlineTravel.Infrastructure.Services;
 using OnlineTravelBookingTeamB.Extensions;
 using OnlineTravelBookingTeamB.Middleware;
 

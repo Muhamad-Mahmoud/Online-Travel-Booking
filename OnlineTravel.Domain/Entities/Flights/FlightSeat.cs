@@ -19,6 +19,7 @@ public class FlightSeat : BaseEntity
     public Money? ExtraCharge { get; set; }
 
     public byte[]? RowVersion { get; set; }
+    public DateTime? LastReservedAt { get; set; }
 
     // Navigation Properties
 

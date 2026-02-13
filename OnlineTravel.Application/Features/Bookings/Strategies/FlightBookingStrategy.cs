@@ -1,6 +1,7 @@
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Application.Specifications;
-using OnlineTravel.Application.Specifications.BookingSpec;
+using OnlineTravel.Application.Features.Bookings.Specifications.Pricing;
+using OnlineTravel.Application.Features.Bookings.Specifications.Availability;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 using OnlineTravel.Domain.Entities.Bookings;
 using OnlineTravel.Domain.Entities.Flights;
@@ -35,13 +36,13 @@ public class FlightBookingStrategy : IBookingStrategy
 
 
         // Check for seat availability in the Booking table
-        var overlappingSpec = new OverlappingBookingDetailsSpec(itemId, DateOnly.FromDateTime(stayRange.Start), DateOnly.FromDateTime(stayRange.End));
+        var overlappingSpec = new OverlappingBookingDetailsSpec(itemId, DateOnly.FromDateTime(stayRange.Start), DateOnly.FromDateTime(stayRange.End), DateTime.UtcNow);
         var overlappingBookings = await _unitOfWork.Repository<BookingDetail>().GetAllWithSpecAsync(overlappingSpec, cancellationToken);
 
         if (overlappingBookings.Any())
             return Result<BookingProcessResult>.Failure(Error.Validation($"Seat {seat.SeatLabel} is already booked for this flight."));
 
-        // Touch the entity to trigger RowVersion check on Save
+        seat.LastReservedAt = DateTime.UtcNow;
         _unitOfWork.Repository<FlightSeat>().Update(seat);
 
         //  Calculate Price (Fetching fares for the parent flight)
