@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OnlineTravel.Application.Features.Flight.CreateAirport;
+using OnlineTravelBookingTeamB.Extensions;
+using OnlineTravel.Domain.ErrorHandling;
 
 namespace OnlineTravelBookingTeamB.Controllers
 {
@@ -17,12 +19,10 @@ namespace OnlineTravelBookingTeamB.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<CreateAirportResponse>> Create(CreateAirportCommand command)
+        public async Task<ActionResult> Create(CreateAirportCommand command)
         {
-           
             var result = await _mediator.Send(command);
-
-            return Ok(result);
+            return result.ToResponse();
         }
     }
 }

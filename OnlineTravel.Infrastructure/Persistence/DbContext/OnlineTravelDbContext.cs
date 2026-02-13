@@ -16,7 +16,7 @@ namespace OnlineTravel.Infrastructure.Persistence.Context;
 /// <summary>
 /// Entity Framework Core DbContext for Travel Marketplace.
 /// </summary>
-public class OnlineTravelDbContext : IdentityDbContext <AppUser, IdentityRole<Guid>, Guid>
+public class OnlineTravelDbContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Guid>
 {
     public OnlineTravelDbContext(DbContextOptions<OnlineTravelDbContext> options)
         : base(options)
@@ -28,7 +28,10 @@ public class OnlineTravelDbContext : IdentityDbContext <AppUser, IdentityRole<Gu
 
     // Tours
     public DbSet<Tour> Tours => Set<Tour>();
+
     public DbSet<TourSchedule> TourSchedules => Set<TourSchedule>();
+    public DbSet<TourActivity> TourActivities => Set<TourActivity>();
+
     public DbSet<TourPriceTier> TourPriceTiers => Set<TourPriceTier>();
 
     // Flights
@@ -50,7 +53,7 @@ public class OnlineTravelDbContext : IdentityDbContext <AppUser, IdentityRole<Gu
     public DbSet<Room> Rooms => Set<Room>();
 
     // Bookings
-    public DbSet<Booking> Bookings => Set<Booking>();
+    public DbSet<BookingEntity> Bookings => Set<BookingEntity>();
     public DbSet<BookingDetail> BookingDetails => Set<BookingDetail>();
 
     // Payments

@@ -19,6 +19,8 @@ public class TourSchedule : BaseEntity
 
     public TourScheduleStatus Status { get; set; } = TourScheduleStatus.Active;
 
+    public byte[]? RowVersion { get; set; }
+
     // Navigation Properties
 
     public virtual Tour Tour { get; set; } = null!;

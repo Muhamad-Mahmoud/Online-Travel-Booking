@@ -1,42 +1,58 @@
+using Microsoft.AspNetCore.Identity;
 using Ecommerce_Project.Extensions;
 using OnlineTravel.Application.DependencyInjection;
+using OnlineTravel.Application.Interfaces.Services;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Application.Mapping;
 using OnlineTravel.Infrastructure;
 using OnlineTravel.Infrastructure.Persistence.UnitOfWork;
 using OnlineTravelBookingTeamB.Extensions;
 using OnlineTravelBookingTeamB.Middleware;
+using OnlineTravel.Infrastructure.Identity;
+using OnlineTravel.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add Infrastructure Services (Database)
+// Add Infrastructure Services 
 builder.Services.AddInfrastructure(builder.Configuration);
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
 // Add Application Services 
 builder.Services.AddApplication();
 
 // Add API Services
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+
+// Add File Service
+var webRootPath = builder.Environment.WebRootPath ?? Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
+builder.Services.AddScoped<IFileService>(_ => new FileService(webRootPath));
+
 MapsterConfig.Register();
 builder.Services.AddSwaggerGenJwtAuth();
 var app = builder.Build();
-app.UseMiddleware<ExceptionHandlingMiddleware>();
-
-// A
-await app.ApplyDatabaseMigrationsAsync();
-
 
 // Configure the HTTP request pipeline.
-app.UseMiddleware<OnlineTravelBookingTeamB.Middlewares.ExceptionMiddleware>();
+app.UseMiddleware<ExceptionMiddleware>();
+
+await app.ApplyDatabaseMigrationsAsync();
 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.MapOpenApi();
+
+    // Data Seeding
+    await app.SeedDatabaseAsync();
 }
 
+app.UseStaticFiles();
 app.UseHttpsRedirection();
+
+await IdentityBootstrapper.InitializeAsync(app.Services);
+
+
+app.UseAuthentication();
 app.UseStatusCodePagesWithReExecute("/errors/{0}");
 app.UseAuthorization();
 

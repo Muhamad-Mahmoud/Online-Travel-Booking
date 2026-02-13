@@ -15,8 +15,8 @@ public class BookingDetailConfiguration : IEntityTypeConfiguration<BookingDetail
 
         builder.OwnsOne(e => e.StayRange, dr =>
         {
-            dr.Property(p => p.Start).HasColumnName("CheckInDate");
-            dr.Property(p => p.End).HasColumnName("CheckOutDate");
+            dr.Property(p => p.Start).HasColumnName("CheckInDate").IsRequired();
+            dr.Property(p => p.End).HasColumnName("CheckOutDate").IsRequired();
         });
 
         builder.HasOne(e => e.Booking)

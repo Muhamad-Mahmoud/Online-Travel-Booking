@@ -1,5 +1,3 @@
-
-using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities._Base;
 
 namespace OnlineTravel.Application.Interfaces.Persistence

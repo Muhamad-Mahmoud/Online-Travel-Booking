@@ -9,18 +9,16 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
     public void Configure(EntityTypeBuilder<Category> builder)
     {
         builder.ToTable("Categories", "infra");
-        builder.HasIndex(e => e.Key).IsUnique();
+
+        builder.Property(e => e.Type)
+            .HasConversion<string>();
+
+        builder.HasIndex(e => e.Type).IsUnique();
 
         builder.OwnsOne(e => e.Image, i =>
         {
             i.Property(p => p.Url).HasColumnName("ImageUrl");
             i.Property(p => p.AltText).HasColumnName("ImageAlt");
         });
-
-
     }
 }
-
-
-
-

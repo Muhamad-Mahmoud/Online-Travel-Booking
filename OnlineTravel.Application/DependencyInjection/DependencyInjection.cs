@@ -4,6 +4,7 @@ using MapsterMapper;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using OnlineTravel.Application.Common.Behaviors;
+using OnlineTravel.Application.Features.Bookings.Strategies;
 
 namespace OnlineTravel.Application.DependencyInjection;
 
@@ -15,6 +16,8 @@ public static class DependencyInjection
         services.AddMediatR(cfg =>
             cfg.RegisterServicesFromAssemblies(typeof(DependencyInjection).Assembly));
         services.AddMapster();
+
+        services.AddAutoMapper(typeof(DependencyInjection).Assembly);
 
         // Register FluentValidation validators manually
         var assembly = typeof(DependencyInjection).Assembly;
@@ -41,6 +44,13 @@ public static class DependencyInjection
         services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
 
 
+        // Register Business Services
+        services.AddScoped<IBookingStrategy, HotelBookingStrategy>();
+        services.AddScoped<IBookingStrategy, TourBookingStrategy>();
+        services.AddScoped<IBookingStrategy, FlightBookingStrategy>();
+        services.AddScoped<IBookingStrategy, CarBookingStrategy>();
+
         return services;
     }
 }
+

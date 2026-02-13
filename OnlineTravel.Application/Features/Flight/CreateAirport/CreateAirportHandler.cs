@@ -1,4 +1,6 @@
 ﻿using MediatR;
+using OnlineTravel.Domain.ErrorHandling;
+using Error = OnlineTravel.Domain.ErrorHandling.Error;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 using OnlineTravel.Domain.Entities.Flights;
@@ -11,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace OnlineTravel.Application.Features.Flight.CreateAirport
 {
-    public class CreateAirportHandler : IRequestHandler<CreateAirportCommand, CreateAirportResponse>
+    public class CreateAirportHandler : IRequestHandler<CreateAirportCommand, Result<CreateAirportResponse>>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -20,7 +22,7 @@ namespace OnlineTravel.Application.Features.Flight.CreateAirport
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<CreateAirportResponse> Handle(CreateAirportCommand request, CancellationToken cancellationToken)
+        public async Task<Result<CreateAirportResponse>> Handle(CreateAirportCommand request, CancellationToken cancellationToken)
         {
             //  Initialize Value Objects required for the Entity
             var iataCode = new IataCode(request.Code);
@@ -49,16 +51,18 @@ namespace OnlineTravel.Application.Features.Flight.CreateAirport
 
             if (result <= 0)
             {
-                throw new Exception("Failed to create airport.");
+                return Result<CreateAirportResponse>.Failure(Error.InternalServer("Failed to create airport."));
             }
 
             // Map the created entity back to Response DTO
-            return new CreateAirportResponse
+            var response = new CreateAirportResponse
             {
                 Id = airport.Id,
                 Name = airport.Name,
                 Code = airport.Code.Value // Extracting the string value from the Value Object
             };
+
+            return Result<CreateAirportResponse>.Success(response);
         }
     }
 }

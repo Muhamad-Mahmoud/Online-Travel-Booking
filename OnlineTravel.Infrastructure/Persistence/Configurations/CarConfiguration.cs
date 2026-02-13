@@ -44,8 +44,8 @@ public class CarConfiguration : IEntityTypeConfiguration<Car>
             .HasColumnName("AvailableDatesJson")
             .HasConversion(
                 v => System.Text.Json.JsonSerializer.Serialize(v, (System.Text.Json.JsonSerializerOptions?)null),
-                v => System.Text.Json.JsonSerializer.Deserialize<List<DateRange>>(v, (System.Text.Json.JsonSerializerOptions?)null) ?? new List<DateRange>())
-            .Metadata.SetValueComparer(new ValueComparer<List<DateRange>>(
+                v => System.Text.Json.JsonSerializer.Deserialize<List<DateTimeRange>>(v, (System.Text.Json.JsonSerializerOptions?)null) ?? new List<DateTimeRange>())
+            .Metadata.SetValueComparer(new ValueComparer<List<DateTimeRange>>(
                 (c1, c2) => c1!.SequenceEqual(c2!),
                 c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
                 c => c.ToList()));
