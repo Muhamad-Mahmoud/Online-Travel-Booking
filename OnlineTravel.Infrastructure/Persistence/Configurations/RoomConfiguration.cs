@@ -11,6 +11,7 @@ public class RoomConfiguration : IEntityTypeConfiguration<Room>
     public void Configure(EntityTypeBuilder<Room> builder)
     {
         builder.ToTable("Rooms", "hotels");
+        builder.Property(e => e.RowVersion).IsRowVersion();
 
         builder.OwnsOne(e => e.BasePrice, m =>
         {

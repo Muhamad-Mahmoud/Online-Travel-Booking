@@ -1,0 +1,17 @@
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Identity;
+
+namespace OnlineTravel.Infrastructure.Identity;
+
+public static class IdentityBootstrapper
+{
+    public static async Task InitializeAsync(IServiceProvider services)
+    {
+        using var scope = services.CreateScope();
+
+        var roleManager = scope.ServiceProvider
+            .GetRequiredService<RoleManager<IdentityRole<Guid>>>();
+
+        await RoleSeeder.SeedAsync(roleManager);
+    }
+}

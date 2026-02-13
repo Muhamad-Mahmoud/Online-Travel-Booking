@@ -32,9 +32,10 @@ public class Car : SoftDeletableEntity
 
     public Guid CategoryId { get; set; }
 
-    public byte[]? RowVersion { get; set; }
 
-    public Point Location { get; set; }
+    public Point Location { get; set; } = null!;
+
+    public byte[]? RowVersion { get; set; }
 
     // Navigation Properties
 

@@ -5,7 +5,7 @@
 namespace OnlineTravel.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class UpgradeCarAvailabilityToDateTime : Migration
+    public partial class RenameUserToAppUser : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

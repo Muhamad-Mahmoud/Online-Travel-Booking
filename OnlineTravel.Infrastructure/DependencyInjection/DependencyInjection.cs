@@ -2,9 +2,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using OnlineTravel.Application.Interfaces.Persistence;
+using OnlineTravel.Application.Interfaces.Services.Auth;
 using OnlineTravel.Domain.Entities.Users;
 using OnlineTravel.Infrastructure.Persistence.Context;
+using OnlineTravel.Infrastructure.Security;
+using OnlineTravel.Infrastructure.Security.Jwt;
+using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Infrastructure.Persistence.UnitOfWork;
 
 namespace OnlineTravel.Infrastructure;
@@ -18,6 +21,9 @@ public static class DependencyInjection
         // Add DbContext with SQL Server
         AddDatabaseContext(services, configuration);
 
+        services.Configure<JwtOptions>(
+                 configuration.GetSection("Jwt"));
+
         // Add Identity
         services.AddIdentityCore<AppUser>(options =>
         {
@@ -27,10 +33,22 @@ public static class DependencyInjection
             options.Password.RequireNonAlphanumeric = false;
             options.Password.RequireUppercase = false;
             options.Password.RequireLowercase = false;
+
+            options.SignIn.RequireConfirmedEmail = true;
+
         })
         .AddRoles<IdentityRole<Guid>>()
+        //.AddSignInManager<SignInManager<User>>()
         .AddEntityFrameworkStores<OnlineTravelDbContext>();
 
+        // Add JWT Authentication
+        services.AddJwtAuthentication(configuration);
+
+        //Register Auth Services
+        services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IJwtService, JwtService>();
+
+        //Add AutoMapper
         // Add UnitOfWork
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 

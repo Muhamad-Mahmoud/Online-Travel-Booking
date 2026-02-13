@@ -13,8 +13,13 @@ using OnlineTravel.Infrastructure.Persistence.Context;
 namespace OnlineTravel.Infrastructure.Migrations
 {
     [DbContext(typeof(OnlineTravelDbContext))]
-    [Migration("20260211152058_UpgradeCarAvailabilityToDateTime")]
-    partial class UpgradeCarAvailabilityToDateTime
+<<<<<<<< HEAD:OnlineTravel.Infrastructure/Migrations/20260213195437_SyncReviewsModel.Designer.cs
+    [Migration("20260213195437_SyncReviewsModel")]
+    partial class SyncReviewsModel
+========
+    [Migration("20260210193851_RenameUserToAppUser")]
+    partial class RenameUserToAppUser
+>>>>>>>> origin/main:OnlineTravel.Infrastructure/Migrations/20260210193851_RenameUserToAppUser.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -157,39 +162,7 @@ namespace OnlineTravel.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("OnlineTravel.Domain.Entities.Bookings.BookingDetail", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("BookingId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CategoryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("ItemId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("ItemId");
-
-                    b.HasIndex("BookingId", "CategoryId");
-
-                    b.ToTable("BookingDetails", "bookings");
-                });
-
-            modelBuilder.Entity("OnlineTravel.Domain.Entities.Bookings.BookingEntity", b =>
+            modelBuilder.Entity("OnlineTravel.Domain.Entities.Bookings.Booking", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -220,6 +193,38 @@ namespace OnlineTravel.Infrastructure.Migrations
                     b.HasIndex("UserId", "Status");
 
                     b.ToTable("Bookings", "bookings");
+                });
+
+            modelBuilder.Entity("OnlineTravel.Domain.Entities.Bookings.BookingDetail", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BookingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("ItemId");
+
+                    b.HasIndex("BookingId", "CategoryId");
+
+                    b.ToTable("BookingDetails", "bookings");
                 });
 
             modelBuilder.Entity("OnlineTravel.Domain.Entities.Cars.Car", b =>
@@ -369,20 +374,20 @@ namespace OnlineTravel.Infrastructure.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Type")
+                    b.HasIndex("Key")
                         .IsUnique();
 
                     b.ToTable("Categories", "infra");
@@ -573,6 +578,11 @@ namespace OnlineTravel.Infrastructure.Migrations
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("bit");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.Property<string>("SeatFeatures")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
@@ -667,6 +677,11 @@ namespace OnlineTravel.Infrastructure.Migrations
                     b.Property<string>("RoomType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -804,6 +819,9 @@ namespace OnlineTravel.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("BestTimeToVisit")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid>("CategoryId")
                         .HasColumnType("uniqueidentifier");
 
@@ -816,15 +834,16 @@ namespace OnlineTravel.Infrastructure.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("DurationDays")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DurationNights")
+                        .HasColumnType("int");
+
                     b.Property<string>("Highlights")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("HighlightsJson");
-
-                    b.Property<string>("Images")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("ImagesJson");
 
                     b.Property<bool>("Recommended")
                         .HasColumnType("bit");
@@ -846,6 +865,68 @@ namespace OnlineTravel.Infrastructure.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Tours", "tours");
+                });
+
+            modelBuilder.Entity("OnlineTravel.Domain.Entities.Tours.TourActivity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<Guid>("TourId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TourId");
+
+                    b.ToTable("TourActivities", (string)null);
+                });
+
+            modelBuilder.Entity("OnlineTravel.Domain.Entities.Tours.TourImage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AltText")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("TourId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TourId");
+
+                    b.ToTable("TourImages", "tours");
                 });
 
             modelBuilder.Entity("OnlineTravel.Domain.Entities.Tours.TourPriceTier", b =>
@@ -894,6 +975,11 @@ namespace OnlineTravel.Infrastructure.Migrations
 
                     b.Property<Guid>("PriceTierId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -1058,9 +1144,66 @@ namespace OnlineTravel.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("OnlineTravel.Domain.Entities.Bookings.Booking", b =>
+                {
+                    b.HasOne("OnlineTravel.Domain.Entities.Users.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("OnlineTravel.Domain.Entities._Shared.ValueObjects.Money", "TotalPrice", b1 =>
+                        {
+                            b1.Property<Guid>("BookingId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasColumnType("decimal(10,2)")
+                                .HasColumnName("TotalPrice");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("Currency");
+
+                            b1.HasKey("BookingId");
+
+                            b1.ToTable("Bookings", "bookings");
+
+                            b1.WithOwner()
+                                .HasForeignKey("BookingId");
+                        });
+
+                    b.OwnsOne("OnlineTravel.Domain.Entities.Bookings.ValueObjects.BookingReference", "BookingReference", b1 =>
+                        {
+                            b1.Property<Guid>("BookingId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("BookingReference");
+
+                            b1.HasKey("BookingId");
+
+                            b1.ToTable("Bookings", "bookings");
+
+                            b1.WithOwner()
+                                .HasForeignKey("BookingId");
+                        });
+
+                    b.Navigation("BookingReference")
+                        .IsRequired();
+
+                    b.Navigation("TotalPrice")
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("OnlineTravel.Domain.Entities.Bookings.BookingDetail", b =>
                 {
-                    b.HasOne("OnlineTravel.Domain.Entities.Bookings.BookingEntity", "Booking")
+                    b.HasOne("OnlineTravel.Domain.Entities.Bookings.Booking", "Booking")
                         .WithMany("Details")
                         .HasForeignKey("BookingId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1101,6 +1244,7 @@ namespace OnlineTravel.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+<<<<<<<< HEAD:OnlineTravel.Infrastructure/Migrations/20260213195437_SyncReviewsModel.Designer.cs
             modelBuilder.Entity("OnlineTravel.Domain.Entities.Bookings.BookingEntity", b =>
                 {
                     b.HasOne("OnlineTravel.Domain.Entities.Users.AppUser", "User")
@@ -1158,6 +1302,8 @@ namespace OnlineTravel.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+========
+>>>>>>>> origin/main:OnlineTravel.Infrastructure/Migrations/20260210193851_RenameUserToAppUser.Designer.cs
             modelBuilder.Entity("OnlineTravel.Domain.Entities.Cars.Car", b =>
                 {
                     b.HasOne("OnlineTravel.Domain.Entities.Cars.CarBrand", "Brand")
@@ -1777,7 +1923,7 @@ namespace OnlineTravel.Infrastructure.Migrations
 
             modelBuilder.Entity("OnlineTravel.Domain.Entities.Payments.Payment", b =>
                 {
-                    b.HasOne("OnlineTravel.Domain.Entities.Bookings.BookingEntity", "Booking")
+                    b.HasOne("OnlineTravel.Domain.Entities.Bookings.Booking", "Booking")
                         .WithMany()
                         .HasForeignKey("BookingId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1856,7 +2002,7 @@ namespace OnlineTravel.Infrastructure.Migrations
 
             modelBuilder.Entity("OnlineTravel.Domain.Entities.Reviews.Review", b =>
                 {
-                    b.HasOne("OnlineTravel.Domain.Entities.Bookings.BookingEntity", "Booking")
+                    b.HasOne("OnlineTravel.Domain.Entities.Bookings.Booking", "Booking")
                         .WithMany()
                         .HasForeignKey("BookingId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -1977,6 +2123,54 @@ namespace OnlineTravel.Infrastructure.Migrations
                     b.Navigation("Category");
 
                     b.Navigation("MainImage");
+                });
+
+            modelBuilder.Entity("OnlineTravel.Domain.Entities.Tours.TourActivity", b =>
+                {
+                    b.HasOne("OnlineTravel.Domain.Entities.Tours.Tour", "Tour")
+                        .WithMany("Activities")
+                        .HasForeignKey("TourId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("OnlineTravel.Domain.Entities._Shared.ValueObjects.ImageUrl", "Image", b1 =>
+                        {
+                            b1.Property<Guid>("TourActivityId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("AltText")
+                                .HasMaxLength(200)
+                                .HasColumnType("nvarchar(200)")
+                                .HasColumnName("ImageAlt");
+
+                            b1.Property<string>("Url")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("ImageUrl");
+
+                            b1.HasKey("TourActivityId");
+
+                            b1.ToTable("TourActivities");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TourActivityId");
+                        });
+
+                    b.Navigation("Image")
+                        .IsRequired();
+
+                    b.Navigation("Tour");
+                });
+
+            modelBuilder.Entity("OnlineTravel.Domain.Entities.Tours.TourImage", b =>
+                {
+                    b.HasOne("OnlineTravel.Domain.Entities.Tours.Tour", "Tour")
+                        .WithMany("Images")
+                        .HasForeignKey("TourId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tour");
                 });
 
             modelBuilder.Entity("OnlineTravel.Domain.Entities.Tours.TourPriceTier", b =>
@@ -2102,7 +2296,7 @@ namespace OnlineTravel.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("OnlineTravel.Domain.Entities.Bookings.BookingEntity", b =>
+            modelBuilder.Entity("OnlineTravel.Domain.Entities.Bookings.Booking", b =>
                 {
                     b.Navigation("Details");
                 });
@@ -2148,6 +2342,10 @@ namespace OnlineTravel.Infrastructure.Migrations
 
             modelBuilder.Entity("OnlineTravel.Domain.Entities.Tours.Tour", b =>
                 {
+                    b.Navigation("Activities");
+
+                    b.Navigation("Images");
+
                     b.Navigation("PriceTiers");
                 });
 

@@ -4,9 +4,9 @@ using OnlineTravel.Domain.Entities.Users;
 using OnlineTravel.Infrastructure.Persistence.Context;
 using OnlineTravel.Infrastructure.Persistence.Seed;
 
-namespace OnlineTravelBookingTeamB.Extensions
+namespace Microsoft.AspNetCore.Builder
 {
-      public static class DatabaseManagementExtensions
+    public static class DatabaseManagementExtensions
     {
         public static async Task ApplyDatabaseMigrationsAsync(this WebApplication app)
         {

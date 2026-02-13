@@ -28,21 +28,5 @@ public class Room : BaseEntity
 
     public virtual Hotel Hotel { get; set; } = null!;
 
-    public bool IsBookable(DateTimeRange stayRange, IEnumerable<DateRange> conflictingSlots)
-    {
-        if (Status != RoomStatus.Active)
-            return false;
-
-        if (MinimumStayNights.HasValue && stayRange.TotalNights < MinimumStayNights.Value)
-            return false;
-
-        var stayDateRange = new DateRange(DateOnly.FromDateTime(stayRange.Start), DateOnly.FromDateTime(stayRange.End));
-        foreach (var slot in conflictingSlots)
-        {
-            if (stayDateRange.OverlapsWith(slot))
-                return false;
-        }
-
-        return true;
-    }
+    public byte[]? RowVersion { get; set; }
 }

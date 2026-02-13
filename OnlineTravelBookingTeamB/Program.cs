@@ -1,12 +1,16 @@
+using Microsoft.AspNetCore.Identity;
 using OnlineTravel.Application.DependencyInjection;
 using OnlineTravel.Application.Interfaces.Services;
 using OnlineTravel.Infrastructure;
-using OnlineTravel.Infrastructure.Services;
+using OnlineTravel.Infrastructure.Persistence.UnitOfWork;
 using OnlineTravelBookingTeamB.Extensions;
+using OnlineTravelBookingTeamB.Middleware;
+using OnlineTravel.Infrastructure.Identity;
+using OnlineTravel.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add Infrastructure Services (Database)
+// Add Infrastructure Services 
 builder.Services.AddInfrastructure(builder.Configuration);
 
 // Add Application Services 
@@ -22,11 +26,10 @@ builder.Services.AddScoped<IFileService>(_ => new FileService(webRootPath));
 
 var app = builder.Build();
 
-// Apply Migrations
-await app.ApplyDatabaseMigrationsAsync();
-
 // Configure the HTTP request pipeline.
-app.UseMiddleware<OnlineTravelBookingTeamB.Middleware.ExceptionMiddleware>();
+app.UseMiddleware<ExceptionMiddleware>();
+
+await app.ApplyDatabaseMigrationsAsync();
 
 if (app.Environment.IsDevelopment())
 {
@@ -38,6 +41,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseStaticFiles();
 app.UseHttpsRedirection();
+
+await IdentityBootstrapper.InitializeAsync(app.Services);
+
+
+app.UseAuthentication();
 app.UseStatusCodePagesWithReExecute("/errors/{0}");
 app.UseAuthorization();
 
