@@ -7,6 +7,8 @@ using OnlineTravelBookingTeamB.Extensions;
 using OnlineTravelBookingTeamB.Middleware;
 using OnlineTravel.Infrastructure.Identity;
 using OnlineTravel.Infrastructure.Services;
+using Microsoft.Extensions.DependencyInjection; // Ensure this is present
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +19,7 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 
 // Add API Services
-builder.Services.AddControllers()
+builder.Services.AddControllersWithViews()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
@@ -49,9 +51,15 @@ app.UseHttpsRedirection();
 await IdentityBootstrapper.InitializeAsync(app.Services);
 
 
+app.UseRouting();
+
 app.UseAuthentication();
 app.UseStatusCodePagesWithReExecute("/errors/{0}");
 app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapControllers();
 
