@@ -7,12 +7,12 @@ namespace OnlineTravel.Application.Features.Tours.Specifications;
 
 public class AllToursWithPricingSpecification : BaseSpecification<Tour>
 {
-    public AllToursWithPricingSpecification(string? search, double? lat, double? lon, double? radiusKm, decimal? minPrice, decimal? maxPrice, int? rating, string? sortOrder)
+    public AllToursWithPricingSpecification(string? search, double? lat, double? lon, double? radiusKm, decimal? minPrice, decimal? maxPrice, int? rating, string? city, string? country, string? sortOrder)
         : base(x => (string.IsNullOrEmpty(search) ||
                      x.Title.Contains(search) ||
-                     x.Address.City != null && x.Address.City.Contains(search) ||
-                     x.Address.Country != null && x.Address.Country.Contains(search) ||
                      x.Activities.Any(a => a.Title.Contains(search))) &&
+                    (string.IsNullOrEmpty(city) || (x.Address.City != null && x.Address.City.Contains(city))) &&
+                    (string.IsNullOrEmpty(country) || (x.Address.Country != null && x.Address.Country.Contains(country))) &&
                     (!lat.HasValue || !lon.HasValue || !radiusKm.HasValue ||
                      (x.Address.Coordinates != null && x.Address.Coordinates.IsWithinDistance(new Point(lon.Value, lat.Value) { SRID = 4326 }, radiusKm.Value * 1000))) &&
                     (!minPrice.HasValue || x.PriceTiers.Any(p => p.Price.Amount >= minPrice.Value)) &&

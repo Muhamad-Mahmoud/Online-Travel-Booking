@@ -20,9 +20,11 @@ public class ToursController : BaseApiController
         [FromQuery] decimal? minPrice,
         [FromQuery] decimal? maxPrice,
         [FromQuery] int? rating,
+        [FromQuery] string? city,
+        [FromQuery] string? country,
         [FromQuery] string? sortOrder)
     {
-        var result = await Mediator.Send(new GetAllToursQuery(paginationParams.PageIndex, paginationParams.PageSize, search, lat, lon, radiusKm, minPrice, maxPrice, rating, sortOrder));
+        var result = await Mediator.Send(new GetAllToursQuery(paginationParams.PageIndex, paginationParams.PageSize, search, lat, lon, radiusKm, minPrice, maxPrice, rating, city, country, sortOrder));
         return Ok(result);
     }
 
