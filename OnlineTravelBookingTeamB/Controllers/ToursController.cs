@@ -10,6 +10,7 @@ namespace OnlineTravelBookingTeamB.Controllers;
 public class ToursController : BaseApiController
 {
     [HttpGet]
+    [Authorize]
     [ProducesResponseType(typeof(OnlineTravel.Application.Common.PagedResult<TourResponse>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll(
         [FromQuery] OnlineTravel.Application.Common.PaginationParams paginationParams,
