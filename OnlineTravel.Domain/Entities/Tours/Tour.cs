@@ -40,6 +40,8 @@ public class Tour : SoftDeletableEntity
 
     public virtual ICollection<TourPriceTier> PriceTiers { get; set; } = new List<TourPriceTier>();
 
+    public virtual ICollection<OnlineTravel.Domain.Entities.Reviews.Review> Reviews { get; set; } = new List<OnlineTravel.Domain.Entities.Reviews.Review>();
+
 
 }
 
