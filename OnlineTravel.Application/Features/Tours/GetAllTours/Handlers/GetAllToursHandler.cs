@@ -19,10 +19,10 @@ public class GetAllToursHandler : IRequestHandler<GetAllToursQuery, PagedResult<
 
     public async Task<PagedResult<TourResponse>> Handle(GetAllToursQuery request, CancellationToken cancellationToken)
     {
-        var countSpec = new AllToursWithPricingSpecification();
+        var countSpec = new AllToursWithPricingSpecification(request.Search);
         var totalCount = await _unitOfWork.Repository<Tour>().GetCountAsync(countSpec);
 
-        var dataSpec = new AllToursWithPricingSpecification();
+        var dataSpec = new AllToursWithPricingSpecification(request.Search);
         dataSpec.ApplyPagination(request.PageSize * (request.PageIndex - 1), request.PageSize);
         var tours = await _unitOfWork.Repository<Tour>().GetAllWithSpecAsync(dataSpec);
 

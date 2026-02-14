@@ -11,9 +11,9 @@ public class ToursController : BaseApiController
 {
     [HttpGet]
     [ProducesResponseType(typeof(OnlineTravel.Application.Common.PagedResult<TourResponse>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetAll([FromQuery] OnlineTravel.Application.Common.PaginationParams paginationParams)
+    public async Task<IActionResult> GetAll([FromQuery] OnlineTravel.Application.Common.PaginationParams paginationParams, [FromQuery] string? search)
     {
-        var result = await Mediator.Send(new GetAllToursQuery(paginationParams.PageIndex, paginationParams.PageSize));
+        var result = await Mediator.Send(new GetAllToursQuery(paginationParams.PageIndex, paginationParams.PageSize, search));
         return Ok(result);
     }
 
