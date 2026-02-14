@@ -34,8 +34,8 @@ public class GetTourByIdHandler : IRequestHandler<GetTourByIdQuery, TourDetailsR
             Category = tour.Category.Title,
             Location = tour.Address.ToString(),
             Duration = $"{tour.DurationDays} Days and {tour.DurationNights} Nights",
-            Rating = 4.5, // Placeholder
-            ReviewCount = 9752, // Placeholder
+            Rating = tour.Reviews.Any() ? (double)tour.Reviews.Average(r => r.Rating.Value) : 0,
+            ReviewCount = tour.Reviews.Count,
             MainImageUrl = tour.MainImage?.Url ?? string.Empty,
             Description = tour.Description ?? string.Empty,
             TopActivities = tour.Activities.Select(a => new TourActivityDto
