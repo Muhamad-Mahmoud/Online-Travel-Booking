@@ -7,7 +7,7 @@ using NetTopologySuite.Geometries;
 namespace OnlineTravel.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class IntialCreate : Migration
+    public partial class initaildata : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -231,6 +231,7 @@ namespace OnlineTravel.Infrastructure.Migrations
                     AvailableDatesJson = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CancellationPolicy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Location = table.Column<Point>(type: "geography", nullable: true),
                     RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: true),
                     ImagesJson = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),

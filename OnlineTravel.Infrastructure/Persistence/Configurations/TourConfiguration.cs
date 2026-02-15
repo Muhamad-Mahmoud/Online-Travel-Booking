@@ -48,6 +48,11 @@ public class TourConfiguration : IEntityTypeConfiguration<Tour>
             .HasForeignKey(p => p.TourId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.HasMany(e => e.Reviews)
+            .WithOne()
+            .HasForeignKey(r => r.ItemId)
+            .OnDelete(DeleteBehavior.Cascade);
+
 
         // JSON Property Conversions
         builder.Property(e => e.Highlights)

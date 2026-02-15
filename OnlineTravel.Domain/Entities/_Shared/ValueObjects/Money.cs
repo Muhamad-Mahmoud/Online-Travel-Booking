@@ -43,6 +43,11 @@ public record Money
     {
         return new Money(left.Amount * multiplier, left.Currency);
     }
+
+    public static implicit operator Money(decimal v)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 

@@ -26,7 +26,11 @@ public class CarConfiguration : IEntityTypeConfiguration<Car>
 
 
 
-        builder.Ignore(e => e.Location);
+
+
+        builder.Property(e => e.Location)
+               .HasColumnType("geography")
+               .IsRequired(false);
 
         // Configure Images collection
         builder.Property(e => e.Images)
