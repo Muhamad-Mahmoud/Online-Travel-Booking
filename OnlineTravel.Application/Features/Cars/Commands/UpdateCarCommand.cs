@@ -9,9 +9,8 @@ using System.Threading.Tasks;
 
 namespace OnlineTravel.Application.Features.Cars.Commands
 {
-    public class CreateCarCommand : IRequest<Result<Guid>>
+    public class UpdateCarCommand : IRequest<Result<Guid>>
     {
-        public CreateCarRequest Data { get; set; } = null!;
+        public UpdateCarRequest Data { get; set; } = null!;
     }
-
 }

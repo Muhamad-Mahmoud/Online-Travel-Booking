@@ -7,11 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OnlineTravel.Application.Features.Cars.Commands
+namespace OnlineTravel.Application.Features.Cars.Queries
 {
-    public class CreateCarCommand : IRequest<Result<Guid>>
+    public class GetCarDetailsByIdQuery : IRequest<Result<CarDetailsDto>>
     {
-        public CreateCarRequest Data { get; set; } = null!;
+        public Guid Id { get; set; }
     }
 
 }
