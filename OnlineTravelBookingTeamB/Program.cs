@@ -1,3 +1,4 @@
+using Serilog;
 using Microsoft.AspNetCore.Identity;
 using Ecommerce_Project.Extensions;
 using OnlineTravel.Application.DependencyInjection;
@@ -10,12 +11,14 @@ using OnlineTravel.Infrastructure.Persistence.UnitOfWork;
 using OnlineTravel.Infrastructure.Services;
 using OnlineTravelBookingTeamB.Extensions;
 using OnlineTravelBookingTeamB.Middleware;
-using OnlineTravel.Infrastructure.Identity;
-using OnlineTravel.Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection; // Ensure this is present
 
 
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure Serilog Logging
+builder.ConfigureSerilog();
 
 // Add Infrastructure Services 
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -31,36 +34,28 @@ builder.Services.AddControllersWithViews()
     });
 builder.Services.AddOpenApi();
 
+// Add Health Checks
+builder.Services.AddAppHealthChecks();
+
 // Add File Service
-var webRootPath = builder.Environment.WebRootPath ?? Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
-builder.Services.AddScoped<IFileService>(_ => new FileService(webRootPath));
 
 MapsterConfig.Register();
 builder.Services.AddSwaggerGenJwtAuth();
 var app = builder.Build();
 
+// Enable Serilog Request Logging 
+app.UseSerilogRequestLogging();
+
 // Configure the HTTP request pipeline.
 app.UseMiddleware<ExceptionMiddleware>();
 
-await app.ApplyDatabaseMigrationsAsync();
+await app.ApplyDatabaseSetupAsync();
 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
-    app.MapOpenApi();
-
-    // Data Seeding
-    await app.SeedDatabaseAsync();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ecommerce API v1"));
 }
-
-app.UseStaticFiles();
-app.UseHttpsRedirection();
-
-await IdentityBootstrapper.InitializeAsync(app.Services);
-
-
-app.UseRouting();
 
 app.UseAuthentication();
 app.UseStatusCodePagesWithReExecute("/errors/{0}");
@@ -71,5 +66,6 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapControllers();
+app.MapHealthChecks("/health");
 
 app.Run();

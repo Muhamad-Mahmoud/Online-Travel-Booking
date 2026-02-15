@@ -3,6 +3,7 @@ using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities._Base;
 using OnlineTravel.Infrastructure.Persistence.Context;
 using OnlineTravel.Infrastructure.Persistence.Repositories;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace OnlineTravel.Infrastructure.Persistence.UnitOfWork
 {
@@ -44,9 +45,10 @@ namespace OnlineTravel.Infrastructure.Persistence.UnitOfWork
             _dbContext.Dispose();
         }
 
-        public async Task BeginTransactionAsync()
+        public async Task<IDbContextTransaction> BeginTransactionAsync()
         {
             _transaction = await _dbContext.Database.BeginTransactionAsync();
+            return _transaction;
         }
 
         public async Task CommitTransactionAsync()

@@ -172,6 +172,10 @@ namespace OnlineTravel.Infrastructure.Migrations
                     b.Property<Guid>("ItemId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("ItemName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -198,11 +202,23 @@ namespace OnlineTravel.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("PaidAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentIntentId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("PaymentStatus")
                         .HasColumnType("int");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
+
+                    b.Property<string>("StripeSessionId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -259,6 +275,9 @@ namespace OnlineTravel.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("ImagesJson");
+
+                    b.Property<DateTime?>("LastReservedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<Point>("Location")
                         .HasColumnType("geography");
@@ -534,11 +553,19 @@ namespace OnlineTravel.Infrastructure.Migrations
                     b.Property<Guid>("DestinationAirportId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime?>("LastReservedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("OriginAirportId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("Refundable")
                         .HasColumnType("bit");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -606,6 +633,9 @@ namespace OnlineTravel.Infrastructure.Migrations
 
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastReservedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
@@ -690,6 +720,9 @@ namespace OnlineTravel.Infrastructure.Migrations
                     b.Property<Guid>("HotelId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime?>("LastReservedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("MaxGuests")
                         .HasColumnType("int");
 
@@ -764,6 +797,39 @@ namespace OnlineTravel.Infrastructure.Migrations
                         .HasFilter("[TransactionId] IS NOT NULL");
 
                     b.ToTable("Payments", "billing");
+                });
+
+            modelBuilder.Entity("OnlineTravel.Domain.Entities.Payments.ProcessedWebhookEvent", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("EventId")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime>("ProcessedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventId")
+                        .IsUnique();
+
+                    b.ToTable("ProcessedWebhookEvents");
                 });
 
             modelBuilder.Entity("OnlineTravel.Domain.Entities.Reviews.Review", b =>
@@ -841,8 +907,16 @@ namespace OnlineTravel.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("HighlightsJson");
 
+                    b.Property<DateTime?>("LastReservedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("Recommended")
                         .HasColumnType("bit");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.Property<string>("Tags")
                         .IsRequired()
@@ -967,6 +1041,9 @@ namespace OnlineTravel.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastReservedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("PriceTierId")

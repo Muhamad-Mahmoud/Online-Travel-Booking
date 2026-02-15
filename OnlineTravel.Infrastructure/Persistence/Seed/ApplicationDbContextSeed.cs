@@ -658,6 +658,33 @@ public static class ApplicationDbContextSeed
 
         context.Flights.AddRange(flights);
         await context.SaveChangesAsync();
+
+        // Seed Seats & Fares for these flights
+        var allFlights = await context.Flights.ToListAsync();
+        var seats = new List<FlightSeat>();
+        var fares = new List<FlightFare>();
+
+        foreach (var flight in allFlights)
+        {
+            // Economy Seats
+            seats.Add(new FlightSeat { SeatLabel = "1A", CabinClass = CabinClass.Economy, IsAvailable = true, FlightId = flight.Id });
+            seats.Add(new FlightSeat { SeatLabel = "1B", CabinClass = CabinClass.Economy, IsAvailable = true, FlightId = flight.Id });
+            seats.Add(new FlightSeat { SeatLabel = "1C", CabinClass = CabinClass.Economy, IsAvailable = true, FlightId = flight.Id });
+            seats.Add(new FlightSeat { SeatLabel = "2A", CabinClass = CabinClass.Economy, IsAvailable = true, FlightId = flight.Id });
+            seats.Add(new FlightSeat { SeatLabel = "2B", CabinClass = CabinClass.Economy, IsAvailable = true, FlightId = flight.Id });
+            seats.Add(new FlightSeat { SeatLabel = "2C", CabinClass = CabinClass.Economy, IsAvailable = true, FlightId = flight.Id });
+
+            // Business Seats
+            seats.Add(new FlightSeat { SeatLabel = "1F", CabinClass = CabinClass.Business, IsAvailable = true, FlightId = flight.Id });
+            seats.Add(new FlightSeat { SeatLabel = "1D", CabinClass = CabinClass.Business, IsAvailable = true, FlightId = flight.Id });
+
+            // Seed ONE Fare per flight (Simplification due to strategy limitation)
+             fares.Add(new FlightFare { FlightId = flight.Id, BasePrice = new Money(150, "USD"), SeatsAvailable = 100 });
+        }
+
+        context.FlightSeats.AddRange(seats);
+        context.Set<FlightFare>().AddRange(fares);
+        await context.SaveChangesAsync();
     }
 
     private static List<TourSchedule> generateSchedules(DateTime startDate, int count, Tour tour, int capacity = 30)
