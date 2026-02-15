@@ -1,0 +1,125 @@
+@model OnlineTravelBookingTeamB.Models.TourViewModel
+
+@{
+    ViewData["Title"] = "Create Tour";
+}
+
+<div class="container mt-4">
+    <h2>Create New Tour</h2>
+    <hr />
+    <div class="row">
+        <div class="col-md-8">
+            <form asp-action="CreateTour">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Title" class="form-label"></label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label"></label>
+                    <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="CategoryId" class="form-label"></label>
+                        <!-- Assuming categories are passed via ViewBag for now, or use a hardcoded select as fallback until logic implemented -->
+                        <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.Categories">
+                            <option value="">-- Select Category --</option>
+                        </select>
+                        <span asp-validation-for="CategoryId" class="text-danger"></span>
+                    </div>
+                     <div class="col-md-6 mb-3">
+                        <div class="form-check mt-4">
+                            <input class="form-check-input" type="checkbox" asp-for="Recommended">
+                            <label class="form-check-label" asp-for="Recommended">
+                                @Html.DisplayNameFor(model => model.Recommended)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="DurationDays" class="form-label"></label>
+                        <input asp-for="DurationDays" class="form-control" />
+                        <span asp-validation-for="DurationDays" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="DurationNights" class="form-label"></label>
+                        <input asp-for="DurationNights" class="form-control" />
+                        <span asp-validation-for="DurationNights" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="BestTimeToVisit" class="form-label"></label>
+                    <input asp-for="BestTimeToVisit" class="form-control" />
+                    <span asp-validation-for="BestTimeToVisit" class="text-danger"></span>
+                </div>
+
+                <h4 class="mt-4">Location</h4>
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label asp-for="Street" class="form-label">Street Address</label>
+                        <input asp-for="Street" class="form-control" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="City" class="form-label"></label>
+                        <input asp-for="City" class="form-control" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="State" class="form-label"></label>
+                        <input asp-for="State" class="form-control" />
+                    </div>
+                </div>
+                 <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Country" class="form-label"></label>
+                        <input asp-for="Country" class="form-control" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="PostalCode" class="form-label"></label>
+                        <input asp-for="PostalCode" class="form-control" />
+                    </div>
+                </div>
+
+                <h4 class="mt-4">Media</h4>
+                <div class="mb-3">
+                    <label asp-for="MainImageUrl" class="form-label"></label>
+                    <input asp-for="MainImageUrl" class="form-control" placeholder="https://example.com/image.jpg" />
+                    <span asp-validation-for="MainImageUrl" class="text-danger"></span>
+                </div>
+
+                <h4 class="mt-4">Pricing</h4>
+                <div class="row">
+                     <div class="col-md-6 mb-3">
+                        <label asp-for="StandardPrice" class="form-label"></label>
+                        <input asp-for="StandardPrice" class="form-control" type="number" step="0.01" />
+                        <span asp-validation-for="StandardPrice" class="text-danger"></span>
+                    </div>
+                     <div class="col-md-6 mb-3">
+                        <label asp-for="Currency" class="form-label"></label>
+                        <input asp-for="Currency" class="form-control" />
+                        <span asp-validation-for="Currency" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-success">Create Tour</button>
+                    <a asp-action="Tours" class="btn btn-secondary">Back to List</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

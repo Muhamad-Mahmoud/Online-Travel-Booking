@@ -436,42 +436,66 @@ public static class DbInitializer
 
     private static async Task SeedReviewsAsync(OnlineTravelDbContext context)
     {
-        if (await context.Reviews.AnyAsync()) return;
+        var user = await context.Users.FirstOrDefaultAsync(u => u.UserName == "customer@onlinetravel.com");
+        if (user == null) return;
 
-        var user = await context.Users.FirstAsync(u => u.UserName == "customer@onlinetravel.com");
+        // Fetch existing reviews strategies into memory for reliable comparison
+        // Select (ItemId, CategoryId) tuples to ensure we match the specific constraint
+        var existingReviews = await context.Reviews
+            .IgnoreQueryFilters()
+            .Where(r => r.UserId == user.Id)
+            .Select(r => new { r.ItemId, r.CategoryId })
+            .ToListAsync();
+
+        var existingReviewSet = new HashSet<(Guid ItemId, Guid CategoryId)>(
+            existingReviews.Select(r => (r.ItemId, r.CategoryId)));
+
         var tours = await context.Tours.Take(2).ToListAsync();
         var hotels = await context.Hotels.Take(2).ToListAsync();
 
-        var tourCategory = await context.Categories.FirstAsync(c => c.Type == CategoryType.Tour);
-        var hotelCategory = await context.Categories.FirstAsync(c => c.Type == CategoryType.Hotel);
+        if (!tours.Any() && !hotels.Any()) return;
+
+        var tourCategory = await context.Categories.FirstOrDefaultAsync(c => c.Type == CategoryType.Tour);
+        var hotelCategory = await context.Categories.FirstOrDefaultAsync(c => c.Type == CategoryType.Hotel);
+
+        if (tourCategory == null || hotelCategory == null) return;
 
         var reviews = new List<Review>();
 
         foreach (var tour in tours)
         {
-            reviews.Add(new Review
+            if (!existingReviewSet.Contains((tour.Id, tourCategory.Id)))
             {
-                UserId = user.Id,
-                ItemId = tour.Id,
-                CategoryId = tourCategory.Id,
-                Rating = new StarRating(5),
-                Comment = $"Excellent tour of {tour.Title}! Highly recommended."
-            });
+                reviews.Add(new Review
+                {
+                    UserId = user.Id,
+                    ItemId = tour.Id,
+                    CategoryId = tourCategory.Id,
+                    Rating = new StarRating(5),
+                    Comment = $"Excellent tour of {tour.Title}! Highly recommended."
+                });
+            }
         }
 
         foreach (var hotel in hotels)
         {
-            reviews.Add(new Review
+            if (!existingReviewSet.Contains((hotel.Id, hotelCategory.Id)))
             {
-                UserId = user.Id,
-                ItemId = hotel.Id,
-                CategoryId = hotelCategory.Id,
-                Rating = new StarRating(4.5m),
-                Comment = $"I had a great stay at {hotel.Name}. Staff were very helpful."
-            });
+                reviews.Add(new Review
+                {
+                    UserId = user.Id,
+                    ItemId = hotel.Id,
+                    CategoryId = hotelCategory.Id,
+                    Rating = new StarRating(4.5m),
+                    Comment = $"I had a great stay at {hotel.Name}. Staff were very helpful."
+                });
+            }
         }
 
-        await context.Reviews.AddRangeAsync(reviews);
-        await context.SaveChangesAsync();
+        if (reviews.Any())
+        {
+            await context.Reviews.AddRangeAsync(reviews);
+            await context.SaveChangesAsync();
+        }
     }
 }

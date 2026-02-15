@@ -16,7 +16,6 @@ namespace OnlineTravel.Infrastructure.Migrations
     [Migration("20260215111421_initaildata")]
     partial class initaildata
     {
-        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
@@ -576,11 +575,6 @@ namespace OnlineTravel.Infrastructure.Migrations
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("bit");
 
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
                     b.Property<string>("SeatFeatures")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
@@ -675,11 +669,6 @@ namespace OnlineTravel.Infrastructure.Migrations
                     b.Property<string>("RoomType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -973,11 +962,6 @@ namespace OnlineTravel.Infrastructure.Migrations
 
                     b.Property<Guid>("PriceTierId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
