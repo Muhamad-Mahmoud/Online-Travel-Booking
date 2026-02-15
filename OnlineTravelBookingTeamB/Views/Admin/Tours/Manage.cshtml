@@ -1,0 +1,233 @@
+@model OnlineTravelBookingTeamB.Models.ManageTourViewModel
+
+@{
+    ViewData["Title"] = "Manage Tour";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-0 text-gray-800">Manage Tour: <span class="text-primary">@Model.Tour.Title</span></h1>
+        <p class="mb-0 text-muted">Add details, images, and pricing.</p>
+    </div>
+    <a asp-action="Tours" class="btn btn-secondary shadow-sm">
+        <i class="bi bi-arrow-left"></i> Back to List
+    </a>
+</div>
+
+<!-- Tour Overview -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Tour Overview</h6>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                @if (!string.IsNullOrEmpty(Model.Tour.MainImageUrl))
+                {
+                    <img src="/@Model.Tour.MainImageUrl" class="img-fluid rounded shadow-sm" alt="@Model.Tour.Title" />
+                }
+                else
+                {
+                    <div class="bg-light d-flex align-items-center justify-content-center text-muted rounded" style="height: 200px;">
+                        <i class="bi bi-image display-1"></i>
+                    </div>
+                }
+            </div>
+            <div class="col-md-8">
+                <h4 class="font-weight-bold mb-3">@Model.Tour.Title</h4>
+                <p class="text-muted mb-4">@Model.Tour.Description</p>
+                
+                <div class="row g-3">
+                    <div class="col-sm-6 col-md-4">
+                        <div class="p-3 bg-light rounded">
+                            <small class="text-uppercase text-secondary fw-bold d-block mb-1">Duration</small>
+                            <span class="h6 mb-0 text-dark">@Model.Tour.DurationDays Days / @Model.Tour.DurationNights Nights</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-4">
+                        <div class="p-3 bg-light rounded">
+                            <small class="text-uppercase text-secondary fw-bold d-block mb-1">Location</small>
+                            <span class="h6 mb-0 text-dark">@Model.Tour.Location?.City, @Model.Tour.Location?.Country</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-4">
+                         <div class="p-3 bg-light rounded">
+                            <small class="text-uppercase text-secondary fw-bold d-block mb-1">Price</small>
+                            <span class="h6 mb-0 text-dark">@(Model.Tour.Price?.Currency ?? "USD") @(Model.Tour.Price?.Amount.ToString("N2") ?? "0.00")</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tour Activities -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h6 class="m-0 font-weight-bold text-primary">Map / Itinerary</h6>
+         <button class="btn btn-sm btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#addActivityForm">
+            <i class="bi bi-plus"></i> Add Activity
+        </button>
+    </div>
+    <div class="card-body">
+        <div class="collapse mb-4" id="addActivityForm">
+            <div class="card card-body bg-light border-0">
+                <form asp-action="AddTourActivity" method="post" enctype="multipart/form-data">
+                    <input type="hidden" asp-for="ActivityForm.TourId" value="@Model.Tour.Id" />
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label small text-secondary">Title</label>
+                            <input asp-for="ActivityForm.Title" class="form-control form-control-sm" placeholder="Activity Title" required />
+                        </div>
+                         <div class="col-md-6 mb-2">
+                            <label class="form-label small text-secondary">Image</label>
+                            <input asp-for="ActivityForm.Image" class="form-control form-control-sm" type="file" accept="image/*" required />
+                        </div>
+                        <div class="col-md-12 mb-2">
+                            <textarea asp-for="ActivityForm.Description" class="form-control form-control-sm" placeholder="Description" rows="2"></textarea>
+                        </div>
+                        <div class="col-md-12 text-end">
+                            <button type="submit" class="btn btn-sm btn-success">Save Activity</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        @if (Model.Tour.Activities != null && Model.Tour.Activities.Any())
+        {
+            <div class="row">
+                @foreach (var activity in Model.Tour.Activities)
+                {
+                    <div class="col-md-3 mb-3">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <img src="/@activity.ImageUrl" class="card-img-top rounded-top" style="height: 140px; object-fit: cover;" alt="@activity.Title">
+                            <div class="card-body p-3">
+                                <h6 class="card-title font-weight-bold text-dark mb-1">@activity.Title</h6>
+                                <p class="card-text small text-muted text-truncate">@activity.Description</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-4">
+                 <i class="bi bi-map display-4 text-gray-300"></i>
+                <p class="text-muted small mt-2">No activities added yet. Build the itinerary!</p>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="row">
+     <!-- Gallery Config -->
+    <div class="col-lg-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                <h6 class="m-0 font-weight-bold text-primary">Gallery Images</h6>
+                 <button class="btn btn-sm btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#addImageForm">
+                    <i class="bi bi-plus"></i> Add Image
+                </button>
+            </div>
+            <div class="card-body">
+                 <div class="collapse mb-4" id="addImageForm">
+                    <div class="card card-body bg-light border-0">
+                        <form asp-action="AddTourImage" method="post" enctype="multipart/form-data">
+                            <input type="hidden" asp-for="ImageForm.TourId" value="@Model.Tour.Id" />
+                            <div class="mb-2">
+                                <input asp-for="ImageForm.Image" class="form-control form-control-sm" type="file" accept="image/*" required />
+                            </div>
+                             <div class="mb-2">
+                                <input asp-for="ImageForm.AltText" class="form-control form-control-sm" placeholder="Alt Text (Optional)" />
+                            </div>
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-sm btn-success">Add Image</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="row g-2">
+                    @if (Model.Tour.Images != null && Model.Tour.Images.Any())
+                    {
+                        @foreach (var img in Model.Tour.Images)
+                        {
+                            <div class="col-4">
+                                <img src="/@img.Url" class="img-fluid rounded border" alt="@img.AltText" />
+                            </div>
+                        }
+                    }
+                     else
+                    {
+                        <p class="text-muted small text-center w-100">No images added yet.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Price Tiers Config -->
+    <div class="col-lg-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                <h6 class="m-0 font-weight-bold text-primary">Price Tiers</h6>
+                 <button class="btn btn-sm btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#addPriceForm">
+                    <i class="bi bi-plus"></i> Add Tier
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="collapse mb-4" id="addPriceForm">
+                    <div class="card card-body bg-light border-0">
+                        <form asp-action="AddTourPriceTier" method="post">
+                            <input type="hidden" asp-for="PriceTierForm.TourId" value="@Model.Tour.Id" />
+                            <div class="row">
+                                <div class="col-6 mb-2">
+                                    <input asp-for="PriceTierForm.Name" class="form-control form-control-sm" placeholder="Name (e.g. Deluxe)" required />
+                                </div>
+                                <div class="col-6 mb-2">
+                                    <div class="input-group input-group-sm">
+                                        <input asp-for="PriceTierForm.Amount" class="form-control" placeholder="Price" required />
+                                        <select asp-for="PriceTierForm.Currency" class="form-select" style="max-width: 70px;">
+                                            <option value="USD">USD</option>
+                                            <option value="EUR">EUR</option>
+                                            <option value="EGP">EGP</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12 mb-2">
+                                     <input asp-for="PriceTierForm.Description" class="form-control form-control-sm" placeholder="Description (Optional)" />
+                                </div>
+                                <div class="col-12 text-end">
+                                    <button type="submit" class="btn btn-sm btn-success">Add Tier</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <ul class="list-group list-group-flush">
+                    @if (Model.Tour.PriceTiers != null && Model.Tour.PriceTiers.Any())
+                    {
+                        @foreach (var tier in Model.Tour.PriceTiers)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                <div>
+                                    <span class="fw-bold">@tier.Name</span>
+                                    <div class="small text-muted">@tier.Description</div>
+                                </div>
+                                <span class="badge bg-success rounded-pill">@tier.Price.Currency @tier.Price.Amount</span>
+                            </li>
+                        }
+                    }
+                    else
+                    {
+                         <li class="list-group-item text-center text-muted small border-0">No price tiers added.</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
