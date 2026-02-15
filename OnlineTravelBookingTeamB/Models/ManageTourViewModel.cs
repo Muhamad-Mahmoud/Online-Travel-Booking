@@ -12,6 +12,14 @@ namespace OnlineTravelBookingTeamB.Models;
         public AddActivityViewModel ActivityForm { get; set; } = new();
         public AddTourImageViewModel ImageForm { get; set; } = new();
         public AddTourPriceTierCommand PriceTierForm { get; set; } = new();
+        public UpdateCoordinatesViewModel LocationForm { get; set; } = new();
+    }
+    
+    public class UpdateCoordinatesViewModel
+    {
+        public Guid TourId { get; set; }
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
     }
 
     public class AddActivityViewModel

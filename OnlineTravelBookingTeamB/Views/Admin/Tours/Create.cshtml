@@ -84,7 +84,26 @@
                         </div>
                     </div>
 
-                    <h6 class="text-uppercase text-gray-800 fw-bold small mt-4 mb-3 border-bottom pb-2">Pricing & Media</h6>
+                     <div class="mb-3">
+                        <label class="form-label small text-muted"><i class="bi bi-search me-1"></i>Search Location</label>
+                        <div class="input-group input-group-sm">
+                            <input type="text" id="mapSearchInput" class="form-control" placeholder="Search for a place..." />
+                            <button type="button" class="btn btn-outline-primary" id="mapSearchBtn"><i class="bi bi-search"></i></button>
+                        </div>
+                    </div>
+                    <div id="createMap" style="height: 280px; border-radius: 8px; border: 2px solid #dee2e6; margin-bottom: 1rem; z-index: 1;"></div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Latitude" class="form-label small text-muted">Latitude</label>
+                            <input asp-for="Latitude" class="form-control" id="createLat" placeholder="e.g. 48.8566" />
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Longitude" class="form-label small text-muted">Longitude</label>
+                            <input asp-for="Longitude" class="form-control" id="createLng" placeholder="e.g. 2.3522" />
+                        </div>
+                    </div>
+
+                    <h6 class="text-uppercase text-gray-800 fw-bold small mt-4 mb-3 border-bottom pb-2">Pricing &amp; Media</h6>
 
                     <div class="row mb-3">
                         <div class="col-md-6">
@@ -135,6 +154,9 @@
             </div>
             <div class="card-body">
                 <p class="small text-muted">
+                    <i class="bi bi-geo-alt me-1"></i> Click anywhere on the map to set coordinates, or search for a location.
+                </p>
+                <p class="small text-muted">
                     <i class="bi bi-info-circle me-1"></i> Ensure images are high quality URLs.
                 </p>
                 <p class="small text-muted">
@@ -145,6 +167,72 @@
     </div>
 </div>
 
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var map = L.map('createMap').setView([30.0444, 31.2357], 3);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors',
+                maxZoom: 19
+            }).addTo(map);
+
+            var marker = null;
+            var latInput = document.getElementById('createLat');
+            var lngInput = document.getElementById('createLng');
+
+            function placeMarker(lat, lng) {
+                if (marker) map.removeLayer(marker);
+                marker = L.marker([lat, lng], { draggable: true }).addTo(map);
+                latInput.value = lat.toFixed(6);
+                lngInput.value = lng.toFixed(6);
+                marker.on('dragend', function (e) {
+                    var pos = e.target.getLatLng();
+                    latInput.value = pos.lat.toFixed(6);
+                    lngInput.value = pos.lng.toFixed(6);
+                });
+            }
+
+            map.on('click', function (e) {
+                placeMarker(e.latlng.lat, e.latlng.lng);
+            });
+
+            // Sync manual input to map
+            function syncFromInputs() {
+                var lat = parseFloat(latInput.value);
+                var lng = parseFloat(lngInput.value);
+                if (!isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
+                    placeMarker(lat, lng);
+                    map.setView([lat, lng], 13);
+                }
+            }
+            latInput.addEventListener('change', syncFromInputs);
+            lngInput.addEventListener('change', syncFromInputs);
+
+            // Search
+            var searchInput = document.getElementById('mapSearchInput');
+            var searchBtn = document.getElementById('mapSearchBtn');
+            function doSearch() {
+                var q = searchInput.value.trim();
+                if (!q) return;
+                fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(q) + '&limit=1')
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.length > 0) {
+                            var lat = parseFloat(data[0].lat);
+                            var lng = parseFloat(data[0].lon);
+                            placeMarker(lat, lng);
+                            map.setView([lat, lng], 13);
+                        } else {
+                            alert('Location not found.');
+                        }
+                    });
+            }
+            searchBtn.addEventListener('click', doSearch);
+            searchInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); doSearch(); } });
+        });
+    </script>
 }

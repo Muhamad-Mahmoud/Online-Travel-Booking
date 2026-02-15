@@ -126,7 +126,13 @@ namespace OnlineTravelBookingTeamB.Controllers
                 Tour = tour,
                 ActivityForm = new OnlineTravelBookingTeamB.Models.AddActivityViewModel { TourId = id },
                 ImageForm = new OnlineTravelBookingTeamB.Models.AddTourImageViewModel { TourId = id },
-                PriceTierForm = new OnlineTravel.Application.Features.Tours.Manage.Commands.AddPriceTier.AddTourPriceTierCommand { TourId = id }
+                PriceTierForm = new OnlineTravel.Application.Features.Tours.Manage.Commands.AddPriceTier.AddTourPriceTierCommand { TourId = id },
+                LocationForm = new Models.UpdateCoordinatesViewModel 
+                { 
+                    TourId = id, 
+                    Latitude = tour.Location?.Coordinates?.Y, 
+                    Longitude = tour.Location?.Coordinates?.X 
+                }
             };
 
             return View("Tours/Manage", model);
@@ -210,6 +216,22 @@ namespace OnlineTravelBookingTeamB.Controllers
                 await _mediator.Send(command);
             }
             return RedirectToAction(nameof(ManageTour), new { id = command.TourId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateTourLocation(Models.UpdateCoordinatesViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var command = new OnlineTravel.Application.Features.Tours.Manage.Commands.UpdateCoordinates.UpdateTourCoordinatesCommand
+                {
+                    TourId = model.TourId,
+                    Latitude = model.Latitude,
+                    Longitude = model.Longitude
+                };
+                await _mediator.Send(command);
+            }
+            return RedirectToAction(nameof(ManageTour), new { id = model.TourId });
         }
 
         public IActionResult Hotels()
