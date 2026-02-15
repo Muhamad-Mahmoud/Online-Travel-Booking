@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 using MediatR;
 
 
+using OnlineTravel.Domain.ErrorHandling;
+
 namespace OnlineTravel.Application.Features.Flight.CreateAirport
 {
-    public class CreateAirportCommand:IRequest<CreateAirportResponse>
+    public class CreateAirportCommand : IRequest<Result<CreateAirportResponse>>
     {
         public string Code { get; set; }
         public string Name { get; set; }

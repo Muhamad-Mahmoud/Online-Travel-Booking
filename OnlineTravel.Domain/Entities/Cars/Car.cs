@@ -1,4 +1,4 @@
-using System.Drawing;
+using NetTopologySuite.Geometries;
 using OnlineTravel.Domain.Entities._Base;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 using OnlineTravel.Domain.Entities.Core;
@@ -26,15 +26,16 @@ public class Car : SoftDeletableEntity
 
     public List<string> Features { get; set; } = new();
 
-    public List<DateRange> AvailableDates { get; set; } = new();
+    public List<DateTimeRange> AvailableDates { get; set; } = new();
 
     public string? CancellationPolicy { get; set; }
 
     public Guid CategoryId { get; set; }
 
-    public byte[]? RowVersion { get; set; }
 
-    public Point Location { get; set; }
+    public Point Location { get; set; } = null!;
+
+    public byte[]? RowVersion { get; set; }
 
     // Navigation Properties
 

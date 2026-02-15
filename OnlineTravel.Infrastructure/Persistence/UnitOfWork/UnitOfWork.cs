@@ -74,12 +74,5 @@ namespace OnlineTravel.Infrastructure.Persistence.UnitOfWork
                 _transaction = null;
             }
         }
-
-        public async Task SaveChangesAsync()
-        {
-            await _dbContext.SaveChangesAsync();
-        }
-
     }
 }
-

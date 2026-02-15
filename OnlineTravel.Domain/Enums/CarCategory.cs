@@ -10,7 +10,8 @@ public enum CarCategory
 
     Luxury = 3,
 
-    Van = 4
+    Van = 4,
+    SUV = 5
 }
 
 

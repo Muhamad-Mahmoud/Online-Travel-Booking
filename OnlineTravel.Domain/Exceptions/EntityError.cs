@@ -1,4 +1,4 @@
-﻿namespace Domain.ErrorHandling;
+﻿namespace OnlineTravel.Domain.ErrorHandling;
 
 public static class EntityError<T>
 {
