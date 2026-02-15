@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FluentValidation;
+using OnlineTravel.Application.Features.Flight.CreateAirport;
 
-namespace OnlineTravel.Application.Features.Flight.CreateAirport
+namespace OnlineTravel.Application.Features.Flight.Airport.CreateAirport
 {
     public class CreateAirportValidator: AbstractValidator<CreateAirportCommand>
     {

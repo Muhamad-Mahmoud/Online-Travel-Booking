@@ -5,13 +5,15 @@ using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 using OnlineTravel.Domain.Entities.Flights;
 using OnlineTravel.Domain.Entities.Flights.ValueObjects;
+using OnlineTravel.Application.Features.Flight.Airport.CreateAirport;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OnlineTravel.Application.Features.Flight.CreateAirport;
 
-namespace OnlineTravel.Application.Features.Flight.CreateAirport
+namespace OnlineTravel.Application.Features.Flight.Airport.CreateAirport
 {
     public class CreateAirportHandler : IRequestHandler<CreateAirportCommand, Result<CreateAirportResponse>>
     {
@@ -34,7 +36,7 @@ namespace OnlineTravel.Application.Features.Flight.CreateAirport
                 request.ZipCode);
 
             //  Map Command data to Airport Entity
-            var airport = new Airport
+            var airport = new OnlineTravel.Domain.Entities.Flights.Airport
             {
                 Code = iataCode,
                 Name = request.Name,
@@ -44,7 +46,7 @@ namespace OnlineTravel.Application.Features.Flight.CreateAirport
             };
 
             //  Add the entity to the database via the Unit of Work's Repository
-            await _unitOfWork.Repository<Airport>().AddAsync(airport);
+            await _unitOfWork.Repository<OnlineTravel.Domain.Entities.Flights.Airport> ().AddAsync(airport);
 
             // Persist changes to the database (Commit)
             var result = await _unitOfWork.Complete();
