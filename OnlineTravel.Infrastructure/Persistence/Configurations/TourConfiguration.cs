@@ -10,9 +10,8 @@ public class TourConfiguration : IEntityTypeConfiguration<Tour>
 {
     public void Configure(EntityTypeBuilder<Tour> builder)
     {
-        builder.ToTable("Tours", "tours");
-        builder.Property(e => e.RowVersion).IsRowVersion();
 
+        builder.ToTable("Tours", "tours");
         builder.Property(e => e.RowVersion).IsRowVersion();
 
 

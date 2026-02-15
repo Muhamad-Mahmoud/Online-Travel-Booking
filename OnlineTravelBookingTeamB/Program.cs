@@ -11,8 +11,6 @@ using OnlineTravel.Infrastructure.Persistence.UnitOfWork;
 using OnlineTravel.Infrastructure.Services;
 using OnlineTravelBookingTeamB.Extensions;
 using OnlineTravelBookingTeamB.Middleware;
-using OnlineTravel.Infrastructure.Identity;
-using OnlineTravel.Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection; // Ensure this is present
 
 
@@ -52,6 +50,12 @@ app.UseSerilogRequestLogging();
 app.UseMiddleware<ExceptionMiddleware>();
 
 await app.ApplyDatabaseSetupAsync();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ecommerce API v1"));
+}
 
 app.UseAuthentication();
 app.UseStatusCodePagesWithReExecute("/errors/{0}");

@@ -276,6 +276,12 @@ namespace OnlineTravel.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("ImagesJson");
 
+                    b.Property<DateTime?>("LastReservedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Point>("Location")
+                        .HasColumnType("geography");
+
                     b.Property<string>("Make")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -793,38 +799,37 @@ namespace OnlineTravel.Infrastructure.Migrations
                     b.ToTable("Payments", "billing");
                 });
 
-            modelBuilder.Entity("OnlineTravel.Domain.Entities.Reviews.Favorite", b =>
+            modelBuilder.Entity("OnlineTravel.Domain.Entities.Payments.ProcessedWebhookEvent", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("AddedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("CategoryId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("ItemId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("EventId")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime>("ProcessedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("UserId", "CategoryId", "ItemId")
+                    b.HasIndex("EventId")
                         .IsUnique();
 
-                    b.ToTable("Favorites", "reviews");
+                    b.ToTable("ProcessedWebhookEvents");
                 });
 
             modelBuilder.Entity("OnlineTravel.Domain.Entities.Reviews.Review", b =>
@@ -902,10 +907,8 @@ namespace OnlineTravel.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("HighlightsJson");
 
-                    b.Property<string>("Images")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("ImagesJson");
+                    b.Property<DateTime?>("LastReservedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("Recommended")
                         .HasColumnType("bit");

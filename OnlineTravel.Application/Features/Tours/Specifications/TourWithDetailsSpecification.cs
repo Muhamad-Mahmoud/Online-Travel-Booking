@@ -11,5 +11,6 @@ public class TourWithDetailsSpecification : BaseSpecification<Tour>
         AddIncludes(t => t.Activities);
         AddIncludes(t => t.PriceTiers);
         AddIncludes(t => t.Images);
+        AddIncludes(t => t.Reviews);
     }
 }

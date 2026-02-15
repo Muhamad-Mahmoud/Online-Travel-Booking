@@ -45,5 +45,10 @@ namespace OnlineTravel.Application.Specifications
             OrderByDescending = orderByDescExpression;
         }
 
+        protected void ApplyOrderByDescending(Expression<Func<T, object>> orderByDescExpression)
+        {
+            OrderByDescending = orderByDescExpression;
+        }
+
     }
 }
