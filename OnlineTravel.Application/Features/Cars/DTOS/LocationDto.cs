@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace OnlineTravel.Application.Features.Cars.DTOs
 {
-    public class ImageUrlDto
+    public class LocationDto
     {
-        public string Url { get; set; } = string.Empty;
-        public string? AltText { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
     }
 }

@@ -1,10 +1,11 @@
-﻿using Domain.ErrorHandling;
+﻿
 using Mapster;
 using MediatR;
 using OnlineTravel.Application.Features.CarBrands.DTOs;
 using OnlineTravel.Application.Features.CarBrands.Queries;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities.Cars;
+using OnlineTravel.Domain.ErrorHandling;
 using System;
 using System.Collections.Generic;
 using System.Linq;

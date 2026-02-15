@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace OnlineTravel.Application.Features.Cars.DTOs
 {
-    public class ImageUrlDto
+    public class DateTimeRangeDto
     {
-        public string Url { get; set; } = string.Empty;
-        public string? AltText { get; set; }
+        public DateTime Start { get; set; }
+        public DateTime End { get; set; }
     }
+
 }

@@ -32,10 +32,4 @@
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="9.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Features\CarBrands\Validation\" />
-    <Folder Include="Features\Cars\Handlers\" />
-    <Folder Include="Features\Cars\Queries\" />
-  </ItemGroup>
-
 </Project>

@@ -1,6 +1,7 @@
-﻿using Domain.ErrorHandling;
+﻿
 using MediatR;
 using OnlineTravel.Application.Features.CarBrands.DTOs;
+using OnlineTravel.Domain.ErrorHandling;
 using OnlineTravel.Domain.Exceptions;
 using System;
 using System.Collections.Generic;

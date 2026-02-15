@@ -1,5 +1,6 @@
-﻿using Domain.ErrorHandling;
+﻿
 using MediatR;
+using OnlineTravel.Domain.ErrorHandling;
 using System;
 using System.Collections.Generic;
 using System.Linq;
