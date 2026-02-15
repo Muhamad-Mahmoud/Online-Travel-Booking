@@ -9,7 +9,7 @@ public class ReviewConfiguration : IEntityTypeConfiguration<Review>
     public void Configure(EntityTypeBuilder<Review> builder)
     {
         builder.ToTable("Reviews", "reviews");
-        builder.HasIndex(e => new { e.UserId, e.CategoryId, e.ItemId }).IsUnique();
+        builder.HasIndex(e => new { e.UserId, e.CategoryId, e.ItemId }); // Allow multiple reviews
         builder.HasIndex(e => new { e.CategoryId, e.ItemId });
 
         builder.OwnsOne(e => e.Rating, r =>
