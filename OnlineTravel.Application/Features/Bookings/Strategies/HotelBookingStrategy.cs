@@ -31,14 +31,14 @@ public class HotelBookingStrategy : IBookingStrategy
         var overlappingBookings = await _unitOfWork.Repository<BookingDetail>().GetAllWithSpecAsync(overlappingSpec, cancellationToken);
 
         if (overlappingBookings.Any())
-            return Result<BookingProcessResult>.Failure(Error.Validation($"Room {room.RoomNumber} is already booked for the selected dates."));
+            return Result<BookingProcessResult>.Failure(Error.Validation($"Room {room.Name} is already booked for the selected dates."));
 
         // Touch the entity to trigger RowVersion check on Save
         _unitOfWork.Repository<Room>().Update(room);
 
         var nights = Math.Max(stayRange.TotalNights, 1);
-        var totalPrice = room.BasePrice * nights;
+        var totalPrice = room.BasePricePerNight * nights;
+        return Result<BookingProcessResult>.Success(new BookingProcessResult(totalPrice, room.Name));
 
-        return Result<BookingProcessResult>.Success(new BookingProcessResult(totalPrice, room.Id.ToString()));
     }
 }

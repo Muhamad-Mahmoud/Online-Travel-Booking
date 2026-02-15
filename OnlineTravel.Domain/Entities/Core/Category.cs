@@ -6,7 +6,6 @@ namespace OnlineTravel.Domain.Entities.Core;
 
 public class Category : BaseEntity
 {
-    public CategoryType Type { get; set; }
 
     public CategoryType Type { get; set; }
     public string Title { get; set; } = string.Empty;

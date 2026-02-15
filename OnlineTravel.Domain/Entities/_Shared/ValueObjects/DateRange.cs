@@ -22,4 +22,24 @@ public record DateRange
     public bool Contains(DateOnly date) => date >= Start && date <= End;
 
     public override string ToString() => $"{Start:yyyy-MM-dd} to {End:yyyy-MM-dd}";
+
+    #region For task Hotel RoomAvailability - check if two date ranges overlap (e.g., for checking room availability)
+    public bool Overlaps(DateRange other)
+    {
+        if (other == null)
+            throw new ArgumentNullException(nameof(other));
+
+        return Start < other.End && End > other.Start;
+    }
+    public IEnumerable<DateTime> GetDates()
+    {
+        for (var date = Start; date < End; date = date.AddDays(1))
+        {
+            yield return date.ToDateTime(TimeOnly.MinValue);
+        }
+    }
+
+
+
+    #endregion
 }

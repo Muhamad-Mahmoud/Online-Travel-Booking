@@ -1,14 +1,11 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 using OnlineTravel.Application.DependencyInjection;
 using OnlineTravel.Application.Interfaces.Services;
 using OnlineTravel.Infrastructure;
-using OnlineTravel.Infrastructure.Persistence.UnitOfWork;
-using OnlineTravelBookingTeamB.Extensions;
+
 using OnlineTravelBookingTeamB.Middleware;
 using OnlineTravel.Infrastructure.Identity;
 using OnlineTravel.Infrastructure.Services;
-using OnlineTravelBookingTeamB.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +35,7 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 var app = builder.Build();
+app.UseStaticFiles();
 
 // Configure the HTTP request pipeline.
 app.UseMiddleware<ExceptionMiddleware>();
@@ -51,7 +49,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseMiddleware<ExceptionMiddleware>();
 
 await app.ApplyDatabaseMigrationsAsync();
 

@@ -6,28 +6,65 @@ using OnlineTravel.Domain.Entities.Hotels;
 
 public class RoomConfiguration : IEntityTypeConfiguration<Room>
 {
-    public void Configure(EntityTypeBuilder<Room> builder)
-    {
-        builder.ToTable("Rooms", "hotels");
-        builder.Property(e => e.RowVersion).IsRowVersion();
-
-        builder.HasIndex(e => new { e.HotelId, e.RoomNumber });
-
-        builder.Property(e => e.Extras)
-            .HasColumnName("ExtrasJson")
-            .HasConversion(
-                v => System.Text.Json.JsonSerializer.Serialize(v, (System.Text.Json.JsonSerializerOptions?)null),
-                v => System.Text.Json.JsonSerializer.Deserialize<List<string>>(v, (System.Text.Json.JsonSerializerOptions?)null) ?? new List<string>())
-            .Metadata.SetValueComparer(new ValueComparer<List<string>>(
-                (c1, c2) => c1!.SequenceEqual(c2!),
-                c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
-                c => c.ToList()));
-
-        // ÅÖÇÝÉ ÇáÜ PricePerNight
-        builder.OwnsOne(r => r.PricePerNight, pp =>
+        public void Configure(EntityTypeBuilder<Room> builder)
         {
-            pp.Property(p => p.Amount).HasColumnName("PriceAmount");
-            pp.Property(p => p.Currency).HasColumnName("PriceCurrency");
-        });
+            builder.HasKey(r => r.Id);
+
+            builder.Property(r => r.RoomNumber)
+                .IsRequired()
+                .HasMaxLength(50);
+
+            builder.Property(r => r.Name)
+                .IsRequired()
+                .HasMaxLength(200);
+
+            builder.Property(r => r.Description)
+                .IsRequired()
+                .HasMaxLength(1000);
+
+            builder.Property(r => r.Capacity)
+                .IsRequired();
+
+            builder.Property(r => r.BedCount)
+                .IsRequired();
+
+            // Money owned type
+            builder.OwnsOne(r => r.BasePricePerNight, money =>
+            {
+                money.Property(m => m.Amount)
+                    .HasColumnType("decimal(18,2)")
+                    .IsRequired();
+                money.Property(m => m.Currency)
+                    .IsRequired()
+                    .HasMaxLength(3);
+            });
+
+            // Photos collection
+            builder.OwnsMany(r => r.Photos, photo =>
+            {
+                photo.Property(p => p.Value)
+                    .IsRequired()
+                    .HasMaxLength(500);
+            });
+
+            // Unique constraint
+            builder.HasIndex(r => new { r.HotelId, r.RoomNumber })
+                .IsUnique();
+
+            // Relationships
+            builder.HasMany(r => r.SeasonalPrices)
+                .WithOne(sp => sp.Room)
+                .HasForeignKey(sp => sp.RoomId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(r => r.RoomAvailabilities)
+                .WithOne(ra => ra.Room)
+                .HasForeignKey(ra => ra.RoomId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(r => r.Bookings)
+                .WithOne(b => b.Room)
+                .HasForeignKey(b => b.RoomId)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
     }
-}

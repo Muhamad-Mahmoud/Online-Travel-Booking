@@ -1,80 +1,151 @@
 using NetTopologySuite.Geometries;
 using OnlineTravel.Domain.Entities._Base;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
-using OnlineTravel.Domain.Entities.Core;
+using OnlineTravel.Domain.Entities.Reviews;
 using OnlineTravel.Domain.Entities.Reviews.ValueObjects;
 
 namespace OnlineTravel.Domain.Entities.Hotels;
 
 public class Hotel : SoftDeletableEntity
 {
-    /// <summary>
-    /// Hotel name
-    /// Example: "Grand Nile Hotel", "Hilton Cairo"
-    /// Required field
-    /// </summary>
-
-    public string Name { get; set; } = string.Empty;
-
-    public string? Description { get; set; }
-
-    public Address Address { get; set; } = null!;
-    public ContactInfo? ContactInfo { get; set; }
-
-    public ImageUrl? MainImage { get; set; }
-
-    public List<ImageUrl> Gallery { get; set; } = new();
+    public string Name { get; private set; }
+    public string Slug { get; private set; }
+    public string Description { get; private set; }
+    public Address Address { get; private set; }
+    public ContactInfo ContactInfo { get; private set; }
+    public string? MainImageUrl { get; private set; }
+    public StarRating? Rating { get; private set; }
+    public TimeRange CheckInTime { get; private set; }
+    public TimeRange CheckOutTime { get; private set; }
+    public string CancellationPolicy { get; private set; }
 
 
-    public StarRating? StarRating { get; set; }
+    // Navigation properties
+    private readonly List<Room> _rooms = new();
+    public IReadOnlyCollection<Room> Rooms => _rooms.AsReadOnly();
 
+    private readonly List<Review> _reviews = new();
+    public IReadOnlyCollection<Review> Reviews => _reviews.AsReadOnly();
 
-    public Guid CategoryId { get; set; }
+    private Hotel() { } // EF Core
 
-    // Navigation Properties
+    public Hotel(
+        string name,
+        string slug,
+        string description,
+        Address address,
+        ContactInfo contactInfo,
+        TimeRange checkInTime,
+        TimeRange checkOutTime,
+        string cancellationPolicy,
+        string? mainImageUrl = null)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException("Name is required", nameof(name));
 
-    public virtual Category Category { get; set; } = null!;
+        if (string.IsNullOrWhiteSpace(slug))
+            throw new ArgumentException("Slug is required", nameof(slug));
 
-    public virtual ICollection<Room> Rooms { get; set; } = new List<Room>();
+        if (string.IsNullOrWhiteSpace(description))
+            throw new ArgumentException("Description is required", nameof(description));
 
-    #region 
-    // Add a new room to the hotel
+        if (string.IsNullOrWhiteSpace(cancellationPolicy))
+            throw new ArgumentException("Cancellation policy is required", nameof(cancellationPolicy));
 
-     public void AddRoom(Room  room)
+        Id = Guid.NewGuid();
+        Name = name;
+        Slug = slug.ToLowerInvariant();
+        Description = description;
+        Address = address ?? throw new ArgumentNullException(nameof(address));
+        ContactInfo = contactInfo ?? throw new ArgumentNullException(nameof(contactInfo));
+        CheckInTime = checkInTime ?? throw new ArgumentNullException(nameof(checkInTime));
+        CheckOutTime = checkOutTime ?? throw new ArgumentNullException(nameof(checkOutTime));
+        CancellationPolicy = cancellationPolicy;
+        MainImageUrl = mainImageUrl;
+        CreatedAt = DateTime.UtcNow;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void UpdateDetails(string name, string description, string cancellationPolicy)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException("Name is required", nameof(name));
+
+        Name = name;
+        Description = description;
+        CancellationPolicy = cancellationPolicy;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void UpdateAddress(Address address)
+    {
+        Address = address ?? throw new ArgumentNullException(nameof(address));
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void UpdateContactInfo(ContactInfo contactInfo)
+    {
+        ContactInfo = contactInfo ?? throw new ArgumentNullException(nameof(contactInfo));
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void UpdateCheckInCheckOut(TimeRange checkInTime, TimeRange checkOutTime)
+    {
+        CheckInTime = checkInTime ?? throw new ArgumentNullException(nameof(checkInTime));
+        CheckOutTime = checkOutTime ?? throw new ArgumentNullException(nameof(checkOutTime));
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void SetMainImage(string imageUrl)
+    {
+        MainImageUrl = imageUrl;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void AddRoom(Room room)
     {
         if (room == null)
-        {
-            throw new ArgumentNullException(nameof(room), "Room cannot be null");
-        }
-        room.HotelId = this.Id; // Set the foreign key to establish the relationship
-        Rooms.Add(room);
-        UpdatedAt = DateTime.UtcNow; // Update the timestamp for the hotel entity
+            throw new ArgumentNullException(nameof(room));
+
+        if (_rooms.Any(r => r.RoomNumber == room.RoomNumber))
+            throw new InvalidOperationException($"Room with number {room.RoomNumber} already exists");
+
+        _rooms.Add(room);
+        UpdatedAt = DateTime.UtcNow;
     }
 
-    // Add Image to gallery 
-    public void AddGalleryImage(ImageUrl imageUrl)
+    public void AddReview(Review review)
     {
-        if(imageUrl == null)
-        {
-              throw new ArgumentNullException(nameof(imageUrl), "Image URL cannot be null");
-        }
-        Gallery.Add(imageUrl);
-        UpdatedAt = DateTime.UtcNow; // Update the timestamp for the hotel entity
+        if (review == null)
+            throw new ArgumentNullException(nameof(review));
+
+        _reviews.Add(review);
+        RecalculateRating();
+        UpdatedAt = DateTime.UtcNow;
     }
 
-    /// <summary>
-    /// Calculate distance to another hotel in kilometers
-    /// Uses NetTopologySuite Point.Distance()
-    /// </summary>
-    /// <param name="otherHotel">Hotel to calculate distance to</param>
-    /// <returns>Distance in kilometers, or null if coordinates missing</returns>
-    public double? DistanceToInKm(Hotel otherHotel)
+    private void RecalculateRating()
     {
-        return Address?.DistanceToInKm(otherHotel.Address);
+        if (_reviews.Count == 0)
+        {
+            Rating = null;
+            return;
+        }
+
+        var averageRating = _reviews.Average(r => (int)r.Rating);
+        Rating = new StarRating((int)Math.Round(averageRating));
+    }
+
+    public double GetAverageRating()
+    {
+        if (_reviews.Count == 0)
+            return 0;
+
+        return _reviews.Average(r => (int)r.Rating);
     }
 
 
-    #endregion
+
 }
 
 

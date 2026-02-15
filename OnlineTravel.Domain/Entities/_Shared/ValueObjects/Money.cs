@@ -43,6 +43,19 @@ public record Money
     {
         return new Money(left.Amount * multiplier, left.Currency);
     }
+
+    #region
+    public Money Add(Money other)
+    {
+        if (other == null)
+            throw new ArgumentNullException(nameof(other));
+
+        if (Currency != other.Currency)
+            throw new InvalidOperationException("Cannot add money with different currencies");
+
+        return new Money(Amount + other.Amount, Currency);
+    }
+    #endregion
 }
 
 

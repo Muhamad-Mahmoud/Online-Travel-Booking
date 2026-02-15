@@ -1,95 +1,174 @@
 using OnlineTravel.Domain.Entities._Base;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
+using OnlineTravel.Domain.Entities.Bookings;
 using OnlineTravel.Domain.Enums;
 
 namespace OnlineTravel.Domain.Entities.Hotels;
 
 public class Room : BaseEntity
 {
-    public Guid HotelId { get; set; }
+    public Guid HotelId { get; private set; }
+    public string RoomNumber { get; private set; }
+    public string Name { get; private set; }
+    public string Description { get; private set; }
+    public Money BasePricePerNight { get; private set; }
+    public int Capacity { get; private set; }
+    public int BedCount { get; private set; }
 
-    public string RoomNumber { get; set; } = string.Empty;
+    private readonly List<Url> _photos = new();
+    public IReadOnlyCollection<Url> Photos => _photos.AsReadOnly();
 
-    public string RoomType { get; set; } = string.Empty; // Single, Double, Suite
+    // Navigation properties
+    public Hotel Hotel { get; private set; }
 
-    public Money PricePerNight { get; private set; }
+    private readonly List<SeasonalPrice> _seasonalPrices = new();
+    public IReadOnlyCollection<SeasonalPrice> SeasonalPrices => _seasonalPrices.AsReadOnly();
 
-    public List<DateRange> AvailableDates { get; set; } = new();
-    
-  //  public List<string> Extras { get; set; } = new();
+    private readonly List<RoomAvailability> _roomAvailabilities = new();
+    public IReadOnlyCollection<RoomAvailability> RoomAvailabilities => _roomAvailabilities.AsReadOnly();
 
-    public int? MinimumStayNights { get; set; }
+    private readonly List<BookingEntity> _bookings = new();
+    public IReadOnlyCollection<BookingEntity> Bookings => _bookings.AsReadOnly();
 
-    public bool IsAvailable { get; private set; }
-    public List<string> Extras { get; set; } = new();
+    private Room() { } // EF Core
 
-
-    // Navigation Properties
-
-    public virtual Hotel Hotel { get; set; } = null!;
-
-    public void UpdatePrice(decimal amount, string currency = "USD")
+    public Room(
+        Guid hotelId,
+        string roomNumber,
+        string name,
+        string description,
+        Money basePricePerNight)
     {
-        PricePerNight = new Money(amount, currency);
-        UpdatedAt = DateTime.UtcNow;
+        if (hotelId == Guid.Empty)
+            throw new ArgumentException("Hotel ID is required", nameof(hotelId));
+
+        if (string.IsNullOrWhiteSpace(roomNumber))
+            throw new ArgumentException("Room number is required", nameof(roomNumber));
+
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException("Name is required", nameof(name));
+
+        if (basePricePerNight == null || basePricePerNight.Amount <= 0)
+            throw new ArgumentException("Base price per night must be greater than zero", nameof(basePricePerNight));
+
+        Id = Guid.NewGuid();
+        HotelId = hotelId;
+        RoomNumber = roomNumber;
+        Name = name;
+        Description = description;
+        BasePricePerNight = basePricePerNight;
+        Capacity = 1; // Fixed as per requirements
+        BedCount = 1; // Fixed as per requirements
+        CreatedAt = DateTime.UtcNow;
     }
 
-    public void SetAvailability(bool isAvailable)
+    public void UpdateDetails(string name, string description, Money basePricePerNight)
     {
-        IsAvailable = isAvailable;
-        UpdatedAt = DateTime.UtcNow;
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException("Name is required", nameof(name));
+
+        if (basePricePerNight == null || basePricePerNight.Amount <= 0)
+            throw new ArgumentException("Base price per night must be greater than zero", nameof(basePricePerNight));
+
+        Name = name;
+        Description = description;
+        BasePricePerNight = basePricePerNight;
     }
 
-    /// <summary>
-    /// Add a date range to available dates
-    /// </summary>
-    /// <param name="dateRange">Date range to add</param>
-    public void AddAvailableDateRange(DateRange dateRange)
+    public void AddPhoto(Url photoUrl)
     {
-        if (dateRange == null)
-            throw new ArgumentNullException(nameof(dateRange));
+        if (photoUrl == null)
+            throw new ArgumentNullException(nameof(photoUrl));
 
-        // Check for overlaps with existing ranges
-        if (AvailableDates.Any(dr => dr.OverlapsWith(dateRange)))
-            throw new InvalidOperationException("Date range overlaps with existing availability");
-
-        AvailableDates.Add(dateRange);
-        UpdatedAt = DateTime.UtcNow;
+        _photos.Add(photoUrl);
     }
 
-    /// <summary>
-    /// Check if room is available for a specific date range
-    /// </summary>
-    /// <param name="requestedRange">Date range to check</param>
-    /// <returns>True if room is available for entire range</returns>
-    public bool IsAvailableForDates(DateRange requestedRange)
+    public void RemovePhoto(Url photoUrl)
     {
-        if (!IsAvailable)
-            return false;
-
-        if (requestedRange == null)
-            return false;
-
-        // Check if requested range falls within any available date range
-        return AvailableDates.Any(availableRange =>
-            requestedRange.Start >= availableRange.Start &&
-            requestedRange.End <= availableRange.End);
+        _photos.Remove(photoUrl);
     }
 
-    /// <summary>
-    /// Calculate total price for a stay
-    /// </summary>
-    /// <param name="dateRange">Stay date range</param>
-    /// <returns>Total price for the stay</returns>
+    public void AddSeasonalPrice(SeasonalPrice seasonalPrice)
+    {
+        if (seasonalPrice == null)
+            throw new ArgumentNullException(nameof(seasonalPrice));
+
+        // Check for overlapping date ranges
+        if (_seasonalPrices.Any(sp => sp.DateRange.Overlaps(seasonalPrice.DateRange)))
+            throw new InvalidOperationException("Seasonal price date range overlaps with existing seasonal price");
+
+        _seasonalPrices.Add(seasonalPrice);
+    }
+
+    public void SetAvailability(RoomAvailability availability)
+    {
+        if (availability == null)
+            throw new ArgumentNullException(nameof(availability));
+
+        // Check for overlapping date ranges
+        var overlapping = _roomAvailabilities
+            .Where(a => a.DateRange.Overlaps(availability.DateRange))
+            .ToList();
+
+        foreach (var item in overlapping)
+        {
+            _roomAvailabilities.Remove(item);
+        }
+
+        _roomAvailabilities.Add(availability);
+    }
+
+    public void AddBooking(BookingEntity booking)
+    {
+        if (booking == null)
+            throw new ArgumentNullException(nameof(booking));
+
+        _bookings.Add(booking);
+    }
+
+    public Money GetPriceForDate(DateOnly date)
+    {
+        var seasonalPrice = _seasonalPrices
+            .FirstOrDefault(sp => sp.DateRange.Contains(date));
+
+        return seasonalPrice?.PricePerNight ?? BasePricePerNight;
+    }
+
     public Money CalculateTotalPrice(DateRange dateRange)
     {
         if (dateRange == null)
             throw new ArgumentNullException(nameof(dateRange));
 
-        var nights = dateRange.TotalNights;
-        var totalAmount = PricePerNight.Amount * nights;
+        var totalPrice = new Money(0, BasePricePerNight.Currency);
 
-        return new Money(totalAmount, PricePerNight.Currency);
+        foreach (var date in dateRange.GetDates())
+        {
+            var dateOnly = DateOnly.FromDateTime(date);
+            var priceForDate = GetPriceForDate(dateOnly);
+            totalPrice = totalPrice.Add(priceForDate);
+        }
+
+        return totalPrice;
     }
 
+    public bool IsAvailable(DateRange dateRange)
+    {
+        if (dateRange == null)
+            throw new ArgumentNullException(nameof(dateRange));
+
+        // Check if there's any unavailability that overlaps
+        var hasUnavailability = _roomAvailabilities
+            .Where(a => !a.IsAvailable && a.DateRange.Overlaps(dateRange))
+            .Any();
+
+        if (hasUnavailability)
+            return false;
+
+        // Check for overlapping bookings
+        var hasOverlappingBooking = _bookings
+            .Where(b => b.Status != BookingStatus.Cancelled && b.DateRange.Overlaps(dateRange))
+            .Any();
+
+        return !hasOverlappingBooking;
+    }
 }

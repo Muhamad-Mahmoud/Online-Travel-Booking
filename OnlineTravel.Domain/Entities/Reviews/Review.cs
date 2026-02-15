@@ -1,5 +1,6 @@
 using OnlineTravel.Domain.Entities._Base;
 using OnlineTravel.Domain.Entities.Core;
+using OnlineTravel.Domain.Entities.Hotels;
 using OnlineTravel.Domain.Entities.Reviews.ValueObjects;
 using OnlineTravel.Domain.Entities.Users;
 
@@ -26,6 +27,10 @@ public class Review : SoftDeletableEntity
     public virtual Category Category { get; set; } = null!;
 
     public virtual Bookings.BookingEntity? Booking { get; set; }
+    public Guid? HotelId { get; set; }
+
+    public Hotel? Hotel { get; set; }
+
 }
 
 

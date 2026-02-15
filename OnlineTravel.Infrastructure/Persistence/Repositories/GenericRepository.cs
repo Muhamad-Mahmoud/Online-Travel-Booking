@@ -59,8 +59,9 @@ namespace OnlineTravel.Infrastructure.Persistence.Repositories
         public void Update(T entity)
         {
             _dbContext.Set<T>().Update(entity);
-        }
+        } 
 
+        
         public async Task AddAsync(T entity, CancellationToken cancellationToken = default)
         {
             await _dbContext.Set<T>().AddAsync(entity, cancellationToken);
@@ -76,6 +77,32 @@ namespace OnlineTravel.Infrastructure.Persistence.Repositories
         {
             return SpecificationEvaluator<T>.GetQuery(_dbContext.Set<T>(), spec);
         }
+
+        //public async Task<IReadOnlyList<T>> ListAsync(ISpecification<T> spec, CancellationToken cancellationToken = default)
+        //{
+        //    return await ApplySpecifications(spec).ToListAsync(cancellationToken);
+        //}
+
+
+        //public async Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
+        //{
+        //    return await _dbContext.Set<T>().FirstOrDefaultAsync(predicate, cancellationToken);
+        //}
+
+        public async Task<IReadOnlyList<T>> ListAllAsync()
+        {
+            return await _dbContext.Set<T>().ToListAsync();
+        }
+        public async Task<IReadOnlyList<T>> ListAsync(ISpecification<T> spec, CancellationToken cancellationToken = default)
+        {
+            return await ApplySpecifications(spec).ToListAsync(cancellationToken);
+        }
+
+
+        //public async Task<IReadOnlyList<T>> ListAsync(ISpecification<T> spec)
+        //{
+        //    return await ApplySpecifications(spec).ToListAsync();
+        //}
 
     }
 }
