@@ -29,7 +29,7 @@ public class FlightSeat : BaseEntity
             throw new DomainException($"Seat {SeatLabel} is no longer available.");
         }
 
-        IsAvailable = false;
+        // IsAvailable = false; // Removed: Availability is now dynamic based on bookings
         LastReservedAt = DateTime.UtcNow;
     }
 

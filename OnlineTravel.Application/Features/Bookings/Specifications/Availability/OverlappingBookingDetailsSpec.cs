@@ -18,7 +18,7 @@ namespace OnlineTravel.Application.Features.Bookings.Specifications.Availability
                          bd.Booking.Status != BookingStatus.Cancelled &&
                          bd.Booking.Status != BookingStatus.Refunded &&
                          // Expired pending bookings are not considered overlapping
-                         !(bd.Booking.Status == BookingStatus.Pending && now > bd.Booking.ExpiresAt))
+                         !(bd.Booking.Status == BookingStatus.PendingPayment && now > bd.Booking.ExpiresAt))
         {
         }
     }

@@ -58,6 +58,7 @@ public class OnlineTravelDbContext : IdentityDbContext<AppUser, IdentityRole<Gui
 
     // Payments
     public DbSet<Payment> Payments => Set<Payment>();
+    public DbSet<ProcessedWebhookEvent> ProcessedWebhookEvents => Set<ProcessedWebhookEvent>();
 
     // Reviews
     public DbSet<Review> Reviews => Set<Review>();

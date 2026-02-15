@@ -24,10 +24,8 @@ public class FlightBookingStrategy : IBookingStrategy
 
 	public CategoryType Type => CategoryType.Flight;
 
-	public async Task<Result<BookingProcessResult>> ProcessBookingAsync(Guid itemId, DateTimeRange stayRange, CancellationToken cancellationToken)
+	public async Task<Result<BookingProcessResult>> ProcessBookingAsync(Guid itemId, DateTimeRange? stayRange, CancellationToken cancellationToken)
 	{
-		_logger.LogDebug("Checking availability for Flight Seat {SeatId}", itemId);
-
 		// Fetch the Specific Seat first itemId refers to FlightSeatId
 		var seat = await _unitOfWork.Repository<FlightSeat>().GetByIdAsync(itemId, cancellationToken);
 		if (seat == null)
@@ -44,8 +42,17 @@ public class FlightBookingStrategy : IBookingStrategy
 			return Result<BookingProcessResult>.Failure(Error.NotFound($"Flight for seat {seat.SeatLabel} was not found."));
 		}
 
+        // --- Dynamic Availability Check ---
+        var activeBookingsSpec = new ActiveBookingDetailsByItemSpec(itemId, DateTime.UtcNow);
+        var activeBookings = await _unitOfWork.Repository<BookingDetail>().GetAllWithSpecAsync(activeBookingsSpec, cancellationToken);
+        
+        if (activeBookings.Any())
+        {
+            _logger.LogWarning("Seat {SeatLabel} is already booked or pending payment (within 15 min)", seat.SeatLabel);
+            return Result<BookingProcessResult>.Failure(Error.Validation($"Seat {seat.SeatLabel} is no longer available."));
+        }
 
-        // Atomic reservation check inside the entity
+        // Atomic reservation check (updates RowVersion via LastReservedAt)
         try 
         {
             seat.Reserve();
@@ -70,6 +77,7 @@ public class FlightBookingStrategy : IBookingStrategy
 			return Result<BookingProcessResult>.Failure(Error.Validation($"No fares found for Flight {flight.FlightNumber.Value}."));
 		}
 
-		return Result<BookingProcessResult>.Success(new BookingProcessResult(fare.BasePrice, seat.SeatLabel));
+		var itemName = $"Flight {flight.FlightNumber.Value} - Seat {seat.SeatLabel}";
+		return Result<BookingProcessResult>.Success(new BookingProcessResult(fare.BasePrice, itemName, flight.Schedule, seat.SeatLabel));
 	}
 }

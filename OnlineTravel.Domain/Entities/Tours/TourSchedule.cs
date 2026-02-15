@@ -29,7 +29,7 @@ public class TourSchedule : BaseEntity
             throw new DomainException("No available slots for this tour schedule.");
         }
 
-        AvailableSlots--;
+        // AvailableSlots--; // Removed: Availability is now dynamic based on bookings
         LastReservedAt = DateTime.UtcNow;
     }
 

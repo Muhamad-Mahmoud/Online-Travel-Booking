@@ -24,9 +24,14 @@ public class CarBookingStrategy : IBookingStrategy
 
 	public CategoryType Type => CategoryType.Car;
 
-	public async Task<Result<BookingProcessResult>> ProcessBookingAsync(Guid itemId, DateTimeRange stayRange, CancellationToken cancellationToken)
+	public async Task<Result<BookingProcessResult>> ProcessBookingAsync(Guid itemId, DateTimeRange? stayRange, CancellationToken cancellationToken)
 	{
 		_logger.LogDebug("Checking availability for Car {CarId}", itemId);
+
+        if (stayRange == null)
+        {
+            return Result<BookingProcessResult>.Failure(Error.Validation("Stay range is required for car bookings."));
+        }
 
 		var car = await _unitOfWork.Repository<Car>().GetByIdAsync(itemId, cancellationToken);
 		if (car == null)
@@ -45,7 +50,6 @@ public class CarBookingStrategy : IBookingStrategy
 			return Result<BookingProcessResult>.Failure(Error.Validation($"Car {car.Make} {car.Model} is already booked for the selected dates."));
 		}
 
-		// Update reservation timestamp to ensure EF issues an UPDATE
 		// and triggers optimistic concurrency via RowVersion 
 		car.Reserve();
 		_unitOfWork.Repository<Car>().Update(car);
@@ -73,6 +77,6 @@ public class CarBookingStrategy : IBookingStrategy
 		}
 
 		var totalPrice = tier.PricePerHour * (decimal)hours;
-		return Result<BookingProcessResult>.Success(new BookingProcessResult(totalPrice, car.Id.ToString()));
+		return Result<BookingProcessResult>.Success(new BookingProcessResult(totalPrice, $"{car.Make} {car.Model}", stayRange));
 	}
 }

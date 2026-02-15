@@ -29,8 +29,6 @@ builder.Services.AddOpenApi();
 builder.Services.AddAppHealthChecks();
 
 // Add File Service
-var webRootPath = builder.Environment.WebRootPath ?? Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
-builder.Services.AddScoped<IFileService>(_ => new FileService(webRootPath));
 
 var app = builder.Build();
 

@@ -1,5 +1,4 @@
 using OnlineTravel.Application.Interfaces.Persistence;
-using OnlineTravel.Application.Features.Bookings.Specifications.Pricing;
 using OnlineTravel.Application.Features.Bookings.Specifications.Availability;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 using OnlineTravel.Domain.Entities.Bookings;
@@ -25,8 +24,15 @@ public class HotelBookingStrategy : IBookingStrategy
 
     public CategoryType Type => CategoryType.Hotel;
 
-    public async Task<Result<BookingProcessResult>> ProcessBookingAsync(Guid itemId, DateTimeRange stayRange, CancellationToken cancellationToken)
+    public async Task<Result<BookingProcessResult>> ProcessBookingAsync(Guid itemId, DateTimeRange? stayRange, CancellationToken cancellationToken)
     {
+        _logger.LogDebug("Checking availability for Room {RoomId}", itemId);
+
+        if (stayRange == null)
+        {
+            return Result<BookingProcessResult>.Failure(Error.Validation("Stay range is required for hotel bookings."));
+        }
+
         _logger.LogDebug("Checking availability for Room {RoomId} from {Start} to {End}", itemId, stayRange.Start, stayRange.End);
 
         var room = await _unitOfWork.Repository<Room>().GetByIdAsync(itemId, cancellationToken);
@@ -51,7 +57,8 @@ public class HotelBookingStrategy : IBookingStrategy
 
         var nights = Math.Max(stayRange.TotalNights, 1);
         var totalPrice = room.BasePrice * nights;
+        var itemName = $"Room {room.RoomNumber}";
 
-        return Result<BookingProcessResult>.Success(new BookingProcessResult(totalPrice, room.Id.ToString()));
+        return Result<BookingProcessResult>.Success(new BookingProcessResult(totalPrice, itemName, stayRange, room.Id.ToString()));
     }
 }
