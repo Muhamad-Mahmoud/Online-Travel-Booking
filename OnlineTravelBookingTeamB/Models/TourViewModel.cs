@@ -37,8 +37,8 @@ namespace OnlineTravelBookingTeamB.Models
         public string? PostalCode { get; set; }
 
         // Main Image
-        [Display(Name = "Main Image URL")]
-        public string? MainImageUrl { get; set; }
+        [Display(Name = "Main Image")]
+        public IFormFile? MainImage { get; set; }
 
         // Price Tier (Simplification for creation: just one standard tier initially)
         [Required]
