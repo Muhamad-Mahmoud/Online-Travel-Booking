@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Identity;
+using Ecommerce_Project.Extensions;
 using OnlineTravel.Application.DependencyInjection;
 using OnlineTravel.Application.Interfaces.Services;
+using OnlineTravel.Application.Interfaces.Persistence;
+using OnlineTravel.Application.Mapping;
 using OnlineTravel.Infrastructure;
 using OnlineTravel.Infrastructure.Persistence.UnitOfWork;
 using OnlineTravelBookingTeamB.Extensions;
@@ -30,6 +33,8 @@ builder.Services.AddOpenApi();
 var webRootPath = builder.Environment.WebRootPath ?? Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
 builder.Services.AddScoped<IFileService>(_ => new FileService(webRootPath));
 
+MapsterConfig.Register();
+builder.Services.AddSwaggerGenJwtAuth();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -39,6 +44,8 @@ await app.ApplyDatabaseMigrationsAsync();
 
 if (app.Environment.IsDevelopment())
 {
+    app.UseSwagger();
+    app.UseSwaggerUI();
     app.MapOpenApi();
 
     // Data Seeding
