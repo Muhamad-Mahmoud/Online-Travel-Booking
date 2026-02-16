@@ -54,6 +54,7 @@ var wwwRoot = builder.Environment.WebRootPath
 Directory.CreateDirectory(Path.Combine(wwwRoot, "uploads"));
 builder.Services.AddScoped<IFileService>(_ => new FileService(wwwRoot));
 
+
 MapsterConfig.Register();
 builder.Services.AddSwaggerGenJwtAuth();
 var app = builder.Build();
