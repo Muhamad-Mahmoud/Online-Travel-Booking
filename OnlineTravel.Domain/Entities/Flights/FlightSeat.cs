@@ -1,6 +1,7 @@
 using OnlineTravel.Domain.Entities._Base;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 using OnlineTravel.Domain.Enums;
+using OnlineTravel.Domain.ErrorHandling;
 
 namespace OnlineTravel.Domain.Entities.Flights;
 
@@ -19,6 +20,18 @@ public class FlightSeat : BaseEntity
     public Money? ExtraCharge { get; set; }
 
     public byte[]? RowVersion { get; set; }
+    public DateTime? LastReservedAt { get; set; }
+
+    public void Reserve()
+    {
+        if (!IsAvailable)
+        {
+            throw new DomainException($"Seat {SeatLabel} is no longer available.");
+        }
+
+        // IsAvailable = false; // Removed: Availability is now dynamic based on bookings
+        LastReservedAt = DateTime.UtcNow;
+    }
 
     // Navigation Properties
 

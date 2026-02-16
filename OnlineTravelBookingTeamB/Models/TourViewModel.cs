@@ -35,10 +35,12 @@ namespace OnlineTravelBookingTeamB.Models
         public string? State { get; set; }
         public string? Country { get; set; }
         public string? PostalCode { get; set; }
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
 
         // Main Image
-        [Display(Name = "Main Image URL")]
-        public string? MainImageUrl { get; set; }
+        [Display(Name = "Main Image")]
+        public IFormFile? MainImage { get; set; }
 
         // Price Tier (Simplification for creation: just one standard tier initially)
         [Required]

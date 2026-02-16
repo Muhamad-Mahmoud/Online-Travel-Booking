@@ -1,4 +1,6 @@
-﻿using Ecommerce_Project.Extensions;
+﻿using Serilog;
+using Microsoft.AspNetCore.Identity;
+using Ecommerce_Project.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection; // Ensure this is present
 using OnlineTravel.Application.DependencyInjection;
@@ -11,11 +13,16 @@ using OnlineTravel.Infrastructure.Persistence.UnitOfWork;
 using OnlineTravel.Infrastructure.Services;
 using OnlineTravelBookingTeamB.Extensions;
 using OnlineTravelBookingTeamB.Middleware;
+using Microsoft.Extensions.DependencyInjection; // Ensure this is present
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
 
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure Serilog Logging
+builder.ConfigureSerilog();
 
 // Add Infrastructure Services 
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -30,6 +37,9 @@ builder.Services.AddControllersWithViews()
         options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
     });
 builder.Services.AddOpenApi();
+
+// Add Health Checks
+builder.Services.AddAppHealthChecks();
 
 // Add File Service
 builder.Services.AddControllers()
@@ -49,28 +59,19 @@ MapsterConfig.Register();
 builder.Services.AddSwaggerGenJwtAuth();
 var app = builder.Build();
 
+// Enable Serilog Request Logging 
+app.UseSerilogRequestLogging();
+
 // Configure the HTTP request pipeline.
 app.UseMiddleware<ExceptionMiddleware>();
 
-await app.ApplyDatabaseMigrationsAsync();
+await app.ApplyDatabaseSetupAsync();
 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
-    app.MapOpenApi();
-
-    // Data Seeding
-    await app.SeedDatabaseAsync();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ecommerce API v1"));
 }
-
-app.UseStaticFiles();
-app.UseHttpsRedirection();
-
-await IdentityBootstrapper.InitializeAsync(app.Services);
-
-
-app.UseRouting();
 
 app.UseAuthentication();
 app.UseStatusCodePagesWithReExecute("/errors/{0}");
@@ -81,5 +82,6 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapControllers();
+app.MapHealthChecks("/health");
 
 app.Run();

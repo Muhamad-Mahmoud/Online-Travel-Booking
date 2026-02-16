@@ -36,6 +36,9 @@ public class GetAllToursHandler : IRequestHandler<GetAllToursQuery, PagedResult<
             {
                 Id = tour.Id,
                 Title = tour.Title,
+                Description = tour.Description ?? string.Empty,
+                City = tour.Address?.City ?? string.Empty,
+                Country = tour.Address?.Country ?? string.Empty,
                 ImageUrl = tour.MainImage?.Url ?? string.Empty,
                 Category = tour.Category?.Title ?? string.Empty,
                 Rating = tour.Reviews.Any() ? (double)tour.Reviews.Average(r => r.Rating.Value) : 0,

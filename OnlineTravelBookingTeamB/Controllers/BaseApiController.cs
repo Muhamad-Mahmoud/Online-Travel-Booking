@@ -11,4 +11,17 @@ public abstract class BaseApiController : ControllerBase
 
     protected IMediator Mediator =>
         _mediator ??= HttpContext.RequestServices.GetRequiredService<IMediator>();
+	protected Guid UserId
+	{
+		get
+		{
+			var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+			if (string.IsNullOrEmpty(userId))
+				throw new UnauthorizedAccessException("User is not authenticated.");
+
+			return Guid.Parse(userId);
+		}
+	}
+
 }

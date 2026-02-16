@@ -1,11 +1,20 @@
 using OnlineTravel.Domain.Entities._Base;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 using OnlineTravel.Domain.Enums;
+using OnlineTravel.Domain.ErrorHandling;
 
 namespace OnlineTravel.Domain.Entities.Hotels;
 
 public class Room : BaseEntity
 {
+    public byte[]? RowVersion { get; set; }
+    public DateTime? LastReservedAt { get; set; }
+
+    public void Reserve()
+    {
+        LastReservedAt = DateTime.UtcNow;
+    }
+
     public Guid HotelId { get; set; }
 
     public string RoomNumber { get; set; } = string.Empty;
@@ -28,5 +37,4 @@ public class Room : BaseEntity
 
     public virtual Hotel Hotel { get; set; } = null!;
 
-    public byte[]? RowVersion { get; set; }
 }
