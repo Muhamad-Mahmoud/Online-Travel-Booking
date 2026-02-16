@@ -1,0 +1,47 @@
+@{
+    ViewData["Title"] = "Seed Data";
+}
+
+<div class="text-center mb-5">
+    <h1 class="display-4">Seed Data Management</h1>
+    <p class="lead">Select a category below to manage seeding operations.</p>
+</div>
+
+<div class="row">
+    <div class="col-md-3 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <h5 class="card-title">Tours</h5>
+                <p class="card-text">Manage and seed tour data.</p>
+                <a asp-controller="Admin" asp-action="Tours" class="btn btn-primary">Go to Tours</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <h5 class="card-title">Hotels</h5>
+                <p class="card-text">Manage and seed hotel & room data.</p>
+                <a asp-controller="Admin" asp-action="Hotels" class="btn btn-primary">Go to Hotels</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <h5 class="card-title">Cars</h5>
+                <p class="card-text">Manage and seed car rental data.</p>
+                <a asp-controller="Admin" asp-action="Cars" class="btn btn-primary">Go to Cars</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <h5 class="card-title">Flights</h5>
+                <p class="card-text">Manage and seed flight schedule data.</p>
+                <a asp-controller="Admin" asp-action="Flights" class="btn btn-primary">Go to Flights</a>
+            </div>
+        </div>
+    </div>
+</div>

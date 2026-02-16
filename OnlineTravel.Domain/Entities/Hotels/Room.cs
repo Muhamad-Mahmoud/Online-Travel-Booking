@@ -2,6 +2,7 @@ using OnlineTravel.Domain.Entities._Base;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 using OnlineTravel.Domain.Entities.Bookings;
 using OnlineTravel.Domain.Enums;
+using OnlineTravel.Domain.ErrorHandling;
 
 namespace OnlineTravel.Domain.Entities.Hotels;
 

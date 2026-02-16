@@ -53,6 +53,11 @@ public static class DependencyInjection
         //Add AutoMapper
         // Add UnitOfWork
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        
+        // Add Payments
+        services.Configure<StripeOptions>(configuration.GetSection(StripeOptions.SectionName));
+        services.AddScoped<IPaymentService, StripePaymentService>();
+
         services.AddScoped<IHotelRepository, HotelRepository>();
         services.AddScoped<IRoomRepository, RoomRepository>();
 

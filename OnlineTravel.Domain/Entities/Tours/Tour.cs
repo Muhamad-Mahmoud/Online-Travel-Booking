@@ -28,6 +28,9 @@ public class Tour : SoftDeletableEntity
 
     public Guid CategoryId { get; set; }
 
+    public byte[]? RowVersion { get; set; }
+    public DateTime? LastReservedAt { get; set; }
+
 
 
     // Navigation Properties
@@ -39,6 +42,8 @@ public class Tour : SoftDeletableEntity
     public virtual ICollection<TourActivity> Activities { get; set; } = new List<TourActivity>();
 
     public virtual ICollection<TourPriceTier> PriceTiers { get; set; } = new List<TourPriceTier>();
+
+    public virtual ICollection<OnlineTravel.Domain.Entities.Reviews.Review> Reviews { get; set; } = new List<OnlineTravel.Domain.Entities.Reviews.Review>();
 
 
 }

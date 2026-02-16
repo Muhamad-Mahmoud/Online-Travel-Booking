@@ -10,6 +10,7 @@ using OnlineTravel.Domain.Entities.Payments;
 using OnlineTravel.Domain.Entities.Reviews;
 using OnlineTravel.Domain.Entities.Tours;
 using OnlineTravel.Domain.Entities.Users;
+using OnlineTravel.Domain.Entities.Favorites;
 
 namespace OnlineTravel.Infrastructure.Persistence.Context;
 
@@ -61,6 +62,7 @@ public class OnlineTravelDbContext : IdentityDbContext<AppUser, IdentityRole<Gui
 
     // Payments
     public DbSet<Payment> Payments => Set<Payment>();
+    public DbSet<ProcessedWebhookEvent> ProcessedWebhookEvents => Set<ProcessedWebhookEvent>();
 
     // Reviews
     public DbSet<Review> Reviews => Set<Review>();

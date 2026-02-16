@@ -5,6 +5,7 @@ using OnlineTravel.Domain.Entities.Hotels;
 using OnlineTravel.Infrastructure.Persistence.Context;
 using OnlineTravel.Infrastructure.Persistence.Repositories;
 using System.Collections;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace OnlineTravel.Infrastructure.Persistence.UnitOfWork
 {
@@ -57,8 +58,10 @@ namespace OnlineTravel.Infrastructure.Persistence.UnitOfWork
 
 
         public async Task BeginTransactionAsync()
+        public async Task<IDbContextTransaction> BeginTransactionAsync()
         {
             _transaction = await _dbContext.Database.BeginTransactionAsync();
+            return _transaction;
         }
 
         public async Task CommitTransactionAsync()

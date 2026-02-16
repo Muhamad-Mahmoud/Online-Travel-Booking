@@ -68,3 +68,4 @@ package-lock.json
 # Rider
 .idea/
 
+/build_merge.log
