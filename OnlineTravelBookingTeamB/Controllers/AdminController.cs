@@ -239,11 +239,7 @@ namespace OnlineTravelBookingTeamB.Controllers
             return View("Hotels/Index");
         }
 
-        public IActionResult Cars()
-        {
-            return View("Cars/Index");
-        }
-
+   
         public IActionResult Flights()
         {
             return View("Flights/Index");
