@@ -120,6 +120,52 @@
             </div>
         }
     </div>
+    </div>
+</div>
+
+<!-- Location Settings -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary"><i class="bi bi-geo-alt-fill me-1"></i>Location Settings</h6>
+    </div>
+    <div class="card-body">
+        <form asp-action="UpdateTourLocation" method="post">
+            <input type="hidden" asp-for="LocationForm.TourId" value="@Model.Tour.Id" />
+            <div class="mb-3">
+                <div class="input-group input-group-sm">
+                    <input type="text" id="manageMapSearch" class="form-control" placeholder="Search for a place..." />
+                    <button type="button" class="btn btn-outline-primary" id="manageMapSearchBtn"><i class="bi bi-search"></i></button>
+                </div>
+            </div>
+            <div id="manageMap" style="height: 300px; border-radius: 8px; border: 2px solid #dee2e6; margin-bottom: 1rem; z-index: 1;"></div>
+            <div class="row align-items-end">
+                <div class="col-md-5">
+                    <label asp-for="LocationForm.Latitude" class="form-label small text-muted">Latitude</label>
+                    <input asp-for="LocationForm.Latitude" class="form-control" id="manageLat" placeholder="e.g. 48.8566" />
+                </div>
+                <div class="col-md-5">
+                    <label asp-for="LocationForm.Longitude" class="form-label small text-muted">Longitude</label>
+                    <input asp-for="LocationForm.Longitude" class="form-control" id="manageLng" placeholder="e.g. 2.3522" />
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">Update</button>
+                </div>
+            </div>
+             <div class="mt-2">
+                <small class="text-muted">
+                    Current Coordinates: 
+                    @if (Model.LocationForm.Latitude.HasValue && Model.LocationForm.Longitude.HasValue)
+                    {
+                        <span class="badge bg-info text-dark">@Model.LocationForm.Latitude, @Model.LocationForm.Longitude</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Not Set</span>
+                    }
+                </small>
+            </div>
+        </form>
+    </div>
 </div>
 
 <div class="row">
@@ -231,3 +277,79 @@
         </div>
     </div>
 </div>
+
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+@section Scripts {
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var initLat = @(Model.LocationForm.Latitude.HasValue ? Model.LocationForm.Latitude.Value.ToString(System.Globalization.CultureInfo.InvariantCulture) : "30.0444");
+            var initLng = @(Model.LocationForm.Longitude.HasValue ? Model.LocationForm.Longitude.Value.ToString(System.Globalization.CultureInfo.InvariantCulture) : "31.2357");
+            var hasCoords = @(Model.LocationForm.Latitude.HasValue && Model.LocationForm.Longitude.HasValue ? "true" : "false");
+            var zoom = hasCoords ? 13 : 3;
+
+            var map = L.map('manageMap').setView([initLat, initLng], zoom);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors',
+                maxZoom: 19
+            }).addTo(map);
+
+            var marker = null;
+            var latInput = document.getElementById('manageLat');
+            var lngInput = document.getElementById('manageLng');
+
+            function placeMarker(lat, lng) {
+                if (marker) map.removeLayer(marker);
+                marker = L.marker([lat, lng], { draggable: true }).addTo(map);
+                latInput.value = lat.toFixed(6);
+                lngInput.value = lng.toFixed(6);
+                marker.on('dragend', function (e) {
+                    var pos = e.target.getLatLng();
+                    latInput.value = pos.lat.toFixed(6);
+                    lngInput.value = pos.lng.toFixed(6);
+                });
+            }
+
+            if (hasCoords) placeMarker(initLat, initLng);
+
+            map.on('click', function (e) {
+                placeMarker(e.latlng.lat, e.latlng.lng);
+            });
+
+            function syncFromInputs() {
+                var lat = parseFloat(latInput.value);
+                var lng = parseFloat(lngInput.value);
+                if (!isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
+                    placeMarker(lat, lng);
+                    map.setView([lat, lng], 13);
+                }
+            }
+            latInput.addEventListener('change', syncFromInputs);
+            lngInput.addEventListener('change', syncFromInputs);
+
+            var searchInput = document.getElementById('manageMapSearch');
+            var searchBtn = document.getElementById('manageMapSearchBtn');
+            function doSearch() {
+                var q = searchInput.value.trim();
+                if (!q) return;
+                fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(q) + '&limit=1')
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.length > 0) {
+                            var lat = parseFloat(data[0].lat);
+                            var lng = parseFloat(data[0].lon);
+                            placeMarker(lat, lng);
+                            map.setView([lat, lng], 13);
+                        } else {
+                            alert('Location not found.');
+                        }
+                    });
+            }
+            searchBtn.addEventListener('click', doSearch);
+            searchInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); doSearch(); } });
+        });
+    </script>
+}
+

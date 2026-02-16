@@ -12,8 +12,16 @@
 </div>
 
 <div class="card shadow mb-4">
-    <div class="card-header py-3">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
         <h6 class="m-0 font-weight-bold text-primary">All Tours</h6>
+        <div class="d-flex align-items-center gap-2">
+            <span id="tourCount" class="badge bg-light text-secondary border small"></span>
+            <div class="input-group input-group-sm" style="width: 280px;">
+                <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                <input type="text" id="tourSearch" class="form-control border-start-0 ps-0" placeholder="Search tours..." />
+                <button type="button" id="clearSearch" class="btn btn-outline-secondary d-none"><i class="bi bi-x-lg"></i></button>
+            </div>
+        </div>
     </div>
     <div class="card-body">
         @if (Model != null && Model.Any())
@@ -33,7 +41,7 @@
                     <tbody>
                         @foreach (var tour in Model)
                         {
-                            <tr>
+                            <tr data-city="@tour.City" data-country="@tour.Country" data-description="@tour.Description">
                                 <td style="width: 120px;">
                                     @if (!string.IsNullOrEmpty(tour.ImageUrl))
                                     {
@@ -86,6 +94,10 @@
                     </tbody>
                 </table>
             </div>
+            <div id="noResults" class="text-center py-4 d-none">
+                <i class="bi bi-search display-4 text-gray-300"></i>
+                <p class="mt-3 text-secondary">No tours match your search.</p>
+            </div>
         }
         else
         {
@@ -96,3 +108,56 @@
         }
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var searchInput = document.getElementById('tourSearch');
+        var clearBtn = document.getElementById('clearSearch');
+        var table = document.getElementById('dataTable');
+        var countBadge = document.getElementById('tourCount');
+        var noResults = document.getElementById('noResults');
+        if (!searchInput || !table) return;
+
+        var rows = table.querySelectorAll('tbody tr');
+        var totalCount = rows.length;
+        countBadge.textContent = totalCount + ' tour' + (totalCount !== 1 ? 's' : '');
+
+        function filterTable() {
+            var query = searchInput.value.toLowerCase().trim();
+            clearBtn.classList.toggle('d-none', !query);
+            var visibleCount = 0;
+
+            rows.forEach(function (row) {
+                var title = row.cells[1].textContent.toLowerCase();
+                var category = row.cells[2].textContent.toLowerCase();
+                var city = (row.dataset.city || '').toLowerCase();
+                var country = (row.dataset.country || '').toLowerCase();
+                var desc = (row.dataset.description || '').toLowerCase();
+                var match = title.includes(query) || category.includes(query) || city.includes(query) || country.includes(query) || desc.includes(query);
+                row.style.display = match ? '' : 'none';
+                if (match) visibleCount++;
+            });
+
+            countBadge.textContent = (query ? visibleCount + ' of ' + totalCount : totalCount) + ' tour' + (totalCount !== 1 ? 's' : '');
+
+            if (noResults) {
+                var tableWrapper = table.closest('.table-responsive');
+                if (visibleCount === 0 && query) {
+                    noResults.classList.remove('d-none');
+                    if (tableWrapper) tableWrapper.classList.add('d-none');
+                } else {
+                    noResults.classList.add('d-none');
+                    if (tableWrapper) tableWrapper.classList.remove('d-none');
+                }
+            }
+        }
+
+        searchInput.addEventListener('input', filterTable);
+        clearBtn.addEventListener('click', function () {
+            searchInput.value = '';
+            filterTable();
+            searchInput.focus();
+        });
+    });
+</script>
+
