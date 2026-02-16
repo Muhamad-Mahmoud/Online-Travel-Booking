@@ -1679,6 +1679,37 @@ namespace OnlineTravel.Infrastructure.Migrations
                                 .HasForeignKey("FlightId");
                         });
 
+                    b.OwnsOne("OnlineTravel.Domain.Entities.Flights.ValueObjects.FlightMetadata", "Metadata", b1 =>
+                        {
+                            b1.Property<Guid>("FlightId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("AircraftType")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("Gate")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("QRCodeData")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("Terminal")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("FlightId");
+
+                            b1.ToTable("Flights", "flights");
+
+                            b1.ToJson("Metadata");
+
+                            b1.WithOwner()
+                                .HasForeignKey("FlightId");
+                        });
+
                     b.OwnsOne("OnlineTravel.Domain.Entities.Flights.ValueObjects.FlightNumber", "FlightNumber", b1 =>
                         {
                             b1.Property<Guid>("FlightId")
@@ -1705,6 +1736,8 @@ namespace OnlineTravel.Infrastructure.Migrations
 
                     b.Navigation("FlightNumber")
                         .IsRequired();
+
+                    b.Navigation("Metadata");
 
                     b.Navigation("OriginAirport");
 

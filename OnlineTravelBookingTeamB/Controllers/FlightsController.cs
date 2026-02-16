@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OnlineTravel.Application.Features.Flight.Flights.CreateFlight;
-using OnlineTravel.Application.Features.Flight.Flights.FlightDetails;
+// using OnlineTravel.Application.Features.Flight.Flights.FlightDetails;
 using OnlineTravel.Application.Features.Flight.Flights.SearchFlights;
-using OnlineTravel.Application.Features.Flight.Seats.AllSeats;
+// using OnlineTravel.Application.Features.Flight.Seats.AllSeats;
 
 namespace OnlineTravelBookingTeamB.Controllers
 {
@@ -35,6 +35,7 @@ namespace OnlineTravelBookingTeamB.Controllers
 
             return Ok(result);
         }
+        /*
         [HttpGet("{flightId}/seats")]
         public async Task<ActionResult<List<AllSeatsDto>>> GetAllSeats(Guid flightId)
         {
@@ -57,5 +58,6 @@ namespace OnlineTravelBookingTeamB.Controllers
 
             return Ok(result);
         }
+        */
     }
 }
