@@ -4,4 +4,4 @@ using OnlineTravel.Domain.ErrorHandling;
 
 namespace OnlineTravel.Application.Features.Bookings.GetUserBookings;
 
-public sealed record GetUserBookingsQuery(Guid UserId) : IRequest<Result<IReadOnlyList<BookingResponse>>>;
+public sealed record GetUserBookingsQuery(Guid UserId) : IRequest<Result<IReadOnlyList<AdminBookingResponse>>>;

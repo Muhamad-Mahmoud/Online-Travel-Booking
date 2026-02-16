@@ -64,7 +64,7 @@ namespace OnlineTravelBookingTeamB.Controllers
         {
             var command = new UpdateCarBrandCommand(id, request);
             var result = await _mediator.Send(command);
-            return result.IsSuccess ? NoContent() : result.ToProblem();
+            return result.IsSuccess ? Ok(result.Value) : result.ToProblem();
         }
         [HttpDelete("Delete_CarBrand/{id:guid}")]
 
