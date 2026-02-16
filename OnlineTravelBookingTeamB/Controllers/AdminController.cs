@@ -36,10 +36,7 @@ namespace OnlineTravelBookingTeamB.Controllers
             return View("System/SeedData");
         }
 
-        public IActionResult Monitor()
-        {
-            return View("Dashboard/Monitor");
-        }
+
 
         public async Task<IActionResult> Tours()
         {
@@ -262,7 +259,7 @@ namespace OnlineTravelBookingTeamB.Controllers
                 .Where(s => s != "Completed" && s != "Refunded")
                 .ToList();
             
-            return View(viewModel);
+            return View("Bookings/Index", viewModel);
         }
 
         public async Task<IActionResult> BookingDetails(Guid id)
@@ -273,14 +270,14 @@ namespace OnlineTravelBookingTeamB.Controllers
             {
                 return RedirectToAction(nameof(Bookings));
             }
-            return View(result.Value);
+            return View("Bookings/Details", result.Value);
         }
 
         public async Task<IActionResult> UserBookings(Guid userId)
         {
             var query = new GetUserBookingsQuery(userId);
             var result = await _mediator.Send(query);
-            return View(result.Value);
+            return View("Bookings/UserBookings", result.Value);
         }
         [HttpGet]
         public async Task<IActionResult> ExportBookingsReport()
