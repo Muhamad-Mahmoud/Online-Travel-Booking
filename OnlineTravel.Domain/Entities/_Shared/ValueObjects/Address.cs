@@ -30,6 +30,14 @@ public record Address
         Coordinates = coordinates;
         FullAddress = string.Join(", ", new[] { street, city, state, country, postalCode }.Where(s => !string.IsNullOrWhiteSpace(s)));
     }
+    public double? DistanceToInKm(Address? other)
+    {
+        if (Coordinates == null || other?.Coordinates == null)
+            return null;
+
+        // Distance returns in meters by default if using Geography type in NetTopologySuite
+        return Coordinates.Distance(other.Coordinates) / 1000.0;
+    }
 }
 
 

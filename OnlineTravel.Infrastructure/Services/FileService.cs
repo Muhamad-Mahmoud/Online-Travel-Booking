@@ -32,4 +32,9 @@ public class FileService : IFileService
         if (File.Exists(fullPath))
             File.Delete(fullPath);
     }
+
+    public string GetFileUrl(string fileName, string folder)
+    {
+        return $"/uploads/{folder}/{fileName}";
+    }
 }
