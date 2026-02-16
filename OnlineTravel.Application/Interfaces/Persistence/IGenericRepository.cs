@@ -12,6 +12,10 @@ namespace OnlineTravel.Application.Interfaces.Persistence
         Task<int> GetCountAsync(ISpecification<T> spec, CancellationToken cancellationToken = default);
         Task AddAsync(T entity, CancellationToken cancellationToken = default);
         void Update(T entity);
+        void MarkPropertyModified<TProperty>(
+    T entity,
+    Expression<Func<T, TProperty>> propertyExpression);
+
         void Delete(T entity);
         Task<T?> FindAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
     }
