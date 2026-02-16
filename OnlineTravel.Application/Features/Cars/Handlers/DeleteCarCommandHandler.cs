@@ -23,29 +23,26 @@ namespace OnlineTravel.Application.Features.Cars.Handlers
 
         public async Task<Result> Handle(DeleteCarCommand request, CancellationToken cancellationToken)
         {
-            try
-            {
-                var car = await _unitOfWork.Repository<Car>()
-                    .GetByIdAsync(request.Id, cancellationToken);
-                if (car is null)
-                    return Result.Failure(EntityError<Car>.NotFound());
+            var repo = _unitOfWork.Repository<Car>();
 
-                // إذا كان محذوفاً بالفعل، نعتبر النجاح
-                if (car.DeletedAt != null)
-                    return Result.Success();
+            var car = await repo.GetByIdAsync(request.Id, cancellationToken);
+            if (car is null)
+                return Result.Failure(EntityError<Car>.NotFound());
 
-                car.DeletedAt = DateTime.UtcNow;
-                // لا حاجة لـ Update، الكيان متتبع بالفعل من GetByIdAsync
+            if (car.DeletedAt != null)
+                return Result.Success();
 
-                var affected = await _unitOfWork.Complete();
-                return affected > 0
-                    ? Result.Success()
-                    : Result.Failure(EntityError<Car>.OperationFailed("No rows updated"));
-            }
-            catch (Exception ex)
-            {
-                return Result.Failure(EntityError<Car>.OperationFailed(ex.Message));
-            }
+            car.DeletedAt = DateTime.UtcNow;
+
+            repo.MarkPropertyModified(car, x => x.DeletedAt); // ✅ الحل الصحيح
+
+            var affected = await _unitOfWork.Complete();
+
+            return affected > 0
+                ? Result.Success()
+                : Result.Failure(EntityError<Car>.OperationFailed("Delete failed"));
         }
+
+
     }
 }
