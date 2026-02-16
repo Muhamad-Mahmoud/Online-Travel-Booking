@@ -172,6 +172,10 @@ namespace OnlineTravel.Infrastructure.Migrations
                     b.Property<Guid>("ItemId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("ItemName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -198,11 +202,23 @@ namespace OnlineTravel.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("PaidAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentIntentId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("PaymentStatus")
                         .HasColumnType("int");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
+
+                    b.Property<string>("StripeSessionId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -259,6 +275,12 @@ namespace OnlineTravel.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("ImagesJson");
+
+                    b.Property<DateTime?>("LastReservedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Point>("Location")
+                        .HasColumnType("geography");
 
                     b.Property<string>("Make")
                         .IsRequired()
@@ -385,6 +407,40 @@ namespace OnlineTravel.Infrastructure.Migrations
                     b.ToTable("Categories", "infra");
                 });
 
+            modelBuilder.Entity("OnlineTravel.Domain.Entities.Favorites.Favorite", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("AddedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ItemType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "ItemId", "ItemType")
+                        .IsUnique();
+
+                    b.ToTable("Favorites", (string)null);
+                });
+
             modelBuilder.Entity("OnlineTravel.Domain.Entities.Flights.Airport", b =>
                 {
                     b.Property<Guid>("Id")
@@ -497,11 +553,19 @@ namespace OnlineTravel.Infrastructure.Migrations
                     b.Property<Guid>("DestinationAirportId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime?>("LastReservedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("OriginAirportId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("Refundable")
                         .HasColumnType("bit");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -570,6 +634,9 @@ namespace OnlineTravel.Infrastructure.Migrations
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime?>("LastReservedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
@@ -601,12 +668,10 @@ namespace OnlineTravel.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.PrimitiveCollection<string>("Amenities")
+                    b.Property<string>("CancellationPolicy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("CategoryId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -615,25 +680,37 @@ namespace OnlineTravel.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Gallery")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("GalleryJson");
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("MainImageUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
+                    b.HasIndex("CreatedAt");
 
-                    b.ToTable("Hotels", "hotels");
+                    b.HasIndex("Name");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
+                    b.ToTable("Hotels");
                 });
 
             modelBuilder.Entity("OnlineTravel.Domain.Entities.Hotels.Room", b =>
@@ -642,50 +719,92 @@ namespace OnlineTravel.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int>("BedCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Capacity")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Extras")
+                    b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("ExtrasJson");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<Guid>("HotelId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("MaxGuests")
-                        .HasColumnType("int");
+                    b.Property<DateTime?>("LastReservedAt")
+                        .HasColumnType("datetime2");
 
-                    b.Property<int?>("MinimumStayNights")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("Refundable")
-                        .HasColumnType("bit");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("RoomNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("RoomType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("HotelId", "RoomNumber");
+                    b.HasIndex("HotelId", "RoomNumber")
+                        .IsUnique();
 
-                    b.ToTable("Rooms", "hotels");
+                    b.ToTable("Rooms");
+                });
+
+            modelBuilder.Entity("OnlineTravel.Domain.Entities.Hotels.RoomAvailability", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("RoomId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoomId");
+
+                    b.ToTable("RoomAvailabilities");
+                });
+
+            modelBuilder.Entity("OnlineTravel.Domain.Entities.Hotels.SeasonalPrice", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("RoomId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoomId");
+
+                    b.ToTable("SeasonalPrices");
                 });
 
             modelBuilder.Entity("OnlineTravel.Domain.Entities.Payments.Payment", b =>
@@ -729,38 +848,37 @@ namespace OnlineTravel.Infrastructure.Migrations
                     b.ToTable("Payments", "billing");
                 });
 
-            modelBuilder.Entity("OnlineTravel.Domain.Entities.Reviews.Favorite", b =>
+            modelBuilder.Entity("OnlineTravel.Domain.Entities.Payments.ProcessedWebhookEvent", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("AddedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("CategoryId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("ItemId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("EventId")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime>("ProcessedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("UserId", "CategoryId", "ItemId")
+                    b.HasIndex("EventId")
                         .IsUnique();
 
-                    b.ToTable("Favorites", "reviews");
+                    b.ToTable("ProcessedWebhookEvents");
                 });
 
             modelBuilder.Entity("OnlineTravel.Domain.Entities.Reviews.Review", b =>
@@ -784,6 +902,9 @@ namespace OnlineTravel.Infrastructure.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("HotelId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("ItemId")
                         .HasColumnType("uniqueidentifier");
 
@@ -797,10 +918,13 @@ namespace OnlineTravel.Infrastructure.Migrations
 
                     b.HasIndex("BookingId");
 
+                    b.HasIndex("HotelId");
+
+                    b.HasIndex("ItemId");
+
                     b.HasIndex("CategoryId", "ItemId");
 
-                    b.HasIndex("UserId", "CategoryId", "ItemId")
-                        .IsUnique();
+                    b.HasIndex("UserId", "CategoryId", "ItemId");
 
                     b.ToTable("Reviews", "reviews");
                 });
@@ -837,8 +961,16 @@ namespace OnlineTravel.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("HighlightsJson");
 
+                    b.Property<DateTime?>("LastReservedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("Recommended")
                         .HasColumnType("bit");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.Property<string>("Tags")
                         .IsRequired()
@@ -963,6 +1095,9 @@ namespace OnlineTravel.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastReservedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("PriceTierId")
@@ -1318,6 +1453,17 @@ namespace OnlineTravel.Infrastructure.Migrations
                     b.Navigation("Image");
                 });
 
+            modelBuilder.Entity("OnlineTravel.Domain.Entities.Favorites.Favorite", b =>
+                {
+                    b.HasOne("OnlineTravel.Domain.Entities.Users.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("OnlineTravel.Domain.Entities.Flights.Airport", b =>
                 {
                     b.OwnsOne("OnlineTravel.Domain.Entities._Shared.ValueObjects.Address", "Address", b1 =>
@@ -1418,24 +1564,6 @@ namespace OnlineTravel.Infrastructure.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("CarrierId");
 
-                            b1.OwnsOne("OnlineTravel.Domain.Entities._Shared.ValueObjects.EmailAddress", "Email", b2 =>
-                                {
-                                    b2.Property<Guid>("ContactInfoCarrierId")
-                                        .HasColumnType("uniqueidentifier");
-
-                                    b2.Property<string>("Value")
-                                        .IsRequired()
-                                        .HasColumnType("nvarchar(max)")
-                                        .HasColumnName("ContactEmail");
-
-                                    b2.HasKey("ContactInfoCarrierId");
-
-                                    b2.ToTable("Carriers", "flights");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("ContactInfoCarrierId");
-                                });
-
                             b1.OwnsOne("OnlineTravel.Domain.Entities._Shared.ValueObjects.PhoneNumber", "Phone", b2 =>
                                 {
                                     b2.Property<Guid>("ContactInfoCarrierId")
@@ -1463,6 +1591,24 @@ namespace OnlineTravel.Infrastructure.Migrations
                                         .IsRequired()
                                         .HasColumnType("nvarchar(max)")
                                         .HasColumnName("WebsiteUrl");
+
+                                    b2.HasKey("ContactInfoCarrierId");
+
+                                    b2.ToTable("Carriers", "flights");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("ContactInfoCarrierId");
+                                });
+
+                            b1.OwnsOne("OnlineTravel.Domain.Entities._Shared.ValueObjects.EmailAddress", "Email", b2 =>
+                                {
+                                    b2.Property<Guid>("ContactInfoCarrierId")
+                                        .HasColumnType("uniqueidentifier");
+
+                                    b2.Property<string>("Value")
+                                        .IsRequired()
+                                        .HasColumnType("nvarchar(max)")
+                                        .HasColumnName("ContactEmail");
 
                                     b2.HasKey("ContactInfoCarrierId");
 
@@ -1645,48 +1791,84 @@ namespace OnlineTravel.Infrastructure.Migrations
 
             modelBuilder.Entity("OnlineTravel.Domain.Entities.Hotels.Hotel", b =>
                 {
-                    b.HasOne("OnlineTravel.Domain.Entities.Core.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.OwnsOne("OnlineTravel.Domain.Entities._Shared.ValueObjects.Address", "Address", b1 =>
                         {
                             b1.Property<Guid>("HotelId")
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<string>("City")
-                                .HasColumnType("nvarchar(max)")
-                                .HasColumnName("City");
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("nvarchar(100)");
 
                             b1.Property<Point>("Coordinates")
-                                .HasColumnType("geography")
-                                .HasColumnName("Location");
+                                .HasColumnType("geography");
 
                             b1.Property<string>("Country")
-                                .HasColumnType("nvarchar(max)")
-                                .HasColumnName("Country");
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("nvarchar(100)");
 
                             b1.Property<string>("FullAddress")
-                                .HasColumnType("nvarchar(max)")
-                                .HasColumnName("Address");
+                                .HasColumnType("nvarchar(max)");
 
                             b1.Property<string>("PostalCode")
-                                .HasColumnType("nvarchar(max)")
-                                .HasColumnName("PostalCode");
+                                .HasMaxLength(20)
+                                .HasColumnType("nvarchar(20)");
 
                             b1.Property<string>("State")
-                                .HasColumnType("nvarchar(max)")
-                                .HasColumnName("State");
+                                .HasMaxLength(100)
+                                .HasColumnType("nvarchar(100)");
 
                             b1.Property<string>("Street")
-                                .HasColumnType("nvarchar(max)")
-                                .HasColumnName("Street");
+                                .HasMaxLength(200)
+                                .HasColumnType("nvarchar(200)");
 
                             b1.HasKey("HotelId");
 
-                            b1.ToTable("Hotels", "hotels");
+                            b1.ToTable("Hotels");
+
+                            b1.WithOwner()
+                                .HasForeignKey("HotelId");
+                        });
+
+                    b.OwnsOne("OnlineTravel.Domain.Entities._Shared.ValueObjects.TimeRange", "CheckInTime", b1 =>
+                        {
+                            b1.Property<Guid>("HotelId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<TimeSpan>("End")
+                                .HasColumnType("time")
+                                .HasColumnName("CheckInEnd");
+
+                            b1.Property<TimeSpan>("Start")
+                                .HasColumnType("time")
+                                .HasColumnName("CheckInStart");
+
+                            b1.HasKey("HotelId");
+
+                            b1.ToTable("Hotels");
+
+                            b1.WithOwner()
+                                .HasForeignKey("HotelId");
+                        });
+
+                    b.OwnsOne("OnlineTravel.Domain.Entities._Shared.ValueObjects.TimeRange", "CheckOutTime", b1 =>
+                        {
+                            b1.Property<Guid>("HotelId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<TimeSpan>("End")
+                                .HasColumnType("time")
+                                .HasColumnName("CheckOutEnd");
+
+                            b1.Property<TimeSpan>("Start")
+                                .HasColumnType("time")
+                                .HasColumnName("CheckOutStart");
+
+                            b1.HasKey("HotelId");
+
+                            b1.ToTable("Hotels");
 
                             b1.WithOwner()
                                 .HasForeignKey("HotelId");
@@ -1697,30 +1879,16 @@ namespace OnlineTravel.Infrastructure.Migrations
                             b1.Property<Guid>("HotelId")
                                 .HasColumnType("uniqueidentifier");
 
+                            b1.Property<string>("Email")
+                                .HasMaxLength(200)
+                                .HasColumnType("nvarchar(200)");
+
                             b1.HasKey("HotelId");
 
-                            b1.ToTable("Hotels", "hotels");
+                            b1.ToTable("Hotels");
 
                             b1.WithOwner()
                                 .HasForeignKey("HotelId");
-
-                            b1.OwnsOne("OnlineTravel.Domain.Entities._Shared.ValueObjects.EmailAddress", "Email", b2 =>
-                                {
-                                    b2.Property<Guid>("ContactInfoHotelId")
-                                        .HasColumnType("uniqueidentifier");
-
-                                    b2.Property<string>("Value")
-                                        .IsRequired()
-                                        .HasColumnType("nvarchar(max)")
-                                        .HasColumnName("ContactEmail");
-
-                                    b2.HasKey("ContactInfoHotelId");
-
-                                    b2.ToTable("Hotels", "hotels");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("ContactInfoHotelId");
-                                });
 
                             b1.OwnsOne("OnlineTravel.Domain.Entities._Shared.ValueObjects.PhoneNumber", "Phone", b2 =>
                                 {
@@ -1729,76 +1897,33 @@ namespace OnlineTravel.Infrastructure.Migrations
 
                                     b2.Property<string>("Value")
                                         .IsRequired()
-                                        .HasColumnType("nvarchar(max)")
-                                        .HasColumnName("ContactPhone");
+                                        .HasMaxLength(20)
+                                        .HasColumnType("nvarchar(20)")
+                                        .HasColumnName("PhoneNumber");
 
                                     b2.HasKey("ContactInfoHotelId");
 
-                                    b2.ToTable("Hotels", "hotels");
+                                    b2.ToTable("Hotels");
 
                                     b2.WithOwner()
                                         .HasForeignKey("ContactInfoHotelId");
                                 });
-
-                            b1.OwnsOne("OnlineTravel.Domain.Entities._Shared.ValueObjects.Url", "Website", b2 =>
-                                {
-                                    b2.Property<Guid>("ContactInfoHotelId")
-                                        .HasColumnType("uniqueidentifier");
-
-                                    b2.Property<string>("Value")
-                                        .IsRequired()
-                                        .HasColumnType("nvarchar(max)")
-                                        .HasColumnName("ContactWebsite");
-
-                                    b2.HasKey("ContactInfoHotelId");
-
-                                    b2.ToTable("Hotels", "hotels");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("ContactInfoHotelId");
-                                });
-
-                            b1.Navigation("Email");
 
                             b1.Navigation("Phone");
-
-                            b1.Navigation("Website");
                         });
 
-                    b.OwnsOne("OnlineTravel.Domain.Entities._Shared.ValueObjects.ImageUrl", "MainImage", b1 =>
-                        {
-                            b1.Property<Guid>("HotelId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<string>("AltText")
-                                .HasColumnType("nvarchar(max)")
-                                .HasColumnName("MainImageAlt");
-
-                            b1.Property<string>("Url")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)")
-                                .HasColumnName("MainImageUrl");
-
-                            b1.HasKey("HotelId");
-
-                            b1.ToTable("Hotels", "hotels");
-
-                            b1.WithOwner()
-                                .HasForeignKey("HotelId");
-                        });
-
-                    b.OwnsOne("OnlineTravel.Domain.Entities.Reviews.ValueObjects.StarRating", "StarRating", b1 =>
+                    b.OwnsOne("OnlineTravel.Domain.Entities.Reviews.ValueObjects.StarRating", "Rating", b1 =>
                         {
                             b1.Property<Guid>("HotelId")
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<decimal>("Value")
-                                .HasColumnType("decimal(2,1)")
-                                .HasColumnName("StarRating");
+                                .HasPrecision(5, 2)
+                                .HasColumnType("decimal(5,2)");
 
                             b1.HasKey("HotelId");
 
-                            b1.ToTable("Hotels", "hotels");
+                            b1.ToTable("Hotels");
 
                             b1.WithOwner()
                                 .HasForeignKey("HotelId");
@@ -1807,14 +1932,16 @@ namespace OnlineTravel.Infrastructure.Migrations
                     b.Navigation("Address")
                         .IsRequired();
 
-                    b.Navigation("Category");
+                    b.Navigation("CheckInTime")
+                        .IsRequired();
+
+                    b.Navigation("CheckOutTime")
+                        .IsRequired();
 
                     b.Navigation("ContactInfo")
                         .IsRequired();
 
-                    b.Navigation("MainImage");
-
-                    b.Navigation("StarRating");
+                    b.Navigation("Rating");
                 });
 
             modelBuilder.Entity("OnlineTravel.Domain.Entities.Hotels.Room", b =>
@@ -1825,32 +1952,147 @@ namespace OnlineTravel.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("OnlineTravel.Domain.Entities._Shared.ValueObjects.Money", "BasePrice", b1 =>
+                    b.OwnsOne("OnlineTravel.Domain.Entities._Shared.ValueObjects.Money", "BasePricePerNight", b1 =>
                         {
                             b1.Property<Guid>("RoomId")
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<decimal>("Amount")
-                                .HasColumnType("decimal(10,2)")
-                                .HasColumnName("BasePrice");
+                                .HasColumnType("decimal(18,2)");
 
                             b1.Property<string>("Currency")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)")
-                                .HasColumnName("Currency");
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)");
 
                             b1.HasKey("RoomId");
 
-                            b1.ToTable("Rooms", "hotels");
+                            b1.ToTable("Rooms");
 
                             b1.WithOwner()
                                 .HasForeignKey("RoomId");
                         });
 
-                    b.Navigation("BasePrice")
+                    b.OwnsMany("OnlineTravel.Domain.Entities._Shared.ValueObjects.Url", "Photos", b1 =>
+                        {
+                            b1.Property<Guid>("RoomId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
+
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(500)
+                                .HasColumnType("nvarchar(500)");
+
+                            b1.HasKey("RoomId", "Id");
+
+                            b1.ToTable("Rooms_Photos");
+
+                            b1.WithOwner()
+                                .HasForeignKey("RoomId");
+                        });
+
+                    b.Navigation("BasePricePerNight")
                         .IsRequired();
 
                     b.Navigation("Hotel");
+
+                    b.Navigation("Photos");
+                });
+
+            modelBuilder.Entity("OnlineTravel.Domain.Entities.Hotels.RoomAvailability", b =>
+                {
+                    b.HasOne("OnlineTravel.Domain.Entities.Hotels.Room", "Room")
+                        .WithMany("RoomAvailabilities")
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("OnlineTravel.Domain.Entities._Shared.ValueObjects.DateRange", "DateRange", b1 =>
+                        {
+                            b1.Property<Guid>("RoomAvailabilityId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<DateOnly>("End")
+                                .HasColumnType("date");
+
+                            b1.Property<DateOnly>("Start")
+                                .HasColumnType("date");
+
+                            b1.HasKey("RoomAvailabilityId");
+
+                            b1.ToTable("RoomAvailabilities");
+
+                            b1.WithOwner()
+                                .HasForeignKey("RoomAvailabilityId");
+                        });
+
+                    b.Navigation("DateRange")
+                        .IsRequired();
+
+                    b.Navigation("Room");
+                });
+
+            modelBuilder.Entity("OnlineTravel.Domain.Entities.Hotels.SeasonalPrice", b =>
+                {
+                    b.HasOne("OnlineTravel.Domain.Entities.Hotels.Room", "Room")
+                        .WithMany("SeasonalPrices")
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("OnlineTravel.Domain.Entities._Shared.ValueObjects.DateRange", "DateRange", b1 =>
+                        {
+                            b1.Property<Guid>("SeasonalPriceId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<DateOnly>("End")
+                                .HasColumnType("date");
+
+                            b1.Property<DateOnly>("Start")
+                                .HasColumnType("date");
+
+                            b1.HasKey("SeasonalPriceId");
+
+                            b1.ToTable("SeasonalPrices");
+
+                            b1.WithOwner()
+                                .HasForeignKey("SeasonalPriceId");
+                        });
+
+                    b.OwnsOne("OnlineTravel.Domain.Entities._Shared.ValueObjects.Money", "PricePerNight", b1 =>
+                        {
+                            b1.Property<Guid>("SeasonalPriceId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasColumnType("decimal(18,2)");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("nvarchar(3)");
+
+                            b1.HasKey("SeasonalPriceId");
+
+                            b1.ToTable("SeasonalPrices");
+
+                            b1.WithOwner()
+                                .HasForeignKey("SeasonalPriceId");
+                        });
+
+                    b.Navigation("DateRange")
+                        .IsRequired();
+
+                    b.Navigation("PricePerNight")
+                        .IsRequired();
+
+                    b.Navigation("Room");
                 });
 
             modelBuilder.Entity("OnlineTravel.Domain.Entities.Payments.Payment", b =>
@@ -1913,25 +2155,6 @@ namespace OnlineTravel.Infrastructure.Migrations
                     b.Navigation("RefundAmount");
                 });
 
-            modelBuilder.Entity("OnlineTravel.Domain.Entities.Reviews.Favorite", b =>
-                {
-                    b.HasOne("OnlineTravel.Domain.Entities.Core.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("OnlineTravel.Domain.Entities.Users.AppUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("OnlineTravel.Domain.Entities.Reviews.Review", b =>
                 {
                     b.HasOne("OnlineTravel.Domain.Entities.Bookings.BookingEntity", "Booking")
@@ -1943,6 +2166,17 @@ namespace OnlineTravel.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("OnlineTravel.Domain.Entities.Hotels.Hotel", "Hotel")
+                        .WithMany("Reviews")
+                        .HasForeignKey("HotelId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("OnlineTravel.Domain.Entities.Tours.Tour", null)
+                        .WithMany("Reviews")
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("OnlineTravel.Domain.Entities.Users.AppUser", "User")
@@ -1971,6 +2205,8 @@ namespace OnlineTravel.Infrastructure.Migrations
                     b.Navigation("Booking");
 
                     b.Navigation("Category");
+
+                    b.Navigation("Hotel");
 
                     b.Navigation("Rating")
                         .IsRequired();
@@ -2269,7 +2505,16 @@ namespace OnlineTravel.Infrastructure.Migrations
 
             modelBuilder.Entity("OnlineTravel.Domain.Entities.Hotels.Hotel", b =>
                 {
+                    b.Navigation("Reviews");
+
                     b.Navigation("Rooms");
+                });
+
+            modelBuilder.Entity("OnlineTravel.Domain.Entities.Hotels.Room", b =>
+                {
+                    b.Navigation("RoomAvailabilities");
+
+                    b.Navigation("SeasonalPrices");
                 });
 
             modelBuilder.Entity("OnlineTravel.Domain.Entities.Tours.Tour", b =>
@@ -2279,6 +2524,8 @@ namespace OnlineTravel.Infrastructure.Migrations
                     b.Navigation("Images");
 
                     b.Navigation("PriceTiers");
+
+                    b.Navigation("Reviews");
                 });
 
             modelBuilder.Entity("OnlineTravel.Domain.Entities.Tours.TourPriceTier", b =>

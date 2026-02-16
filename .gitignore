@@ -68,3 +68,11 @@ package-lock.json
 # Rider
 .idea/
 
+/build_merge.log
+
+appsettings.Development.json
+appsettings.*.json
+Migrations/
+bin/
+obj/
+

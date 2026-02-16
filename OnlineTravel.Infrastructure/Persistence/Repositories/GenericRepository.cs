@@ -24,7 +24,13 @@ namespace OnlineTravel.Infrastructure.Persistence.Repositories
             return await _dbContext.Set<T>().ToListAsync(cancellationToken);
         }
 
-
+        public void MarkPropertyModified<TProperty>(
+    T entity,
+    Expression<Func<T, TProperty>> propertyExpression)
+        {
+            _dbContext.Attach(entity);
+            _dbContext.Entry(entity).Property(propertyExpression).IsModified = true;
+        }
 
         public async Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
@@ -59,8 +65,9 @@ namespace OnlineTravel.Infrastructure.Persistence.Repositories
         public void Update(T entity)
         {
             _dbContext.Set<T>().Update(entity);
-        }
+        } 
 
+        
         public async Task AddAsync(T entity, CancellationToken cancellationToken = default)
         {
             await _dbContext.Set<T>().AddAsync(entity, cancellationToken);
@@ -71,6 +78,11 @@ namespace OnlineTravel.Infrastructure.Persistence.Repositories
             return await ApplySpecifications(spec).CountAsync(cancellationToken);
         }
 
+
+        public IQueryable<T> Query()
+        {
+            return _dbContext.Set<T>().AsQueryable();
+        }
 
         private IQueryable<T> ApplySpecifications(ISpecification<T> spec)
         {

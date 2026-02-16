@@ -26,6 +26,9 @@ public class Flight : SoftDeletableEntity
 
     public Guid CategoryId { get; set; }
 
+    public byte[]? RowVersion { get; set; }
+    public DateTime? LastReservedAt { get; set; }
+
 
     // Navigation Properties
 

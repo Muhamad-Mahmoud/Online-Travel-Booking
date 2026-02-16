@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using OnlineTravel.Domain.ErrorHandling;
 using Error = OnlineTravel.Domain.ErrorHandling.Error;
 using OnlineTravel.Application.Interfaces.Persistence;

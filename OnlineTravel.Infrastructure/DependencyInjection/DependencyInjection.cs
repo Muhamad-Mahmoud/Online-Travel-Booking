@@ -2,13 +2,16 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using OnlineTravel.Application.Interfaces.Persistence;
+using OnlineTravel.Application.Interfaces.Services;
 using OnlineTravel.Application.Interfaces.Services.Auth;
 using OnlineTravel.Domain.Entities.Users;
 using OnlineTravel.Infrastructure.Persistence.Context;
+using OnlineTravel.Infrastructure.Persistence.Repositories;
+using OnlineTravel.Infrastructure.Persistence.UnitOfWork;
 using OnlineTravel.Infrastructure.Security;
 using OnlineTravel.Infrastructure.Security.Jwt;
-using OnlineTravel.Application.Interfaces.Persistence;
-using OnlineTravel.Infrastructure.Persistence.UnitOfWork;
+using OnlineTravel.Infrastructure.Services.Payments;
 
 namespace OnlineTravel.Infrastructure;
 
@@ -47,10 +50,19 @@ public static class DependencyInjection
         //Register Auth Services
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IJwtService, JwtService>();
+        
 
         //Add AutoMapper
         // Add UnitOfWork
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        
+        // Add Payments
+        services.Configure<StripeOptions>(configuration.GetSection(StripeOptions.SectionName));
+        services.AddScoped<IPaymentService, StripePaymentService>();
+
+        services.AddScoped<IHotelRepository, HotelRepository>();
+        services.AddScoped<IRoomRepository, RoomRepository>();
+
 
         return services;
     }

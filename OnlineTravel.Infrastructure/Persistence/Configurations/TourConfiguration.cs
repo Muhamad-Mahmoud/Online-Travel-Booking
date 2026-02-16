@@ -10,7 +10,10 @@ public class TourConfiguration : IEntityTypeConfiguration<Tour>
 {
     public void Configure(EntityTypeBuilder<Tour> builder)
     {
+
         builder.ToTable("Tours", "tours");
+        builder.Property(e => e.RowVersion).IsRowVersion();
+
 
 
         builder.OwnsOne(e => e.MainImage, i =>
@@ -42,6 +45,11 @@ public class TourConfiguration : IEntityTypeConfiguration<Tour>
         builder.HasMany(e => e.PriceTiers)
             .WithOne(p => p.Tour)
             .HasForeignKey(p => p.TourId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(e => e.Reviews)
+            .WithOne()
+            .HasForeignKey(r => r.ItemId)
             .OnDelete(DeleteBehavior.Cascade);
 
 

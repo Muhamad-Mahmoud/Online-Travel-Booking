@@ -32,20 +32,22 @@ public class GetTourByIdHandler : IRequestHandler<GetTourByIdQuery, TourDetailsR
             Id = tour.Id,
             Title = tour.Title,
             Category = tour.Category.Title,
-            Location = tour.Address.ToString(),
-            Duration = $"{tour.DurationDays} Days and {tour.DurationNights} Nights",
-            Rating = 4.5, // Placeholder
-            ReviewCount = 9752, // Placeholder
+            Location = tour.Address,
+            DurationDays = tour.DurationDays,
+            DurationNights = tour.DurationNights,
+            Rating = tour.Reviews.Any() ? (double)tour.Reviews.Average(r => r.Rating.Value) : 0,
+            ReviewCount = tour.Reviews.Count,
             MainImageUrl = tour.MainImage?.Url ?? string.Empty,
             Description = tour.Description ?? string.Empty,
-            TopActivities = tour.Activities.Select(a => new TourActivityDto
+            Activities = tour.Activities.Select(a => new TourActivityDto
             {
                 Title = a.Title,
                 Description = a.Description,
                 ImageUrl = a.Image.Url
             }).ToList(),
             BestTimeToVisit = tour.BestTimeToVisit ?? "Year-round",
-            Gallery = tour.Images.Select(i => i.Url).ToList(),
+            Images = tour.Images.Select(i => new TourImageDto { Id = i.Id, Url = i.Url, AltText = i.AltText }).ToList(),
+            PriceTiers = tour.PriceTiers.Select(p => new TourPriceTierDto { Id = p.Id, Name = p.Name, Price = p.Price, Description = p.Description }).ToList(),
             Price = lowestPrice != null ? new PriceDto { Amount = lowestPrice.Amount, Currency = lowestPrice.Currency } : null
         };
     }

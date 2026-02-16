@@ -1,4 +1,6 @@
 using FluentValidation;
+using Mapster;
+using MapsterMapper;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using OnlineTravel.Application.Common.Behaviors;
@@ -13,6 +15,7 @@ public static class DependencyInjection
         // Register MediatR for CQRS pattern
         services.AddMediatR(cfg =>
             cfg.RegisterServicesFromAssemblies(typeof(DependencyInjection).Assembly));
+        services.AddMapster();
 
         services.AddAutoMapper(typeof(DependencyInjection).Assembly);
 
@@ -36,12 +39,17 @@ public static class DependencyInjection
 
         // Register Pipeline Behaviors for automatic validation
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+        services.AddSingleton(TypeAdapterConfig.GlobalSettings);
+        services.AddScoped<IMapper, ServiceMapper>();
+        services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
+
 
         // Register Business Services
         services.AddScoped<IBookingStrategy, HotelBookingStrategy>();
         services.AddScoped<IBookingStrategy, TourBookingStrategy>();
         services.AddScoped<IBookingStrategy, FlightBookingStrategy>();
         services.AddScoped<IBookingStrategy, CarBookingStrategy>();
+
 
         return services;
     }

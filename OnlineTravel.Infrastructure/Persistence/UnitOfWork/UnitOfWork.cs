@@ -1,8 +1,11 @@
-using System.Collections;
+using Microsoft.EntityFrameworkCore;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities._Base;
+using OnlineTravel.Domain.Entities.Hotels;
 using OnlineTravel.Infrastructure.Persistence.Context;
 using OnlineTravel.Infrastructure.Persistence.Repositories;
+using System.Collections;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace OnlineTravel.Infrastructure.Persistence.UnitOfWork
 {
@@ -13,9 +16,14 @@ namespace OnlineTravel.Infrastructure.Persistence.UnitOfWork
         private Hashtable _repositories;
         private Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction _transaction;
 
+        public IHotelRepository Hotels { get; }
+        public IRoomRepository Rooms { get; }
         public UnitOfWork(OnlineTravelDbContext dbContext)
         {
             _dbContext = dbContext;
+            Hotels = new HotelRepository(_dbContext);
+            Rooms = new RoomRepository(_dbContext);
+           // Bookings = new BookingRepository(_context);
         }
 
         public IGenericRepository<T> Repository<T>() where T : BaseEntity
@@ -43,10 +51,17 @@ namespace OnlineTravel.Infrastructure.Persistence.UnitOfWork
             _transaction?.Dispose();
             _dbContext.Dispose();
         }
+        public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            return await _dbContext.SaveChangesAsync(cancellationToken);
+        }
 
-        public async Task BeginTransactionAsync()
+
+        //public async Task BeginTransactionAsync()
+        public async Task<IDbContextTransaction> BeginTransactionAsync()
         {
             _transaction = await _dbContext.Database.BeginTransactionAsync();
+            return _transaction;
         }
 
         public async Task CommitTransactionAsync()

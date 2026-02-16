@@ -48,7 +48,7 @@ public static class ApplicationDbContextSeed
         if (toursCatId != Guid.Empty) await SeedToursAsync(context, toursCatId);
         
         // 5. Seed Hotels
-        if (hotelsCatId != Guid.Empty) await SeedHotelsAsync(context, hotelsCatId);
+      //  if (hotelsCatId != Guid.Empty) await SeedHotelsAsync(context, hotelsCatId);
 
         // 6. Seed Cars
         if (carsCatId != Guid.Empty) await SeedCarsAsync(context, carsCatId);
@@ -514,47 +514,47 @@ public static class ApplicationDbContextSeed
         await context.SaveChangesAsync();
     }
 
-    private static async Task SeedHotelsAsync(OnlineTravelDbContext context, Guid categoryId)
-    {
-        if (await context.Hotels.AnyAsync()) return;
+    //private static async Task SeedHotelsAsync(OnlineTravelDbContext context, Guid categoryId)
+    //{
+    //    if (await context.Hotels.AnyAsync()) return;
 
-        var hotels = new List<Hotel>
-        {
-            new Hotel
-            {
-                Name = "Grand Plaza Hotel",
-                Description = "Luxury stay in the heart of New York.",
-                CategoryId = categoryId,
-                Address = new Address("5th Avenue", "New York", "NY", "USA", "10001", new Point(new Coordinate(-73.9851, 40.7588)){ SRID = 4326 }),
-                MainImage = new ImageUrl("https://example.com/grandplaza.jpg", "Grand Plaza Hotel"),
-                StarRating = new StarRating(5),
-                ContactInfo = new ContactInfo(new EmailAddress("info@grandplaza.com"), new PhoneNumber("+12125550199"), new Url("https://grandplaza.com")),
-                Amenities = new List<string> { "Pool", "Spa", "Gym", "WiFi" },
-                Rooms = new List<Room>
-                {
-                     new Room { RoomNumber = "101", RoomType = "Standard King", BasePrice = new Money(300, "USD"), MaxGuests = 2 },
-                     new Room { RoomNumber = "102", RoomType = "Double Queen", BasePrice = new Money(350, "USD"), MaxGuests = 4 }
-                }
-            },
-            new Hotel
-            {
-                Name = "Seaside Resort",
-                Description = "Relax by the beach.",
-                CategoryId = categoryId,
-                Address = new Address("Ocean Drive", "Miami", "FL", "USA", "33139", new Point(new Coordinate(-80.1300, 25.7906)){ SRID = 4326 }),
-                MainImage = new ImageUrl("https://example.com/seaside.jpg", "Seaside Resort"),
-                StarRating = new StarRating(4),
-                Amenities = new List<string> { "Beach Access", "Pool", "Bar" },
-                 Rooms = new List<Room>
-                {
-                     new Room { RoomNumber = "201", RoomType = "Ocean View", BasePrice = new Money(400, "USD"), MaxGuests = 2 }
-                }
-            }
-        };
+    //    var hotels = new List<Hotel>
+    //    {
+    //        new Hotel
+    //        {
+    //            Name = "Grand Plaza Hotel",
+    //            Description = "Luxury stay in the heart of New York.",
+    //            CategoryId = categoryId,
+    //            Address = new Address("5th Avenue", "New York", "NY", "USA", "10001", new Point(new Coordinate(-73.9851, 40.7588)){ SRID = 4326 }),
+    //            MainImage = new ImageUrl("https://example.com/grandplaza.jpg", "Grand Plaza Hotel"),
+    //            StarRating = new StarRating(5),
+    //            ContactInfo = new ContactInfo(new EmailAddress("info@grandplaza.com"), new PhoneNumber("+12125550199"), new Url("https://grandplaza.com")),
+    //            Amenities = new List<string> { "Pool", "Spa", "Gym", "WiFi" },
+    //            Rooms = new List<Room>
+    //            {
+    //                 new Room { RoomNumber = "101", RoomType = "Standard King", BasePrice = new Money(300, "USD"), MaxGuests = 2 },
+    //                 new Room { RoomNumber = "102", RoomType = "Double Queen", BasePrice = new Money(350, "USD"), MaxGuests = 4 }
+    //            }
+    //        },
+    //        new Hotel
+    //        {
+    //            Name = "Seaside Resort",
+    //            Description = "Relax by the beach.",
+    //            CategoryId = categoryId,
+    //            Address = new Address("Ocean Drive", "Miami", "FL", "USA", "33139", new Point(new Coordinate(-80.1300, 25.7906)){ SRID = 4326 }),
+    //            MainImage = new ImageUrl("https://example.com/seaside.jpg", "Seaside Resort"),
+    //            StarRating = new StarRating(4),
+    //            Amenities = new List<string> { "Beach Access", "Pool", "Bar" },
+    //             Rooms = new List<Room>
+    //            {
+    //                 new Room { RoomNumber = "201", RoomType = "Ocean View", BasePrice = new Money(400, "USD"), MaxGuests = 2 }
+    //            }
+    //        }
+    //    };
 
-        context.Hotels.AddRange(hotels);
-        await context.SaveChangesAsync();
-    }
+    //    context.Hotels.AddRange(hotels);
+    //    await context.SaveChangesAsync();
+    //}
 
     private static async Task SeedCarsAsync(OnlineTravelDbContext context, Guid categoryId)
     {
@@ -657,6 +657,33 @@ public static class ApplicationDbContextSeed
         };
 
         context.Flights.AddRange(flights);
+        await context.SaveChangesAsync();
+
+        // Seed Seats & Fares for these flights
+        var allFlights = await context.Flights.ToListAsync();
+        var seats = new List<FlightSeat>();
+        var fares = new List<FlightFare>();
+
+        foreach (var flight in allFlights)
+        {
+            // Economy Seats
+            seats.Add(new FlightSeat { SeatLabel = "1A", CabinClass = CabinClass.Economy, IsAvailable = true, FlightId = flight.Id });
+            seats.Add(new FlightSeat { SeatLabel = "1B", CabinClass = CabinClass.Economy, IsAvailable = true, FlightId = flight.Id });
+            seats.Add(new FlightSeat { SeatLabel = "1C", CabinClass = CabinClass.Economy, IsAvailable = true, FlightId = flight.Id });
+            seats.Add(new FlightSeat { SeatLabel = "2A", CabinClass = CabinClass.Economy, IsAvailable = true, FlightId = flight.Id });
+            seats.Add(new FlightSeat { SeatLabel = "2B", CabinClass = CabinClass.Economy, IsAvailable = true, FlightId = flight.Id });
+            seats.Add(new FlightSeat { SeatLabel = "2C", CabinClass = CabinClass.Economy, IsAvailable = true, FlightId = flight.Id });
+
+            // Business Seats
+            seats.Add(new FlightSeat { SeatLabel = "1F", CabinClass = CabinClass.Business, IsAvailable = true, FlightId = flight.Id });
+            seats.Add(new FlightSeat { SeatLabel = "1D", CabinClass = CabinClass.Business, IsAvailable = true, FlightId = flight.Id });
+
+            // Seed ONE Fare per flight (Simplification due to strategy limitation)
+             fares.Add(new FlightFare { FlightId = flight.Id, BasePrice = new Money(150, "USD"), SeatsAvailable = 100 });
+        }
+
+        context.FlightSeats.AddRange(seats);
+        context.Set<FlightFare>().AddRange(fares);
         await context.SaveChangesAsync();
     }
 

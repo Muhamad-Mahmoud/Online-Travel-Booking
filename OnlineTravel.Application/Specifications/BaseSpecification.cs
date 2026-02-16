@@ -8,6 +8,8 @@ namespace OnlineTravel.Application.Specifications
     {
         public Expression<Func<T, bool>>? Criteria { get; set; }
         public List<Expression<Func<T, object>>> Includes { get; } = new();
+        public List<string> IncludeStrings { get; } = new();
+
         public int Take { get; set; }
         public int Skip { get; set; }
         public bool IsPaginationEnabled { get; set; }
@@ -21,12 +23,20 @@ namespace OnlineTravel.Application.Specifications
             Criteria = criteria;
         }
 
+        //protected void AddCriteria(Expression<Func<T, bool>> criteria)
+        //{
+        //    Criteria = criteria;
+        //}
+
 
         protected void AddIncludes(Expression<Func<T, object>> includeExpression)
         {
             Includes.Add(includeExpression);
         }
-
+        protected void AddInclude(string includeString)
+        {
+            IncludeStrings.Add(includeString);
+        }
         public void ApplyPagination(int skip, int take)
         {
             Skip = skip;
@@ -41,6 +51,11 @@ namespace OnlineTravel.Application.Specifications
         }
 
         public void AddOrderByDesc(Expression<Func<T, object>> orderByDescExpression)
+        {
+            OrderByDescending = orderByDescExpression;
+        }
+
+        protected void ApplyOrderByDescending(Expression<Func<T, object>> orderByDescExpression)
         {
             OrderByDescending = orderByDescExpression;
         }

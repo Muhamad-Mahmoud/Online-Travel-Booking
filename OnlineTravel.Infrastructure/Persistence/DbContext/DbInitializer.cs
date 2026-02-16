@@ -26,7 +26,7 @@ public static class DbInitializer
         await SeedUsersAsync(userManager);
         await SeedCategoriesAsync(context);
         await SeedToursAsync(context);
-        await SeedHotelsAsync(context);
+     //   await SeedHotelsAsync(context);
         await SeedFlightsAsync(context);
         await SeedCarsAsync(context);
         await SeedReviewsAsync(context);
@@ -173,85 +173,85 @@ public static class DbInitializer
         await context.SaveChangesAsync();
     }
 
-    private static async Task SeedHotelsAsync(OnlineTravelDbContext context)
-    {
-        if (await context.Hotels.AnyAsync()) return;
+    //private static async Task SeedHotelsAsync(OnlineTravelDbContext context)
+    //{
+    //    if (await context.Hotels.AnyAsync()) return;
 
-        var hotelCategory = await context.Categories.FirstAsync(c => c.Type == CategoryType.Hotel);
+    //    var hotelCategory = await context.Categories.FirstAsync(c => c.Type == CategoryType.Hotel);
 
-        var hotels = new List<Hotel>
-        {
-            new Hotel
-            {
-                Name = "Grand Plaza Hotel",
-                Description = "Luxury hotel in the heart of the city.",
-                CategoryId = hotelCategory.Id,
-                Address = new Address("Downtown", "Cairo", "Cairo", "Egypt", "11111"),
-                MainImage = new ImageUrl("https://images.unsplash.com/photo-1566073771259-6a8506099945", "Hotel Exterior"),
-                StarRating = new StarRating(5),
-                Amenities = new List<string> { "WiFi", "Pool", "Spa", "Gym" }
-            },
-            new Hotel
-            {
-                Name = "Luxor Palace Resort",
-                Description = "Escape to luxury on the banks of the Nile.",
-                CategoryId = hotelCategory.Id,
-                Address = new Address("Nile Corniche", "Luxor", "Luxor", "Egypt", "85111"),
-                MainImage = new ImageUrl("https://images.unsplash.com/photo-1542314831-068cd1dbfeeb", "Luxor Resort"),
-                StarRating = new StarRating(5),
-                Amenities = new List<string> { "Nile View", "Infinity Pool", "Fine Dining" }
-            },
-            new Hotel
-            {
-                Name = "Old Cataract Aswan",
-                Description = "A historic gem overlooking the iconic cataracts.",
-                CategoryId = hotelCategory.Id,
-                Address = new Address("Abtal El Tahrir", "Aswan", "Aswan", "Egypt", "81511"),
-                MainImage = new ImageUrl("https://images.unsplash.com/photo-1520250497591-112f2f40a3f4", "Aswan View"),
-                StarRating = new StarRating(5),
-                Amenities = new List<string> { "Historic Library", "Sunset Terrace", "Butler Service" }
-            }
-        };
+    //    var hotels = new List<Hotel>
+    //    {
+    //        new Hotel
+    //        {
+    //            Name = "Grand Plaza Hotel",
+    //            Description = "Luxury hotel in the heart of the city.",
+    //            CategoryId = hotelCategory.Id,
+    //            Address = new Address("Downtown", "Cairo", "Cairo", "Egypt", "11111"),
+    //            MainImage = new ImageUrl("https://images.unsplash.com/photo-1566073771259-6a8506099945", "Hotel Exterior"),
+    //            StarRating = new StarRating(5),
+    //            Amenities = new List<string> { "WiFi", "Pool", "Spa", "Gym" }
+    //        },
+    //        new Hotel
+    //        {
+    //            Name = "Luxor Palace Resort",
+    //            Description = "Escape to luxury on the banks of the Nile.",
+    //            CategoryId = hotelCategory.Id,
+    //            Address = new Address("Nile Corniche", "Luxor", "Luxor", "Egypt", "85111"),
+    //            MainImage = new ImageUrl("https://images.unsplash.com/photo-1542314831-068cd1dbfeeb", "Luxor Resort"),
+    //            StarRating = new StarRating(5),
+    //            Amenities = new List<string> { "Nile View", "Infinity Pool", "Fine Dining" }
+    //        },
+    //        new Hotel
+    //        {
+    //            Name = "Old Cataract Aswan",
+    //            Description = "A historic gem overlooking the iconic cataracts.",
+    //            CategoryId = hotelCategory.Id,
+    //            Address = new Address("Abtal El Tahrir", "Aswan", "Aswan", "Egypt", "81511"),
+    //            MainImage = new ImageUrl("https://images.unsplash.com/photo-1520250497591-112f2f40a3f4", "Aswan View"),
+    //            StarRating = new StarRating(5),
+    //            Amenities = new List<string> { "Historic Library", "Sunset Terrace", "Butler Service" }
+    //        }
+    //    };
 
-        await context.Hotels.AddRangeAsync(hotels);
-        await context.SaveChangesAsync();
+    //    await context.Hotels.AddRangeAsync(hotels);
+    //    await context.SaveChangesAsync();
 
-        foreach (var hotel in hotels)
-        {
-            var rooms = new List<Room>
-            {
-                new Room
-                {
-                    HotelId = hotel.Id,
-                    RoomNumber = "101",
-                    RoomType = "Luxury Suite",
-                    BasePrice = new Money(250, "USD"),
-                    MaxGuests = 2,
-                    Status = RoomStatus.Active
-                },
-                new Room
-                {
-                    HotelId = hotel.Id,
-                    RoomNumber = "202",
-                    RoomType = "Deluxe Double",
-                    BasePrice = new Money(150, "USD"),
-                    MaxGuests = 3,
-                    Status = RoomStatus.Active
-                },
-                 new Room
-                {
-                    HotelId = hotel.Id,
-                    RoomNumber = "303",
-                    RoomType = "Standard King",
-                    BasePrice = new Money(120, "USD"),
-                    MaxGuests = 2,
-                    Status = RoomStatus.Active
-                }
-            };
-            await context.Rooms.AddRangeAsync(rooms);
-        }
-        await context.SaveChangesAsync();
-    }
+    //    foreach (var hotel in hotels)
+    //    {
+    //        var rooms = new List<Room>
+    //        {
+    //            new Room
+    //            {
+    //                HotelId = hotel.Id,
+    //                RoomNumber = "101",
+    //                RoomType = "Luxury Suite",
+    //                BasePrice = new Money(250, "USD"),
+    //                MaxGuests = 2,
+    //                Status = RoomStatus.Active
+    //            },
+    //            new Room
+    //            {
+    //                HotelId = hotel.Id,
+    //                RoomNumber = "202",
+    //                RoomType = "Deluxe Double",
+    //                BasePrice = new Money(150, "USD"),
+    //                MaxGuests = 3,
+    //                Status = RoomStatus.Active
+    //            },
+    //             new Room
+    //            {
+    //                HotelId = hotel.Id,
+    //                RoomNumber = "303",
+    //                RoomType = "Standard King",
+    //                BasePrice = new Money(120, "USD"),
+    //                MaxGuests = 2,
+    //                Status = RoomStatus.Active
+    //            }
+    //        };
+    //        await context.Rooms.AddRangeAsync(rooms);
+    //    }
+    //    await context.SaveChangesAsync();
+    //}
 
     private static async Task SeedFlightsAsync(OnlineTravelDbContext context)
     {
@@ -436,42 +436,66 @@ public static class DbInitializer
 
     private static async Task SeedReviewsAsync(OnlineTravelDbContext context)
     {
-        if (await context.Reviews.AnyAsync()) return;
+        var user = await context.Users.FirstOrDefaultAsync(u => u.UserName == "customer@onlinetravel.com");
+        if (user == null) return;
 
-        var user = await context.Users.FirstAsync(u => u.UserName == "customer@onlinetravel.com");
+        // Fetch existing reviews strategies into memory for reliable comparison
+        // Select (ItemId, CategoryId) tuples to ensure we match the specific constraint
+        var existingReviews = await context.Reviews
+            .IgnoreQueryFilters()
+            .Where(r => r.UserId == user.Id)
+            .Select(r => new { r.ItemId, r.CategoryId })
+            .ToListAsync();
+
+        var existingReviewSet = new HashSet<(Guid ItemId, Guid CategoryId)>(
+            existingReviews.Select(r => (r.ItemId, r.CategoryId)));
+
         var tours = await context.Tours.Take(2).ToListAsync();
         var hotels = await context.Hotels.Take(2).ToListAsync();
 
-        var tourCategory = await context.Categories.FirstAsync(c => c.Type == CategoryType.Tour);
-        var hotelCategory = await context.Categories.FirstAsync(c => c.Type == CategoryType.Hotel);
+        if (!tours.Any() && !hotels.Any()) return;
+
+        var tourCategory = await context.Categories.FirstOrDefaultAsync(c => c.Type == CategoryType.Tour);
+        var hotelCategory = await context.Categories.FirstOrDefaultAsync(c => c.Type == CategoryType.Hotel);
+
+        if (tourCategory == null || hotelCategory == null) return;
 
         var reviews = new List<Review>();
 
         foreach (var tour in tours)
         {
-            reviews.Add(new Review
+            if (!existingReviewSet.Contains((tour.Id, tourCategory.Id)))
             {
-                UserId = user.Id,
-                ItemId = tour.Id,
-                CategoryId = tourCategory.Id,
-                Rating = new StarRating(5),
-                Comment = $"Excellent tour of {tour.Title}! Highly recommended."
-            });
+                reviews.Add(new Review
+                {
+                    UserId = user.Id,
+                    ItemId = tour.Id,
+                    CategoryId = tourCategory.Id,
+                    Rating = new StarRating(5),
+                    Comment = $"Excellent tour of {tour.Title}! Highly recommended."
+                });
+            }
         }
 
         foreach (var hotel in hotels)
         {
-            reviews.Add(new Review
+            if (!existingReviewSet.Contains((hotel.Id, hotelCategory.Id)))
             {
-                UserId = user.Id,
-                ItemId = hotel.Id,
-                CategoryId = hotelCategory.Id,
-                Rating = new StarRating(4.5m),
-                Comment = $"I had a great stay at {hotel.Name}. Staff were very helpful."
-            });
+                reviews.Add(new Review
+                {
+                    UserId = user.Id,
+                    ItemId = hotel.Id,
+                    CategoryId = hotelCategory.Id,
+                    Rating = new StarRating(4.5m),
+                    Comment = $"I had a great stay at {hotel.Name}. Staff were very helpful."
+                });
+            }
         }
 
-        await context.Reviews.AddRangeAsync(reviews);
-        await context.SaveChangesAsync();
+        if (reviews.Any())
+        {
+            await context.Reviews.AddRangeAsync(reviews);
+            await context.SaveChangesAsync();
+        }
     }
 }
