@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OnlineTravel.Application.Features.Flight.Flights.CreateFlight;
+using OnlineTravel.Application.Features.Flight.Flights.FlightDetails;
 using OnlineTravel.Application.Features.Flight.Flights.SearchFlights;
+using OnlineTravel.Application.Features.Flight.Seats.AllSeats;
 
 namespace OnlineTravelBookingTeamB.Controllers
 {
@@ -30,6 +32,28 @@ namespace OnlineTravelBookingTeamB.Controllers
             {
                 return NotFound("No flights found matching your criteria.");
             }
+
+            return Ok(result);
+        }
+        [HttpGet("{flightId}/seats")]
+        public async Task<ActionResult<List<AllSeatsDto>>> GetAllSeats(Guid flightId)
+        {
+           
+            var result = await _mediator.Send(new AllSeatsQuery(flightId));
+
+            if (result == null || !result.Any())
+            {
+                return NotFound($"No seats found for flight with ID: {flightId}");
+            }
+
+            return Ok(result);
+        }
+        [HttpGet("{id}")]
+        public async Task<ActionResult<FlightDetailsDto>> GetFlightDetails(Guid id)
+        {
+            var result = await _mediator.Send(new FlightDetailsQuery(id));
+
+            if (result == null) return NotFound();
 
             return Ok(result);
         }
