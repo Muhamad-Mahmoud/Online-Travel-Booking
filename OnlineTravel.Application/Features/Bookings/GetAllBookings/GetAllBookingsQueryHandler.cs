@@ -6,11 +6,18 @@ using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities.Bookings;
 using OnlineTravel.Domain.ErrorHandling;
 
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+
+using OnlineTravel.Domain.Enums;
+using OnlineTravel.Application.Features.Bookings.Helpers;
+
+using OnlineTravel.Application.Common;
 
 namespace OnlineTravel.Application.Features.Bookings.GetAllBookings;
 
-public sealed class GetAllBookingsQueryHandler : IRequestHandler<GetAllBookingsQuery, Result<IReadOnlyList<AdminBookingResponse>>>
+public sealed class GetAllBookingsQueryHandler : IRequestHandler<GetAllBookingsQuery, OnlineTravel.Domain.ErrorHandling.Result<PagedResult<AdminBookingResponse>>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -23,17 +30,29 @@ public sealed class GetAllBookingsQueryHandler : IRequestHandler<GetAllBookingsQ
         _logger = logger;
     }
 
-    public async Task<Result<IReadOnlyList<AdminBookingResponse>>> Handle(GetAllBookingsQuery request, CancellationToken cancellationToken)
+    public async Task<OnlineTravel.Domain.ErrorHandling.Result<PagedResult<AdminBookingResponse>>> Handle(GetAllBookingsQuery request, CancellationToken cancellationToken)
     {
         _logger.LogDebug("Retrieving all bookings (Page {Page}, Size {Size})", request.PageIndex, request.PageSize);
 
-        var spec = new GetAllBookingsSpec(request.PageIndex, request.PageSize);
-        var bookings = await _unitOfWork.Repository<BookingEntity>().GetAllWithSpecAsync(spec, cancellationToken);
+        // Create Count Specification (isCount: true)
+        var countSpec = new GetAllBookingsSpec(request.PageIndex, request.PageSize, request.SearchTerm, request.Status, isCount: true);
+        var totalCount = await _unitOfWork.Repository<BookingEntity>().GetCountAsync(countSpec, cancellationToken);
 
-        var response = _mapper.Map<IReadOnlyList<AdminBookingResponse>>(bookings);
+        // Create Data Specification (isCount: false - default)
+        var spec = new GetAllBookingsSpec(request.PageIndex, request.PageSize, request.SearchTerm, request.Status);
+        var bookings = await _unitOfWork.Repository<BookingEntity>().GetAllWithSpecAsync(spec, cancellationToken);
+        
+        // Handle lazy expiration
+        if (BookingExpirationHelper.MarkExpiredBookings(bookings))
+        {
+            await _unitOfWork.Complete();
+        }
+
+        var bookingDtos = _mapper.Map<IReadOnlyList<AdminBookingResponse>>(bookings);
 
         _logger.LogDebug("Retrieved {Count} bookings", bookings.Count);
 
-        return Result<IReadOnlyList<AdminBookingResponse>>.Success(response);
+        var pagedResult = new PagedResult<AdminBookingResponse>(bookingDtos, totalCount, request.PageIndex, request.PageSize);
+        return OnlineTravel.Domain.ErrorHandling.Result<PagedResult<AdminBookingResponse>>.Success(pagedResult);
     }
 }

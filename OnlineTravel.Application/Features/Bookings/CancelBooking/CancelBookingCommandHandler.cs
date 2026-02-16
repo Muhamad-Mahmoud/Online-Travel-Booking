@@ -48,7 +48,7 @@ public sealed class CancelBookingCommandHandler : IRequestHandler<CancelBookingC
 
             await _unitOfWork.Complete();
             _logger.LogInformation("Booking {BookingId} cancelled successfully", request.BookingId);
-            
+
             return Result<CancelBookingResponse>.Success(new CancelBookingResponse(booking.BookingReference.Value, booking.Status.ToString()));
         }
         catch (DomainException ex)

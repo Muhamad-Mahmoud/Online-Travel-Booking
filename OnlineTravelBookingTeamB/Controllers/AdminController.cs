@@ -1,4 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
+using OnlineTravel.Application.Features.Bookings.DTOs;
+using OnlineTravel.Application.Features.Admin.Export;
+using OnlineTravel.Application.Features.Bookings.GetAllBookings;
+using OnlineTravel.Application.Features.Bookings.GetBookingById;
+using OnlineTravel.Application.Features.Bookings.GetUserBookings;
+using OnlineTravel.Domain.Enums;
 using OnlineTravel.Infrastructure.Persistence.Context;
 
 namespace OnlineTravelBookingTeamB.Controllers
@@ -15,9 +21,11 @@ namespace OnlineTravelBookingTeamB.Controllers
             _mediator = mediator;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var query = new OnlineTravel.Application.Features.Admin.Dashboard.GetAdminDashboardStatsQuery();
+            var result = await _mediator.Send(query);
+            return View(result.Value);
         }
 
         public IActionResult SeedData()
@@ -95,7 +103,61 @@ namespace OnlineTravelBookingTeamB.Controllers
         public IActionResult Flights()
         {
             return View();
-            }
-}
+        }
 
+        public async Task<IActionResult> Bookings(int pageIndex = 1, int pageSize = 5, string? searchTerm = null, string? status = null)
+        {
+            var bookingsQuery = new GetAllBookingsQuery(pageIndex, pageSize, searchTerm, status);
+            var statsQuery = new OnlineTravel.Application.Features.Bookings.GetBookingStats.GetBookingStatsQuery();
+
+            var bookingsResult = await _mediator.Send(bookingsQuery);
+            var statsResult = await _mediator.Send(statsQuery);
+            
+            var viewModel = new Models.AdminBookingsViewModel
+            {
+                Bookings = bookingsResult.IsSuccess ? bookingsResult.Value : new OnlineTravel.Application.Common.PagedResult<AdminBookingResponse>(new List<AdminBookingResponse>(), 0, pageIndex, pageSize),
+                Stats = statsResult.IsSuccess ? statsResult.Value : new BookingStatsDto()
+            };
+
+            ViewBag.SearchTerm = searchTerm;
+            ViewBag.Status = status;
+            ViewBag.BookingStatuses = Enum.GetNames(typeof(BookingStatus))
+                .Where(s => s != "Completed" && s != "Refunded")
+                .ToList();
+            
+            return View(viewModel);
+        }
+
+        public async Task<IActionResult> BookingDetails(Guid id)
+        {
+            var query = new GetBookingByIdQuery(id);
+            var result = await _mediator.Send(query);
+            if (!result.IsSuccess)
+            {
+                return RedirectToAction(nameof(Bookings));
+            }
+            return View(result.Value);
+        }
+
+        public async Task<IActionResult> UserBookings(Guid userId)
+        {
+            var query = new GetUserBookingsQuery(userId);
+            var result = await _mediator.Send(query);
+            return View(result.Value);
+        }
+        [HttpGet]
+        public async Task<IActionResult> ExportBookingsReport()
+        {
+            var query = new ExportBookingsQuery();
+            var result = await _mediator.Send(query);
+
+            if (!result.IsSuccess)
+            {
+                return RedirectToAction(nameof(Bookings));
+            }
+
+            var fileName = $"bookings_report_{DateTime.UtcNow:yyyyMMdd_HHmmss}.csv";
+            return File(result.Value ?? [], "text/csv", fileName);
+        }
+    }
 }

@@ -84,7 +84,7 @@ public class BookingEntity : BaseEntity
         if (Status == BookingStatus.PendingPayment)
         {
             Status = BookingStatus.Expired;
-        }
+            PaymentStatus = PaymentStatus.Expired;		}
     }
 
     public void ConfirmPayment(string? paymentIntentId = null)

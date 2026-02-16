@@ -14,5 +14,6 @@ namespace OnlineTravel.Application.Interfaces.Persistence
         void Update(T entity);
         void Delete(T entity);
         Task<T?> FindAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
+        IQueryable<T> Query();
     }
 }

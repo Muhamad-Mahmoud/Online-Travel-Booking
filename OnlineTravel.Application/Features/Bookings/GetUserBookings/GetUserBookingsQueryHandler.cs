@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace OnlineTravel.Application.Features.Bookings.GetUserBookings;
 
-public sealed class GetUserBookingsQueryHandler : IRequestHandler<GetUserBookingsQuery, Result<IReadOnlyList<BookingResponse>>>
+public sealed class GetUserBookingsQueryHandler : IRequestHandler<GetUserBookingsQuery, Result<IReadOnlyList<AdminBookingResponse>>>
 {
 
     private readonly IUnitOfWork _unitOfWork;
@@ -29,17 +29,17 @@ public sealed class GetUserBookingsQueryHandler : IRequestHandler<GetUserBooking
         _logger = logger;
     }
 
-    public async Task<Result<IReadOnlyList<BookingResponse>>> Handle(GetUserBookingsQuery request, CancellationToken cancellationToken)
+    public async Task<Result<IReadOnlyList<AdminBookingResponse>>> Handle(GetUserBookingsQuery request, CancellationToken cancellationToken)
     {
         _logger.LogDebug("Retrieving bookings for User {UserId}", request.UserId);
 
         var spec = new GetAllBookingsByUserIdSpec(request.UserId);
         var bookings = await _unitOfWork.Repository<BookingEntity>().GetAllWithSpecAsync(spec, cancellationToken);
 
-        var response = _mapper.Map<IReadOnlyList<BookingResponse>>(bookings);
+        var response = _mapper.Map<IReadOnlyList<AdminBookingResponse>>(bookings);
 
         _logger.LogDebug("Found {Count} bookings for User {UserId}", bookings.Count, request.UserId);
 
-        return Result<IReadOnlyList<BookingResponse>>.Success(response);
+        return Result<IReadOnlyList<AdminBookingResponse>>.Success(response);
     }
 }

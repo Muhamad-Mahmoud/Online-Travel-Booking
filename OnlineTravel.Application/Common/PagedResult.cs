@@ -7,6 +7,8 @@ public class PagedResult<T>
     public int PageSize { get; set; }
     public int TotalCount { get; set; }
     public int TotalPages { get; set; }
+    public bool HasPreviousPage => PageIndex > 1;
+    public bool HasNextPage => PageIndex < TotalPages;
 
     public PagedResult(IReadOnlyList<T> data, int count, int pageIndex, int pageSize)
     {
