@@ -13,7 +13,9 @@ namespace OnlineTravel.Application.Interfaces.Persistence
         Task AddAsync(T entity, CancellationToken cancellationToken = default);
         void Update(T entity );
 
-       // Task UpdateAsync(T entity, CancellationToken cancellationToken = default);
+        void MarkPropertyModified<TProperty>(
+    T entity,
+    Expression<Func<T, TProperty>> propertyExpression);
 
         void Delete(T entity);
         Task<T?> FindAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);

@@ -19,14 +19,6 @@ namespace OnlineTravelBookingTeamB.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult> GetById(Guid id)
-        {
-            var query = new GetCarByIdQuery { Id = id };
-            var result = await _mediator.Send(query);
-            return result.IsSuccess ? Ok(result.Value) : result.ToProblem();
-        }
-
         [HttpGet]
         public async Task<ActionResult> GetAll([FromQuery] GetAllCarsQuery query)
         {
@@ -47,9 +39,8 @@ namespace OnlineTravelBookingTeamB.Controllers
             var result = await _mediator.Send(query);
 
             if (result.IsSuccess)
-                return Ok(result.Value); // 200 + DTO
+                return Ok(result.Value); 
 
-            // لو فشل، حوّل الـ Error إلى ProblemDetails (حسب ToProblem extension)
             return result.ToProblem();
         }
 
@@ -62,7 +53,7 @@ namespace OnlineTravelBookingTeamB.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Update(Guid id, UpdateCarRequest request)
+        public async Task<ActionResult> Update(Guid id,[FromBody] UpdateCarRequest request)
         {
             if (id != request.Id)
                 return BadRequest("ID mismatch");

@@ -42,6 +42,19 @@ var wwwRoot = builder.Environment.WebRootPath
     ?? Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
 Directory.CreateDirectory(Path.Combine(wwwRoot, "uploads"));
 builder.Services.AddScoped<IFileService>(_ => new FileService(wwwRoot));
+// Add File Service
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        // تحويل أسماء الخصائص إلى camelCase (مثلاً Latitude -> latitude)
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        // تجاهل حالة الأحرف (احتياطي)
+        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+        // السماح باستقبال الـ enums كنصوص (strings)
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
+var webRootPath = builder.Environment.WebRootPath ?? Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
+builder.Services.AddScoped<IFileService>(_ => new FileService(webRootPath));
 
 var app = builder.Build();
 app.UseStaticFiles();
