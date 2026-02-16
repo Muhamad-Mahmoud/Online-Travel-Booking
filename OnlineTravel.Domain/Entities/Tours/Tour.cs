@@ -46,6 +46,11 @@ public class Tour : SoftDeletableEntity
     public virtual ICollection<OnlineTravel.Domain.Entities.Reviews.Review> Reviews { get; set; } = new List<OnlineTravel.Domain.Entities.Reviews.Review>();
 
 
+
+    public void UpdateAddress(Address newAddress)
+    {
+        Address = newAddress;
+    }
 }
 
 

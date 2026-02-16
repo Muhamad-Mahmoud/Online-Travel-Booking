@@ -3,6 +3,7 @@ using OnlineTravel.Application.Features.Tours.CreateTour.Commands;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities.Tours;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
+using NetTopologySuite.Geometries;
 
 namespace OnlineTravel.Application.Features.Tours.CreateTour.Handlers
 {
@@ -26,7 +27,11 @@ namespace OnlineTravel.Application.Features.Tours.CreateTour.Handlers
                 DurationNights = request.DurationNights,
                 Recommended = request.Recommended,
                 BestTimeToVisit = request.BestTimeToVisit,
-                Address = new Address(request.Street, request.City, request.State, request.Country, request.PostalCode),
+
+                Address = new Address(request.Street, request.City, request.State, request.Country, request.PostalCode, 
+                    (request.Latitude.HasValue && request.Longitude.HasValue) 
+                        ? new Point(request.Longitude.Value, request.Latitude.Value) { SRID = 4326 } 
+                        : null),
                 MainImage = !string.IsNullOrEmpty(request.MainImageUrl) ? new ImageUrl(request.MainImageUrl) : null
             };
 
