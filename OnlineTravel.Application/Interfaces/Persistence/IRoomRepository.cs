@@ -1,9 +1,4 @@
-﻿using OnlineTravel.Domain.Entities.Hotels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using OnlineTravel.Domain.Entities.Hotels;
 
 namespace OnlineTravel.Application.Interfaces.Persistence
 {
@@ -11,7 +6,6 @@ namespace OnlineTravel.Application.Interfaces.Persistence
     {
         Task<Room?> GetWithAvailabilityAsync(Guid id);
         Task<Room?> GetWithSeasonalPricesAsync(Guid id);
-        Task<bool> RoomNumberExistsInHotelAsync(Guid hotelId, string roomNumber);
         Task<IReadOnlyList<Room>> GetHotelRoomsAsync(Guid hotelId);
     }
 

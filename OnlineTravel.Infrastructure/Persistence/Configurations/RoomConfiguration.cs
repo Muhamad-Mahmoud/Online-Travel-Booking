@@ -61,10 +61,5 @@ public class RoomConfiguration : IEntityTypeConfiguration<Room>
                 .WithOne(ra => ra.Room)
                 .HasForeignKey(ra => ra.RoomId)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasMany(r => r.Bookings)
-                .WithOne(b => b.Room)
-                .HasForeignKey(b => b.RoomId)
-                .OnDelete(DeleteBehavior.Restrict);
         }
     }

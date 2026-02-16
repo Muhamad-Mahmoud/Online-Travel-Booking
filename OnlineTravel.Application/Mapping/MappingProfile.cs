@@ -1,5 +1,6 @@
 using AutoMapper;
-using OnlineTravel.Application.Hotels.Dtos;
+using OnlineTravel.Application.Features.Hotels.Dtos;
+using OnlineTravel.Application.Features.Hotels.Public.SearchHotels;
 using OnlineTravel.Domain.Entities.Hotels;
 using OnlineTravel.Domain.Entities.Reviews;
 using OnlineTravel.Domain.Entities.Tours;
@@ -28,7 +29,7 @@ namespace OnlineTravel.Application.Mapping
                 .ForMember(dest => dest.Currency, opt => opt.MapFrom(src => src.Price.Currency));
 
             // Hotel mappings
-            CreateMap<Hotel, Hotels.Public.SearchHotels.HotelSearchDto>()
+            CreateMap<Hotel, HotelSearchDto>()
                 .ForMember(d => d.Latitude, opt => opt.MapFrom(s => s.Address != null && s.Address.Coordinates != null ? s.Address.Coordinates.Y : 0))
                 .ForMember(d => d.Longitude, opt => opt.MapFrom(s => s.Address != null && s.Address.Coordinates != null ? s.Address.Coordinates.X : 0))
                 .ForMember(d => d.MinPrice, opt => opt.MapFrom(s => s.Rooms.Any() ? s.Rooms.Min(r => r.BasePricePerNight.Amount) : 0m))
@@ -56,7 +57,6 @@ namespace OnlineTravel.Application.Mapping
                 .ForMember(d => d.CheckOutTime, opt => opt.MapFrom(s => s.CheckOutTime.Start))
                 .ForMember(d => d.Gallery, opt => opt.Ignore());
 
-            CreateMap<HotelGallery, GalleryImageDto>();
             CreateMap<Review, ReviewDto>();
 
             // Room mappings

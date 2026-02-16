@@ -1,9 +1,9 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using OnlineTravel.Application.Hotels.Public.AddReview;
-using OnlineTravel.Application.Hotels.Public.GetHotelDetails;
-using OnlineTravel.Application.Hotels.Public.GetHotelRooms;
-using OnlineTravel.Application.Hotels.Public.SearchHotels;
+using OnlineTravel.Application.Features.Hotels.Public.AddReview;
+using OnlineTravel.Application.Features.Hotels.Public.GetHotelDetails;
+using OnlineTravel.Application.Features.Hotels.Public.GetHotelRooms;
+using OnlineTravel.Application.Features.Hotels.Public.SearchHotels;
 
 namespace OnlineTravelBookingTeamB.Controllers
 {

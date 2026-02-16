@@ -1,7 +1,5 @@
 using OnlineTravel.Domain.Entities._Base;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
-using OnlineTravel.Domain.Entities.Bookings;
-using OnlineTravel.Domain.Enums;
 using OnlineTravel.Domain.ErrorHandling;
 
 namespace OnlineTravel.Domain.Entities.Hotels;
@@ -15,6 +13,8 @@ public class Room : BaseEntity
     public Money BasePricePerNight { get; private set; }
     public int Capacity { get; private set; }
     public int BedCount { get; private set; }
+    public DateTime? LastReservedAt { get; set; }
+
 
     private readonly List<Url> _photos = new();
     public IReadOnlyCollection<Url> Photos => _photos.AsReadOnly();
@@ -27,9 +27,6 @@ public class Room : BaseEntity
 
     private readonly List<RoomAvailability> _roomAvailabilities = new();
     public IReadOnlyCollection<RoomAvailability> RoomAvailabilities => _roomAvailabilities.AsReadOnly();
-
-    private readonly List<BookingEntity> _bookings = new();
-    public IReadOnlyCollection<BookingEntity> Bookings => _bookings.AsReadOnly();
 
     private Room() { } // EF Core
 
@@ -62,7 +59,10 @@ public class Room : BaseEntity
         BedCount = 1; // Fixed as per requirements
         CreatedAt = DateTime.UtcNow;
     }
-
+    public void Reserve()
+    {
+        LastReservedAt = DateTime.UtcNow;
+    }
     public void UpdateDetails(string name, string description, Money basePricePerNight)
     {
         if (string.IsNullOrWhiteSpace(name))
@@ -84,18 +84,13 @@ public class Room : BaseEntity
         _photos.Add(photoUrl);
     }
 
-    public void RemovePhoto(Url photoUrl)
-    {
-        _photos.Remove(photoUrl);
-    }
-
     public void AddSeasonalPrice(SeasonalPrice seasonalPrice)
     {
         if (seasonalPrice == null)
             throw new ArgumentNullException(nameof(seasonalPrice));
 
         // Check for overlapping date ranges
-        if (_seasonalPrices.Any(sp => sp.DateRange.Overlaps(seasonalPrice.DateRange)))
+        if (_seasonalPrices.Any(sp => sp.DateRange.OverlapsWith(seasonalPrice.DateRange)))
             throw new InvalidOperationException("Seasonal price date range overlaps with existing seasonal price");
 
         _seasonalPrices.Add(seasonalPrice);
@@ -108,7 +103,7 @@ public class Room : BaseEntity
 
         // Check for overlapping date ranges
         var overlapping = _roomAvailabilities
-            .Where(a => a.DateRange.Overlaps(availability.DateRange))
+            .Where(a => a.DateRange.OverlapsWith(availability.DateRange))
             .ToList();
 
         foreach (var item in overlapping)
@@ -117,14 +112,6 @@ public class Room : BaseEntity
         }
 
         _roomAvailabilities.Add(availability);
-    }
-
-    public void AddBooking(BookingEntity booking)
-    {
-        if (booking == null)
-            throw new ArgumentNullException(nameof(booking));
-
-        _bookings.Add(booking);
     }
 
     public Money GetPriceForDate(DateOnly date)
@@ -146,7 +133,7 @@ public class Room : BaseEntity
         {
             var dateOnly = DateOnly.FromDateTime(date);
             var priceForDate = GetPriceForDate(dateOnly);
-            totalPrice = totalPrice.Add(priceForDate);
+            totalPrice = totalPrice + priceForDate;
         }
 
         return totalPrice;
@@ -159,17 +146,9 @@ public class Room : BaseEntity
 
         // Check if there's any unavailability that overlaps
         var hasUnavailability = _roomAvailabilities
-            .Where(a => !a.IsAvailable && a.DateRange.Overlaps(dateRange))
+            .Where(a => !a.IsAvailable && a.DateRange.OverlapsWith(dateRange))
             .Any();
 
-        if (hasUnavailability)
-            return false;
-
-        // Check for overlapping bookings
-        var hasOverlappingBooking = _bookings
-            .Where(b => b.Status != BookingStatus.Cancelled && b.DateRange.Overlaps(dateRange))
-            .Any();
-
-        return !hasOverlappingBooking;
+        return !hasUnavailability;
     }
 }

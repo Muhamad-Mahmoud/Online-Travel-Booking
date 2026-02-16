@@ -20,7 +20,7 @@
     <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="9.0.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+	  <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,6 +31,8 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\uploads\" />
+    <Folder Include="wwwroot\uploads\hotels\" />
+    <Folder Include="wwwroot\uploads\rooms\" />
   </ItemGroup>
 
 </Project>

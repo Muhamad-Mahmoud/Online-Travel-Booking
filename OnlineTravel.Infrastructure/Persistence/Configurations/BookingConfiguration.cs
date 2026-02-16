@@ -28,21 +28,5 @@ public class BookingConfiguration : IEntityTypeConfiguration<BookingEntity>
             .WithOne(d => d.Booking)
             .HasForeignKey(d => d.BookingId)
             .OnDelete(DeleteBehavior.Cascade);
-
-
-        //builder.OwnsOne(e => e.DateRange, dr =>
-        //{
-        //    dr.Property(d => d.Start)
-        //      .HasColumnName("StartDate")
-        //      .HasConversion(
-        //          d => d.ToDateTime(TimeOnly.MinValue),   // DateOnly -> DateTime
-        //          d => DateOnly.FromDateTime(d));        // DateTime -> DateOnly
-
-        //    dr.Property(d => d.End)
-        //      .HasColumnName("EndDate")
-        //      .HasConversion(
-        //          d => d.ToDateTime(TimeOnly.MinValue),
-        //          d => DateOnly.FromDateTime(d));
-        //});
     }
 }

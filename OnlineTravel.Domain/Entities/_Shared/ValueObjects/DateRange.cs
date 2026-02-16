@@ -17,29 +17,20 @@ public record DateRange
     public int TotalDays => End.DayNumber - Start.DayNumber;
     public int TotalNights => TotalDays;
 
-    public bool OverlapsWith(DateRange other) => Start < other.End && other.Start < End;
-
-    public bool Contains(DateOnly date) => date >= Start && date <= End;
-
-    public override string ToString() => $"{Start:yyyy-MM-dd} to {End:yyyy-MM-dd}";
-
-    #region For task Hotel RoomAvailability - check if two date ranges overlap (e.g., for checking room availability)
-    public bool Overlaps(DateRange other)
+    public bool OverlapsWith(DateRange other)
     {
         if (other == null)
             throw new ArgumentNullException(nameof(other));
-
-        return Start < other.End && End > other.Start;
+        return Start < other.End && other.Start < End;
     }
+
+    public bool Contains(DateOnly date) => date >= Start && date <= End;
+
     public IEnumerable<DateTime> GetDates()
     {
         for (var date = Start; date < End; date = date.AddDays(1))
-        {
             yield return date.ToDateTime(TimeOnly.MinValue);
-        }
     }
 
-
-
-    #endregion
+    public override string ToString() => $"{Start:yyyy-MM-dd} to {End:yyyy-MM-dd}";
 }

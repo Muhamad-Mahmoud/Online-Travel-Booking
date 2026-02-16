@@ -1,8 +1,9 @@
 using AutoMapper;
 using MediatR;
 using NetTopologySuite.Geometries;
-using OnlineTravel.Application.Hotels.Common;
+using OnlineTravel.Application.Common;
 using OnlineTravel.Application.Hotels.Specifications;
+using OnlineTravel.Application.Features.Hotels.Public.SearchHotels;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 using OnlineTravel.Domain.Entities.Hotels;
@@ -28,7 +29,7 @@ namespace OnlineTravel.Application.Hotels.Public.SearchHotels
                 pageNumber: request.PageNumber,
                 pageSize: request.PageSize);
 
-            var hotels = await _unitOfWork.Repository<Hotel>().ListAsync(spec, cancellationToken);
+            var hotels = await _unitOfWork.Repository<Hotel>().GetAllWithSpecAsync(spec, cancellationToken);
             var filteredHotels = hotels.AsEnumerable();
 
             if (request.Latitude.HasValue && request.Longitude.HasValue && request.RadiusInKm.HasValue && request.RadiusInKm > 0)
@@ -63,13 +64,8 @@ namespace OnlineTravel.Application.Hotels.Public.SearchHotels
             var hotelsList = filteredHotels.ToList();
             var totalCount = hotelsList.Count;
             var dtos = _mapper.Map<List<HotelSearchDto>>(hotelsList);
-            var pagedResult = new PagedResult<HotelSearchDto>
-            {
-                Items = dtos,
-                TotalCount = totalCount,
-                PageNumber = request.PageNumber,
-                PageSize = request.PageSize
-            };
+            var pageIndex = request.PageNumber > 0 ? request.PageNumber - 1 : 0;
+            var pagedResult = new PagedResult<HotelSearchDto>(dtos, totalCount, pageIndex, request.PageSize);
             return Result<PagedResult<HotelSearchDto>>.Success(pagedResult);
         }
     }

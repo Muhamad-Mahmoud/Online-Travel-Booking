@@ -1,7 +1,8 @@
 using AutoMapper;
 using MediatR;
-using OnlineTravel.Application.Hotels.Common;
-using OnlineTravel.Application.Hotels.Dtos;
+using OnlineTravel.Application.Common;
+using OnlineTravel.Application.Features.Hotels.Public.GetHotelRooms;
+using OnlineTravel.Application.Features.Hotels.Dtos;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 using OnlineTravel.Domain.Entities.Hotels;

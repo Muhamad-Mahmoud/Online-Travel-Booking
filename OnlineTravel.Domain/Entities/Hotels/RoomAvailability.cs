@@ -1,10 +1,5 @@
-﻿using OnlineTravel.Domain.Entities._Base;
+using OnlineTravel.Domain.Entities._Base;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OnlineTravel.Domain.Entities.Hotels
 {
@@ -33,10 +28,5 @@ namespace OnlineTravel.Domain.Entities.Hotels
             IsAvailable = isAvailable;
         }
 
-        public void UpdateAvailability(bool isAvailable)
-        {
-            IsAvailable = isAvailable;
-        }
     }
-
 }

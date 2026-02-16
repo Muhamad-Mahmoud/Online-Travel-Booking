@@ -49,11 +49,16 @@ public class HotelConfiguration : IEntityTypeConfiguration<Hotel>
         // ContactInfo owned type
         builder.OwnsOne(h => h.ContactInfo, contact =>
         {
+            // EmailAddress conversion
             contact.Property(c => c.Email)
-                   .HasMaxLength(200);
+                   .HasMaxLength(200)
+                   .HasConversion(
+                       v => v.Value,            // EmailAddress -> string
+                       v => new EmailAddress(v) // string -> EmailAddress
+                   );
 
-            contact.Property(c => c.Website)
-                   .HasMaxLength(300);
+            contact.Ignore(c => c.Website); 
+
 
             // PhoneNumber inside ContactInfo
             contact.OwnsOne(c => c.Phone, phone =>
@@ -64,6 +69,7 @@ public class HotelConfiguration : IEntityTypeConfiguration<Hotel>
                      .HasColumnName("PhoneNumber");
             });
         });
+
 
         // CheckInTime owned type
         builder.OwnsOne(h => h.CheckInTime, time =>
@@ -102,10 +108,13 @@ public class HotelConfiguration : IEntityTypeConfiguration<Hotel>
         });
 
         // Rating owned type
+        // Rating owned type
         builder.OwnsOne(h => h.Rating, rating =>
         {
-            rating.Property(r => r.Value);
+            rating.Property(r => r.Value)
+                  .HasPrecision(5, 2); // 5 ÃÑÞÇã ÅÌãÇáí¡ 2 ÑÞã ÚÔÑí
         });
+
 
         // Relationships
         builder.HasMany(h => h.Rooms)

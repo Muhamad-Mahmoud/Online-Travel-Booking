@@ -1,14 +1,11 @@
-using Microsoft.AspNetCore.Identity;
-using Ecommerce_Project.Extensions;
+
 using OnlineTravel.Application.DependencyInjection;
 using OnlineTravel.Application.Interfaces.Services;
-using OnlineTravel.Application.Interfaces.Persistence;
-using OnlineTravel.Application.Mapping;
 using OnlineTravel.Infrastructure;
-using OnlineTravel.Infrastructure.Persistence.UnitOfWork;
+using OnlineTravel.Infrastructure.Services;
 using OnlineTravelBookingTeamB.Extensions;
 using OnlineTravelBookingTeamB.Middleware;
-using Microsoft.Extensions.DependencyInjection; // Ensure this is present
+using Serilog; // Ensure this is present
 
 
 
@@ -29,12 +26,22 @@ builder.Services.AddControllersWithViews()
     {
         options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
     });
-builder.Services.AddOpenApi();
+// builder.Services.AddOpenApi();
+
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new() { Title = "Online Travel API", Version = "v1" });
+});
+
 
 // Add Health Checks
 builder.Services.AddAppHealthChecks();
 
-// Add File Service
+// رفع الصور يُخزّن في wwwroot/uploads
+var wwwRoot = builder.Environment.WebRootPath
+    ?? Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
+Directory.CreateDirectory(Path.Combine(wwwRoot, "uploads"));
+builder.Services.AddScoped<IFileService>(_ => new FileService(wwwRoot));
 
 var app = builder.Build();
 app.UseStaticFiles();
@@ -44,25 +51,28 @@ app.UseSerilogRequestLogging();
 
 // Configure the HTTP request pipeline.
 app.UseMiddleware<ExceptionMiddleware>();
+
+await app.ApplyDatabaseSetupAsync();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();             // Generate Swagger JSON
     app.UseSwaggerUI(c =>         // Swagger UI endpoint
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Online Travel API V1");
-        c.RoutePrefix = string.Empty; 
+        //c.RoutePrefix = string.Empty; 
     });
 }
 
-app.UseMiddleware<ExceptionMiddleware>();
+////app.UseMiddleware<ExceptionMiddleware>();
 
-await app.ApplyDatabaseSetupAsync();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ecommerce API v1"));
-}
+//if (app.Environment.IsDevelopment())
+//{
+
+//    app.UseSwagger();
+//    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ecommerce API v1"));
+//}
 
 app.UseAuthentication();
 app.UseStatusCodePagesWithReExecute("/errors/{0}");

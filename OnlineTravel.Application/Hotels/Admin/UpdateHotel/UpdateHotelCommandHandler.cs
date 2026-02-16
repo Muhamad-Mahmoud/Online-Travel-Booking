@@ -1,6 +1,7 @@
 using MediatR;
 using NetTopologySuite.Geometries;
-using OnlineTravel.Application.Hotels.Common;
+using OnlineTravel.Application.Common;
+using OnlineTravel.Application.Features.Hotels.Admin.UpdateHotel;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 using OnlineTravel.Domain.Entities.Hotels;
@@ -47,7 +48,7 @@ namespace OnlineTravel.Application.Hotels.Admin.UpdateHotel
                 hotel.SetMainImage(request.MainImage);
 
             _unitOfWork.Repository<Hotel>().Update(hotel);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.Complete();
 
             return Result<UpdateHotelResponse>.Success(new UpdateHotelResponse
             {

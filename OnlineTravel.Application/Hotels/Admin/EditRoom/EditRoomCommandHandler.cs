@@ -1,5 +1,6 @@
 using MediatR;
-using OnlineTravel.Application.Hotels.Common;
+using OnlineTravel.Application.Common;
+using OnlineTravel.Application.Features.Hotels.Admin.EditRoom;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 using OnlineTravel.Domain.Entities.Hotels;
@@ -23,7 +24,7 @@ namespace OnlineTravel.Application.Hotels.Admin.EditRoom
 
             room.UpdateDetails(request.Name, request.Description, new Money(request.BasePricePerNight, "USD"));
             _unitOfWork.Repository<Room>().Update(room);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.Complete();
 
             return Result<EditRoomResponse>.Success(new EditRoomResponse
             {

@@ -1,10 +1,5 @@
-﻿using OnlineTravel.Domain.Entities._Base;
+using OnlineTravel.Domain.Entities._Base;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OnlineTravel.Domain.Entities.Hotels
 {
@@ -36,13 +31,5 @@ namespace OnlineTravel.Domain.Entities.Hotels
             PricePerNight = pricePerNight;
         }
 
-        public void UpdatePrice(Money newPrice)
-        {
-            if (newPrice == null || newPrice.Amount <= 0)
-                throw new ArgumentException("Price per night must be greater than zero", nameof(newPrice));
-
-            PricePerNight = newPrice;
-        }
     }
-
 }

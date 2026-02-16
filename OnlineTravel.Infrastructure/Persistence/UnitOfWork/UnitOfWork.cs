@@ -57,7 +57,7 @@ namespace OnlineTravel.Infrastructure.Persistence.UnitOfWork
         }
 
 
-        public async Task BeginTransactionAsync()
+        //public async Task BeginTransactionAsync()
         public async Task<IDbContextTransaction> BeginTransactionAsync()
         {
             _transaction = await _dbContext.Database.BeginTransactionAsync();

@@ -1,5 +1,6 @@
 using MediatR;
-using OnlineTravel.Application.Hotels.Common;
+using OnlineTravel.Application.Common;
+using OnlineTravel.Application.Features.Hotels.Admin.ManageAvailability;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 using OnlineTravel.Domain.Entities.Hotels;
@@ -23,7 +24,7 @@ namespace OnlineTravel.Application.Hotels.Admin.ManageAvailability
 
             var dateRange = new DateRange(request.StartDate, request.EndDate);
             var toRemove = room.RoomAvailabilities
-                .Where(a => a.DateRange.Overlaps(dateRange))
+                .Where(a => a.DateRange.OverlapsWith(dateRange))
                 .ToList();
 
             var availability = new RoomAvailability(room.Id, dateRange, request.IsAvailable);
@@ -32,7 +33,7 @@ namespace OnlineTravel.Application.Hotels.Admin.ManageAvailability
             foreach (var existing in toRemove)
                 _unitOfWork.Repository<RoomAvailability>().Delete(existing);
             await _unitOfWork.Repository<RoomAvailability>().AddAsync(availability, cancellationToken);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.Complete();
 
             return Result<ManageAvailabilityResponse>.Success(new ManageAvailabilityResponse
             {

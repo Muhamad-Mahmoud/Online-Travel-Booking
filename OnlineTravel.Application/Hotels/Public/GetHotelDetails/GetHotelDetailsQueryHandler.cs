@@ -1,10 +1,10 @@
 using AutoMapper;
 using MediatR;
-using OnlineTravel.Application.Hotels.Common;
-using OnlineTravel.Application.Hotels.Dtos;
+using OnlineTravel.Application.Common;
+using OnlineTravel.Application.Features.Hotels.Public.GetHotelDetails;
+using OnlineTravel.Application.Features.Hotels.Dtos;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities.Hotels;
-
 
 namespace OnlineTravel.Application.Hotels.Public.GetHotelDetails
 {

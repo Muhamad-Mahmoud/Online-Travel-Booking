@@ -1,5 +1,6 @@
 using MediatR;
-using OnlineTravel.Application.Hotels.Common;
+using OnlineTravel.Application.Features.Hotels.Public.AddReview;
+using OnlineTravel.Application.Common;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities.Core;
 using OnlineTravel.Domain.Entities.Hotels;
@@ -43,7 +44,7 @@ public class AddReviewCommandHandler : IRequestHandler<AddReviewCommand, Result<
         hotel.AddReview(review);
         await _unitOfWork.Repository<Review>().AddAsync(review, cancellationToken);
         _unitOfWork.Hotels.Update(hotel);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.Complete();
 
         return Result<ReviewAddedResponse>.Success(new ReviewAddedResponse
         {

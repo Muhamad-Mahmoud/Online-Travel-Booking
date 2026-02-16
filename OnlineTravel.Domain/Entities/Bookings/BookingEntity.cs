@@ -1,7 +1,6 @@
 using OnlineTravel.Domain.Entities._Base;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 using OnlineTravel.Domain.Entities.Bookings.ValueObjects;
-using OnlineTravel.Domain.Entities.Hotels;
 using OnlineTravel.Domain.Entities.Users;
 using OnlineTravel.Domain.Enums;
 using OnlineTravel.Domain.ErrorHandling;
@@ -34,13 +33,6 @@ public class BookingEntity : BaseEntity
     public virtual AppUser User { get; private set; } = null!;
 
     public virtual ICollection<BookingDetail> Details { get; private set; } = new List<BookingDetail>();
-    #region Hotel
-    public Guid? RoomId { get; private set; }
-    public Room? Room { get; private set; }
-    public DateRange? DateRange { get;  set; }
-    #endregion 
-
-
 
     protected BookingEntity() { } // For EF
 

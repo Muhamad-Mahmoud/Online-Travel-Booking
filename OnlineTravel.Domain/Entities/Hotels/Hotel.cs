@@ -135,17 +135,6 @@ public class Hotel : SoftDeletableEntity
         var averageRating = _reviews.Average(r => (int)r.Rating);
         Rating = new StarRating((int)Math.Round(averageRating));
     }
-
-    public double GetAverageRating()
-    {
-        if (_reviews.Count == 0)
-            return 0;
-
-        return _reviews.Average(r => (int)r.Rating);
-    }
-
-
-
 }
 
 

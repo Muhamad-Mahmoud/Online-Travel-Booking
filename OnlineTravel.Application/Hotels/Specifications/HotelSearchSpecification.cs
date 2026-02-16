@@ -26,7 +26,6 @@ namespace OnlineTravel.Application.Hotels.Specifications
             AddIncludes(h => h.Reviews);
             AddInclude("Rooms.SeasonalPrices");
             AddInclude("Rooms.RoomAvailabilities");
-            AddInclude("Rooms.Bookings");
 
             // Build criteria
             var criteria = BuildCriteria(city, minRating, location, radiusInKm);

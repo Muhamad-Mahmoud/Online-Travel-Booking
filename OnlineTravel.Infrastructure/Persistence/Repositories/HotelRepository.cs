@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities.Hotels;
 using OnlineTravel.Infrastructure.Persistence.Context;
@@ -16,19 +16,6 @@ namespace OnlineTravel.Infrastructure.Persistence.Repositories
 
         }
 
-        public async Task<Hotel?> GetBySlugAsync(string slug)
-        {
-            return await _context.Hotels
-                .Include(h => h.Rooms)
-                    .ThenInclude(r => r.SeasonalPrices)
-                .Include(h => h.Rooms)
-                    .ThenInclude(r => r.RoomAvailabilities)
-                .Include(h => h.Rooms)
-                    .ThenInclude(r => r.Bookings)
-                .Include(h => h.Reviews)
-                .FirstOrDefaultAsync(h => h.Slug == slug.ToLower());
-        }
-
         public async Task<bool> SlugExistsAsync(string slug)
         {
             return await _context.Hotels.AnyAsync(h => h.Slug == slug.ToLower());
@@ -41,8 +28,6 @@ namespace OnlineTravel.Infrastructure.Persistence.Repositories
                     .ThenInclude(r => r.SeasonalPrices)
                 .Include(h => h.Rooms)
                     .ThenInclude(r => r.RoomAvailabilities)
-                .Include(h => h.Rooms)
-                    .ThenInclude(r => r.Bookings)
                 .Include(h => h.Reviews)
                 .FirstOrDefaultAsync(h => h.Id == id);
         }

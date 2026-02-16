@@ -1,5 +1,6 @@
 using MediatR;
-using OnlineTravel.Application.Hotels.Common;
+using OnlineTravel.Application.Common;
+using OnlineTravel.Application.Features.Hotels.Admin.ConfigureSeasonalPricing;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 using OnlineTravel.Domain.Entities.Hotels;
@@ -27,7 +28,7 @@ namespace OnlineTravel.Application.Hotels.Admin.ConfigureSeasonalPricing
             room.AddSeasonalPrice(seasonalPrice);
 
             await _unitOfWork.Repository<SeasonalPrice>().AddAsync(seasonalPrice, cancellationToken);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.Complete();
 
             return Result<ConfigureSeasonalPricingResponse>.Success(new ConfigureSeasonalPricingResponse
             {

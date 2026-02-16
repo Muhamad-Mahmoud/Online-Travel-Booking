@@ -1,13 +1,15 @@
 using MediatR;
 using NetTopologySuite.Geometries;
-using OnlineTravel.Application.Hotels.Common;
+using OnlineTravel.Application.Common;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 using OnlineTravel.Domain.Entities.Hotels;
+using CreateHotelCmd = OnlineTravel.Application.Features.Hotels.Admin.CreateHotelCommand.CreateHotelCommand;
+using CreateHotelResponse = OnlineTravel.Application.Features.Hotels.Admin.CreateHotelCommand.CreateHotelResponse;
 
 namespace OnlineTravel.Application.Hotels.Admin.CreateHotelCommand
 {
-    public class CreateHotelCommandHandler : IRequestHandler<CreateHotelCommand, Result<CreateHotelResponse>>
+    public class CreateHotelCommandHandler : IRequestHandler<CreateHotelCmd, Result<CreateHotelResponse>>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -16,10 +18,10 @@ namespace OnlineTravel.Application.Hotels.Admin.CreateHotelCommand
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result<CreateHotelResponse>> Handle(CreateHotelCommand request, CancellationToken cancellationToken)
+        public async Task<Result<CreateHotelResponse>> Handle(CreateHotelCmd request, CancellationToken cancellationToken)
         {
             Point? coordinates = (request.Latitude.HasValue && request.Longitude.HasValue)
-                ? new Point(request.Longitude.Value, request.Latitude.Value)
+                ? new Point(request.Longitude.Value, request.Latitude.Value) { SRID = 4326 }
                 : null;
 
             var address = new Address(
@@ -58,7 +60,7 @@ namespace OnlineTravel.Application.Hotels.Admin.CreateHotelCommand
             );
 
             await _unitOfWork.Hotels.AddAsync(hotel);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.Complete();
 
             var response = new CreateHotelResponse
             {
