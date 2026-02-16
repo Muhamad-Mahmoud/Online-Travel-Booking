@@ -79,6 +79,11 @@ namespace OnlineTravel.Infrastructure.Persistence.Repositories
         }
 
 
+        public IQueryable<T> Query()
+        {
+            return _dbContext.Set<T>().AsQueryable();
+        }
+
         private IQueryable<T> ApplySpecifications(ISpecification<T> spec)
         {
             return SpecificationEvaluator<T>.GetQuery(_dbContext.Set<T>(), spec);

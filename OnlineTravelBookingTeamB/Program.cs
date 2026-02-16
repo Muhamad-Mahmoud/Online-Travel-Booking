@@ -69,24 +69,11 @@ await app.ApplyDatabaseSetupAsync();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();             // Generate Swagger JSON
-    app.UseSwaggerUI(c =>         // Swagger UI endpoint
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Online Travel API V1");
-        //c.RoutePrefix = string.Empty; 
-    });
+    app.UseSwagger();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Online Travel Booking API v1"));
 }
 
-////app.UseMiddleware<ExceptionMiddleware>();
-
-
-//if (app.Environment.IsDevelopment())
-//{
-
-//    app.UseSwagger();
-//    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ecommerce API v1"));
-//}
-
+app.UseStaticFiles();
 app.UseAuthentication();
 app.UseStatusCodePagesWithReExecute("/errors/{0}");
 app.UseAuthorization();

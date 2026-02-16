@@ -1,0 +1,10 @@
+using OnlineTravel.Application.Common;
+using OnlineTravel.Application.Features.Bookings.DTOs;
+
+namespace OnlineTravelBookingTeamB.Models;
+
+public class AdminBookingsViewModel
+{
+    public PagedResult<AdminBookingResponse> Bookings { get; set; }
+    public BookingStatsDto Stats { get; set; } = new();
+}

@@ -10,7 +10,9 @@ public enum PaymentStatus
 
     Refunded = 3,
     
-    Cancelled = 4
+    Cancelled = 4,
+    
+    Expired = 5
 }
 
 

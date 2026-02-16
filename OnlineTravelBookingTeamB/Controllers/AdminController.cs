@@ -1,4 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
+using OnlineTravel.Application.Features.Bookings.DTOs;
+using OnlineTravel.Application.Features.Admin.Export;
+using OnlineTravel.Application.Features.Bookings.GetAllBookings;
+using OnlineTravel.Application.Features.Bookings.GetBookingById;
+using OnlineTravel.Application.Features.Bookings.GetUserBookings;
+using OnlineTravel.Domain.Enums;
 using OnlineTravel.Infrastructure.Persistence.Context;
 
 namespace OnlineTravelBookingTeamB.Controllers
@@ -17,37 +23,20 @@ namespace OnlineTravelBookingTeamB.Controllers
             _fileService = fileService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var model = new Models.DashboardViewModel
-            {
-                TotalTours = _context.Tours.Count(),
-                TotalHotels = 12, // Mock data
-                TotalCars = 45,   // Mock data
-                TotalFlights = 8, // Mock data
-                TotalRevenue = 12450.00m,
-                ActiveBookings = 34,
-                NewUsersToday = 5,
-                RecentActivities = new List<Models.RecentActivityItem>
-                {
-                    new Models.RecentActivityItem { Title = "New Booking #1024", Description = "Flight to Paris confirmed", TimeAgo = "2 mins ago", Status = "success", Icon = "bi-check-circle" },
-                    new Models.RecentActivityItem { Title = "System Alert", Description = "High server load detected", TimeAgo = "15 mins ago", Status = "warning", Icon = "bi-exclamation-triangle" },
-                    new Models.RecentActivityItem { Title = "New User", Description = "John Doe registered", TimeAgo = "1 hour ago", Status = "info", Icon = "bi-person-plus" },
-                    new Models.RecentActivityItem { Title = "Payment Failed", Description = "Booking #1023 payment declined", TimeAgo = "3 hours ago", Status = "danger", Icon = "bi-x-circle" }
-                }
-            };
-            return View("Dashboard/Index", model);
+            var query = new OnlineTravel.Application.Features.Admin.Dashboard.GetAdminDashboardStatsQuery();
+            var result = await _mediator.Send(query);
+            return View(result.Value);
         }
+
 
         public IActionResult SeedData()
         {
             return View("System/SeedData");
         }
 
-        public IActionResult Monitor()
-        {
-            return View("Dashboard/Monitor");
-        }
+
 
         public async Task<IActionResult> Tours()
         {
@@ -244,6 +233,61 @@ namespace OnlineTravelBookingTeamB.Controllers
         {
             return View("Flights/Index");
         }
-}
 
+
+        public async Task<IActionResult> Bookings(int pageIndex = 1, int pageSize = 5, string? searchTerm = null, string? status = null)
+        {
+            var bookingsQuery = new GetAllBookingsQuery(pageIndex, pageSize, searchTerm, status);
+            var statsQuery = new OnlineTravel.Application.Features.Bookings.GetBookingStats.GetBookingStatsQuery();
+
+            var bookingsResult = await _mediator.Send(bookingsQuery);
+            var statsResult = await _mediator.Send(statsQuery);
+            
+            var viewModel = new Models.AdminBookingsViewModel
+            {
+                Bookings = bookingsResult.IsSuccess ? bookingsResult.Value : new OnlineTravel.Application.Common.PagedResult<AdminBookingResponse>(new List<AdminBookingResponse>(), 0, pageIndex, pageSize),
+                Stats = statsResult.IsSuccess ? statsResult.Value : new BookingStatsDto()
+            };
+
+            ViewBag.SearchTerm = searchTerm;
+            ViewBag.Status = status;
+            ViewBag.BookingStatuses = Enum.GetNames(typeof(BookingStatus))
+                .Where(s => s != "Completed" && s != "Refunded")
+                .ToList();
+            
+            return View("Bookings/Index", viewModel);
+        }
+
+        public async Task<IActionResult> BookingDetails(Guid id)
+        {
+            var query = new GetBookingByIdQuery(id);
+            var result = await _mediator.Send(query);
+            if (!result.IsSuccess)
+            {
+                return RedirectToAction(nameof(Bookings));
+            }
+            return View("Bookings/Details", result.Value);
+        }
+
+        public async Task<IActionResult> UserBookings(Guid userId)
+        {
+            var query = new GetUserBookingsQuery(userId);
+            var result = await _mediator.Send(query);
+            return View("Bookings/UserBookings", result.Value);
+        }
+        [HttpGet]
+        public async Task<IActionResult> ExportBookingsReport()
+        {
+            var query = new ExportBookingsQuery();
+            var result = await _mediator.Send(query);
+
+            if (!result.IsSuccess)
+            {
+                return RedirectToAction(nameof(Bookings));
+            }
+
+            var fileName = $"bookings_report_{DateTime.UtcNow:yyyyMMdd_HHmmss}.csv";
+            return File(result.Value ?? [], "text/csv", fileName);
+        }
+    }
 }
