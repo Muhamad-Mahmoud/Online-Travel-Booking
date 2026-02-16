@@ -14,15 +14,21 @@ namespace OnlineTravel.Application.Mapping
         {
             CreateMap<OnlineTravel.Domain.Entities.Tours.Tour, Features.Tours.GetTourById.DTOs.TourDetailsResponse>()
                 .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category.Title))
-                .ForMember(dest => dest.Location, opt => opt.MapFrom(src => $"{src.Address.City}, {src.Address.Country}"))
-                .ForMember(dest => dest.Duration, opt => opt.MapFrom(src => $"{src.DurationDays} Days / {src.DurationNights} Nights"))
+                .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Address))
+                .ForMember(dest => dest.DurationDays, opt => opt.MapFrom(src => src.DurationDays))
+                .ForMember(dest => dest.DurationNights, opt => opt.MapFrom(src => src.DurationNights))
                 .ForMember(dest => dest.MainImageUrl, opt => opt.MapFrom(src => src.MainImage != null ? src.MainImage.Url : string.Empty))
-                .ForMember(dest => dest.Gallery, opt => opt.MapFrom(src => src.Images.Select(i => i.Url).ToList()))
-                .ForMember(dest => dest.TopActivities, opt => opt.MapFrom(src => src.Activities.Take(3).ToList())) // Assuming Top 3 for summary
-                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.PriceTiers.FirstOrDefault())); // Simplified for now
+                .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images))
+                .ForMember(dest => dest.Activities, opt => opt.MapFrom(src => src.Activities))
+                .ForMember(dest => dest.PriceTiers, opt => opt.MapFrom(src => src.PriceTiers))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.PriceTiers.OrderBy(p => p.Price.Amount).Select(p => new Features.Tours.GetTourById.DTOs.PriceDto { Amount = p.Price.Amount, Currency = p.Price.Currency }).FirstOrDefault()));
 
             CreateMap<OnlineTravel.Domain.Entities.Tours.TourActivity, Features.Tours.GetTourById.DTOs.TourActivityDto>()
                  .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Image != null ? src.Image.Url : string.Empty));
+            
+            CreateMap<OnlineTravel.Domain.Entities.Tours.TourImage, Features.Tours.GetTourById.DTOs.TourImageDto>();
+
+            CreateMap<OnlineTravel.Domain.Entities.Tours.TourPriceTier, Features.Tours.GetTourById.DTOs.TourPriceTierDto>();
 
             CreateMap<OnlineTravel.Domain.Entities.Tours.TourPriceTier, Features.Tours.GetTourById.DTOs.PriceDto>()
                 .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Price.Amount))

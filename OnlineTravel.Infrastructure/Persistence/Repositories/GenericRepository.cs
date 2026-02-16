@@ -24,7 +24,13 @@ namespace OnlineTravel.Infrastructure.Persistence.Repositories
             return await _dbContext.Set<T>().ToListAsync(cancellationToken);
         }
 
-
+        public void MarkPropertyModified<TProperty>(
+    T entity,
+    Expression<Func<T, TProperty>> propertyExpression)
+        {
+            _dbContext.Attach(entity);
+            _dbContext.Entry(entity).Property(propertyExpression).IsModified = true;
+        }
 
         public async Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
