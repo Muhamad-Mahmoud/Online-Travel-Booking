@@ -38,6 +38,8 @@ builder.Services.AddOpenApi();
 builder.Services.AddAppHealthChecks();
 
 // Add File Service
+builder.Services.AddScoped<IFileService>(sp =>
+    new FileService(sp.GetRequiredService<Microsoft.AspNetCore.Hosting.IWebHostEnvironment>().WebRootPath));
 
 MapsterConfig.Register();
 builder.Services.AddSwaggerGenJwtAuth();

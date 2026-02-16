@@ -14,11 +14,23 @@
     </a>
 </div>
 
-<!-- Tour Overview -->
-<div class="card shadow mb-4">
-    <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Tour Overview</h6>
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-1"></i> @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
+}
+
+<!-- Edit Tour Details -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h6 class="m-0 font-weight-bold text-primary"><i class="bi bi-pencil-square me-1"></i>Tour Details</h6>
+        <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#editTourForm">
+            <i class="bi bi-chevron-down"></i> Edit
+        </button>
+    </div>
+    <!-- Read-only summary (shown when form is collapsed) -->
     <div class="card-body">
         <div class="row">
             <div class="col-md-4">
@@ -58,6 +70,90 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- Collapsible Edit Form -->
+        <div class="collapse mt-4" id="editTourForm">
+            <hr />
+            <form asp-action="UpdateTour" method="post" enctype="multipart/form-data">
+                <input type="hidden" asp-for="EditForm.TourId" />
+
+                <div class="row mb-3">
+                    <div class="col-md-8">
+                        <label asp-for="EditForm.Title" class="form-label fw-bold small">Title</label>
+                        <input asp-for="EditForm.Title" class="form-control" />
+                        <span asp-validation-for="EditForm.Title" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="EditForm.CategoryId" class="form-label fw-bold small">Category</label>
+                        <select asp-for="EditForm.CategoryId" asp-items="ViewBag.Categories" class="form-select"></select>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="EditForm.Description" class="form-label fw-bold small">Description</label>
+                    <textarea asp-for="EditForm.Description" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="EditForm.Description" class="text-danger small"></span>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <label asp-for="EditForm.DurationDays" class="form-label fw-bold small">Days</label>
+                        <input asp-for="EditForm.DurationDays" class="form-control" type="number" min="1" />
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="EditForm.DurationNights" class="form-label fw-bold small">Nights</label>
+                        <input asp-for="EditForm.DurationNights" class="form-control" type="number" min="0" />
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="EditForm.BestTimeToVisit" class="form-label fw-bold small">Best Time</label>
+                        <input asp-for="EditForm.BestTimeToVisit" class="form-control" placeholder="e.g. Summer" />
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" asp-for="EditForm.Recommended" />
+                            <label class="form-check-label fw-bold small" asp-for="EditForm.Recommended">Recommended</label>
+                        </div>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold small text-uppercase text-secondary mt-4 mb-3 border-bottom pb-2">Address</h6>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label asp-for="EditForm.Street" class="form-label small text-muted">Street</label>
+                        <input asp-for="EditForm.Street" class="form-control" />
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="EditForm.City" class="form-label small text-muted">City</label>
+                        <input asp-for="EditForm.City" class="form-control" />
+                    </div>
+                    <div class="col-md-2">
+                        <label asp-for="EditForm.State" class="form-label small text-muted">State</label>
+                        <input asp-for="EditForm.State" class="form-control" />
+                    </div>
+                    <div class="col-md-2">
+                        <label asp-for="EditForm.Country" class="form-label small text-muted">Country</label>
+                        <input asp-for="EditForm.Country" class="form-control" />
+                    </div>
+                    <div class="col-md-1">
+                        <label asp-for="EditForm.PostalCode" class="form-label small text-muted">Zip</label>
+                        <input asp-for="EditForm.PostalCode" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="EditForm.MainImage" class="form-label fw-bold small">Update Main Image</label>
+                        <input asp-for="EditForm.MainImage" class="form-control" type="file" accept="image/*" />
+                        <small class="text-muted">Leave empty to keep current image.</small>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 mt-3">
+                    <button type="button" class="btn btn-light" data-bs-toggle="collapse" data-bs-target="#editTourForm">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-save me-1"></i>Save Changes</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

@@ -124,6 +124,22 @@ namespace OnlineTravelBookingTeamB.Controllers
             var model = new OnlineTravelBookingTeamB.Models.ManageTourViewModel
             {
                 Tour = tour,
+                EditForm = new OnlineTravelBookingTeamB.Models.EditTourViewModel
+                {
+                    TourId = id,
+                    Title = tour.Title,
+                    Description = tour.Description,
+                    CategoryId = tour.CategoryId,
+                    DurationDays = tour.DurationDays,
+                    DurationNights = tour.DurationNights,
+                    BestTimeToVisit = tour.BestTimeToVisit,
+                    Recommended = tour.Recommended,
+                    Street = tour.Location?.Street,
+                    City = tour.Location?.City,
+                    State = tour.Location?.State,
+                    Country = tour.Location?.Country,
+                    PostalCode = tour.Location?.PostalCode
+                },
                 ActivityForm = new OnlineTravelBookingTeamB.Models.AddActivityViewModel { TourId = id },
                 ImageForm = new OnlineTravelBookingTeamB.Models.AddTourImageViewModel { TourId = id },
                 PriceTierForm = new OnlineTravel.Application.Features.Tours.Manage.Commands.AddPriceTier.AddTourPriceTierCommand { TourId = id },
@@ -135,8 +151,56 @@ namespace OnlineTravelBookingTeamB.Controllers
                 }
             };
 
+            ViewBag.Categories = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(_context.Categories.Where(c => c.Type == OnlineTravel.Domain.Enums.CategoryType.Tour), "Id", "Title", tour.CategoryId);
             return View("Tours/Manage", model);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateTour(Models.EditTourViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    string? mainImageUrl = null;
+                    if (model.MainImage != null)
+                    {
+                        using (var stream = model.MainImage.OpenReadStream())
+                        {
+                            mainImageUrl = await _fileService.UploadFileAsync(stream, model.MainImage.FileName, "tours");
+                        }
+                    }
+
+                    var command = new OnlineTravel.Application.Features.Tours.Manage.Commands.UpdateTour.UpdateTourCommand
+                    {
+                        TourId = model.TourId,
+                        Title = model.Title,
+                        Description = model.Description,
+                        CategoryId = model.CategoryId,
+                        DurationDays = model.DurationDays,
+                        DurationNights = model.DurationNights,
+                        Recommended = model.Recommended,
+                        BestTimeToVisit = model.BestTimeToVisit,
+                        Street = model.Street,
+                        City = model.City,
+                        State = model.State,
+                        Country = model.Country,
+                        PostalCode = model.PostalCode,
+                        MainImageUrl = mainImageUrl
+                    };
+
+                    await _mediator.Send(command);
+                    TempData["Success"] = "Tour updated successfully!";
+                    return RedirectToAction(nameof(ManageTour), new { id = model.TourId });
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "Error updating tour: " + ex.Message);
+                }
+            }
+            return RedirectToAction(nameof(ManageTour), new { id = model.TourId });
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> DeleteTour(Guid id)
