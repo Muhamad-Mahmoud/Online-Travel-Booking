@@ -11,7 +11,8 @@ namespace OnlineTravel.Application.Interfaces.Persistence
         Task<T?> GetEntityWithAsync(ISpecification<T> spec, CancellationToken cancellationToken = default);
         Task<int> GetCountAsync(ISpecification<T> spec, CancellationToken cancellationToken = default);
         Task AddAsync(T entity, CancellationToken cancellationToken = default);
-        void Update(T entity);
+        void Update(T entity );
+
         void MarkPropertyModified<TProperty>(
     T entity,
     Expression<Func<T, TProperty>> propertyExpression);

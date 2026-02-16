@@ -50,6 +50,7 @@ public static class DependencyInjection
         services.AddScoped<IBookingStrategy, FlightBookingStrategy>();
         services.AddScoped<IBookingStrategy, CarBookingStrategy>();
 
+
         return services;
     }
 }

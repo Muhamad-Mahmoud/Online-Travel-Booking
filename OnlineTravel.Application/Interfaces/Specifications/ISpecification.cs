@@ -7,6 +7,8 @@ namespace OnlineTravel.Application.Interfaces.Specifications
 
         Expression<Func<T, bool>>? Criteria { get; set; }
         List<Expression<Func<T, object>>> Includes { get; }
+        List<string> IncludeStrings { get; }
+
         int Take { get; set; }
         int Skip { get; set; }
         bool IsPaginationEnabled { get; set; }

@@ -65,8 +65,9 @@ namespace OnlineTravel.Infrastructure.Persistence.Repositories
         public void Update(T entity)
         {
             _dbContext.Set<T>().Update(entity);
-        }
+        } 
 
+        
         public async Task AddAsync(T entity, CancellationToken cancellationToken = default)
         {
             await _dbContext.Set<T>().AddAsync(entity, cancellationToken);
