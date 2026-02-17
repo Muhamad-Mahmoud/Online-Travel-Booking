@@ -24,6 +24,20 @@ builder.ConfigureSerilog();
 
 // Add Infrastructure Services 
 builder.Services.AddInfrastructure(builder.Configuration);
+//Add Google login
+builder.Services
+    .AddAuthentication()
+    .AddCookie(IdentityConstants.ExternalScheme)
+    .AddGoogle("Google", options =>
+    {
+        options.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
+        options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
+        options.CallbackPath = "/signin-google";
+        options.SignInScheme = IdentityConstants.ExternalScheme;
+        options.Scope.Add("profile");
+        options.Scope.Add("email");
+
+    });
 
 // Add Application Services 
 builder.Services.AddApplication();
