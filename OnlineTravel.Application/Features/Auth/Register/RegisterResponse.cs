@@ -12,8 +12,11 @@ namespace OnlineTravel.Application.Features.Auth.Register
         public bool IsSuccess { get; set; }
         public string Message { get; set; } = string.Empty;
 
+        public bool EmailConfirmed { get; set; }
+
+        public string? ConfirmationLink { get; set; }
+
         public UserDto? User { get; set; }
-        public string? Token { get; set; }
-        public DateTime? ExpiresAt { get; set; }
     }
+
 }

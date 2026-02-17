@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Application.Interfaces.Services;
+using OnlineTravel.Application.Features.Auth.Email;
 using OnlineTravel.Application.Interfaces.Services.Auth;
 using OnlineTravel.Domain.Entities.Users;
 using OnlineTravel.Infrastructure.Persistence.Context;
@@ -42,7 +43,9 @@ public static class DependencyInjection
         })
         .AddRoles<IdentityRole<Guid>>()
         //.AddSignInManager<SignInManager<User>>()
-        .AddEntityFrameworkStores<OnlineTravelDbContext>();
+        .AddEntityFrameworkStores<OnlineTravelDbContext>()
+        .AddDefaultTokenProviders();
+
 
         // Add JWT Authentication
         services.AddJwtAuthentication(configuration);
@@ -50,7 +53,13 @@ public static class DependencyInjection
         //Register Auth Services
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IJwtService, JwtService>();
-        
+
+        //Email
+        services.Configure<EmailSettings>(
+            configuration.GetSection("EmailSettings"));
+
+        services.AddScoped<IEmailService, EmailService>();
+
 
         //Add AutoMapper
         // Add UnitOfWork
