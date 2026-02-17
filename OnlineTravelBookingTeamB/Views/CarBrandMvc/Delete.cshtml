@@ -1,0 +1,51 @@
+﻿@using OnlineTravel.Application.Features.CarBrands.DTOs
+@model CarBrandDto
+@{
+    ViewData["Title"] = "Delete Car Brand";
+}
+
+<h1>Delete Car Brand</h1>
+
+<!-- Display TempData Messages -->
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="alert alert-warning">
+    <h4 class="alert-heading">Are you sure you want to delete this brand?</h4>
+    <p>This action cannot be undone.</p>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">Name</dt>
+            <dd class="col-sm-9">@Model.Name</dd>
+
+            <dt class="col-sm-3">Logo</dt>
+            <dd class="col-sm-9">
+                @if (!string.IsNullOrEmpty(Model.Logo))
+                {
+                    <img src="@Model.Logo" alt="Logo" style="max-width:200px;" />
+                }
+                else
+                {
+                    <span>No logo</span>
+                }
+            </dd>
+
+            <dt class="col-sm-3">IsActive</dt>
+            <dd class="col-sm-9">@Model.IsActive</dd>
+        </dl>
+    </div>
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" name="id" value="@Model.Id" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

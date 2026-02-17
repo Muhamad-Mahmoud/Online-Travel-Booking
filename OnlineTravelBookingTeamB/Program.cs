@@ -59,8 +59,8 @@ MapsterConfig.Register();
 builder.Services.AddSwaggerGenJwtAuth();
 var app = builder.Build();
 
-// Enable Serilog Request Logging 
-app.UseSerilogRequestLogging();
+//// Enable Serilog Request Logging 
+//app.UseSerilogRequestLogging();
 
 // Configure the HTTP request pipeline.
 app.UseMiddleware<ExceptionMiddleware>();
