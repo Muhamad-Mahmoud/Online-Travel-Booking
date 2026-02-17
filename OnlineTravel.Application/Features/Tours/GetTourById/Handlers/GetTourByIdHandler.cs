@@ -32,6 +32,8 @@ public class GetTourByIdHandler : IRequestHandler<GetTourByIdQuery, TourDetailsR
             Id = tour.Id,
             Title = tour.Title,
             Category = tour.Category.Title,
+            CategoryId = tour.CategoryId,
+            Recommended = tour.Recommended,
             Location = tour.Address,
             DurationDays = tour.DurationDays,
             DurationNights = tour.DurationNights,

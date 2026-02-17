@@ -57,8 +57,8 @@ public class HotelBookingStrategy : IBookingStrategy
         _unitOfWork.Repository<Room>().Update(room);
 
         var nights = Math.Max(stayRange.TotalNights, 1);
-        var totalPrice = room.BasePrice * nights;
-        var itemName = $"{room.RoomType} - Room {room.RoomNumber}";
+        var totalPrice = room.BasePricePerNight * nights;
+        var itemName = $"{room.Name} - Room {room.RoomNumber}";
 
         return Result<BookingProcessResult>.Success(new BookingProcessResult(totalPrice, itemName, stayRange, room.Id.ToString()));
 

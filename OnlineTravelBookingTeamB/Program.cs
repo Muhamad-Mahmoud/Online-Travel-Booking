@@ -1,11 +1,19 @@
-
+using Serilog;
+using Microsoft.AspNetCore.Identity;
+using Ecommerce_Project.Extensions;
 using OnlineTravel.Application.DependencyInjection;
 using OnlineTravel.Application.Interfaces.Services;
+using OnlineTravel.Application.Interfaces.Persistence;
+using OnlineTravel.Application.Mapping;
 using OnlineTravel.Infrastructure;
+using OnlineTravel.Infrastructure.Identity;
+using OnlineTravel.Infrastructure.Persistence.UnitOfWork;
 using OnlineTravel.Infrastructure.Services;
 using OnlineTravelBookingTeamB.Extensions;
 using OnlineTravelBookingTeamB.Middleware;
-using Serilog; // Ensure this is present
+using Microsoft.Extensions.DependencyInjection;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 
 
@@ -24,39 +32,32 @@ builder.Services.AddApplication();
 builder.Services.AddControllersWithViews()
     .AddJsonOptions(options =>
     {
-        options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
-// builder.Services.AddOpenApi();
 
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new() { Title = "Online Travel API", Version = "v1" });
-});
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
+builder.Services.AddOpenApi();
 
 // Add Health Checks
 builder.Services.AddAppHealthChecks();
 
-// رفع الصور يُخزّن في wwwroot/uploads
+// Add File Service
 var wwwRoot = builder.Environment.WebRootPath
     ?? Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
 Directory.CreateDirectory(Path.Combine(wwwRoot, "uploads"));
 builder.Services.AddScoped<IFileService>(_ => new FileService(wwwRoot));
-// Add File Service
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        // تحويل أسماء الخصائص إلى camelCase (مثلاً Latitude -> latitude)
-        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-        // تجاهل حالة الأحرف (احتياطي)
-        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
-        // السماح باستقبال الـ enums كنصوص (strings)
-        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-    });
-var webRootPath = builder.Environment.WebRootPath ?? Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
-builder.Services.AddScoped<IFileService>(_ => new FileService(webRootPath));
 
+MapsterConfig.Register();
+builder.Services.AddSwaggerGenJwtAuth();
 var app = builder.Build();
+
 app.UseStaticFiles();
 
 // Enable Serilog Request Logging 
@@ -73,7 +74,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Online Travel Booking API v1"));
 }
 
-app.UseStaticFiles();
 app.UseAuthentication();
 app.UseStatusCodePagesWithReExecute("/errors/{0}");
 app.UseAuthorization();
