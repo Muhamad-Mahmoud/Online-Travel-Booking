@@ -71,7 +71,7 @@ public sealed class AddFavoriteCommandHandler : IRequestHandler<AddFavoriteComma
         };
 
         await _unitOfWork.Repository<Favorite>().AddAsync(favorite, cancellationToken);
-        await _unitOfWork.Complete();
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success(favorite.Id);
     }

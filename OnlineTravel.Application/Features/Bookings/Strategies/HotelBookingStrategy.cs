@@ -50,15 +50,17 @@ public class HotelBookingStrategy : IBookingStrategy
         {
             _logger.LogWarning("Room {RoomNumber} is already booked for dates {Start}-{End}", room.RoomNumber, stayRange.Start, stayRange.End);
             return Result<BookingProcessResult>.Failure(Error.Validation($"Room {room.RoomNumber} is already booked for the selected dates."));
+            // return Result<BookingProcessResult>.Failure(Error.Validation($"Room {room.Name} is already booked for the selected dates."));
         }
 
         room.Reserve();
         _unitOfWork.Repository<Room>().Update(room);
 
         var nights = Math.Max(stayRange.TotalNights, 1);
-        var totalPrice = room.BasePrice * nights;
-        var itemName = $"Room {room.RoomNumber}";
+        var totalPrice = room.BasePricePerNight * nights;
+        var itemName = $"{room.Name} - Room {room.RoomNumber}";
 
         return Result<BookingProcessResult>.Success(new BookingProcessResult(totalPrice, itemName, stayRange, room.Id.ToString()));
+
     }
 }

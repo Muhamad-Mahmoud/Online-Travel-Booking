@@ -10,61 +10,125 @@ public class HotelConfiguration : IEntityTypeConfiguration<Hotel>
 {
     public void Configure(EntityTypeBuilder<Hotel> builder)
     {
-        builder.ToTable("Hotels", "hotels");
+        // Primary Key
+        builder.HasKey(h => h.Id);
 
-        builder.OwnsOne(e => e.Address, a =>
+        // Basic Properties
+        builder.Property(h => h.Name)
+            .IsRequired()
+            .HasMaxLength(200);
+
+        builder.Property(h => h.Slug)
+            .IsRequired()
+            .HasMaxLength(200);
+
+        builder.HasIndex(h => h.Slug).IsUnique();
+
+        builder.Property(h => h.Description)
+            .IsRequired()
+            .HasMaxLength(2000);
+
+        builder.Property(h => h.CancellationPolicy)
+            .IsRequired()
+            .HasMaxLength(1000);
+
+        builder.Property(h => h.MainImageUrl)
+            .HasMaxLength(500);
+
+        // Address owned type
+        builder.OwnsOne(h => h.Address, address =>
         {
-            a.Property(p => p.FullAddress).HasColumnName("Address");
-            a.Property(p => p.Coordinates).HasColumnName("Location");
-            a.Property(p => p.City).HasColumnName("City");
-            a.Property(p => p.Country).HasColumnName("Country");
-            a.Property(p => p.Street).HasColumnName("Street");
-            a.Property(p => p.State).HasColumnName("State");
-            a.Property(p => p.PostalCode).HasColumnName("PostalCode");
+            address.Property(a => a.Street).HasMaxLength(200);
+            address.Property(a => a.City).IsRequired().HasMaxLength(100);
+            address.Property(a => a.State).HasMaxLength(100);
+            address.Property(a => a.Country).IsRequired().HasMaxLength(100);
+            address.Property(a => a.PostalCode).HasMaxLength(20);
+            address.Property(a => a.Coordinates).HasColumnType("geography");
         });
 
-        builder.OwnsOne(e => e.StarRating, r =>
+        // ContactInfo owned type
+        builder.OwnsOne(h => h.ContactInfo, contact =>
         {
-            r.Property(p => p.Value).HasColumnName("StarRating").HasColumnType("decimal(2,1)");
+            // EmailAddress conversion
+            contact.Property(c => c.Email)
+                   .HasMaxLength(200)
+                   .HasConversion(
+                       v => v.Value,            // EmailAddress -> string
+                       v => new EmailAddress(v) // string -> EmailAddress
+                   );
+
+            contact.Ignore(c => c.Website); 
+
+
+            // PhoneNumber inside ContactInfo
+            contact.OwnsOne(c => c.Phone, phone =>
+            {
+                phone.Property(p => p.Value) // EF maps Value only
+                     .IsRequired()
+                     .HasMaxLength(20)
+                     .HasColumnName("PhoneNumber");
+            });
         });
 
-        builder.OwnsOne(e => e.ContactInfo, ci =>
-        {
-            ci.OwnsOne(c => c.Email, e => e.Property(p => p.Value).HasColumnName("ContactEmail"));
-            ci.OwnsOne(c => c.Phone, p => p.Property(p => p.Value).HasColumnName("ContactPhone"));
-            ci.OwnsOne(c => c.Website, w => w.Property(p => p.Value).HasColumnName("ContactWebsite"));
-        }).Navigation(e => e.ContactInfo).IsRequired();
 
-        builder.OwnsOne(e => e.MainImage, i =>
+        // CheckInTime owned type
+        builder.OwnsOne(h => h.CheckInTime, time =>
         {
-            i.Property(p => p.Url).HasColumnName("MainImageUrl");
-            i.Property(p => p.AltText).HasColumnName("MainImageAlt");
+            time.Property(t => t.Start)
+                .HasConversion(
+                    v => v.ToTimeSpan(),
+                    v => TimeOnly.FromTimeSpan(v))
+                .IsRequired()
+                .HasColumnName("CheckInStart");
+
+            time.Property(t => t.End)
+                .HasConversion(
+                    v => v.ToTimeSpan(),
+                    v => TimeOnly.FromTimeSpan(v))
+                .IsRequired()
+                .HasColumnName("CheckInEnd");
         });
 
-        builder.Property(e => e.Gallery)
-            .HasColumnName("GalleryJson")
-            .HasConversion(
-                v => System.Text.Json.JsonSerializer.Serialize(v, (System.Text.Json.JsonSerializerOptions?)null),
-                v => System.Text.Json.JsonSerializer.Deserialize<List<ImageUrl>>(v, (System.Text.Json.JsonSerializerOptions?)null) ?? new List<ImageUrl>())
-            .Metadata.SetValueComparer(new ValueComparer<List<ImageUrl>>(
-                (c1, c2) => c1!.SequenceEqual(c2!),
-                c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
-                c => c.ToList()));
+        // CheckOutTime owned type
+        builder.OwnsOne(h => h.CheckOutTime, time =>
+        {
+            time.Property(t => t.Start)
+                .HasConversion(
+                    v => v.ToTimeSpan(),
+                    v => TimeOnly.FromTimeSpan(v))
+                .IsRequired()
+                .HasColumnName("CheckOutStart");
 
-        builder.HasOne(e => e.Category)
-            .WithMany()
-            .HasForeignKey(e => e.CategoryId)
-            .OnDelete(DeleteBehavior.Restrict);
+            time.Property(t => t.End)
+                .HasConversion(
+                    v => v.ToTimeSpan(),
+                    v => TimeOnly.FromTimeSpan(v))
+                .IsRequired()
+                .HasColumnName("CheckOutEnd");
+        });
 
-        builder.HasMany(e => e.Rooms)
-            .WithOne(r => r.Hotel)
-            .HasForeignKey(r => r.HotelId)
-            .OnDelete(DeleteBehavior.Cascade);
+        // Rating owned type
+        // Rating owned type
+        builder.OwnsOne(h => h.Rating, rating =>
+        {
+            rating.Property(r => r.Value)
+                  .HasPrecision(5, 2); // 5 ÃÑÞÇã ÅÌãÇáí¡ 2 ÑÞã ÚÔÑí
+        });
+
+
+        // Relationships
+        builder.HasMany(h => h.Rooms)
+               .WithOne(r => r.Hotel)
+               .HasForeignKey(r => r.HotelId)
+               .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(h => h.Reviews)
+               .WithOne(r => r.Hotel)
+               .HasForeignKey(r => r.HotelId)
+               .OnDelete(DeleteBehavior.Cascade);
+
+        // Indexes
+        builder.HasIndex(h => h.CreatedAt);
+        builder.HasIndex(h => h.Name);
     }
-
-
 }
-
-
-
-

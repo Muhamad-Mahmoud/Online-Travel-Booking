@@ -17,13 +17,12 @@ namespace Ecommerce_Project.Extensions
                 options.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
-                    Title = "Ecommerce API",
-                    Description = "The Ecommerce Platform API is a robust backend service designed to " +
-                                  "manage an online Shopping platform",
+                    Title = "Online Travel Booking API",
+                    Description = "A robust backend service designed to manage online travel bookings (Flights, Hotels, Cars, Tours).",
                     Contact = new OpenApiContact
                     {
-                        Name = "MoMontaser",
-                        Email = "momntaser99@gmail.com"
+                        Name = "Online Travel Support",
+                        Email = "support@onlinetravel.com"
                     }
                 });
 

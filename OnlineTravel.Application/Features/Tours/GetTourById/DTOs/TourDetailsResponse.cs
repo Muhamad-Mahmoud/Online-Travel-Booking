@@ -7,6 +7,8 @@ public class TourDetailsResponse
     public Guid Id { get; set; }
     public string Title { get; set; } = string.Empty;
     public string Category { get; set; } = string.Empty;
+    public Guid CategoryId { get; set; }
+    public bool Recommended { get; set; }
     public Address? Location { get; set; }
     public int DurationDays { get; set; }
     public int DurationNights { get; set; }

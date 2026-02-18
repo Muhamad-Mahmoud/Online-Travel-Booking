@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MailKit" Version="4.14.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.12" />
     <PackageReference Include="FluentValidation" Version="12.1.1" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.1" />
@@ -25,6 +26,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.0" />
 	<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.0" />
 	<PackageReference Include="Stripe.net" Version="50.3.0" />
+	<PackageReference Include="MimeKit" Version="4.14.0" />
 
     <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="19.225.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.0" />
@@ -36,6 +38,10 @@
   <ItemGroup>
     <ProjectReference Include="..\OnlineTravel.Domain\OnlineTravel.Domain.csproj" />
     <ProjectReference Include="..\OnlineTravel.Application\OnlineTravel.Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

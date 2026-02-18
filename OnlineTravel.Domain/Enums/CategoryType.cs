@@ -1,9 +1,11 @@
-namespace OnlineTravel.Domain.Enums;
-
-public enum CategoryType
+﻿
+namespace OnlineTravel.Domain.Enums
 {
-    Tour,
-    Flight,
-    Hotel,
-    Car
+    public enum CategoryType
+    {
+        Tour,
+        Flight,
+        Hotel,
+        Car
+    }
 }

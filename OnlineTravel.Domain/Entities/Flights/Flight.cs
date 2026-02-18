@@ -15,7 +15,7 @@ public class Flight : SoftDeletableEntity
     public Guid OriginAirportId { get; set; }
 
     public Guid DestinationAirportId { get; set; }
-
+    public virtual FlightMetadata? Metadata { get; set; }
     public DateTimeRange Schedule { get; set; } = null!;
 
     public List<string> BaggageRules { get; set; } = new();
