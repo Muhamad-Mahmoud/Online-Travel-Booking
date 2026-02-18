@@ -70,9 +70,7 @@ package-lock.json
 
 /build_merge.log
 
-appsettings.Development.json
-appsettings.*.json
-Migrations/
+
 bin/
 obj/
 
