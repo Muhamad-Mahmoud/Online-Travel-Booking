@@ -1,0 +1,61 @@
+﻿@using OnlineTravel.Application.Features.CarBrands.DTOs
+@model CarBrandDto
+@{
+    ViewData["Title"] = "Car Brand Details";
+}
+
+<h1>Car Brand Details</h1>
+
+<!-- Display TempData Messages -->
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="card">
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">Id</dt>
+            <dd class="col-sm-9">@Model.Id</dd>
+
+            <dt class="col-sm-3">Name</dt>
+            <dd class="col-sm-9">@Model.Name</dd>
+
+            <dt class="col-sm-3">Logo</dt>
+            <dd class="col-sm-9">
+                @if (!string.IsNullOrEmpty(Model.Logo))
+                {
+                    <img src="@Model.Logo" alt="Logo" style="max-width:200px;" />
+                }
+                else
+                {
+                    <span>No logo</span>
+                }
+            </dd>
+
+            <dt class="col-sm-3">IsActive</dt>
+            <dd class="col-sm-9">@Model.IsActive</dd>
+
+            <dt class="col-sm-3">CreatedAt</dt>
+            <dd class="col-sm-9">@Model.CreatedAt</dd>
+
+            <dt class="col-sm-3">UpdatedAt</dt>
+            <dd class="col-sm-9">@Model.UpdatedAt</dd>
+        </dl>
+    </div>
+</div>
+
+<div class="mt-3">
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>
