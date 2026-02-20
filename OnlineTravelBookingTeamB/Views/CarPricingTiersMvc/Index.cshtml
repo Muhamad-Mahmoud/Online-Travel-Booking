@@ -1,0 +1,58 @@
+﻿@using OnlineTravel.Application.Features.CarPricingTiers.DTOs
+@model IReadOnlyList<CarPricingTierDto>
+
+@{
+    ViewData["Title"] = "Pricing Tiers";
+    var carId = ViewBag.CarId;
+}
+
+<h1>Pricing Tiers for Car</h1>
+
+<p>
+    <a asp-action="Create" asp-route-carId="@carId" class="btn btn-primary">Create New Tier</a>
+    <a asp-controller="Cars" asp-action="Details" asp-route-id="@carId" class="btn btn-secondary">Back to Car</a>
+</p>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+@if (!Model.Any())
+{
+    <p>No pricing tiers defined for this car.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>From (hours)</th>
+                <th>To (hours)</th>
+                <th>Price per hour</th>
+                <th>Currency</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.FromHours</td>
+                    <td>@item.ToHours</td>
+                    <td>@item.PricePerHour.Amount.ToString("N2")</td>
+                    <td>@item.PricePerHour.Currency</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

@@ -1,0 +1,178 @@
+﻿@using OnlineTravel.Application.Features.Cars.DTOs
+@using OnlineTravel.Domain.Enums
+@model UpdateCarRequest
+
+
+@{
+    ViewData["Title"] = "Edit Car";
+}
+
+<h1>Edit Car</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="Edit" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="BrandId" class="control-label"></label>
+                <input asp-for="BrandId" class="form-control" />
+                <span asp-validation-for="BrandId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Make" class="control-label"></label>
+                <input asp-for="Make" class="form-control" />
+                <span asp-validation-for="Make" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Model" class="control-label"></label>
+                <input asp-for="Model" class="form-control" />
+                <span asp-validation-for="Model" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="CarType" class="control-label"></label>
+                <select asp-for="CarType" class="form-control" asp-items="Html.GetEnumSelectList<CarCategory>()"></select>
+                <span asp-validation-for="CarType" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="SeatsCount" class="control-label"></label>
+                <input asp-for="SeatsCount" class="form-control" />
+                <span asp-validation-for="SeatsCount" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="FuelType" class="control-label"></label>
+                <select asp-for="FuelType" class="form-control" asp-items="Html.GetEnumSelectList<FuelType>()"></select>
+                <span asp-validation-for="FuelType" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Transmission" class="control-label"></label>
+                <select asp-for="Transmission" class="form-control" asp-items="Html.GetEnumSelectList<TransmissionType>()"></select>
+                <span asp-validation-for="Transmission" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Features" class="control-label"></label>
+                <input asp-for="Features" class="form-control" placeholder="Enter features separated by comma" />
+                <span asp-validation-for="Features" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="CancellationPolicy" class="control-label"></label>
+                <textarea asp-for="CancellationPolicy" class="form-control"></textarea>
+                <span asp-validation-for="CancellationPolicy" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="CategoryId" class="control-label"></label>
+                <input asp-for="CategoryId" class="form-control" />
+                <span asp-validation-for="CategoryId" class="text-danger"></span>
+            </div>
+
+            <h4>Location</h4>
+            <div class="form-group">
+                <label asp-for="Location.Latitude" class="control-label"></label>
+                <input asp-for="Location.Latitude" class="form-control" />
+                <span asp-validation-for="Location.Latitude" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Location.Longitude" class="control-label"></label>
+                <input asp-for="Location.Longitude" class="form-control" />
+                <span asp-validation-for="Location.Longitude" class="text-danger"></span>
+            </div>
+
+            <h4>Available Dates</h4>
+            <div id="available-dates">
+                @for (int i = 0; i < Model.AvailableDates.Count; i++)
+                {
+                    <div class="row mb-2 date-range-item">
+                        <div class="col-md-5">
+                            <input asp-for="AvailableDates[i].Start" class="form-control" type="datetime-local" value="@Model.AvailableDates[i].Start.ToString("yyyy-MM-ddTHH:mm")" />
+                        </div>
+                        <div class="col-md-5">
+                            <input asp-for="AvailableDates[i].End" class="form-control" type="datetime-local" value="@Model.AvailableDates[i].End.ToString("yyyy-MM-ddTHH:mm")" />
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-danger" onclick="this.closest('.date-range-item').remove()">Remove</button>
+                        </div>
+                    </div>
+                }
+            </div>
+            <button type="button" id="add-date" class="btn btn-secondary mb-3">Add Date Range</button>
+
+            <h4>Images</h4>
+            <div id="images">
+                @for (int i = 0; i < Model.Images.Count; i++)
+                {
+                    <div class="row mb-2 image-item">
+                        <div class="col-md-5">
+                            <input asp-for="Images[i].Url" class="form-control" placeholder="URL" />
+                        </div>
+                        <div class="col-md-5">
+                            <input asp-for="Images[i].AltText" class="form-control" placeholder="Alt Text" />
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-danger" onclick="this.closest('.image-item').remove()">Remove</button>
+                        </div>
+                    </div>
+                }
+            </div>
+            <button type="button" id="add-image" class="btn btn-secondary mb-3">Add Image</button>
+
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        // Add Date Range
+        document.getElementById('add-date').addEventListener('click', function() {
+            var index = document.querySelectorAll('#available-dates .date-range-item').length;
+            var html = `<div class="row mb-2 date-range-item">
+                <div class="col-md-5">
+                    <input type="datetime-local" name="AvailableDates[${index}].Start" class="form-control" />
+                </div>
+                <div class="col-md-5">
+                    <input type="datetime-local" name="AvailableDates[${index}].End" class="form-control" />
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-danger" onclick="this.closest('.date-range-item').remove()">Remove</button>
+                </div>
+            </div>`;
+            document.getElementById('available-dates').insertAdjacentHTML('beforeend', html);
+        });
+
+        // Add Image
+        document.getElementById('add-image').addEventListener('click', function() {
+            var index = document.querySelectorAll('#images .image-item').length;
+            var html = `<div class="row mb-2 image-item">
+                <div class="col-md-5">
+                    <input type="text" name="Images[${index}].Url" class="form-control" placeholder="URL" />
+                </div>
+                <div class="col-md-5">
+                    <input type="text" name="Images[${index}].AltText" class="form-control" placeholder="Alt Text" />
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-danger" onclick="this.closest('.image-item').remove()">Remove</button>
+                </div>
+            </div>`;
+            document.getElementById('images').insertAdjacentHTML('beforeend', html);
+        });
+    </script>
+}

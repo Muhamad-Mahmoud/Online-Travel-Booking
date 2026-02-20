@@ -1,0 +1,97 @@
+﻿@using OnlineTravel.Application.Features.Cars.DTOs
+@model CarDetailsDto
+
+@{
+    ViewData["Title"] = $"{Model.Make} {Model.Model} Details";
+}
+
+<h1>@Model.Make @Model.Model</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">Brand</dt>
+        <dd class="col-sm-9">@Model.BrandName</dd>
+
+        <dt class="col-sm-3">Category</dt>
+        <dd class="col-sm-9">@Model.CategoryTitle</dd>
+
+        <dt class="col-sm-3">Type</dt>
+        <dd class="col-sm-9">@Model.CarType</dd>
+
+        <dt class="col-sm-3">Seats</dt>
+        <dd class="col-sm-9">@Model.SeatsCount</dd>
+
+        <dt class="col-sm-3">Fuel</dt>
+        <dd class="col-sm-9">@Model.FuelType</dd>
+
+        <dt class="col-sm-3">Transmission</dt>
+        <dd class="col-sm-9">@Model.Transmission</dd>
+
+        <dt class="col-sm-3">Features</dt>
+        <dd class="col-sm-9">@string.Join(", ", Model.Features)</dd>
+
+        <dt class="col-sm-3">Available Dates</dt>
+        <dd class="col-sm-9">
+            @foreach (var date in Model.AvailableDates)
+            {
+                <div>@date.Start:yyyy-MM-dd HH:mm - @date.End:yyyy-MM-dd HH:mm</div>
+            }
+        </dd>
+
+        <dt class="col-sm-3">Cancellation Policy</dt>
+        <dd class="col-sm-9">@Model.CancellationPolicy</dd>
+
+        <dt class="col-sm-3">Location</dt>
+        <dd class="col-sm-9">Lat: @Model.Location.Latitude, Lng: @Model.Location.Longitude</dd>
+
+        <dt class="col-sm-3">Images</dt>
+        <dd class="col-sm-9">
+            @foreach (var img in Model.Images)
+            {
+                <img src="@img.Url" alt="@img.AltText" style="max-width:200px; max-height:150px;" class="img-thumbnail" />
+            }
+        </dd>
+
+        <dt class="col-sm-3">Pricing Tiers</dt>
+        <dd class="col-sm-9">
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>From (hrs)</th>
+                        <th>To (hrs)</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var tier in Model.PricingTiers)
+                    {
+                        <tr>
+                            <td>@tier.FromHours</td>
+                            <td>@tier.ToHours</td>
+                            <td>@tier.PricePerHour.Amount @tier.PricePerHour.Currency</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </dd>
+
+        <dt class="col-sm-3">Created At</dt>
+        <dd class="col-sm-9">@Model.CreatedAt.ToString("g")</dd>
+
+        <dt class="col-sm-3">Updated At</dt>
+        <dd class="col-sm-9">@Model.UpdatedAt.ToString("g")</dd>
+    </dl>
+</div>
+
+<!-- رابط إدارة Pricing Tiers -->
+<div class="mt-3">
+    <a asp-controller="CarPricingTiersMvc" asp-action="Index" asp-route-carId="@Model.Id" class="btn btn-info">
+        Manage Pricing Tiers
+    </a>
+</div>
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>

@@ -1,0 +1,29 @@
+﻿@using OnlineTravel.Application.Features.CarPricingTiers.DTOs
+@model CarPricingTierDto
+
+@{
+    ViewData["Title"] = "Pricing Tier Details";
+}
+
+<h1>Pricing Tier Details</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">From Hours</dt>
+        <dd class="col-sm-9">@Model.FromHours</dd>
+
+        <dt class="col-sm-3">To Hours</dt>
+        <dd class="col-sm-9">@Model.ToHours</dd>
+
+        <dt class="col-sm-3">Amount</dt>
+        <dd class="col-sm-9">@Model.PricePerHour.Amount.ToString("N2")</dd>
+
+        <dt class="col-sm-3">Currency</dt>
+        <dd class="col-sm-9">@Model.PricePerHour.Currency</dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+    <a asp-action="Index" asp-route-carId="@Model.CarId" class="btn btn-secondary">Back to List</a>
+</div>
