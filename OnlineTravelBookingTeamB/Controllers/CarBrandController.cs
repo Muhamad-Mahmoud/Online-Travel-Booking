@@ -23,6 +23,9 @@ namespace OnlineTravelBookingTeamB.Controllers
             _mediator = mediator;
         }
 
+        /// <remarks>⚠️ Deprecated — use GET api/carbrand/GetCarBrandsPaginated instead.
+        /// This endpoint performs a full table scan and will be removed in a future version.</remarks>
+        [Obsolete("Use GetCarBrandsPaginated instead.")]
         [HttpGet("GetAll_CarBrands")]
         public async Task<IActionResult> GetAll()
         {

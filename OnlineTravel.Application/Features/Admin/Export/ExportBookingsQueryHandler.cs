@@ -12,6 +12,9 @@ public class ExportBookingsQueryHandler : IRequestHandler<ExportBookingsQuery, R
 {
     private readonly IUnitOfWork _unitOfWork;
 
+    // Batch size — keeps memory usage bounded to ~1 000 records at a time
+    private const int BatchSize = 1_000;
+
     public ExportBookingsQueryHandler(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
@@ -19,28 +22,49 @@ public class ExportBookingsQueryHandler : IRequestHandler<ExportBookingsQuery, R
 
     public async Task<Result<byte[]>> Handle(ExportBookingsQuery request, CancellationToken cancellationToken)
     {
-        // Fetch all bookings
-        var spec = new GetAllBookingsSpec(1, int.MaxValue, null, null); 
-        var bookings = await _unitOfWork.Repository<BookingEntity>().GetAllWithSpecAsync(spec, cancellationToken);
-
-        // Handle lazy expiration (consistent with other handlers)
-        if (BookingExpirationHelper.MarkExpiredBookings(bookings))
-        {
-            await _unitOfWork.Complete();
-        }
-
-        // Generate CSV
         var csv = new StringBuilder();
         csv.AppendLine("Reference,User,Service,Booked On,Start Date,Amount,Currency,Status,PaymentStatus");
 
-        foreach (var b in bookings)
+        int pageIndex = 1;
+        bool hasMore = true;
+
+        while (hasMore)
         {
-            var userName = b.User?.Name ?? "Unknown";
-            var detail = b.Details.FirstOrDefault();
-            var itemName = detail?.ItemName ?? "N/A";
-            var startDate = detail?.StayRange.Start.ToString("yyyy-MM-dd") ?? "N/A";
-            
-            csv.AppendLine($"{b.BookingReference.Value},{EscapeCsv(userName)},{EscapeCsv(itemName)},{b.BookingDate:yyyy-MM-dd HH:mm},{startDate},{b.TotalPrice.Amount},{b.TotalPrice.Currency},{b.Status},{b.PaymentStatus}");
+            var spec = new GetAllBookingsSpec(pageIndex, BatchSize, null, null);
+            var batch = await _unitOfWork.Repository<BookingEntity>()
+                .GetAllWithSpecAsync(spec, cancellationToken);
+
+            if (batch.Count == 0)
+                break;
+
+            // Handle lazy expiration for this batch
+            if (BookingExpirationHelper.MarkExpiredBookings(batch))
+            {
+                await _unitOfWork.Complete();
+            }
+
+            foreach (var b in batch)
+            {
+                var userName  = b.User?.Name ?? "Unknown";
+                var detail    = b.Details.FirstOrDefault();
+                var itemName  = detail?.ItemName ?? "N/A";
+                var startDate = detail?.StayRange.Start.ToString("yyyy-MM-dd") ?? "N/A";
+
+                csv.AppendLine(
+                    $"{b.BookingReference.Value}," +
+                    $"{EscapeCsv(userName)}," +
+                    $"{EscapeCsv(itemName)}," +
+                    $"{b.BookingDate:yyyy-MM-dd HH:mm}," +
+                    $"{startDate}," +
+                    $"{b.TotalPrice.Amount}," +
+                    $"{b.TotalPrice.Currency}," +
+                    $"{b.Status}," +
+                    $"{b.PaymentStatus}");
+            }
+
+            // If fewer rows were returned than the batch size, this was the last page
+            hasMore = batch.Count == BatchSize;
+            pageIndex++;
         }
 
         return Result<byte[]>.Success(Encoding.UTF8.GetBytes(csv.ToString()));
@@ -49,10 +73,9 @@ public class ExportBookingsQueryHandler : IRequestHandler<ExportBookingsQuery, R
     private static string EscapeCsv(string field)
     {
         if (string.IsNullOrEmpty(field)) return "";
-        if (field.Contains(",") || field.Contains("\"") || field.Contains("\n"))
-        {
+        if (field.Contains(',') || field.Contains('"') || field.Contains('\n'))
             return $"\"{field.Replace("\"", "\"\"")}\"";
-        }
         return field;
     }
 }
+

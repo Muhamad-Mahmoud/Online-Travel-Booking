@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using OnlineTravel.Application.Features.Bookings.DTOs;
 using OnlineTravel.Application.Features.Admin.Export;
 using OnlineTravel.Application.Features.Bookings.GetAllBookings;
@@ -38,17 +40,21 @@ namespace OnlineTravelBookingTeamB.Controllers
 
 
 
-        public async Task<IActionResult> Tours()
+        public async Task<IActionResult> Tours(int pageIndex = 1, int pageSize = 20)
         {
-            var query = new OnlineTravel.Application.Features.Tours.GetAllTours.Queries.GetAllToursQuery(1, 50, null, null, null, null, null, null, null, null, null, null);
+            var query = new OnlineTravel.Application.Features.Tours.GetAllTours.Queries.GetAllToursQuery(pageIndex, pageSize, null, null, null, null, null, null, null, null, null, null);
             var result = await _mediator.Send(query);
             return View("Tours/Index", result.Data);
         }
 
         [HttpGet]
-        public IActionResult CreateTour()
+        public async Task<IActionResult> CreateTour()
         {
-            ViewBag.Categories = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(_context.Categories.Where(c => c.Type == OnlineTravel.Domain.Enums.CategoryType.Tour), "Id", "Title");
+            var categories = await _context.Categories
+                .Where(c => c.Type == CategoryType.Tour)
+                .AsNoTracking()
+                .ToListAsync();
+            ViewBag.Categories = new SelectList(categories, "Id", "Title");
             return View("Tours/Create");
         }
 
@@ -95,7 +101,11 @@ namespace OnlineTravelBookingTeamB.Controllers
                     ModelState.AddModelError("", "Error creating tour: " + ex.Message);
                 }
             }
-            ViewBag.Categories = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(_context.Categories.Where(c => c.Type == OnlineTravel.Domain.Enums.CategoryType.Tour), "Id", "Title");
+            var categories = await _context.Categories
+                .Where(c => c.Type == CategoryType.Tour)
+                .AsNoTracking()
+                .ToListAsync();
+            ViewBag.Categories = new SelectList(categories, "Id", "Title");
             return View("Tours/Create", model);
         }
 
@@ -140,7 +150,11 @@ namespace OnlineTravelBookingTeamB.Controllers
                 }
             };
 
-            ViewBag.Categories = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(_context.Categories.Where(c => c.Type == OnlineTravel.Domain.Enums.CategoryType.Tour), "Id", "Title", tour.CategoryId);
+            var categories = await _context.Categories
+                .Where(c => c.Type == CategoryType.Tour)
+                .AsNoTracking()
+                .ToListAsync();
+            ViewBag.Categories = new SelectList(categories, "Id", "Title", tour.CategoryId);
             return View("Tours/Manage", model);
         }
 
@@ -304,9 +318,14 @@ namespace OnlineTravelBookingTeamB.Controllers
             var bookingsQuery = new GetAllBookingsQuery(pageIndex, pageSize, searchTerm, status);
             var statsQuery = new OnlineTravel.Application.Features.Bookings.GetBookingStats.GetBookingStatsQuery();
 
-            var bookingsResult = await _mediator.Send(bookingsQuery);
-            var statsResult = await _mediator.Send(statsQuery);
-            
+            // Run both queries in parallel — they are completely independent
+            var bookingsTask = _mediator.Send(bookingsQuery);
+            var statsTask    = _mediator.Send(statsQuery);
+            await Task.WhenAll(bookingsTask, statsTask);
+
+            var bookingsResult = await bookingsTask;
+            var statsResult    = await statsTask;
+
             var viewModel = new Models.AdminBookingsViewModel
             {
                 Bookings = bookingsResult.IsSuccess ? bookingsResult.Value : new OnlineTravel.Application.Common.PagedResult<AdminBookingResponse>(new List<AdminBookingResponse>(), 0, pageIndex, pageSize),

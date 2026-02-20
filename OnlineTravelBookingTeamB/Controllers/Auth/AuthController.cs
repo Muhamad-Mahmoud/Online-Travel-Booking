@@ -147,10 +147,9 @@ namespace OnlineTravel.API.Controllers.Auth
 
         [Authorize]
         [HttpPost("logout")]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-            var result = _authService.Logout();
-
+            var result = await Task.FromResult(_authService.Logout());
             return Ok(result);
         }
 
