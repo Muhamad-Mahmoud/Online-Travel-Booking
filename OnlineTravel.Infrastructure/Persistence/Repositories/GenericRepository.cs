@@ -65,8 +65,9 @@ namespace OnlineTravel.Infrastructure.Persistence.Repositories
         public void Update(T entity)
         {
             _dbContext.Set<T>().Update(entity);
-        }
+        } 
 
+        
         public async Task AddAsync(T entity, CancellationToken cancellationToken = default)
         {
             await _dbContext.Set<T>().AddAsync(entity, cancellationToken);
@@ -77,6 +78,11 @@ namespace OnlineTravel.Infrastructure.Persistence.Repositories
             return await ApplySpecifications(spec).CountAsync(cancellationToken);
         }
 
+
+        public IQueryable<T> Query()
+        {
+            return _dbContext.Set<T>().AsQueryable();
+        }
 
         private IQueryable<T> ApplySpecifications(ISpecification<T> spec)
         {

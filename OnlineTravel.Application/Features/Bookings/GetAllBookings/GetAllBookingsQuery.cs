@@ -2,6 +2,8 @@ using MediatR;
 using OnlineTravel.Application.Features.Bookings.DTOs;
 using OnlineTravel.Domain.ErrorHandling;
 
+using OnlineTravel.Application.Common;
+
 namespace OnlineTravel.Application.Features.Bookings.GetAllBookings;
 
-public sealed record GetAllBookingsQuery(int PageIndex = 1, int PageSize = 10) : IRequest<Result<IReadOnlyList<AdminBookingResponse>>>;
+public sealed record GetAllBookingsQuery(int PageIndex, int PageSize , string? SearchTerm = null, string? Status = null) : IRequest<OnlineTravel.Domain.ErrorHandling.Result<PagedResult<AdminBookingResponse>>>;

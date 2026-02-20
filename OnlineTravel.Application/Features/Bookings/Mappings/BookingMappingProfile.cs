@@ -1,6 +1,7 @@
 using AutoMapper;
 using OnlineTravel.Application.Features.Bookings.DTOs;
 using OnlineTravel.Domain.Entities.Bookings;
+using OnlineTravel.Application.Features.Admin.Dashboard;
 
 namespace OnlineTravel.Application.Features.Bookings.Mappings;
 
@@ -23,7 +24,11 @@ public class BookingMappingProfile : Profile
         CreateMap<BookingEntity, AdminBookingResponse>()
             .ForMember(dest => dest.BookingReference, opt => opt.MapFrom(src => src.BookingReference.Value))
             .ForMember(dest => dest.BookingDate, opt => opt.MapFrom(src => src.CreatedAt))
-            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.Name))
+            .ForMember(dest => dest.PaidAt, opt => opt.MapFrom(src => src.PaidAt))
+            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User != null ? src.User.Name : "Unknown"))
+            .ForMember(dest => dest.UserEmail, opt => opt.MapFrom(src => src.User != null ? src.User.Email : string.Empty))
+            .ForMember(dest => dest.UserJoinedAt, opt => opt.MapFrom(src => src.User != null ? src.User.CreatedAt : default))
+
             .ForMember(dest => dest.IsExpired, opt => opt.MapFrom(src => src.IsExpired(DateTime.UtcNow)))
             .ForMember(dest => dest.TotalAmount, opt => opt.MapFrom(src => src.TotalPrice.Amount))
             .ForMember(dest => dest.Currency, opt => opt.MapFrom(src => src.TotalPrice.Currency))
@@ -41,5 +46,17 @@ public class BookingMappingProfile : Profile
             .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.ItemName))
             .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StayRange.Start))
             .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.StayRange.End));
+        
+        CreateMap<BookingEntity, RecentBookingDto>()
+            .ConstructUsing(src => new RecentBookingDto(
+                src.Id,
+                src.BookingReference.Value,
+                src.User != null ? src.User.Name : null,
+                src.Details.Select(d => d.ItemName).FirstOrDefault(),
+                src.BookingDate,
+                src.TotalPrice.Amount,
+                src.TotalPrice.Currency,
+                src.Status.ToString()
+            ));
     }
 }

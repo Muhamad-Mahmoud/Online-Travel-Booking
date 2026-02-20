@@ -10,6 +10,7 @@ namespace OnlineTravel.Application.Features.Bookings.Specifications.Queries
         {
             AddIncludes(b => b.Details);
             AddIncludes(b => b.Details.Select(d => d.Category));
+            AddIncludes(b => b.User);
         }
     }
 }

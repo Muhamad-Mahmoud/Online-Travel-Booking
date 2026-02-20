@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 using OnlineTravel.Domain.Entities.Flights.ValueObjects;

@@ -2,15 +2,16 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using OnlineTravel.Application.Interfaces.Persistence;
+using OnlineTravel.Application.Interfaces.Services;
+using OnlineTravel.Application.Features.Auth.Email;
+using OnlineTravel.Application.Interfaces.Services.Auth;
+using OnlineTravel.Domain.Entities.Users;
 using OnlineTravel.Infrastructure.Persistence.Context;
+using OnlineTravel.Infrastructure.Persistence.Repositories;
+using OnlineTravel.Infrastructure.Persistence.UnitOfWork;
 using OnlineTravel.Infrastructure.Security;
 using OnlineTravel.Infrastructure.Security.Jwt;
-using OnlineTravel.Application.Interfaces.Services;
-using OnlineTravel.Application.Interfaces.Services.Auth;
-using OnlineTravel.Infrastructure.Services;
-using OnlineTravel.Domain.Entities.Users;
-using OnlineTravel.Application.Interfaces.Persistence;
-using OnlineTravel.Infrastructure.Persistence.UnitOfWork;
 using OnlineTravel.Infrastructure.Services.Payments;
 
 namespace OnlineTravel.Infrastructure;
@@ -42,7 +43,9 @@ public static class DependencyInjection
         })
         .AddRoles<IdentityRole<Guid>>()
         //.AddSignInManager<SignInManager<User>>()
-        .AddEntityFrameworkStores<OnlineTravelDbContext>();
+        .AddEntityFrameworkStores<OnlineTravelDbContext>()
+        .AddDefaultTokenProviders();
+
 
         // Add JWT Authentication
         services.AddJwtAuthentication(configuration);
@@ -51,6 +54,13 @@ public static class DependencyInjection
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IJwtService, JwtService>();
 
+        //Email
+        services.Configure<EmailSettings>(
+            configuration.GetSection("EmailSettings"));
+
+        services.AddScoped<IEmailService, EmailService>();
+
+
         //Add AutoMapper
         // Add UnitOfWork
         services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -58,6 +68,10 @@ public static class DependencyInjection
         // Add Payments
         services.Configure<StripeOptions>(configuration.GetSection(StripeOptions.SectionName));
         services.AddScoped<IPaymentService, StripePaymentService>();
+
+        services.AddScoped<IHotelRepository, HotelRepository>();
+        services.AddScoped<IRoomRepository, RoomRepository>();
+
 
         return services;
     }
