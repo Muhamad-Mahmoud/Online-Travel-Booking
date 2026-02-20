@@ -33,9 +33,9 @@ namespace OnlineTravelBookingTeamB.Controllers
         /// Retrieves all bookings for the currently authenticated user.
         /// </summary>
         [HttpGet]
-        public async Task<ActionResult> GetMyBookings()
+        public async Task<ActionResult> GetMyBookings([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
         {
-            var query = new GetUserBookingsQuery(UserId);
+            var query = new GetUserBookingsQuery(UserId, pageIndex, pageSize);
             var result = await Mediator.Send(query);
             return result.ToResponse();
         }
@@ -68,9 +68,9 @@ namespace OnlineTravelBookingTeamB.Controllers
         /// </summary>
         [Authorize(Roles = "Admin")]
         [HttpGet("user/{userId}")]
-        public async Task<ActionResult> GetUserBookings(Guid userId)
+        public async Task<ActionResult> GetUserBookings(Guid userId, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
         {
-            var query = new GetUserBookingsQuery(userId);
+            var query = new GetUserBookingsQuery(userId, pageIndex, pageSize);
             var result = await Mediator.Send(query);
             return result.ToResponse();
         }

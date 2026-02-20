@@ -34,9 +34,11 @@ namespace OnlineTravelBookingTeamB.Controllers
             return Ok(result);
         }
         [HttpGet]
-        public async Task<ActionResult<List<GetAllAirportsDto>>> GetAll()
+        public async Task<ActionResult<List<GetAllAirportsDto>>> GetAll(
+            [FromQuery] int pageIndex = 1,
+            [FromQuery] int pageSize = 100)
         {
-            var result = await _mediator.Send(new GetAllAirportsQuery());
+            var result = await _mediator.Send(new GetAllAirportsQuery { PageIndex = pageIndex, PageSize = pageSize });
             return Ok(result);
         }
         [HttpPut("{id}")]
