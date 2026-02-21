@@ -1,0 +1,98 @@
+﻿@model PaginatedResult<CarSummaryDto>
+@using OnlineTravel.Application.Features.Cars.DTOs
+@using OnlineTravel.Domain.Enums
+@using OnlineTravel.Domain.Exceptions
+
+
+@{
+    ViewData["Title"] = "Cars";
+}
+
+<h1>Cars</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
+</p>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<form asp-action="Index" method="get" class="mb-3">
+    <div class="row">
+        <div class="col-md-3">
+            <input type="text" name="BrandId" class="form-control" placeholder="Brand ID" value="@Context.Request.Query["brandId"]" />
+        </div>
+        <div class="col-md-3">
+            <input type="text" name="CategoryId" class="form-control" placeholder="Category ID" value="@Context.Request.Query["categoryId"]" />
+        </div>
+        <div class="col-md-3">
+            <select name="CarType" class="form-control" asp-items="Html.GetEnumSelectList<CarCategory>()">
+                <option value="">All Types</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-secondary">Filter</button>
+        </div>
+    </div>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Make</th>
+            <th>Model</th>
+            <th>Type</th>
+            <th>Seats</th>
+            <th>Fuel</th>
+            <th>Transmission</th>
+            <th>Brand</th>
+            <th>Category</th>
+            <th>Price/hr</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>@item.Make</td>
+                <td>@item.Model</td>
+                <td>@item.CarType</td>
+                <td>@item.SeatsCount</td>
+                <td>@item.FuelType</td>
+                <td>@item.Transmission</td>
+                <td>@item.BrandName</td>
+                <td>@item.CategoryTitle</td>
+                <td>@item.PricePerHour.ToString("C")</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (Model.TotalPages > 1)
+{
+    <nav>
+        <ul class="pagination">
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-pageIndex="@i" asp-route-pageSize="@Model.PageSize"
+                       asp-route-brandId="@Context.Request.Query["brandId"]"
+                       asp-route-categoryId="@Context.Request.Query["categoryId"]"
+                       asp-route-carType="@Context.Request.Query["carType"]">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}
