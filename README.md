@@ -161,15 +161,4 @@ Errors follow RFC 7807 Problem Details.
 
 ---
 
-## 🔮 Next Steps
-
-- Unit & Integration Tests
-- Refresh Tokens for JWT rotation
-- Redis Caching
-- Background Jobs for expiration cleanup
-- Docker support
-- CI/CD Pipeline
-
----
-
 *Built with ASP.NET Core 9 and modern backend practices.*
