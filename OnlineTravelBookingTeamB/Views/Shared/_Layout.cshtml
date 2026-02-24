@@ -73,7 +73,7 @@
                     </a>
                 </div>
                 <div class="menu-item">
-                    <a asp-controller="CarMvc" asp-action="Index" class="@ActiveClass("CarMvc") menu-link">
+                    <a asp-controller="Cars" asp-action="Index" class="@ActiveClass("Cars") menu-link">
                         <i class="fas fa-car"></i>
                         <span>Cars</span>
                     </a>
@@ -103,6 +103,12 @@
                     <a asp-controller="Flights" asp-action="Carriers" class="@ActiveClass("Flights", "Carriers") menu-link">
                         <i class="fas fa-plane"></i>
                         <span>Carriers</span>
+                    </a>
+                </div>
+                <div class="menu-item">
+                    <a asp-controller="CarBrands" asp-action="Index" class="@ActiveClass("CarBrands") menu-link">
+                        <i class="fas fa-tags"></i>
+                        <span>Car Brands</span>
                     </a>
                 </div>
                 <div class="menu-item">

@@ -5,10 +5,21 @@ using OnlineTravel.Domain.Enums;
 using OnlineTravel.Infrastructure.Persistence.Context;
 using MediatR;
 using OnlineTravel.Application.Interfaces.Services;
+using OnlineTravelBookingTeamB.Models;
+using OnlineTravel.Application.Features.Tours.Manage.Commands.AddPriceTier;
+using OnlineTravel.Application.Features.Tours.Manage.Commands.UpdateTour;
+using OnlineTravel.Application.Features.Tours.Manage.Commands.AddActivity;
+using OnlineTravel.Application.Features.Tours.Manage.Commands.AddImage;
+using OnlineTravel.Application.Features.Tours.Manage.Commands.UpdateCoordinates;
+using OnlineTravel.Application.Features.Tours.GetAllTours.Queries;
+using OnlineTravel.Application.Features.Tours.GetTourById.Queries;
+using OnlineTravel.Application.Features.Tours.CreateTour.Commands;
+using OnlineTravel.Application.Features.Tours.DeleteTour.Commands;
 
 namespace OnlineTravelBookingTeamB.Controllers.Admin
 {
     [Route("Admin/Tours")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class ToursController : Controller
     {
         private readonly OnlineTravelDbContext _context;
@@ -26,7 +37,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
         [Route("")]
         public async Task<IActionResult> Index(int pageIndex = 1, int pageSize = 20)
         {
-            var query = new OnlineTravel.Application.Features.Tours.GetAllTours.Queries.GetAllToursQuery(pageIndex, pageSize, null, null, null, null, null, null, null, null, null, null);
+            var query = new GetAllToursQuery(pageIndex, pageSize, null, null, null, null, null, null, null, null, null, null);
             var result = await _mediator.Send(query);
 
             var categories = await _context.Categories
@@ -35,7 +46,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
                 .ToListAsync();
             ViewBag.Categories = new SelectList(categories, "Id", "Title");
 
-            return View("~/Views/Admin/Tours/Index.cshtml", result.Data);
+            return View("~/Views/Admin/Tours/Tours/Index.cshtml", result.Data);
         }
 
         [HttpGet("Create")]
@@ -46,11 +57,11 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
                 .AsNoTracking()
                 .ToListAsync();
             ViewBag.Categories = new SelectList(categories, "Id", "Title");
-            return View("~/Views/Admin/Tours/Create.cshtml");
+            return View("~/Views/Admin/Tours/Tours/Create.cshtml");
         }
 
         [HttpPost("Create")]
-        public async Task<IActionResult> Create(Models.TourViewModel model)
+        public async Task<IActionResult> Create(TourViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -65,7 +76,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
                         }
                     }
 
-                    var command = new OnlineTravel.Application.Features.Tours.CreateTour.Commands.CreateTourCommand
+                    var command = new CreateTourCommand
                     {
                         Title = model.Title,
                         Description = model.Description,
@@ -84,7 +95,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
                         Currency = model.Currency
                     };
 
-                    var tourId = await _mediator.Send(command);
+                    await _mediator.Send(command);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
@@ -97,13 +108,13 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
                 .AsNoTracking()
                 .ToListAsync();
             ViewBag.Categories = new SelectList(categories, "Id", "Title");
-            return View("~/Views/Admin/Tours/Create.cshtml", model);
+            return View("~/Views/Admin/Tours/Tours/Create.cshtml", model);
         }
 
         [HttpGet("Manage/{id}")]
         public async Task<IActionResult> Manage(Guid id, bool partial = false)
         {
-            var query = new OnlineTravel.Application.Features.Tours.GetTourById.Queries.GetTourByIdQuery(id);
+            var query = new GetTourByIdQuery(id);
             var tour = await _mediator.Send(query);
 
             if (tour == null)
@@ -111,10 +122,10 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
                 return NotFound();
             }
 
-            var model = new OnlineTravelBookingTeamB.Models.ManageTourViewModel
+            var model = new ManageTourViewModel
             {
                 Tour = tour,
-                EditForm = new OnlineTravelBookingTeamB.Models.EditTourViewModel
+                EditForm = new EditTourViewModel
                 {
                     TourId = id,
                     Title = tour.Title,
@@ -130,10 +141,10 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
                     Country = tour.Location?.Country,
                     PostalCode = tour.Location?.PostalCode
                 },
-                ActivityForm = new OnlineTravelBookingTeamB.Models.AddActivityViewModel { TourId = id },
-                ImageForm = new OnlineTravelBookingTeamB.Models.AddTourImageViewModel { TourId = id },
-                PriceTierForm = new OnlineTravel.Application.Features.Tours.Manage.Commands.AddPriceTier.AddTourPriceTierCommand { TourId = id },
-                LocationForm = new Models.UpdateCoordinatesViewModel 
+                ActivityForm = new AddActivityViewModel { TourId = id },
+                ImageForm = new AddTourImageViewModel { TourId = id },
+                PriceTierForm = new AddTourPriceTierCommand { TourId = id },
+                LocationForm = new UpdateCoordinatesViewModel 
                 { 
                     TourId = id, 
                     Latitude = tour.Location?.Coordinates?.Y, 
@@ -147,13 +158,13 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
                 .ToListAsync();
             ViewBag.Categories = new SelectList(categories, "Id", "Title", tour.CategoryId);
             if (partial)
-                return PartialView("~/Views/Admin/Tours/Manage.cshtml", model);
+                return PartialView("~/Views/Admin/Tours/Tours/Manage.cshtml", model);
 
-            return View("~/Views/Admin/Tours/Manage.cshtml", model);
+            return View("~/Views/Admin/Tours/Tours/Manage.cshtml", model);
         }
 
         [HttpPost("Update")]
-        public async Task<IActionResult> Update(Models.EditTourViewModel model)
+        public async Task<IActionResult> Update(EditTourViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -168,7 +179,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
                         }
                     }
 
-                    var command = new OnlineTravel.Application.Features.Tours.Manage.Commands.UpdateTour.UpdateTourCommand
+                    var command = new UpdateTourCommand
                     {
                         TourId = model.TourId,
                         Title = model.Title,
@@ -204,18 +215,18 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
         {
             try
             {
-                var command = new OnlineTravel.Application.Features.Tours.DeleteTour.Commands.DeleteTourCommand(id);
+                var command = new DeleteTourCommand(id);
                 await _mediator.Send(command);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // Handle error
+                TempData["Error"] = "Error deleting tour: " + ex.Message;
             }
             return RedirectToAction(nameof(Index));
         }
 
         [HttpPost("AddActivity")]
-        public async Task<IActionResult> AddActivity([Bind(Prefix = "ActivityForm")] OnlineTravelBookingTeamB.Models.AddActivityViewModel model)
+        public async Task<IActionResult> AddActivity([Bind(Prefix = "ActivityForm")] AddActivityViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -228,7 +239,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
                     }
                 }
 
-                var command = new OnlineTravel.Application.Features.Tours.Manage.Commands.AddActivity.AddTourActivityCommand
+                var command = new AddTourActivityCommand
                 {
                     TourId = model.TourId,
                     Title = model.Title,
@@ -242,7 +253,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
         }
 
         [HttpPost("AddImage")]
-        public async Task<IActionResult> AddImage([Bind(Prefix = "ImageForm")] OnlineTravelBookingTeamB.Models.AddTourImageViewModel model)
+        public async Task<IActionResult> AddImage([Bind(Prefix = "ImageForm")] AddTourImageViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -255,7 +266,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
                     }
                 }
 
-                var command = new OnlineTravel.Application.Features.Tours.Manage.Commands.AddImage.AddTourImageCommand
+                var command = new AddTourImageCommand
                 {
                     TourId = model.TourId,
                     Url = imageUrl,
@@ -268,7 +279,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
         }
 
         [HttpPost("AddPriceTier")]
-        public async Task<IActionResult> AddPriceTier([Bind(Prefix = "PriceTierForm")] OnlineTravel.Application.Features.Tours.Manage.Commands.AddPriceTier.AddTourPriceTierCommand command)
+        public async Task<IActionResult> AddPriceTier([Bind(Prefix = "PriceTierForm")] AddTourPriceTierCommand command)
         {
             if (ModelState.IsValid)
             {
@@ -278,11 +289,11 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
         }
 
         [HttpPost("UpdateLocation")]
-        public async Task<IActionResult> UpdateLocation(Models.UpdateCoordinatesViewModel model)
+        public async Task<IActionResult> UpdateLocation(UpdateCoordinatesViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var command = new OnlineTravel.Application.Features.Tours.Manage.Commands.UpdateCoordinates.UpdateTourCoordinatesCommand
+                var command = new UpdateTourCoordinatesCommand
                 {
                     TourId = model.TourId,
                     Latitude = model.Latitude,

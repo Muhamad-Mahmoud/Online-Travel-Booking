@@ -5,10 +5,16 @@ using OnlineTravel.Domain.Enums;
 using OnlineTravel.Infrastructure.Persistence.Context;
 using MediatR;
 using OnlineTravel.Application.Interfaces.Services;
+using OnlineTravel.Application.Features.Hotels.Admin.CreateHotelCommand;
+using OnlineTravel.Application.Features.Hotels.Admin.AddRoom;
+using OnlineTravel.Application.Features.Hotels.Admin.EditRoom;
+using OnlineTravel.Application.Features.Hotels.Admin.UpdateHotel;
+using OnlineTravelBookingTeamB.Models;
 
 namespace OnlineTravelBookingTeamB.Controllers.Admin
 {
     [Route("Admin/Hotels")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class HotelsController : Controller
     {
         private readonly OnlineTravelDbContext _context;
@@ -39,20 +45,20 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
 
             var hotels = await query.OrderByDescending(h => h.CreatedAt).ToListAsync();
             ViewBag.SearchTerm = search;
-            return View("~/Views/Admin/Hotels/Index.cshtml", hotels);
+            return View("~/Views/Admin/Hotels/Hotels/Index.cshtml", hotels);
         }
 
         [HttpGet("Create")]
         public IActionResult Create()
         {
-            return View("~/Views/Admin/Hotels/Create.cshtml", new Models.CreateHotelViewModel());
+            return View("~/Views/Admin/Hotels/Hotels/Create.cshtml", new CreateHotelViewModel());
         }
 
         [HttpPost("Create")]
-        public async Task<IActionResult> Create(Models.CreateHotelViewModel model)
+        public async Task<IActionResult> Create(CreateHotelViewModel model)
         {
             if (!ModelState.IsValid)
-                return View("~/Views/Admin/Hotels/Create.cshtml", model);
+                return View("~/Views/Admin/Hotels/Hotels/Create.cshtml", model);
 
             try
             {
@@ -73,7 +79,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
                 if (double.TryParse(model.Latitude, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var parsedLat)) lat = parsedLat;
                 if (double.TryParse(model.Longitude, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var parsedLon)) lon = parsedLon;
 
-                var command = new OnlineTravel.Application.Features.Hotels.Admin.CreateHotelCommand.CreateHotelCommand
+                var command = new CreateHotelCommand
                 {
                     Name = model.Name,
                     Slug = model.Slug,
@@ -100,7 +106,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
                 if (!result.IsSuccess)
                 {
                     ModelState.AddModelError("", result.ErrorMessage ?? "Failed to create hotel.");
-                    return View("~/Views/Admin/Hotels/Create.cshtml", model);
+                    return View("~/Views/Admin/Hotels/Hotels/Create.cshtml", model);
                 }
 
                 TempData["Success"] = "Hotel created successfully!";
@@ -109,7 +115,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
             catch (Exception ex)
             {
                 ModelState.AddModelError("", "Error creating hotel: " + ex.Message);
-                return View("~/Views/Admin/Hotels/Create.cshtml", model);
+                return View("~/Views/Admin/Hotels/Hotels/Create.cshtml", model);
             }
         }
 
@@ -138,21 +144,21 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
                 CurrentImageUrl = hotel.MainImageUrl
             };
 
-            return View("~/Views/Admin/Hotels/Edit.cshtml", model);
+            return View("~/Views/Admin/Hotels/Hotels/Edit.cshtml", model);
         }
 
         [HttpPost("Edit/{id}")]
-        public async Task<IActionResult> Edit(Models.EditHotelViewModel model)
+        public async Task<IActionResult> Edit(EditHotelViewModel model)
         {
             if (!ModelState.IsValid)
-                return View("~/Views/Admin/Hotels/Edit.cshtml", model);
+                return View("~/Views/Admin/Hotels/Hotels/Edit.cshtml", model);
 
             try
             {
                 if (!TimeOnly.TryParse(model.CheckInTime, out var checkIn)) checkIn = new TimeOnly(14, 0);
                 if (!TimeOnly.TryParse(model.CheckOutTime, out var checkOut)) checkOut = new TimeOnly(10, 0);
 
-                var command = new OnlineTravel.Application.Features.Hotels.Admin.UpdateHotel.UpdateHotelCommand
+                var command = new UpdateHotelCommand
                 {
                     Id = model.Id,
                     Name = model.Name,
@@ -177,7 +183,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
                 if (!result.IsSuccess)
                 {
                     ModelState.AddModelError("", result.ErrorMessage ?? "Failed to update hotel.");
-                    return View("~/Views/Admin/Hotels/Edit.cshtml", model);
+                    return View("~/Views/Admin/Hotels/Hotels/Edit.cshtml", model);
                 }
 
                 TempData["Success"] = "Hotel updated successfully!";
@@ -186,7 +192,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
             catch (Exception ex)
             {
                 ModelState.AddModelError("", "Error updating hotel: " + ex.Message);
-                return View("~/Views/Admin/Hotels/Edit.cshtml", model);
+                return View("~/Views/Admin/Hotels/Hotels/Edit.cshtml", model);
             }
         }
 
@@ -199,10 +205,10 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
 
             if (hotel == null) return NotFound();
 
-            var model = new Models.ManageHotelViewModel
+            var model = new ManageHotelViewModel
             {
                 Hotel = hotel,
-                EditForm = new Models.EditHotelViewModel
+                EditForm = new EditHotelViewModel
                 {
                     Id = hotel.Id,
                     Name = hotel.Name,
@@ -220,10 +226,10 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
                     Website = hotel.ContactInfo?.Website?.ToString(),
                     CurrentImageUrl = hotel.MainImageUrl
                 },
-                RoomForm = new Models.AddRoomViewModel { HotelId = id }
+                RoomForm = new AddRoomViewModel { HotelId = id }
             };
 
-            return View("~/Views/Admin/Hotels/Manage.cshtml", model);
+            return View("~/Views/Admin/Hotels/Hotels/Manage.cshtml", model);
         }
 
         [HttpPost("Delete/{id}")]
@@ -239,7 +245,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
         }
 
         [HttpPost("AddRoom")]
-        public async Task<IActionResult> AddRoom(Models.AddRoomViewModel model)
+        public async Task<IActionResult> AddRoom(AddRoomViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -248,7 +254,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
 
             try
             {
-                var command = new OnlineTravel.Application.Features.Hotels.Admin.AddRoom.AddRoomCommand
+                var command = new AddRoomCommand
                 {
                     HotelId = model.HotelId,
                     RoomNumber = model.RoomNumber,
@@ -276,7 +282,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
         }
 
         [HttpPost("EditRoom")]
-        public async Task<IActionResult> EditRoom(Models.EditRoomViewModel model)
+        public async Task<IActionResult> EditRoom(EditRoomViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -286,7 +292,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
 
             try
             {
-                var command = new OnlineTravel.Application.Features.Hotels.Admin.EditRoom.EditRoomCommand
+                var command = new EditRoomCommand
                 {
                     Id = model.Id,
                     Name = model.Name,
