@@ -7,7 +7,7 @@ using OnlineTravel.Domain.ErrorHandling;
 using OnlineTravel.Domain.Enums;
 using OnlineTravel.Domain.Entities.Bookings;
 using OnlineTravel.Domain.Entities.Tours;
-using OnlineTravel.Application.Features.Admin.Dashboard.Specifications;
+using OnlineTravel.Application.Features.Admin.Shared.Specifications;
 using OnlineTravel.Application.Features.Bookings.Helpers;
 
 namespace OnlineTravel.Application.Features.Admin.Dashboard;

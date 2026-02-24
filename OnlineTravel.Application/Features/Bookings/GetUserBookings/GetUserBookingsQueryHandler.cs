@@ -1,12 +1,12 @@
 using AutoMapper;
 using MediatR;
-using OnlineTravel.Application.Features.Bookings.DTOs;
+using OnlineTravel.Application.Features.Bookings.Shared.DTOs;
 using OnlineTravel.Application.Features.Bookings.Specifications.Queries;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities.Bookings;
 using OnlineTravel.Domain.ErrorHandling;
 using Microsoft.Extensions.Logging;
-using DomainResult = OnlineTravel.Domain.ErrorHandling.Result<OnlineTravel.Application.Common.PagedResult<OnlineTravel.Application.Features.Bookings.DTOs.AdminBookingResponse>>;
+using DomainResult = OnlineTravel.Domain.ErrorHandling.Result<OnlineTravel.Application.Common.PagedResult<OnlineTravel.Application.Features.Bookings.Shared.DTOs.AdminBookingResponse>>;
 
 namespace OnlineTravel.Application.Features.Bookings.GetUserBookings;
 

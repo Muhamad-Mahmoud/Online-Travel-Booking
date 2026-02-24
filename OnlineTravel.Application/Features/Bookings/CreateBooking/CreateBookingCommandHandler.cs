@@ -2,7 +2,7 @@ using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
-using OnlineTravel.Application.Features.Bookings.DTOs;
+using OnlineTravel.Application.Features.Bookings.Shared.DTOs;
 using OnlineTravel.Application.Features.Bookings.Strategies;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Application.Interfaces.Services;

@@ -45,20 +45,20 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
 
             var hotels = await query.OrderByDescending(h => h.CreatedAt).ToListAsync();
             ViewBag.SearchTerm = search;
-            return View("~/Views/Admin/Hotels/Hotels/Index.cshtml", hotels);
+            return View("~/Views/Admin/Hotels/Index.cshtml", hotels);
         }
 
         [HttpGet("Create")]
         public IActionResult Create()
         {
-            return View("~/Views/Admin/Hotels/Hotels/Create.cshtml", new CreateHotelViewModel());
+            return View("~/Views/Admin/Hotels/Create.cshtml", new CreateHotelViewModel());
         }
 
         [HttpPost("Create")]
         public async Task<IActionResult> Create(CreateHotelViewModel model)
         {
             if (!ModelState.IsValid)
-                return View("~/Views/Admin/Hotels/Hotels/Create.cshtml", model);
+                return View("~/Views/Admin/Hotels/Create.cshtml", model);
 
             try
             {
@@ -106,7 +106,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
                 if (!result.IsSuccess)
                 {
                     ModelState.AddModelError("", result.ErrorMessage ?? "Failed to create hotel.");
-                    return View("~/Views/Admin/Hotels/Hotels/Create.cshtml", model);
+                    return View("~/Views/Admin/Hotels/Create.cshtml", model);
                 }
 
                 TempData["Success"] = "Hotel created successfully!";
@@ -115,7 +115,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
             catch (Exception ex)
             {
                 ModelState.AddModelError("", "Error creating hotel: " + ex.Message);
-                return View("~/Views/Admin/Hotels/Hotels/Create.cshtml", model);
+                return View("~/Views/Admin/Hotels/Create.cshtml", model);
             }
         }
 
@@ -144,14 +144,14 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
                 CurrentImageUrl = hotel.MainImageUrl
             };
 
-            return View("~/Views/Admin/Hotels/Hotels/Edit.cshtml", model);
+            return View("~/Views/Admin/Hotels/Edit.cshtml", model);
         }
 
         [HttpPost("Edit/{id}")]
         public async Task<IActionResult> Edit(EditHotelViewModel model)
         {
             if (!ModelState.IsValid)
-                return View("~/Views/Admin/Hotels/Hotels/Edit.cshtml", model);
+                return View("~/Views/Admin/Hotels/Edit.cshtml", model);
 
             try
             {
@@ -183,7 +183,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
                 if (!result.IsSuccess)
                 {
                     ModelState.AddModelError("", result.ErrorMessage ?? "Failed to update hotel.");
-                    return View("~/Views/Admin/Hotels/Hotels/Edit.cshtml", model);
+                    return View("~/Views/Admin/Hotels/Edit.cshtml", model);
                 }
 
                 TempData["Success"] = "Hotel updated successfully!";
@@ -192,7 +192,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
             catch (Exception ex)
             {
                 ModelState.AddModelError("", "Error updating hotel: " + ex.Message);
-                return View("~/Views/Admin/Hotels/Hotels/Edit.cshtml", model);
+                return View("~/Views/Admin/Hotels/Edit.cshtml", model);
             }
         }
 
@@ -229,7 +229,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
                 RoomForm = new AddRoomViewModel { HotelId = id }
             };
 
-            return View("~/Views/Admin/Hotels/Hotels/Manage.cshtml", model);
+            return View("~/Views/Admin/Hotels/Manage.cshtml", model);
         }
 
         [HttpPost("Delete/{id}")]

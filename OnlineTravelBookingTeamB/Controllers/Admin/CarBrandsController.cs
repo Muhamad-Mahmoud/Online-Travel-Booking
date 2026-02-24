@@ -1,10 +1,17 @@
 ﻿using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using OnlineTravel.Application.Features.CarBrands.Commands;
-using OnlineTravel.Application.Features.CarBrands.DTOs;
-using OnlineTravel.Application.Features.CarBrands.Queries;
+using OnlineTravel.Application.Features.CarBrands.CreateCarBrand;
+using OnlineTravel.Application.Features.CarBrands.UpdateCarBrand;
+using OnlineTravel.Application.Features.CarBrands.DeleteCarBrand;
+using OnlineTravel.Application.Features.CarBrands.GetCarBrandById;
+using OnlineTravel.Application.Features.CarBrands.GetCarBrandsPaginated;
+using OnlineTravel.Application.Features.CarBrands.Shared.DTOs;
+using OnlineTravel.Domain.ErrorHandling;
 using OnlineTravel.Domain.Exceptions;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace OnlineTravelBookingTeamB.Controllers.Admin
 {
@@ -21,7 +28,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
 
         // GET: CarBrand
         [HttpGet]
-        public async Task<IActionResult> Index(int pageIndex = 1, int pageSize = 10, string searchTerm = null)
+        public async Task<IActionResult> Index(int pageIndex = 1, int pageSize = 10, string? searchTerm = null)
         {
             var query = new GetCarBrandsPaginatedQuery(pageIndex, pageSize, searchTerm);
             var result = await _mediator.Send(query);
@@ -44,7 +51,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
 
             if (!result.IsSuccess)
             {
-                TempData["Error"] = result.Error.Description; // تعديل
+                TempData["Error"] = result.Error.Description;
                 return RedirectToAction(nameof(Index));
             }
 
@@ -55,23 +62,24 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
         [HttpGet("Create")]
         public IActionResult Create()
         {
-            return View("~/Views/Admin/Cars/Brands/Create.cshtml", new CreateCarBrandDto());
+            return View("~/Views/Admin/Cars/Brands/Create.cshtml", new CreateCarBrandRequest());
         }
 
-        [HttpPost]
+        // POST: CarBrand/Create
+        [HttpPost("Create")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateCarBrandDto dto)
+        public async Task<IActionResult> Create(CreateCarBrandRequest request)
         {
             if (!ModelState.IsValid)
-                return View("~/Views/Admin/Cars/Brands/Create.cshtml", dto);
+                return View("~/Views/Admin/Cars/Brands/Create.cshtml", request);
 
-            var command = new CreateCarBrandCommand(dto);
+            var command = new CreateCarBrandCommand(request);
             var result = await _mediator.Send(command);
 
             if (!result.IsSuccess)
             {
                 ModelState.AddModelError(string.Empty, result.Error.Description);
-                return View("~/Views/Admin/Cars/Brands/Create.cshtml", dto);
+                return View("~/Views/Admin/Cars/Brands/Create.cshtml", request);
             }
 
             TempData["Success"] = "Car brand created successfully.";
@@ -87,30 +95,32 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
 
             if (!result.IsSuccess)
             {
-                TempData["Error"] = result.Error.Description; // تعديل
+                TempData["Error"] = result.Error.Description;
                 return RedirectToAction(nameof(Index));
             }
 
-            // تحويل CarBrandDto إلى UpdateCarBrandDto (باستخدام Mapster)
-            var updateDto = result.Value.Adapt<UpdateCarBrandDto>();
-            return View("~/Views/Admin/Cars/Brands/Edit.cshtml", updateDto);
+            var updateRequest = result.Value.Adapt<UpdateCarBrandRequest>();
+            return View("~/Views/Admin/Cars/Brands/Edit.cshtml", updateRequest);
         }
 
         // POST: CarBrand/Edit/5
-        [HttpPost]
+        [HttpPost("Edit/{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, UpdateCarBrandDto dto)
+        public async Task<IActionResult> Edit(Guid id, UpdateCarBrandRequest request)
         {
-            if (!ModelState.IsValid)
-                return View("~/Views/Admin/Cars/Brands/Edit.cshtml", dto);
+            if (id != request.Id)
+                return BadRequest();
 
-            var command = new UpdateCarBrandCommand(id, dto);
+            if (!ModelState.IsValid)
+                return View("~/Views/Admin/Cars/Brands/Edit.cshtml", request);
+
+            var command = new UpdateCarBrandCommand(id, request);
             var result = await _mediator.Send(command);
 
             if (!result.IsSuccess)
             {
-                ModelState.AddModelError(string.Empty, result.Error.Description); // تعديل
-                return View("~/Views/Admin/Cars/Brands/Edit.cshtml", dto);
+                ModelState.AddModelError(string.Empty, result.Error.Description);
+                return View("~/Views/Admin/Cars/Brands/Edit.cshtml", request);
             }
 
             TempData["Success"] = "Car brand updated successfully.";
@@ -126,7 +136,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
 
             if (!result.IsSuccess)
             {
-                TempData["Error"] = result.Error.Description; // تعديل
+                TempData["Error"] = result.Error.Description;
                 return RedirectToAction(nameof(Index));
             }
 
@@ -134,7 +144,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
         }
 
         // POST: CarBrand/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost("Delete/{id}"), ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
@@ -143,7 +153,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
 
             if (!result.IsSuccess)
             {
-                TempData["Error"] = result.Error.Description; // تعديل
+                TempData["Error"] = result.Error.Description;
             }
             else
             {
@@ -154,4 +164,3 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
         }
     }
 }
-

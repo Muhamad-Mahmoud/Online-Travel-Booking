@@ -1,58 +1,91 @@
-﻿@using OnlineTravel.Application.Features.CarPricingTiers.DTOs
-@model IReadOnlyList<CarPricingTierDto>
+@using OnlineTravel.Application.Features.CarPricingTiers.GetAll
+@model IReadOnlyList<GetAllCarPricingTiersResponse>
 
 @{
-    ViewData["Title"] = "Pricing Tiers";
+    ViewData["Title"] = "Vehicle Pricing Strategy";
     var carId = ViewBag.CarId;
 }
 
-<h1>Pricing Tiers for Car</h1>
+<div class="page-title d-flex justify-content-between align-items-center">
+    <span><i class="fas fa-funnel-dollar me-2 text-success"></i> Dynamic Pricing Tiers</span>
+    <div>
+        <a asp-action="Create" asp-route-carId="@carId" class="btn btn-primary shadow-sm rounded-pill px-4 me-2">
+            <i class="fas fa-plus me-2"></i> Add New Tier
+        </a>
+        <a asp-controller="Cars" asp-action="Details" asp-route-id="@carId" class="btn btn-light shadow-sm rounded-pill px-4">
+            <i class="fas fa-arrow-left me-2"></i> Back to Vehicle
+        </a>
+    </div>
+</div>
 
-<p>
-    <a asp-action="Create" asp-route-carId="@carId" class="btn btn-primary">Create New Tier</a>
-    <a asp-controller="Cars" asp-action="Details" asp-route-id="@carId" class="btn btn-secondary">Back to Car</a>
-</p>
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+    <div class="card-body p-0">
+        @if (!Model.Any())
+        {
+            <div class="p-5 text-center">
+                <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                    <i class="fas fa-coins fa-2x text-muted opacity-50"></i>
+                </div>
+                <h4 class="fw-bold">No pricing tiers defined yet</h4>
+                <p class="text-muted mb-4">Define how this vehicle is priced based on rental duration.</p>
+                <a asp-action="Create" asp-route-carId="@carId" class="btn btn-soft-primary rounded-pill px-5 py-3 fw-bold">
+                    <i class="fas fa-plus me-2"></i> CONFIGURE FIRST TIER
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light small">
+                        <tr>
+                            <th class="ps-4">Duration Range</th>
+                            <th>Hourly Rate</th>
+                            <th>Currency</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-4 py-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-soft-primary p-2 rounded-3 me-3">
+                                            <i class="fas fa-clock text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold text-dark">@item.FromHours - @item.ToHours Hours</div>
+                                            <div class="small text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">RENTAL WINDOW</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <h5 class="fw-bold text-success mb-0">@item.PricePerHour.Amount.ToString("C2")</h5>
+                                </td>
+                                <td class="text-muted fw-bold">@item.PricePerHour.Currency</td>
+                                <td class="text-end pe-4">
+                                    <div class="btn-group shadow-sm rounded-pill overflow-hidden bg-white">
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-white border-end px-3" title="View"><i class="fas fa-eye text-primary"></i></a>
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-white border-end px-3" title="Edit"><i class="fas fa-edit text-warning"></i></a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-white px-3" title="Delete"><i class="fas fa-trash text-danger"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
 
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success">@TempData["Success"]</div>
-}
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger">@TempData["Error"]</div>
-}
-
-@if (!Model.Any())
-{
-    <p>No pricing tiers defined for this car.</p>
-}
-else
-{
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>From (hours)</th>
-                <th>To (hours)</th>
-                <th>Price per hour</th>
-                <th>Currency</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@item.FromHours</td>
-                    <td>@item.ToHours</td>
-                    <td>@item.PricePerHour.Amount.ToString("N2")</td>
-                    <td>@item.PricePerHour.Currency</td>
-                    <td>
-                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a>
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+<div class="mt-4 bg-soft-info p-4 rounded-4 border-0">
+    <div class="d-flex align-items-center">
+        <i class="fas fa-lightbulb fa-2x text-info me-3"></i>
+        <div>
+            <h6 class="fw-bold text-info mb-1">Pricing Tip</h6>
+            <p class="mb-0 small text-info opacity-75">Tiers allow you to offer discounts for longer rentals. For example, set a higher rate for 1-hour rentals and a lower rate for 24+ hour rentals.</p>
+        </div>
+    </div>
+</div>
