@@ -6,7 +6,7 @@
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="h3 mb-0 text-gray-800">Create New Tour</h1>
-    <a asp-action="Tours" class="btn btn-secondary shadow-sm">
+    <a asp-action="Index" class="btn btn-secondary shadow-sm">
         <i class="bi bi-arrow-left"></i> Back to List
     </a>
 </div>
@@ -18,7 +18,7 @@
                 <h6 class="m-0 font-weight-bold text-primary">Tour Details</h6>
             </div>
             <div class="card-body">
-                <form asp-action="CreateTour" enctype="multipart/form-data">
+                <form asp-action="Create" enctype="multipart/form-data">
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
                     <div class="row mb-3">
@@ -139,7 +139,7 @@
                     </div>
 
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                         <a asp-action="Tours" class="btn btn-light me-md-2">Cancel</a>
+                         <a asp-action="Index" class="btn btn-light me-md-2">Cancel</a>
                         <button type="submit" class="btn btn-primary px-4">Create Tour</button>
                     </div>
                 </form>

@@ -4,7 +4,7 @@
     ViewData["Title"] = "Bookings";
 }
 
-<form method="get" action="/Admin/Bookings" class="row g-3 justify-content-between align-items-center mb-4">
+<form method="get" action="@Url.Action("Index", "Bookings")" class="row g-3 justify-content-between align-items-center mb-4">
     <div class="col-12 col-lg-auto">
         <h1 class="h3 fw-bold text-dark mb-1">Bookings</h1>
         <p class="text-muted small mb-0">Manage and track all customer reservations in one place.</p>
@@ -26,7 +26,7 @@
             </select>
             <div class="d-flex gap-2 action-buttons">
                 <button type="submit" class="btn btn-primary shadow-sm"><i class="fas fa-filter me-2"></i>Filter</button>
-                <a asp-controller="Admin" asp-action="Bookings" class="btn btn-white shadow-sm" title="Clear Filters"><i class="fas fa-undo text-muted"></i></a>
+                <a asp-controller="Bookings" asp-action="Index" class="btn btn-white shadow-sm" title="Clear Filters"><i class="fas fa-undo text-muted"></i></a>
             </div>
         </div>
     </div>
@@ -87,18 +87,18 @@
         <nav>
             <ul class="pagination pagination-sm mb-0 align-items-center">
                 <li class="page-item @(!Model.Bookings.HasPreviousPage ? "disabled" : "")">
-                    <a class="page-link" href="@Url.Action("Bookings", new { pageIndex = Model.Bookings.PageIndex - 1, searchTerm = ViewBag.SearchTerm, status = ViewBag.Status })"><i class="fas fa-chevron-left"></i></a>
+                    <a class="page-link" href="@Url.Action("Index", new { pageIndex = Model.Bookings.PageIndex - 1, searchTerm = ViewBag.SearchTerm, status = ViewBag.Status })"><i class="fas fa-chevron-left"></i></a>
                 </li>
                 
                 @for (int i = 1; i <= Model.Bookings.TotalPages; i++)
                 {
                      <li class="page-item @(i == Model.Bookings.PageIndex ? "active" : "")">
-                        <a class="page-link" href="@Url.Action("Bookings", new { pageIndex = i, searchTerm = ViewBag.SearchTerm, status = ViewBag.Status })">@i</a>
+                        <a class="page-link" href="@Url.Action("Index", new { pageIndex = i, searchTerm = ViewBag.SearchTerm, status = ViewBag.Status })">@i</a>
                     </li>
                 }
 
                 <li class="page-item @(!Model.Bookings.HasNextPage ? "disabled" : "")">
-                    <a class="page-link" href="@Url.Action("Bookings", new { pageIndex = Model.Bookings.PageIndex + 1, searchTerm = ViewBag.SearchTerm, status = ViewBag.Status })"><i class="fas fa-chevron-right"></i></a>
+                    <a class="page-link" href="@Url.Action("Index", new { pageIndex = Model.Bookings.PageIndex + 1, searchTerm = ViewBag.SearchTerm, status = ViewBag.Status })"><i class="fas fa-chevron-right"></i></a>
                 </li>
             </ul>
         </nav>

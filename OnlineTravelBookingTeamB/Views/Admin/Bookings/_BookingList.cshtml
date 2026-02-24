@@ -28,7 +28,7 @@
                 {
                     <tr>
                         <td class="ps-4 fw-bold text-dark">
-                            <a asp-controller="Admin" asp-action="BookingDetails" asp-route-id="@booking.Id" class="text-decoration-none text-primary">#@booking.BookingReference</a>
+                            <a asp-controller="Bookings" asp-action="Details" asp-route-id="@booking.Id" class="text-decoration-none text-primary">#@booking.BookingReference</a>
                         </td>
                         @if (showCustomer)
                         {
@@ -75,7 +75,7 @@
                             </span>
                         </td>
                         <td class="pe-4 text-end">
-                            <a asp-controller="Admin" asp-action="BookingDetails" asp-route-id="@booking.Id" class="btn btn-sm btn-icon btn-hover-primary" title="View Details">
+                            <a asp-controller="Bookings" asp-action="Details" asp-route-id="@booking.Id" class="btn btn-sm btn-icon btn-hover-primary" title="View Details">
                                 <i class="fas fa-chevron-right text-muted"></i>
                             </a>
                         </td>

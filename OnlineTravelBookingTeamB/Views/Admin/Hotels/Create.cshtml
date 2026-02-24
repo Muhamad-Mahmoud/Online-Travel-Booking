@@ -1,0 +1,190 @@
+@model OnlineTravelBookingTeamB.Models.CreateHotelViewModel
+
+@{
+    ViewData["Title"] = "Create Hotel";
+}
+
+<div class="row g-3 justify-content-between align-items-center mb-4">
+    <div class="col-12 col-lg-auto">
+        <h1 class="h3 fw-bold text-dark mb-1">Create New Hotel</h1>
+        <p class="text-muted small mb-0">Add a new hotel property to the system.</p>
+    </div>
+    <div class="col-12 col-lg-auto">
+        <a asp-controller="Hotels" asp-action="Index" class="btn btn-white shadow-sm">
+            <i class="fas fa-arrow-left me-2 text-muted"></i>Back to Hotels
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+            <!-- Basic Info -->
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="m-0 fw-bold text-dark"><i class="fas fa-hotel text-primary me-2"></i>Hotel Details</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            <label asp-for="Name" class="form-label fw-bold small text-uppercase text-muted"></label>
+                            <input asp-for="Name" class="form-control" placeholder="Enter hotel name" />
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="Slug" class="form-label fw-bold small text-uppercase text-muted"></label>
+                            <input asp-for="Slug" class="form-control" placeholder="hotel-url-slug" />
+                            <span asp-validation-for="Slug" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label fw-bold small text-uppercase text-muted"></label>
+                        <textarea asp-for="Description" class="form-control" rows="3" placeholder="Describe the hotel..."></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="MainImage" class="form-label fw-bold small text-uppercase text-muted">Main Image</label>
+                        <input asp-for="MainImage" class="form-control" type="file" accept="image/*" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Location -->
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="m-0 fw-bold text-dark"><i class="fas fa-map-marker-alt text-danger me-2"></i>Location</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="Street" class="form-label small text-muted">Street Address</label>
+                        <input asp-for="Street" class="form-control" />
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="City" class="form-label small text-muted">City</label>
+                            <input asp-for="City" class="form-control" />
+                            <span asp-validation-for="City" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="State" class="form-label small text-muted">State/Province</label>
+                            <input asp-for="State" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Country" class="form-label small text-muted">Country</label>
+                            <input asp-for="Country" class="form-control" />
+                            <span asp-validation-for="Country" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="PostalCode" class="form-label small text-muted">Postal Code</label>
+                            <input asp-for="PostalCode" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Latitude" class="form-label small text-muted">Latitude</label>
+                            <input asp-for="Latitude" class="form-control" placeholder="e.g. 30.0444" />
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Longitude" class="form-label small text-muted">Longitude</label>
+                            <input asp-for="Longitude" class="form-control" placeholder="e.g. 31.2357" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schedule & Policy -->
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="m-0 fw-bold text-dark"><i class="fas fa-clock text-warning me-2"></i>Schedule & Policy</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label asp-for="CheckInTimeStart" class="form-label small text-muted">Check-in Start</label>
+                            <input asp-for="CheckInTimeStart" class="form-control" type="time" />
+                        </div>
+                        <div class="col-md-3">
+                            <label asp-for="CheckInTimeEnd" class="form-label small text-muted">Check-in End</label>
+                            <input asp-for="CheckInTimeEnd" class="form-control" type="time" />
+                        </div>
+                        <div class="col-md-3">
+                            <label asp-for="CheckOutTimeStart" class="form-label small text-muted">Check-out Start</label>
+                            <input asp-for="CheckOutTimeStart" class="form-control" type="time" />
+                        </div>
+                        <div class="col-md-3">
+                            <label asp-for="CheckOutTimeEnd" class="form-label small text-muted">Check-out End</label>
+                            <input asp-for="CheckOutTimeEnd" class="form-control" type="time" />
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="CancellationPolicy" class="form-label fw-bold small text-uppercase text-muted">Cancellation Policy</label>
+                        <input asp-for="CancellationPolicy" class="form-control" placeholder="e.g. Free cancellation up to 24 hours" />
+                        <span asp-validation-for="CancellationPolicy" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="m-0 fw-bold text-dark"><i class="fas fa-address-book text-info me-2"></i>Contact Information</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label asp-for="ContactPhone" class="form-label small text-muted">Phone</label>
+                            <input asp-for="ContactPhone" class="form-control" placeholder="+20 123 456 7890" />
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="ContactEmail" class="form-label small text-muted">Email</label>
+                            <input asp-for="ContactEmail" class="form-control" type="email" placeholder="info@hotel.com" />
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="Website" class="form-label small text-muted">Website</label>
+                            <input asp-for="Website" class="form-control" type="url" placeholder="https://hotel.com" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="d-flex gap-2 justify-content-end mb-4">
+                <a asp-controller="Hotels" asp-action="Index" class="btn btn-white px-4">Cancel</a>
+                <button type="submit" class="btn btn-primary px-4 shadow-sm"><i class="fas fa-save me-2"></i>Create Hotel</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Tips Sidebar -->
+    <div class="col-lg-4">
+        <div class="card shadow-sm border-0 rounded-4 overflow-hidden sticky-top" style="top:1rem;">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h6 class="m-0 fw-bold text-dark"><i class="fas fa-lightbulb text-warning me-2"></i>Tips</h6>
+            </div>
+            <div class="card-body">
+                <p class="small text-muted mb-2"><i class="fas fa-check-circle text-success me-2"></i>Use a URL-friendly slug (e.g. <code>grand-plaza-hotel</code>).</p>
+                <p class="small text-muted mb-2"><i class="fas fa-check-circle text-success me-2"></i>Provide accurate coordinates for map placement.</p>
+                <p class="small text-muted mb-2"><i class="fas fa-check-circle text-success me-2"></i>Upload high-quality cover images (JPG, PNG, WebP).</p>
+                <p class="small text-muted mb-0"><i class="fas fa-check-circle text-success me-2"></i>Set clear check-in/out times and cancellation policies.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .btn-white {
+        background-color: #fff;
+        border: 1px solid #e3e6f0;
+        color: #6e707e;
+    }
+    .btn-white:hover { background-color: #f8f9fc; }
+</style>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

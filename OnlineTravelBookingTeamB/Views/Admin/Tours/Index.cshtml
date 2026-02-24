@@ -6,7 +6,7 @@
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="h3 mb-0 text-gray-800">Tours Management</h1>
-    <a asp-controller="Admin" asp-action="CreateTour" class="btn btn-primary d-none d-sm-inline-block shadow-sm">
+    <a asp-controller="Tours" asp-action="Create" class="btn btn-primary d-none d-sm-inline-block shadow-sm">
         <i class="bi bi-plus-lg text-white-50"></i> Create New Tour
     </a>
 </div>
@@ -79,10 +79,10 @@
                                 </td>
                                 <td class="align-middle">
                                     <div class="d-flex gap-2 justify-content-center">
-                                        <a asp-action="ManageTour" asp-route-id="@tour.Id" class="btn btn-icon-soft btn-soft-primary" title="Edit">
-                                            <i class="bi bi-pencil-fill fs-6"></i>
+                                        <a asp-action="Manage" asp-route-id="@tour.Id" class="btn btn-icon-soft btn-soft-primary" title="Manage Everything">
+                                            <i class="bi bi-gear-fill fs-6"></i>
                                         </a>
-                                        <form asp-action="DeleteTour" asp-route-id="@tour.Id" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this tour?');">
+                                        <form asp-action="Delete" asp-route-id="@tour.Id" method="post" class="d-inline" data-confirm="This tour will be permanently deleted. Are you sure?" data-confirm-title="Delete Tour">
                                             <button type="submit" class="btn btn-icon-soft btn-soft-danger" title="Delete">
                                                 <i class="bi bi-trash-fill fs-6"></i>
                                             </button>
@@ -108,6 +108,14 @@
         }
     </div>
 </div>
+
+<style>
+    .btn-icon-soft { width: 34px; height: 34px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; border: none; transition: all 0.2s; }
+    .btn-soft-primary { background-color: rgba(13, 110, 253, 0.1); color: #0d6efd; }
+    .btn-soft-primary:hover { background-color: #0d6efd; color: #fff; }
+    .btn-soft-danger { background-color: rgba(220, 53, 69, 0.1); color: #dc3545; }
+    .btn-soft-danger:hover { background-color: #dc3545; color: #fff; }
+</style>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
