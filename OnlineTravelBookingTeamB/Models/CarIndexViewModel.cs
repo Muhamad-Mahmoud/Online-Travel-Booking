@@ -1,5 +1,5 @@
 ﻿using Mapster;
-using OnlineTravel.Application.Features.Cars.DTOs;
+using OnlineTravel.Application.Features.Cars.GetAllCarsSummary;
 using OnlineTravel.Domain.Exceptions;
 
 namespace OnlineTravelBookingTeamB.Models

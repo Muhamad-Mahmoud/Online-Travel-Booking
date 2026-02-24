@@ -1,5 +1,5 @@
-﻿using MediatR;
-using OnlineTravel.Application.Features.Bookings.DTOs;
+using MediatR;
+using OnlineTravel.Application.Features.Bookings.Shared.DTOs;
 
 namespace OnlineTravel.Application.Features.Bookings.GetUserBookings;
 

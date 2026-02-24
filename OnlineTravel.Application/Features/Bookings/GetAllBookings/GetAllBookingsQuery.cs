@@ -1,5 +1,5 @@
 using MediatR;
-using OnlineTravel.Application.Features.Bookings.DTOs;
+using OnlineTravel.Application.Features.Bookings.Shared.DTOs;
 using OnlineTravel.Domain.ErrorHandling;
 
 using OnlineTravel.Application.Common;

@@ -1,98 +1,173 @@
 ﻿@model PaginatedResult<CarSummaryDto>
-@using OnlineTravel.Application.Features.Cars.DTOs
+@using OnlineTravel.Application.Features.Cars.GetAllCarsSummary
+@using OnlineTravel.Application.Features.CarBrands.Shared.DTOs
 @using OnlineTravel.Domain.Enums
 @using OnlineTravel.Domain.Exceptions
 
-
 @{
-    ViewData["Title"] = "Cars";
+    ViewData["Title"] = "Car Fleet Management";
+    var brands = ViewBag.Brands as IEnumerable<CarBrandDto> ?? new List<CarBrandDto>();
 }
 
-<h1>Cars</h1>
+<div class="page-title">
+    <span><i class="fas fa-car me-2 text-primary"></i> Car Fleet Management</span>
+    <a asp-action="Create" class="btn btn-primary shadow-sm rounded-pill px-4">
+        <i class="fas fa-plus me-2"></i> Add New Car
+    </a>
+</div>
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Create New</a>
-</p>
-
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success">@TempData["Success"]</div>
-}
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger">@TempData["Error"]</div>
-}
-
-<form asp-action="Index" method="get" class="mb-3">
-    <div class="row">
-        <div class="col-md-3">
-            <input type="text" name="BrandId" class="form-control" placeholder="Brand ID" value="@Context.Request.Query["brandId"]" />
-        </div>
-        <div class="col-md-3">
-            <input type="text" name="CategoryId" class="form-control" placeholder="Category ID" value="@Context.Request.Query["categoryId"]" />
-        </div>
-        <div class="col-md-3">
-            <select name="CarType" class="form-control" asp-items="Html.GetEnumSelectList<CarCategory>()">
-                <option value="">All Types</option>
-            </select>
-        </div>
-        <div class="col-md-3">
-            <button type="submit" class="btn btn-secondary">Filter</button>
-        </div>
+<!-- Filters -->
+<div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-body p-4">
+        <form asp-action="Index" method="get">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label small fw-bold text-muted">BRAND</label>
+                    <select name="BrandId" class="form-select border-0 bg-light rounded-3">
+                        <option value="">All Brands</option>
+                        @foreach (var brand in brands)
+                        {
+                            <option value="@brand.Id" selected="@(Context.Request.Query["BrandId"] == brand.Id.ToString())">@brand.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small fw-bold text-muted">VEHICLE TYPE</label>
+                    <select name="CarType" class="form-select border-0 bg-light rounded-3" asp-items="Html.GetEnumSelectList<CarCategory>()">
+                        <option value="">Any Type</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold text-muted">SEARCH MODEL/MAKE</label>
+                    <div class="input-group bg-light rounded-3 overflow-hidden">
+                        <span class="input-group-text border-0 bg-transparent text-muted"><i class="fas fa-search"></i></span>
+                        <input type="text" name="SearchTerm" class="form-control border-0 bg-transparent" placeholder="Ex: Tesla Model S..." value="@Context.Request.Query["SearchTerm"]" />
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-dark w-100 rounded-3">
+                        <i class="fas fa-filter me-2"></i> Filter
+                    </button>
+                </div>
+            </div>
+        </form>
     </div>
-</form>
+</div>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Make</th>
-            <th>Model</th>
-            <th>Type</th>
-            <th>Seats</th>
-            <th>Fuel</th>
-            <th>Transmission</th>
-            <th>Brand</th>
-            <th>Category</th>
-            <th>Price/hr</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Items)
-        {
-            <tr>
-                <td>@item.Make</td>
-                <td>@item.Model</td>
-                <td>@item.CarType</td>
-                <td>@item.SeatsCount</td>
-                <td>@item.FuelType</td>
-                <td>@item.Transmission</td>
-                <td>@item.BrandName</td>
-                <td>@item.CategoryTitle</td>
-                <td>@item.PricePerHour.ToString("C")</td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a>
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<!-- Table Card -->
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="bg-light text-muted small text-uppercase">
+                <tr>
+                    <th class="ps-4 py-3">Vehicle</th>
+                    <th class="py-3">Specifications</th>
+                    <th class="py-3">Brand & Category</th>
+                    <th class="py-3">Base Price</th>
+                    <th class="py-3">Status</th>
+                    <th class="pe-4 py-3 text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Items.Any())
+                {
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="fas fa-car-side fa-3x mb-3 opacity-25"></i>
+                            <p>No cars found matching your criteria.</p>
+                        </td>
+                    </tr>
+                }
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td class="ps-4">
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-sm bg-primary-light rounded-3 p-2 me-3 text-primary text-center" style="width: 40px; height: 40px;">
+                                    <i class="fas fa-car fa-lg"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold text-dark">@item.Make @item.Model</div>
+                                    <div class="small text-muted">ID: @item.Id.ToString().Substring(0, 8)...</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <span class="badge bg-light text-dark fw-normal border" title="Seats"><i class="fas fa-users me-1"></i> @item.SeatsCount</span>
+                                <span class="badge bg-light text-dark fw-normal border" title="Transmission">@item.Transmission</span>
+                                <span class="badge bg-light text-dark fw-normal border" title="Fuel">@item.FuelType</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="fw-medium">@item.BrandName</div>
+                            <div class="badge bg-soft-primary px-2 py-1">@item.CarType</div>
+                        </td>
+                        <td>
+                            <div class="fw-bold text-primary">@item.PricePerHour.ToString("C")/hr</div>
+                            <div class="small text-muted">Daily options available</div>
+                        </td>
+                        <td>
+                            <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2 fw-normal">Active</span>
+                        </td>
+                        <td class="pe-4 text-end">
+                            <div class="btn-group shadow-sm rounded-3 overflow-hidden">
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-white btn-sm px-3 border-end" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-white btn-sm px-3 border-end text-warning" title="Edit Car">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-white btn-sm px-3 text-danger" title="Delete Car">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                            <a asp-controller="CarPricingTiers" asp-action="Index" asp-route-carId="@item.Id" class="btn btn-link btn-sm text-decoration-none">
+                                <i class="fas fa-tags me-1"></i> Pricing
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
 
+<!-- Pagination -->
 @if (Model.TotalPages > 1)
 {
-    <nav>
-        <ul class="pagination">
-            @for (int i = 1; i <= Model.TotalPages; i++)
-            {
-                <li class="page-item @(i == Model.PageIndex ? "active" : "")">
-                    <a class="page-link" asp-action="Index" asp-route-pageIndex="@i" asp-route-pageSize="@Model.PageSize"
+    <div class="d-flex justify-content-between align-items-center mt-4 px-2">
+        <div class="text-muted small">
+            Showing @((Model.PageIndex - 1) * Model.PageSize + 1) to @(Math.Min(Model.PageIndex * Model.PageSize, Model.TotalCount)) of @Model.TotalCount cars
+        </div>
+        <nav>
+            <ul class="pagination pagination-separated mb-0">
+                <li class="page-item @(Model.PageIndex == 1 ? "disabled" : "")">
+                    <a class="page-link border-0 shadow-sm rounded-3" asp-action="Index" asp-route-pageIndex="@(Model.PageIndex - 1)" 
                        asp-route-brandId="@Context.Request.Query["brandId"]"
-                       asp-route-categoryId="@Context.Request.Query["categoryId"]"
-                       asp-route-carType="@Context.Request.Query["carType"]">@i</a>
+                       asp-route-carType="@Context.Request.Query["carType"]"
+                       asp-route-searchTerm="@Context.Request.Query["searchTerm"]">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
                 </li>
-            }
-        </ul>
-    </nav>
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item mx-1 @(i == Model.PageIndex ? "active" : "")">
+                        <a class="page-link border-0 shadow-sm rounded-3" asp-action="Index" asp-route-pageIndex="@i"
+                           asp-route-brandId="@Context.Request.Query["brandId"]"
+                           asp-route-carType="@Context.Request.Query["carType"]"
+                           asp-route-searchTerm="@Context.Request.Query["searchTerm"]">@i</a>
+                    </li>
+                }
+                <li class="page-item @(Model.PageIndex == Model.TotalPages ? "disabled" : "")">
+                    <a class="page-link border-0 shadow-sm rounded-3" asp-action="Index" asp-route-pageIndex="@(Model.PageIndex + 1)"
+                       asp-route-brandId="@Context.Request.Query["brandId"]"
+                       asp-route-carType="@Context.Request.Query["carType"]"
+                       asp-route-searchTerm="@Context.Request.Query["searchTerm"]">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
 }

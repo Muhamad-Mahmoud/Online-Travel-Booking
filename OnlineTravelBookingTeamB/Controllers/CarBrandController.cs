@@ -1,9 +1,12 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using OnlineTravel.Application.Features.CarBrands.Commands;
-using OnlineTravel.Application.Features.CarBrands.DTOs;
-using OnlineTravel.Application.Features.CarBrands.Queries;
+using OnlineTravel.Application.Features.CarBrands.CreateCarBrand;
+using OnlineTravel.Application.Features.CarBrands.GetCarBrandById;
+using OnlineTravel.Application.Features.CarBrands.GetCarBrandsPaginated;
+using OnlineTravel.Application.Features.CarBrands.Shared.DTOs;
+using OnlineTravel.Application.Features.CarBrands.UpdateCarBrand;
+using OnlineTravel.Application.Features.CarBrands.DeleteCarBrand;
 using OnlineTravelBookingTeamB.Extensions;
 using System.Net;
 using static Microsoft.TeamFoundation.Framework.Common.AadSecurity;
@@ -23,16 +26,16 @@ namespace OnlineTravelBookingTeamB.Controllers
             _mediator = mediator;
         }
 
-        /// <remarks>⚠️ Deprecated — use GET api/carbrand/GetCarBrandsPaginated instead.
-        /// This endpoint performs a full table scan and will be removed in a future version.</remarks>
-        [Obsolete("Use GetCarBrandsPaginated instead.")]
-        [HttpGet("GetAll_CarBrands")]
-        public async Task<IActionResult> GetAll()
-        {
-            var query = new GetAllCarBrandsQuery();
-            var result = await _mediator.Send(query);
-            return result.IsSuccess ? Ok(result.Value) : result.ToProblem();
-        }
+        ///// <remarks>⚠️ Deprecated — use GET api/carbrand/GetCarBrandsPaginated instead.
+        ///// This endpoint performs a full table scan and will be removed in a future version.</remarks>
+        //[Obsolete("Use GetCarBrandsPaginated instead.")]
+        //[HttpGet("GetAll_CarBrands")]
+        //public async Task<IActionResult> GetAll()
+        //{
+        //    var query = new GetAllCarBrandsQuery();
+        //    var result = await _mediator.Send(query);
+        //    return result.IsSuccess ? Ok(result.Value) : result.ToProblem();
+        //}
         [HttpGet("GetCarBrandsPaginated")]
         public async Task<IActionResult> GetPaginated([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10, [FromQuery] string? searchTerm = null)
         {
@@ -50,20 +53,20 @@ namespace OnlineTravelBookingTeamB.Controllers
 
         [HttpPost("Add_CarBrand")]
 
-        public async Task<IActionResult> Add(CreateCarBrandDto request)
+        public async Task<IActionResult> Add(CreateCarBrandRequest request)
         {
             var command = new CreateCarBrandCommand(request);
             var result = await _mediator.Send(command);
 
             return result.IsSuccess
                 ? CreatedAtAction(nameof(GetById),
-                    new { id = result.Value.Id }, result.Value)
+                    new { id = result.Value }, result.Value)
                 : result.ToProblem();
         }
         
         [HttpPut("Update_CarBrand/{id:guid}")]
 
-        public async Task<IActionResult> Update(Guid id, UpdateCarBrandDto request)
+        public async Task<IActionResult> Update(Guid id, UpdateCarBrandRequest request)
         {
             var command = new UpdateCarBrandCommand(id, request);
             var result = await _mediator.Send(command);

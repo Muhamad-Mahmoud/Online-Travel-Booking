@@ -1,8 +1,13 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using OnlineTravel.Application.Features.CarPricingTiers.Commands;
-using OnlineTravel.Application.Features.CarPricingTiers.DTOs;
-using OnlineTravel.Application.Features.CarPricingTiers.Queries;
+using OnlineTravel.Application.Features.CarPricingTiers.Common;
+using OnlineTravel.Application.Features.CarPricingTiers.Create;
+using OnlineTravel.Application.Features.CarPricingTiers.Delete;
+using OnlineTravel.Application.Features.CarPricingTiers.GetAll;
+using OnlineTravel.Application.Features.CarPricingTiers.GetById;
+using OnlineTravel.Application.Features.CarPricingTiers.Update;
+using CreatePricingTier = OnlineTravel.Application.Features.CarPricingTiers.Create;
+using UpdatePricingTier = OnlineTravel.Application.Features.CarPricingTiers.Update;
 
 namespace OnlineTravelBookingTeamB.Controllers.Admin
 {
@@ -24,7 +29,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
             if (carId == Guid.Empty)
                 return BadRequest("Car ID is required");
 
-            var query = new GetAllCarPricingTiersQuery { CarId = carId };
+            var query = new GetAllCarPricingTiersQuery(carId);
             var result = await _mediator.Send(query);
             if (result.IsSuccess)
             {
@@ -40,7 +45,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
         [HttpGet("Details/{id}")]
         public async Task<IActionResult> Details(Guid id)
         {
-            var query = new GetCarPricingTierByIdQuery { Id = id };
+            var query = new GetCarPricingTierByIdQuery(id);
             var result = await _mediator.Send(query);
             if (result.IsSuccess)
                 return View("~/Views/Admin/Cars/PricingTiers/Details.cshtml", result.Value);
@@ -56,39 +61,44 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
             if (carId == Guid.Empty)
                 return BadRequest("Car ID is required");
 
-            var request = new CreateCarPricingTierRequest
+            var formModel = new CreateCarPricingTierFormModel
             {
                 CarId = carId,
-                PricePerHour = new MoneyDto { Amount = 0, Currency = "USD" }
+                PricePerHour = new CreatePricingTier.MoneyFormModel { Amount = 0, Currency = "USD" }
             };
-            return View("~/Views/Admin/Cars/PricingTiers/Create.cshtml", request);
+            return View("~/Views/Admin/Cars/PricingTiers/Create.cshtml", formModel);
         }
 
         // POST: CarPricingTiers/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateCarPricingTierRequest request)
+        public async Task<IActionResult> Create(CreateCarPricingTierFormModel formModel)
         {
             if (!ModelState.IsValid)
-                return View("~/Views/Admin/Cars/PricingTiers/Create.cshtml", request);
+                return View("~/Views/Admin/Cars/PricingTiers/Create.cshtml", formModel);
 
-            var command = new CreateCarPricingTierCommand { Data = request };
+            var command = new CreateCarPricingTierCommand(
+                formModel.CarId,
+                formModel.FromHours,
+                formModel.ToHours,
+                new MoneyCommand(formModel.PricePerHour.Amount, formModel.PricePerHour.Currency));
+
             var result = await _mediator.Send(command);
             if (result.IsSuccess)
             {
                 TempData["Success"] = "Pricing tier created successfully.";
-                return RedirectToAction(nameof(Index), new { carId = request.CarId });
+                return RedirectToAction(nameof(Index), new { carId = formModel.CarId });
             }
 
             ModelState.AddModelError(string.Empty, result.Error.Description);
-            return View("~/Views/Admin/Cars/PricingTiers/Create.cshtml", request);
+            return View("~/Views/Admin/Cars/PricingTiers/Create.cshtml", formModel);
         }
 
         // GET: CarPricingTiers/Edit/5
         [HttpGet("Edit/{id}")]
         public async Task<IActionResult> Edit(Guid id)
         {
-            var query = new GetCarPricingTierByIdQuery { Id = id };
+            var query = new GetCarPricingTierByIdQuery(id);
             var result = await _mediator.Send(query);
             if (!result.IsSuccess)
             {
@@ -96,46 +106,56 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
                 return RedirectToAction(nameof(Index), new { carId = result.Value?.CarId });
             }
 
-            // تحويل CarPricingTierDto إلى UpdateCarPricingTierRequest
-            var updateRequest = new UpdateCarPricingTierRequest
+            // تحويل Response إلى UpdateCarPricingTierFormModel
+            var updateFormModel = new UpdateCarPricingTierFormModel
             {
                 Id = result.Value.Id,
                 CarId = result.Value.CarId,
                 FromHours = result.Value.FromHours,
                 ToHours = result.Value.ToHours,
-                PricePerHour = result.Value.PricePerHour
+                PricePerHour = new UpdatePricingTier.MoneyFormModel
+                {
+                    Amount = result.Value.PricePerHour.Amount,
+                    Currency = result.Value.PricePerHour.Currency
+                }
             };
-            return View("~/Views/Admin/Cars/PricingTiers/Edit.cshtml", updateRequest);
+            return View("~/Views/Admin/Cars/PricingTiers/Edit.cshtml", updateFormModel);
         }
 
         // POST: CarPricingTiers/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, UpdateCarPricingTierRequest request)
+        public async Task<IActionResult> Edit(Guid id, UpdateCarPricingTierFormModel formModel)
         {
-            if (id != request.Id)
+            if (id != formModel.Id)
                 return BadRequest("ID mismatch");
 
             if (!ModelState.IsValid)
-                return View("~/Views/Admin/Cars/PricingTiers/Edit.cshtml", request);
+                return View("~/Views/Admin/Cars/PricingTiers/Edit.cshtml", formModel);
 
-            var command = new UpdateCarPricingTierCommand { Data = request };
+            var command = new UpdateCarPricingTierCommand(
+                formModel.Id,
+                formModel.CarId,
+                formModel.FromHours,
+                formModel.ToHours,
+                new MoneyCommand(formModel.PricePerHour.Amount, formModel.PricePerHour.Currency));
+
             var result = await _mediator.Send(command);
             if (result.IsSuccess)
             {
                 TempData["Success"] = "Pricing tier updated successfully.";
-                return RedirectToAction(nameof(Index), new { carId = request.CarId });
+                return RedirectToAction(nameof(Index), new { carId = formModel.CarId });
             }
 
             ModelState.AddModelError(string.Empty, result.Error.Description);
-            return View("~/Views/Admin/Cars/PricingTiers/Edit.cshtml", request);
+            return View("~/Views/Admin/Cars/PricingTiers/Edit.cshtml", formModel);
         }
 
         // GET: CarPricingTiers/Delete/5
         [HttpGet("Delete/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var query = new GetCarPricingTierByIdQuery { Id = id };
+            var query = new GetCarPricingTierByIdQuery(id);
             var result = await _mediator.Send(query);
             if (!result.IsSuccess)
             {
@@ -151,14 +171,14 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             // نحتاج لمعرفة CarId قبل الحذف لإعادة التوجيه
-            var entity = await _mediator.Send(new GetCarPricingTierByIdQuery { Id = id });
+            var entity = await _mediator.Send(new GetCarPricingTierByIdQuery(id));
             if (!entity.IsSuccess)
             {
                 TempData["Error"] = entity.Error.Description;
                 return RedirectToAction("Index", "Cars");
             }
 
-            var command = new DeleteCarPricingTierCommand { Id = id };
+            var command = new DeleteCarPricingTierCommand(id);
             var result = await _mediator.Send(command);
             if (result.IsSuccess)
             {

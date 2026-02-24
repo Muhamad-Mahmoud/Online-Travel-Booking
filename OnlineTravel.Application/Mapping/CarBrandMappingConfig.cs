@@ -1,11 +1,8 @@
 ﻿using Mapster;
-using OnlineTravel.Application.Features.CarBrands.DTOs;
+using OnlineTravel.Application.Features.CarBrands.Shared.DTOs;
+using OnlineTravel.Application.Features.CarBrands.CreateCarBrand;
+using OnlineTravel.Application.Features.CarBrands.UpdateCarBrand;
 using OnlineTravel.Domain.Entities.Cars;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OnlineTravel.Application.Mapping
 {
@@ -16,18 +13,17 @@ namespace OnlineTravel.Application.Mapping
             // Entity -> DTO
             config.NewConfig<CarBrand, CarBrandDto>();
 
-            // Create DTO -> Entity (ignore Id, CreatedAt, UpdatedAt)
-            config.NewConfig<CreateCarBrandDto, CarBrand>()
+            // Request -> Entity
+            config.NewConfig<CreateCarBrandRequest, CarBrand>()
                 .Ignore(dest => dest.Id)
                 .Ignore(dest => dest.CreatedAt)
                 .Ignore(dest => dest.UpdatedAt)
-                .Ignore(dest => dest.Cars);   // navigation property
+                .Ignore(dest => dest.Cars);
 
-            config.NewConfig<UpdateCarBrandDto, CarBrand>()
-           .Ignore(dest => dest.Id)          // احتياطي، لو حصل وأضيف Id في المستقبل
-           .Ignore(dest => dest.CreatedAt)
-           .Ignore(dest => dest.UpdatedAt)
-           .Ignore(dest => dest.Cars);
+            config.NewConfig<UpdateCarBrandRequest, CarBrand>()
+                .Ignore(dest => dest.CreatedAt)
+                .Ignore(dest => dest.UpdatedAt)
+                .Ignore(dest => dest.Cars);
         }
     }
 }

@@ -1,14 +1,16 @@
 ﻿using Mapster;
 using NetTopologySuite.Geometries;
-using OnlineTravel.Application.Features.CarPricingTiers.DTOs;
-using OnlineTravel.Application.Features.Cars.DTOs;
+using OnlineTravel.Application.Features.Cars.Shared.DTOs;
+using OnlineTravel.Application.Features.Cars.CreateCar;
+using OnlineTravel.Application.Features.Cars.UpdateCar;
+using OnlineTravel.Application.Features.Cars.GetAllCarsSummary;
+using OnlineTravel.Application.Features.Cars.GetCarById;
+using OnlineTravel.Application.Features.Cars.GetCarByIdWithDetails;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 using OnlineTravel.Domain.Entities.Cars;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OnlineTravel.Application.Mapping
 {
@@ -53,7 +55,6 @@ namespace OnlineTravel.Application.Mapping
                 .Ignore(dest => dest.Category)
                 .Ignore(dest => dest.PricingTiers)
                 .Ignore(dest => dest.RowVersion);
-            // تم حذف السطر الخاطئ .Ignore(dest => dest.Car)
 
             // UpdateCarRequest -> Car
             config.NewConfig<UpdateCarRequest, Car>()
@@ -65,7 +66,6 @@ namespace OnlineTravel.Application.Mapping
                 .Ignore(dest => dest.PricingTiers)
                 .Ignore(dest => dest.RowVersion);
 
-            // Car -> CarSummaryDto
             // Car -> CarSummaryDto
             config.NewConfig<Car, CarSummaryDto>()
                 .Map(dest => dest.BrandName, src => src.Brand == null ? null : src.Brand.Name)
@@ -107,10 +107,6 @@ namespace OnlineTravel.Application.Mapping
                 .Map(dest => dest.PricingTiers, src => src.PricingTiers)
                 .Map(dest => dest.CreatedAt, src => src.CreatedAt)
                 .Map(dest => dest.UpdatedAt, src => src.UpdatedAt);
-            // تحويل CarPricingTier -> CarPricingTierDto (إذا لم يكن موجوداً)
-            config.NewConfig<CarPricingTier, CarPricingTierDto>()
-                .Map(dest => dest.PricePerHour, src => src.PricePerHour); // Money -> MoneyDto تلقائي
-        
-    }
+        }
     }
 }

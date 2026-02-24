@@ -4,7 +4,7 @@ using OnlineTravel.Application.Features.Bookings.GetBookingById;
 using OnlineTravel.Application.Features.Bookings.GetBookingStats;
 using OnlineTravel.Application.Features.Bookings.GetUserBookings;
 using OnlineTravel.Application.Features.Admin.Export;
-using OnlineTravel.Application.Features.Bookings.DTOs;
+using OnlineTravel.Application.Features.Bookings.Shared.DTOs;
 using OnlineTravel.Domain.Enums;
 using MediatR;
 
@@ -43,7 +43,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
                 .Where(s => s != "Completed" && s != "Refunded")
                 .ToList();
             
-            return View("~/Views/Admin/Bookings/Bookings/Index.cshtml", viewModel);
+            return View("~/Views/Admin/Bookings/Index.cshtml", viewModel);
         }
 
         [HttpGet("Details/{id}")]
@@ -55,7 +55,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
             {
                 return RedirectToAction(nameof(Index));
             }
-            return View("~/Views/Admin/Bookings/Bookings/Details.cshtml", result.Value);
+            return View("~/Views/Admin/Bookings/Details.cshtml", result.Value);
         }
 
         [HttpGet("User/{userId}")]
@@ -63,7 +63,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
         {
             var query = new GetUserBookingsQuery(userId);
             var result = await _mediator.Send(query);
-            return View("~/Views/Admin/Bookings/Bookings/UserBookings.cshtml", result.Value);
+            return View("~/Views/Admin/Bookings/UserBookings.cshtml", result.Value);
         }
 
         [HttpGet("Export")]

@@ -14,6 +14,10 @@ namespace Ecommerce_Project.Extensions
         {
             services.AddSwaggerGen(options =>
             {
+                // Use fully qualified type names to avoid schema ID collisions
+                // (e.g., Create.MoneyFormModel vs Update.MoneyFormModel).
+                options.CustomSchemaIds(type => (type.FullName ?? type.Name).Replace("+", "."));
+
                 options.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",

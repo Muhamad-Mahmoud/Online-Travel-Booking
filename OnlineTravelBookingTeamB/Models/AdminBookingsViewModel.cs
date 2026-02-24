@@ -1,5 +1,5 @@
 using OnlineTravel.Application.Common;
-using OnlineTravel.Application.Features.Bookings.DTOs;
+using OnlineTravel.Application.Features.Bookings.Shared.DTOs;
 
 namespace OnlineTravelBookingTeamB.Models;
 

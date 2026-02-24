@@ -1,11 +1,21 @@
-﻿
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using OnlineTravel.Application.Features.Cars.Commands;
-using OnlineTravel.Application.Features.Cars.DTOs;
-using OnlineTravel.Application.Features.Cars.Queries;
+using OnlineTravel.Application.Features.Cars.CreateCar;
+using OnlineTravel.Application.Features.Cars.UpdateCar;
+using OnlineTravel.Application.Features.Cars.DeleteCar;
+using OnlineTravel.Application.Features.Cars.GetCarById;
+using OnlineTravel.Application.Features.Cars.GetCarByIdWithDetails;
+using OnlineTravel.Application.Features.Cars.GetAllCarsSummary;
+using OnlineTravel.Application.Features.CarBrands.GetCarBrandsPaginated;
+using OnlineTravel.Application.Features.CarBrands.Shared.DTOs;
+using OnlineTravel.Application.Features.Categories.GetCategoriesByType;
+using OnlineTravel.Application.Features.Categories.Shared.DTOs;
+using OnlineTravel.Domain.Enums;
 using OnlineTravel.Domain.Exceptions;
 using OnlineTravelBookingTeamB.Models;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace OnlineTravelBookingTeamB.Controllers.Admin
 {
@@ -25,6 +35,14 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
         public async Task<IActionResult> Index(GetAllCarsSummaryQuery query)
         {
             var result = await _mediator.Send(query);
+            
+            // Fetch brands and categories for filtering
+            var brandsResult = await _mediator.Send(new GetCarBrandsPaginatedQuery(1, 100));
+            ViewBag.Brands = brandsResult.IsSuccess ? brandsResult.Value.Items : new List<CarBrandDto>();
+
+            var categoriesResult = await _mediator.Send(new GetCategoriesByTypeQuery(CategoryType.Car));
+            ViewBag.Categories = categoriesResult.IsSuccess ? categoriesResult.Value : new List<CategoryDto>();
+
             if (result.IsSuccess)
                 return View("~/Views/Admin/Cars/Cars/Index.cshtml", result.Value);
 
@@ -36,7 +54,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
         [HttpGet("Details/{id}")]
         public async Task<IActionResult> Details(Guid id)
         {
-            var query = new GetCarDetailsByIdQuery { Id = id };
+            var query = new GetCarDetailsByIdQuery(id);
             var result = await _mediator.Send(query);
             if (result.IsSuccess)
                 return View("~/Views/Admin/Cars/Cars/Details.cshtml", result.Value);
@@ -47,8 +65,14 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
 
         // GET: Cars/Create
         [HttpGet("Create")]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var brandsResult = await _mediator.Send(new GetCarBrandsPaginatedQuery(1, 100));
+            ViewBag.Brands = brandsResult.IsSuccess ? brandsResult.Value.Items : new List<CarBrandDto>();
+            
+            var categoriesResult = await _mediator.Send(new GetCategoriesByTypeQuery(CategoryType.Car));
+            ViewBag.Categories = categoriesResult.IsSuccess ? categoriesResult.Value : new List<CategoryDto>();
+
             return View("~/Views/Admin/Cars/Cars/Create.cshtml", new CreateCarRequest());
         }
 
@@ -58,9 +82,15 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
         public async Task<IActionResult> Create(CreateCarRequest request)
         {
             if (!ModelState.IsValid)
+            {
+                var brandsResult = await _mediator.Send(new GetCarBrandsPaginatedQuery(1, 100));
+                ViewBag.Brands = brandsResult.IsSuccess ? brandsResult.Value.Items : new List<CarBrandDto>();
+                var categoriesResult = await _mediator.Send(new GetCategoriesByTypeQuery(CategoryType.Car));
+                ViewBag.Categories = categoriesResult.IsSuccess ? categoriesResult.Value : new List<CategoryDto>();
                 return View("~/Views/Admin/Cars/Cars/Create.cshtml", request);
+            }
 
-            var command = new CreateCarCommand { Data = request };
+            var command = new CreateCarCommand(request);
             var result = await _mediator.Send(command);
             if (result.IsSuccess)
             {
@@ -69,6 +99,10 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
             }
 
             ModelState.AddModelError(string.Empty, result.Error.Description);
+            var bRes = await _mediator.Send(new GetCarBrandsPaginatedQuery(1, 100));
+            ViewBag.Brands = bRes.IsSuccess ? bRes.Value.Items : new List<CarBrandDto>();
+            var cRes = await _mediator.Send(new GetCategoriesByTypeQuery(CategoryType.Car));
+            ViewBag.Categories = cRes.IsSuccess ? cRes.Value : new List<CategoryDto>();
             return View("~/Views/Admin/Cars/Cars/Create.cshtml", request);
         }
 
@@ -76,7 +110,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
         [HttpGet("Edit/{id}")]
         public async Task<IActionResult> Edit(Guid id)
         {
-            var query = new GetCarByIdQuery { Id = id };
+            var query = new GetCarByIdQuery(id);
             var result = await _mediator.Send(query);
             if (!result.IsSuccess)
             {
@@ -84,7 +118,12 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
                 return RedirectToAction(nameof(Index));
             }
 
-            // تحويل CarDto إلى UpdateCarRequest (استخدم Mapster إن أمكن)
+            var brandsResult = await _mediator.Send(new GetCarBrandsPaginatedQuery(1, 100));
+            ViewBag.Brands = brandsResult.IsSuccess ? brandsResult.Value.Items : new List<CarBrandDto>();
+
+            var categoriesResult = await _mediator.Send(new GetCategoriesByTypeQuery(CategoryType.Car));
+            ViewBag.Categories = categoriesResult.IsSuccess ? categoriesResult.Value : new List<CategoryDto>();
+
             var updateRequest = new UpdateCarRequest
             {
                 Id = result.Value.Id,
@@ -114,9 +153,15 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
                 return BadRequest();
 
             if (!ModelState.IsValid)
+            {
+                var brandsResult = await _mediator.Send(new GetCarBrandsPaginatedQuery(1, 100));
+                ViewBag.Brands = brandsResult.IsSuccess ? brandsResult.Value.Items : new List<CarBrandDto>();
+                var categoriesResult = await _mediator.Send(new GetCategoriesByTypeQuery(CategoryType.Car));
+                ViewBag.Categories = categoriesResult.IsSuccess ? categoriesResult.Value : new List<CategoryDto>();
                 return View("~/Views/Admin/Cars/Cars/Edit.cshtml", request);
+            }
 
-            var command = new UpdateCarCommand { Data = request };
+            var command = new UpdateCarCommand(request);
             var result = await _mediator.Send(command);
             if (result.IsSuccess)
             {
@@ -125,6 +170,10 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
             }
 
             ModelState.AddModelError(string.Empty, result.Error.Description);
+            var bRes = await _mediator.Send(new GetCarBrandsPaginatedQuery(1, 100));
+            ViewBag.Brands = bRes.IsSuccess ? bRes.Value.Items : new List<CarBrandDto>();
+            var cRes = await _mediator.Send(new GetCategoriesByTypeQuery(CategoryType.Car));
+            ViewBag.Categories = cRes.IsSuccess ? cRes.Value : new List<CategoryDto>();
             return View("~/Views/Admin/Cars/Cars/Edit.cshtml", request);
         }
 
@@ -132,31 +181,17 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
         [HttpGet("Delete/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var query = new GetCarByIdQuery { Id = id };
-            var result = await _mediator.Send(query);
-            if (!result.IsSuccess)
-            {
-                TempData["Error"] = result.Error.Description;
-                return RedirectToAction(nameof(Index));
-            }
-            return View("~/Views/Admin/Cars/Cars/Delete.cshtml", result.Value);
-        }
-
-        // POST: Cars/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
-        {
-            var command = new DeleteCarCommand { Id = id };
+            var command = new DeleteCarCommand(id);
             var result = await _mediator.Send(command);
             if (result.IsSuccess)
             {
                 TempData["Success"] = "Car deleted successfully.";
-                return RedirectToAction(nameof(Index));
             }
-
-            TempData["Error"] = result.Error.Description;
-            return RedirectToAction(nameof(Delete), new { id });
+            else
+            {
+                TempData["Error"] = result.Error.Description;
+            }
+            return RedirectToAction(nameof(Index));
         }
     }
 }

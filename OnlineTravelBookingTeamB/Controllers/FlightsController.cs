@@ -3,7 +3,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OnlineTravel.Application.Features.Flight.Flights.CreateFlight;
 // using OnlineTravel.Application.Features.Flight.Flights.FlightDetails;
-using OnlineTravel.Application.Features.Flight.Flights.SearchFlights;
+using OnlineTravel.Application.Features.Flight.Flights.SearchFlights.Queries;
+using OnlineTravel.Application.Features.Flight.Flights.SearchFlights.DTOs;
 // using OnlineTravel.Application.Features.Flight.Seats.AllSeats;
 
 namespace OnlineTravelBookingTeamB.Controllers

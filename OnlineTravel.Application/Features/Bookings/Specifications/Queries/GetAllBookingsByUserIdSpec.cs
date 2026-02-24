@@ -1,4 +1,4 @@
-﻿using OnlineTravel.Application.Specifications;
+using OnlineTravel.Application.Specifications;
 using OnlineTravel.Domain.Entities.Bookings;
 
 namespace OnlineTravel.Application.Features.Bookings.Specifications.Queries
@@ -15,7 +15,7 @@ namespace OnlineTravel.Application.Features.Bookings.Specifications.Queries
             ApplyPagination(pageSize * (pageIndex - 1), pageSize);
         }
 
-        /// <summary>Count-only spec — no includes or paging needed.</summary>
+        /// <summary>Count-only spec � no includes or paging needed.</summary>
         public GetAllBookingsByUserIdSpec(Guid userId, bool isCountOnly)
             : base(b => b.UserId == userId) { }
     }

@@ -1,6 +1,6 @@
 using AutoMapper;
 using MediatR;
-using OnlineTravel.Application.Features.Bookings.DTOs;
+using OnlineTravel.Application.Features.Bookings.Shared.DTOs;
 using OnlineTravel.Application.Features.Bookings.Specifications.Queries;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities.Bookings;

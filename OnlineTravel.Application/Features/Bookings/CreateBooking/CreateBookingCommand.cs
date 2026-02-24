@@ -1,7 +1,7 @@
 using OnlineTravel.Domain.ErrorHandling;
 using MediatR;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
-using OnlineTravel.Application.Features.Bookings.DTOs;
+using OnlineTravel.Application.Features.Bookings.Shared.DTOs;
 
 namespace OnlineTravel.Application.Features.Bookings.CreateBooking;
 

@@ -1,0 +1,27 @@
+using OnlineTravel.Domain.Enums;
+using OnlineTravel.Application.Features.Cars.Shared.DTOs;
+using System;
+using System.Collections.Generic;
+
+namespace OnlineTravel.Application.Features.Cars.GetCarById
+{
+    public class CarDto
+    {
+        public Guid Id { get; set; }
+        public Guid BrandId { get; set; }
+        public string? BrandName { get; set; }
+        public string Make { get; set; } = string.Empty;
+        public string Model { get; set; } = string.Empty;
+        public CarCategory CarType { get; set; }
+        public int SeatsCount { get; set; }
+        public FuelType FuelType { get; set; }
+        public TransmissionType Transmission { get; set; }
+        public List<string> Features { get; set; } = new();
+        public List<DateTimeRangeDto> AvailableDates { get; set; } = new();
+        public string? CancellationPolicy { get; set; }
+        public Guid CategoryId { get; set; }
+        public string? CategoryTitle { get; set; }
+        public LocationDto Location { get; set; } = null!;
+        public List<ImageUrlDto> Images { get; set; } = new();
+    }
+}
