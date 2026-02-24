@@ -39,6 +39,17 @@ namespace OnlineTravel.Application.Features.Flight.Flights.CreateFlight
                 Status = OnlineTravel.Domain.Enums.FlightStatus.Scheduled
             };
 
+            // 2.5 Set Metadata if provided
+            if (!string.IsNullOrWhiteSpace(request.Gate) || !string.IsNullOrWhiteSpace(request.Terminal) || !string.IsNullOrWhiteSpace(request.AircraftType))
+            {
+                flight.Metadata = new FlightMetadata(
+                    request.Gate ?? "",
+                    request.Terminal ?? "",
+                    "", // Remarks
+                    request.AircraftType ?? ""
+                );
+            }
+
             // 3. Persist via Unit of Work
             await _unitOfWork.Repository<OnlineTravel.Domain.Entities.Flights.Flight>().AddAsync(flight);
             await _unitOfWork.Complete();

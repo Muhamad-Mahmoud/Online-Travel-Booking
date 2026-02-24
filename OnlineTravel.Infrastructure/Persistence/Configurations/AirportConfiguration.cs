@@ -1,6 +1,7 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OnlineTravel.Domain.Entities.Flights;
+using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 
 namespace OnlineTravel.Infrastructure.Persistence.Configurations;
 
@@ -18,7 +19,7 @@ public class AirportConfiguration : IEntityTypeConfiguration<Airport>
         builder.OwnsOne(e => e.Address, a =>
         {
             a.Property(p => p.FullAddress).HasColumnName("Address");
-            a.Property(p => p.Coordinates).HasColumnName("Location");
+            a.Property(p => p.Coordinates).HasColumnName("Location").HasColumnType("geography");
             a.Property(p => p.City).HasColumnName("City");
             a.Property(p => p.Country).HasColumnName("Country");
             a.Property(p => p.Street).HasColumnName("Street");

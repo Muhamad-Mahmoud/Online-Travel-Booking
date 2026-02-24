@@ -1,0 +1,168 @@
+@model OnlineTravelBookingTeamB.Models.EditFlightViewModel
+
+@{
+    ViewData["Title"] = "Edit Flight";
+}
+
+<div class="row g-3 justify-content-between align-items-center mb-4">
+    <div class="col-12 col-lg-auto">
+        <h1 class="h3 fw-bold text-dark mb-1">Edit Flight</h1>
+        <p class="text-muted small mb-0">Update details for flight <strong>@Model.FlightNumber</strong>.</p>
+    </div>
+    <div class="col-12 col-lg-auto">
+        <a asp-action="Index" class="btn btn-white shadow-sm">
+            <i class="fas fa-arrow-left me-2 text-muted"></i>Back to Flights
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <form asp-action="Edit" method="post">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            <input type="hidden" asp-for="Id" />
+
+            <!-- Flight Info -->
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="m-0 fw-bold text-dark"><i class="fas fa-plane text-primary me-2"></i>Flight Details</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label asp-for="FlightNumber" class="form-label fw-bold small text-uppercase text-muted">Flight Number</label>
+                            <input asp-for="FlightNumber" class="form-control" />
+                            <span asp-validation-for="FlightNumber" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="CarrierId" class="form-label fw-bold small text-uppercase text-muted">Carrier</label>
+                            <select asp-for="CarrierId" class="form-select" asp-items="ViewBag.Carriers">
+                                <option value="">-- Select --</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="CategoryId" class="form-label fw-bold small text-uppercase text-muted">Category</label>
+                            <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.Categories">
+                                <option value="">-- Select --</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label asp-for="Status" class="form-label fw-bold small text-uppercase text-muted">Status</label>
+                            <select asp-for="Status" class="form-select" asp-items="ViewBag.Statuses"></select>
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" asp-for="Refundable" />
+                                <label class="form-check-label" asp-for="Refundable">
+                                    <i class="fas fa-undo text-success me-1"></i>Refundable
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Route -->
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="m-0 fw-bold text-dark"><i class="fas fa-route text-info me-2"></i>Route</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="OriginAirportId" class="form-label small text-muted">Origin Airport</label>
+                            <select asp-for="OriginAirportId" class="form-select" asp-items="ViewBag.Airports">
+                                <option value="">-- Select --</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="DestinationAirportId" class="form-label small text-muted">Destination Airport</label>
+                            <select asp-for="DestinationAirportId" class="form-select" asp-items="ViewBag.Airports">
+                                <option value="">-- Select --</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schedule -->
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="m-0 fw-bold text-dark"><i class="fas fa-clock text-warning me-2"></i>Schedule</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="DepartureTime" class="form-label small text-muted">Departure</label>
+                            <input asp-for="DepartureTime" class="form-control" type="datetime-local" />
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="ArrivalTime" class="form-label small text-muted">Arrival</label>
+                            <input asp-for="ArrivalTime" class="form-control" type="datetime-local" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Metadata & Baggage -->
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="m-0 fw-bold text-dark"><i class="fas fa-cogs text-secondary me-2"></i>Metadata & Baggage</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label asp-for="Gate" class="form-label small text-muted">Gate</label>
+                            <input asp-for="Gate" class="form-control" placeholder="e.g. B12" />
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="Terminal" class="form-label small text-muted">Terminal</label>
+                            <input asp-for="Terminal" class="form-control" placeholder="e.g. Terminal 2" />
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="AircraftType" class="form-label small text-muted">Aircraft Type</label>
+                            <input asp-for="AircraftType" class="form-control" placeholder="e.g. Boeing 737" />
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="BaggageRulesText" class="form-label small text-muted">Baggage Rules</label>
+                        <input asp-for="BaggageRulesText" class="form-control" placeholder="Rule 1, Rule 2 (comma-separated)" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="d-flex gap-2 justify-content-end mb-4">
+                <a asp-action="Index" class="btn btn-white px-4">Cancel</a>
+                <button type="submit" class="btn btn-primary px-4 shadow-sm"><i class="fas fa-save me-2"></i>Save Changes</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <div class="card shadow-sm border-0 rounded-4 overflow-hidden sticky-top" style="top:1rem;">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h6 class="m-0 fw-bold text-dark"><i class="fas fa-info-circle text-primary me-2"></i>Info</h6>
+            </div>
+            <div class="card-body">
+                <p class="small text-muted mb-2"><strong>Flight ID:</strong> <code>@Model.Id</code></p>
+                <hr />
+                <p class="small text-muted mb-2"><i class="fas fa-check-circle text-success me-2"></i>Change the status to Delayed/Cancelled as needed.</p>
+                <p class="small text-muted mb-2"><i class="fas fa-check-circle text-success me-2"></i>Gate and Terminal info will show on the ticket.</p>
+                <p class="small text-muted mb-0"><i class="fas fa-check-circle text-success me-2"></i>Manage seats and fares from the Manage page.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .btn-white { background-color: #fff; border: 1px solid #e3e6f0; color: #6e707e; }
+    .btn-white:hover { background-color: #f8f9fc; }
+</style>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

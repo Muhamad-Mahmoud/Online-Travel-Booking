@@ -1,9 +1,9 @@
 @{
-    string ActiveClass(string action)
+    string ActiveClass(string controller, string action = "Index")
     {
         var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
         var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
-        return string.Equals(currentController, "Admin", StringComparison.OrdinalIgnoreCase) && 
+        return string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase) && 
                string.Equals(currentAction, action, StringComparison.OrdinalIgnoreCase) ? "active" : "";
     }
 }
@@ -35,7 +35,7 @@
         <!-- Sidebar -->
         <nav class="sidebar">
             <div class="sidebar-header">
-                <a asp-controller="Admin" asp-action="Index" class="logo">
+                <a asp-controller="Dashboard" asp-action="Index" class="logo">
                     <i class="fas fa-paper-plane"></i>
                     <span>TravelAdmin</span>
                 </a>
@@ -45,7 +45,7 @@
                 <div class="menu-category">Menu</div>
                 
                 <div class="menu-item">
-                    <a asp-controller="Admin" asp-action="Index" class="@ActiveClass("Index") menu-link">
+                    <a asp-controller="Dashboard" asp-action="Index" class="@ActiveClass("Dashboard") menu-link">
                         <i class="fas fa-th-large"></i>
                         <span>Dashboard</span>
                     </a>
@@ -54,32 +54,32 @@
                 <div class="menu-category">Bookings & Services</div>
 
                 <div class="menu-item">
-                    <a asp-controller="Admin" asp-action="Bookings" class="@ActiveClass("Bookings") menu-link">
+                    <a asp-controller="Bookings" asp-action="Index" class="@ActiveClass("Bookings") menu-link">
                         <i class="fas fa-calendar-check"></i>
                         <span>All Bookings</span>
                     </a>
                 </div>
 
                 <div class="menu-item">
-                    <a asp-controller="Admin" asp-action="Tours" class="@ActiveClass("Tours") menu-link">
+                    <a asp-controller="Tours" asp-action="Index" class="@ActiveClass("Tours") menu-link">
                         <i class="fas fa-globe-americas"></i>
                         <span>Tours</span>
                     </a>
                 </div>
                 <div class="menu-item">
-                    <a asp-controller="Admin" asp-action="Hotels" class="@ActiveClass("Hotels") menu-link">
+                    <a asp-controller="Hotels" asp-action="Index" class="@ActiveClass("Hotels") menu-link">
                         <i class="fas fa-hotel"></i>
                         <span>Hotels</span>
                     </a>
                 </div>
                 <div class="menu-item">
-                    <a asp-controller="Admin" asp-action="Cars" class="@ActiveClass("Cars") menu-link">
+                    <a asp-controller="CarMvc" asp-action="Index" class="@ActiveClass("CarMvc") menu-link">
                         <i class="fas fa-car"></i>
                         <span>Cars</span>
                     </a>
                 </div>
                 <div class="menu-item">
-                    <a asp-controller="Admin" asp-action="Flights" class="@ActiveClass("Flights") menu-link">
+                    <a asp-controller="Flights" asp-action="Index" class="@ActiveClass("Flights") menu-link">
                         <i class="fas fa-plane-departure"></i>
                         <span>Flights</span>
                     </a>
@@ -88,19 +88,31 @@
                 <div class="menu-category">Administration</div>
 
                 <div class="menu-item">
-                    <a asp-controller="Admin" asp-action="Users" class="@ActiveClass("Users") menu-link">
+                    <a href="#" class="menu-link">
                         <i class="fas fa-users"></i>
                         <span>Users</span>
                     </a>
                 </div>
                 <div class="menu-item">
-                    <a asp-controller="Admin" asp-action="Finance" class="@ActiveClass("Finance") menu-link">
+                    <a asp-controller="Flights" asp-action="Airports" class="@ActiveClass("Flights", "Airports") menu-link">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Airports</span>
+                    </a>
+                </div>
+                <div class="menu-item">
+                    <a asp-controller="Flights" asp-action="Carriers" class="@ActiveClass("Flights", "Carriers") menu-link">
+                        <i class="fas fa-plane"></i>
+                        <span>Carriers</span>
+                    </a>
+                </div>
+                <div class="menu-item">
+                    <a href="#" class="menu-link">
                          <i class="fas fa-wallet"></i>
                         <span>Finance</span>
                     </a>
                 </div>
                 <div class="menu-item">
-                    <a asp-controller="Admin" asp-action="Settings" class="@ActiveClass("Settings") menu-link">
+                    <a href="#" class="menu-link">
                         <i class="fas fa-cog"></i>
                         <span>Settings</span>
                     </a>
@@ -153,6 +165,7 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -171,6 +184,44 @@
                     document.body.classList.remove('sidebar-toggled');
                 });
             }
+
+            // Global Confirmation Handler for Forms
+            document.addEventListener('submit', function(e) {
+                const form = e.target;
+                if (form.hasAttribute('data-confirm')) {
+                    e.preventDefault();
+                    const message = form.getAttribute('data-confirm') || 'Are you sure you want to perform this action?';
+                    const title = form.getAttribute('data-confirm-title') || 'Confirm Action';
+                    
+                    Swal.fire({
+                        title: title,
+                        text: message,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#dc3545',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: 'Yes, Delete',
+                        cancelButtonText: 'Cancel',
+                        reverseButtons: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Use a flag to avoid infinite loop
+                            form.setAttribute('data-confirmed', 'true');
+                            form.submit();
+                        }
+                    });
+                }
+            });
+
+            // Prevent infinite loop by checking if already confirmed
+            document.addEventListener('submit', function(e) {
+                const form = e.target;
+                if (form.getAttribute('data-confirmed') === 'true') {
+                    // Allow submission
+                } else if (form.hasAttribute('data-confirm')) {
+                    // Case handled above
+                }
+            }, true);
         });
     </script>
     @await RenderSectionAsync("Scripts", required: false)

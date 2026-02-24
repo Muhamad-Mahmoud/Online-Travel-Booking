@@ -1,65 +1,56 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using OnlineTravel.Application.Features.Bookings.DTOs;
-using OnlineTravel.Application.Features.Admin.Export;
-using OnlineTravel.Application.Features.Bookings.GetAllBookings;
-using OnlineTravel.Application.Features.Bookings.GetBookingById;
-using OnlineTravel.Application.Features.Bookings.GetUserBookings;
 using OnlineTravel.Domain.Enums;
 using OnlineTravel.Infrastructure.Persistence.Context;
+using MediatR;
+using OnlineTravel.Application.Interfaces.Services;
 
-namespace OnlineTravelBookingTeamB.Controllers
+namespace OnlineTravelBookingTeamB.Controllers.Admin
 {
-    // [Authorize(Roles = "Admin")] // Uncomment when roles are ready
-    public class AdminController : Controller
+    [Route("Admin/Tours")]
+    public class ToursController : Controller
     {
-        private readonly OnlineTravelDbContext _context; // Keeping for queries for now
-        private readonly MediatR.IMediator _mediator;
-        private readonly OnlineTravel.Application.Interfaces.Services.IFileService _fileService;
+        private readonly OnlineTravelDbContext _context;
+        private readonly IMediator _mediator;
+        private readonly IFileService _fileService;
 
-        public AdminController(OnlineTravelDbContext context, MediatR.IMediator mediator, OnlineTravel.Application.Interfaces.Services.IFileService fileService)
+        public ToursController(OnlineTravelDbContext context, IMediator mediator, IFileService fileService)
         {
             _context = context;
             _mediator = mediator;
             _fileService = fileService;
         }
 
-        public async Task<IActionResult> Index()
-        {
-            var query = new OnlineTravel.Application.Features.Admin.Dashboard.GetAdminDashboardStatsQuery();
-            var result = await _mediator.Send(query);
-            return View(result.Value);
-        }
-
-
-        public IActionResult SeedData()
-        {
-            return View("System/SeedData");
-        }
-
-
-
-        public async Task<IActionResult> Tours(int pageIndex = 1, int pageSize = 20)
+        [HttpGet]
+        [Route("")]
+        public async Task<IActionResult> Index(int pageIndex = 1, int pageSize = 20)
         {
             var query = new OnlineTravel.Application.Features.Tours.GetAllTours.Queries.GetAllToursQuery(pageIndex, pageSize, null, null, null, null, null, null, null, null, null, null);
             var result = await _mediator.Send(query);
-            return View("Tours/Index", result.Data);
+
+            var categories = await _context.Categories
+                .Where(c => c.Type == CategoryType.Tour)
+                .AsNoTracking()
+                .ToListAsync();
+            ViewBag.Categories = new SelectList(categories, "Id", "Title");
+
+            return View("~/Views/Admin/Tours/Index.cshtml", result.Data);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> CreateTour()
+        [HttpGet("Create")]
+        public async Task<IActionResult> Create()
         {
             var categories = await _context.Categories
                 .Where(c => c.Type == CategoryType.Tour)
                 .AsNoTracking()
                 .ToListAsync();
             ViewBag.Categories = new SelectList(categories, "Id", "Title");
-            return View("Tours/Create");
+            return View("~/Views/Admin/Tours/Create.cshtml");
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateTour(Models.TourViewModel model)
+        [HttpPost("Create")]
+        public async Task<IActionResult> Create(Models.TourViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -94,7 +85,7 @@ namespace OnlineTravelBookingTeamB.Controllers
                     };
 
                     var tourId = await _mediator.Send(command);
-                    return RedirectToAction(nameof(ManageTour), new { id = tourId });
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
                 {
@@ -106,11 +97,11 @@ namespace OnlineTravelBookingTeamB.Controllers
                 .AsNoTracking()
                 .ToListAsync();
             ViewBag.Categories = new SelectList(categories, "Id", "Title");
-            return View("Tours/Create", model);
+            return View("~/Views/Admin/Tours/Create.cshtml", model);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> ManageTour(Guid id)
+        [HttpGet("Manage/{id}")]
+        public async Task<IActionResult> Manage(Guid id, bool partial = false)
         {
             var query = new OnlineTravel.Application.Features.Tours.GetTourById.Queries.GetTourByIdQuery(id);
             var tour = await _mediator.Send(query);
@@ -155,11 +146,14 @@ namespace OnlineTravelBookingTeamB.Controllers
                 .AsNoTracking()
                 .ToListAsync();
             ViewBag.Categories = new SelectList(categories, "Id", "Title", tour.CategoryId);
-            return View("Tours/Manage", model);
+            if (partial)
+                return PartialView("~/Views/Admin/Tours/Manage.cshtml", model);
+
+            return View("~/Views/Admin/Tours/Manage.cshtml", model);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> UpdateTour(Models.EditTourViewModel model)
+        [HttpPost("Update")]
+        public async Task<IActionResult> Update(Models.EditTourViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -194,36 +188,34 @@ namespace OnlineTravelBookingTeamB.Controllers
 
                     await _mediator.Send(command);
                     TempData["Success"] = "Tour updated successfully!";
-                    return RedirectToAction(nameof(ManageTour), new { id = model.TourId });
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
                 {
                     ModelState.AddModelError("", "Error updating tour: " + ex.Message);
                 }
             }
-            return RedirectToAction(nameof(ManageTour), new { id = model.TourId });
+            return RedirectToAction(nameof(Manage), new { id = model.TourId });
         }
 
 
-        [HttpPost]
-        public async Task<IActionResult> DeleteTour(Guid id)
+        [HttpPost("Delete/{id}")]
+        public async Task<IActionResult> Delete(Guid id)
         {
             try
             {
                 var command = new OnlineTravel.Application.Features.Tours.DeleteTour.Commands.DeleteTourCommand(id);
                 await _mediator.Send(command);
-                // Optionally add a success message to TempData
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                // Handle error (e.g., log it, show error message)
-                // TempData["Error"] = "Error deleting tour: " + ex.Message;
+                // Handle error
             }
-            return RedirectToAction(nameof(Tours));
+            return RedirectToAction(nameof(Index));
         }
 
-        [HttpPost]
-        public async Task<IActionResult> AddTourActivity([Bind(Prefix = "ActivityForm")] OnlineTravelBookingTeamB.Models.AddActivityViewModel model)
+        [HttpPost("AddActivity")]
+        public async Task<IActionResult> AddActivity([Bind(Prefix = "ActivityForm")] OnlineTravelBookingTeamB.Models.AddActivityViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -246,11 +238,11 @@ namespace OnlineTravelBookingTeamB.Controllers
 
                 await _mediator.Send(command);
             }
-            return RedirectToAction(nameof(ManageTour), new { id = model.TourId });
+            return RedirectToAction(nameof(Manage), new { id = model.TourId });
         }
 
-        [HttpPost]
-        public async Task<IActionResult> AddTourImage([Bind(Prefix = "ImageForm")] OnlineTravelBookingTeamB.Models.AddTourImageViewModel model)
+        [HttpPost("AddImage")]
+        public async Task<IActionResult> AddImage([Bind(Prefix = "ImageForm")] OnlineTravelBookingTeamB.Models.AddTourImageViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -272,21 +264,21 @@ namespace OnlineTravelBookingTeamB.Controllers
 
                 await _mediator.Send(command);
             }
-            return RedirectToAction(nameof(ManageTour), new { id = model.TourId });
+            return RedirectToAction(nameof(Manage), new { id = model.TourId });
         }
 
-        [HttpPost]
-        public async Task<IActionResult> AddTourPriceTier([Bind(Prefix = "PriceTierForm")] OnlineTravel.Application.Features.Tours.Manage.Commands.AddPriceTier.AddTourPriceTierCommand command)
+        [HttpPost("AddPriceTier")]
+        public async Task<IActionResult> AddPriceTier([Bind(Prefix = "PriceTierForm")] OnlineTravel.Application.Features.Tours.Manage.Commands.AddPriceTier.AddTourPriceTierCommand command)
         {
             if (ModelState.IsValid)
             {
                 await _mediator.Send(command);
             }
-            return RedirectToAction(nameof(ManageTour), new { id = command.TourId });
+            return RedirectToAction(nameof(Manage), new { id = command.TourId });
         }
 
-        [HttpPost]
-        public async Task<IActionResult> UpdateTourLocation(Models.UpdateCoordinatesViewModel model)
+        [HttpPost("UpdateLocation")]
+        public async Task<IActionResult> UpdateLocation(Models.UpdateCoordinatesViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -298,79 +290,7 @@ namespace OnlineTravelBookingTeamB.Controllers
                 };
                 await _mediator.Send(command);
             }
-            return RedirectToAction(nameof(ManageTour), new { id = model.TourId });
-        }
-
-        public IActionResult Hotels()
-        {
-            return View("Hotels/Index");
-        }
-
-   
-        public IActionResult Flights()
-        {
-            return View("Flights/Index");
-        }
-
-
-        public async Task<IActionResult> Bookings(int pageIndex = 1, int pageSize = 5, string? searchTerm = null, string? status = null)
-        {
-            var bookingsQuery = new GetAllBookingsQuery(pageIndex, pageSize, searchTerm, status);
-            var statsQuery = new OnlineTravel.Application.Features.Bookings.GetBookingStats.GetBookingStatsQuery();
-
-            // Run both queries in parallel — they are completely independent
-            var bookingsTask = _mediator.Send(bookingsQuery);
-            var statsTask    = _mediator.Send(statsQuery);
-            await Task.WhenAll(bookingsTask, statsTask);
-
-            var bookingsResult = await bookingsTask;
-            var statsResult    = await statsTask;
-
-            var viewModel = new Models.AdminBookingsViewModel
-            {
-                Bookings = bookingsResult.IsSuccess ? bookingsResult.Value : new OnlineTravel.Application.Common.PagedResult<AdminBookingResponse>(new List<AdminBookingResponse>(), 0, pageIndex, pageSize),
-                Stats = statsResult.IsSuccess ? statsResult.Value : new BookingStatsDto()
-            };
-
-            ViewBag.SearchTerm = searchTerm;
-            ViewBag.Status = status;
-            ViewBag.BookingStatuses = Enum.GetNames(typeof(BookingStatus))
-                .Where(s => s != "Completed" && s != "Refunded")
-                .ToList();
-            
-            return View("Bookings/Index", viewModel);
-        }
-
-        public async Task<IActionResult> BookingDetails(Guid id)
-        {
-            var query = new GetBookingByIdQuery(id);
-            var result = await _mediator.Send(query);
-            if (!result.IsSuccess)
-            {
-                return RedirectToAction(nameof(Bookings));
-            }
-            return View("Bookings/Details", result.Value);
-        }
-
-        public async Task<IActionResult> UserBookings(Guid userId)
-        {
-            var query = new GetUserBookingsQuery(userId);
-            var result = await _mediator.Send(query);
-            return View("Bookings/UserBookings", result.Value);
-        }
-        [HttpGet]
-        public async Task<IActionResult> ExportBookingsReport()
-        {
-            var query = new ExportBookingsQuery();
-            var result = await _mediator.Send(query);
-
-            if (!result.IsSuccess)
-            {
-                return RedirectToAction(nameof(Bookings));
-            }
-
-            var fileName = $"bookings_report_{DateTime.UtcNow:yyyyMMdd_HHmmss}.csv";
-            return File(result.Value ?? [], "text/csv", fileName);
+            return RedirectToAction(nameof(Manage), new { id = model.TourId });
         }
     }
 }

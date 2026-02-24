@@ -1,0 +1,125 @@
+@model IEnumerable<OnlineTravel.Domain.Entities.Flights.Airport>
+
+@{
+    ViewData["Title"] = "Airports";
+}
+
+<div class="row g-3 justify-content-between align-items-center mb-4">
+    <div class="col-12 col-lg-auto">
+        <h1 class="h3 fw-bold text-dark mb-1">Airports</h1>
+        <p class="text-muted small mb-0">@Model.Count() airports registered in the system.</p>
+    </div>
+    <div class="col-12 col-lg-auto d-flex gap-2">
+        <a asp-action="Index" class="btn btn-white shadow-sm">
+            <i class="fas fa-arrow-left me-2 text-muted"></i>Back to Flights
+        </a>
+        <a asp-action="CreateAirport" class="btn btn-primary shadow-sm">
+            <i class="fas fa-plus me-2"></i>Add Airport
+        </a>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+    <div class="card-body p-0">
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light small text-uppercase text-muted">
+                        <tr>
+                            <th class="ps-4">Code</th>
+                            <th>Name</th>
+                            <th>Location</th>
+                            <th>Facilities</th>
+                            <th>Status</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var airport in Model)
+                        {
+                            <tr class="border-top">
+                                <td class="ps-4">
+                                    <span class="badge bg-primary-light text-primary px-3 py-2 rounded-pill fw-bold">
+                                        @airport.Code?.Value
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-dark small">@airport.Name</div>
+                                </td>
+                                <td>
+                                    <div class="text-muted small">
+                                        @(airport.Address?.City ?? "—"), @(airport.Address?.Country ?? "")
+                                    </div>
+                                </td>
+                                <td>
+                                    @if (airport.Facilities != null && airport.Facilities.Any())
+                                    {
+                                        @foreach (var fac in airport.Facilities.Take(3))
+                                        {
+                                            <span class="badge bg-light text-dark border px-2 py-1 rounded-pill fw-normal x-small me-1">@fac</span>
+                                        }
+                                        @if (airport.Facilities.Count > 3)
+                                        {
+                                            <span class="text-muted x-small">+@(airport.Facilities.Count - 3) more</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted x-small">—</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (airport.IsActive)
+                                    {
+                                        <span class="badge bg-success-light text-success px-2 py-1 rounded-pill fw-normal x-small">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger-light text-danger px-2 py-1 rounded-pill fw-normal x-small">Inactive</span>
+                                    }
+                                </td>
+                                <td class="pe-4 text-end">
+                                    <a asp-action="EditAirport" asp-route-id="@airport.Id" class="btn btn-sm btn-icon btn-hover-primary" title="Edit">
+                                        <i class="fas fa-edit text-muted"></i>
+                                    </a>
+                                    <form asp-action="DeleteAirport" method="post" class="d-inline" data-confirm="Airport @airport.Name will be deleted. Are you sure?" data-confirm-title="Delete Airport">
+                                        <input type="hidden" name="id" value="@airport.Id" />
+                                        <button type="submit" class="btn btn-sm btn-icon btn-hover-danger" title="Delete">
+                                            <i class="fas fa-trash text-muted"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <i class="fas fa-map-marker-alt display-4 text-muted opacity-25"></i>
+                <p class="text-muted mt-3">No airports found. Click <strong>Add Airport</strong> to create one.</p>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .btn-white { background-color: #fff; border: 1px solid #e3e6f0; color: #6e707e; }
+    .btn-white:hover { background-color: #f8f9fc; }
+    .x-small { font-size: 0.75rem; }
+    .bg-primary-light { background-color: rgba(78, 115, 223, 0.1); }
+    .bg-success-light { background-color: rgba(28, 200, 138, 0.1); }
+    .bg-danger-light { background-color: rgba(231, 74, 59, 0.1); }
+    .btn-hover-danger:hover i { color: #e74a3b !important; }
+</style>

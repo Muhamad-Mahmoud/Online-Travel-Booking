@@ -40,6 +40,14 @@ namespace OnlineTravel.Application.Features.Hotels.Admin.CreateHotelCommand
                 .GreaterThan(x => x.CheckInTimeStart).WithMessage("Check-in end time must be after start time");
             RuleFor(x => x.CheckOutTimeEnd)
                 .GreaterThan(x => x.CheckOutTimeStart).WithMessage("Check-out end time must be after start time");
+
+            RuleFor(x => x.Latitude)
+                .InclusiveBetween(-90, 90).When(x => x.Latitude.HasValue)
+                .WithMessage("Latitude must be between -90 and 90");
+
+            RuleFor(x => x.Longitude)
+                .InclusiveBetween(-180, 180).When(x => x.Longitude.HasValue)
+                .WithMessage("Longitude must be between -180 and 180");
         }
 
         private async Task<bool> BeUniqueSlug(string slug, CancellationToken cancellationToken)
