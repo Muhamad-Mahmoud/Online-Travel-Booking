@@ -5,10 +5,13 @@ using OnlineTravel.Domain.Enums;
 using OnlineTravel.Infrastructure.Persistence.Context;
 using MediatR;
 using OnlineTravel.Application.Interfaces.Services;
+using OnlineTravelBookingTeamB.Models;
+using OnlineTravel.Application.Features.Flight.Flights.CreateFlight;
 
 namespace OnlineTravelBookingTeamB.Controllers.Admin
 {
     [Route("Admin/Flights")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class FlightsController : Controller
     {
         private readonly OnlineTravelDbContext _context;
@@ -51,23 +54,23 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
             ViewBag.SearchTerm = search;
             ViewBag.Status = status;
             ViewBag.FlightStatuses = Enum.GetNames(typeof(FlightStatus)).ToList();
-            return View("~/Views/Admin/Flights/Index.cshtml", flights);
+            return View("~/Views/Admin/Flights/Flights/Index.cshtml", flights);
         }
 
         [HttpGet("Create")]
         public async Task<IActionResult> Create()
         {
             await LoadFlightDropdowns();
-            return View("~/Views/Admin/Flights/Create.cshtml", new Models.CreateFlightViewModel());
+            return View("~/Views/Admin/Flights/Flights/Create.cshtml", new CreateFlightViewModel());
         }
 
         [HttpPost("Create")]
-        public async Task<IActionResult> Create(Models.CreateFlightViewModel model)
+        public async Task<IActionResult> Create(CreateFlightViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 await LoadFlightDropdowns();
-                return View("~/Views/Admin/Flights/Create.cshtml", model);
+                return View("~/Views/Admin/Flights/Flights/Create.cshtml", model);
             }
 
             try
@@ -76,7 +79,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
                     ? new List<string>()
                     : model.BaggageRulesText.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
 
-                var command = new OnlineTravel.Application.Features.Flight.Flights.CreateFlight.CreateFlightCommand
+                var command = new CreateFlightCommand
                 {
                     FlightNumber = model.FlightNumber,
                     CarrierId = model.CarrierId,
@@ -100,7 +103,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
             {
                 ModelState.AddModelError("", "Error creating flight: " + ex.Message);
                 await LoadFlightDropdowns();
-                return View("~/Views/Admin/Flights/Create.cshtml", model);
+                return View("~/Views/Admin/Flights/Flights/Create.cshtml", model);
             }
         }
 
@@ -116,7 +119,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
 
             await LoadFlightDropdowns();
 
-            var model = new Models.EditFlightViewModel
+            var model = new EditFlightViewModel
             {
                 Id = flight.Id,
                 FlightNumber = flight.FlightNumber?.Value ?? "",
@@ -139,11 +142,11 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
                     .Select(s => new { Value = s.ToString(), Text = s.ToString() }),
                 "Value", "Text", model.Status);
 
-            return View("~/Views/Admin/Flights/Edit.cshtml", model);
+            return View("~/Views/Admin/Flights/Flights/Edit.cshtml", model);
         }
 
         [HttpPost("Edit/{id}")]
-        public async Task<IActionResult> Edit(Models.EditFlightViewModel model)
+        public async Task<IActionResult> Edit(EditFlightViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -152,7 +155,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
                     Enum.GetValues<FlightStatus>()
                         .Select(s => new { Value = s.ToString(), Text = s.ToString() }),
                     "Value", "Text", model.Status);
-                return View("~/Views/Admin/Flights/Edit.cshtml", model);
+                return View("~/Views/Admin/Flights/Flights/Edit.cshtml", model);
             }
 
             try
@@ -198,7 +201,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
                     Enum.GetValues<FlightStatus>()
                         .Select(s => new { Value = s.ToString(), Text = s.ToString() }),
                     "Value", "Text", model.Status);
-                return View("~/Views/Admin/Flights/Edit.cshtml", model);
+                return View("~/Views/Admin/Flights/Flights/Edit.cshtml", model);
             }
         }
 
@@ -226,7 +229,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
                 FareForm = new Models.AddFlightFareViewModel { FlightId = id }
             };
 
-            return View("~/Views/Admin/Flights/Manage.cshtml", model);
+            return View("~/Views/Admin/Flights/Flights/Manage.cshtml", model);
         }
 
         [HttpPost("Delete/{id}")]
@@ -347,20 +350,20 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
         public async Task<IActionResult> Airports()
         {
             var airports = await _context.Airports.AsNoTracking().OrderBy(a => a.Name).ToListAsync();
-            return View("~/Views/Admin/Flights/Airports.cshtml", airports);
+            return View("~/Views/Admin/Flights/Airports/Index.cshtml", airports);
         }
 
         [HttpGet("Airports/Create")]
         public IActionResult CreateAirport()
         {
-            return View("~/Views/Admin/Flights/CreateAirport.cshtml", new Models.CreateAirportViewModel());
+            return View("~/Views/Admin/Flights/Airports/Create.cshtml", new Models.CreateAirportViewModel());
         }
 
         [HttpPost("Airports/Create")]
         public async Task<IActionResult> CreateAirport(Models.CreateAirportViewModel model)
         {
             if (!ModelState.IsValid)
-                return View("~/Views/Admin/Flights/CreateAirport.cshtml", model);
+                return View("~/Views/Admin/Flights/Airports/Create.cshtml", model);
 
             try
             {
@@ -387,7 +390,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
             catch (Exception ex)
             {
                 ModelState.AddModelError("", "Error creating airport: " + ex.Message);
-                return View("~/Views/Admin/Flights/CreateAirport.cshtml", model);
+                return View("~/Views/Admin/Flights/Airports/Create.cshtml", model);
             }
         }
 
@@ -410,14 +413,14 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
                 FacilitiesText = string.Join(", ", airport.Facilities ?? new List<string>())
             };
 
-            return View("~/Views/Admin/Flights/EditAirport.cshtml", model);
+            return View("~/Views/Admin/Flights/Airports/Edit.cshtml", model);
         }
 
         [HttpPost("Airports/Edit/{id}")]
         public async Task<IActionResult> EditAirport(Models.EditAirportViewModel model)
         {
             if (!ModelState.IsValid)
-                return View("~/Views/Admin/Flights/EditAirport.cshtml", model);
+                return View("~/Views/Admin/Flights/Airports/Edit.cshtml", model);
 
             try
             {
@@ -445,7 +448,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
             catch (Exception ex)
             {
                 ModelState.AddModelError("", "Error updating airport: " + ex.Message);
-                return View("~/Views/Admin/Flights/EditAirport.cshtml", model);
+                return View("~/Views/Admin/Flights/Airports/Edit.cshtml", model);
             }
         }
 
@@ -467,20 +470,20 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
         public async Task<IActionResult> Carriers()
         {
             var carriers = await _context.Carriers.AsNoTracking().OrderBy(c => c.Name).ToListAsync();
-            return View("~/Views/Admin/Flights/Carriers.cshtml", carriers);
+            return View("~/Views/Admin/Flights/Carriers/Index.cshtml", carriers);
         }
 
         [HttpGet("Carriers/Create")]
         public IActionResult CreateCarrier()
         {
-            return View("~/Views/Admin/Flights/CreateCarrier.cshtml", new Models.CreateCarrierViewModel());
+            return View("~/Views/Admin/Flights/Carriers/Create.cshtml", new Models.CreateCarrierViewModel());
         }
 
         [HttpPost("Carriers/Create")]
         public async Task<IActionResult> CreateCarrier(Models.CreateCarrierViewModel model)
         {
             if (!ModelState.IsValid)
-                return View("~/Views/Admin/Flights/CreateCarrier.cshtml", model);
+                return View("~/Views/Admin/Flights/Carriers/Create.cshtml", model);
 
             try
             {
@@ -500,7 +503,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
             catch (Exception ex)
             {
                 ModelState.AddModelError("", "Error creating carrier: " + ex.Message);
-                return View("~/Views/Admin/Flights/CreateCarrier.cshtml", model);
+                return View("~/Views/Admin/Flights/Carriers/Create.cshtml", model);
             }
         }
 

@@ -11,6 +11,7 @@ using MediatR;
 namespace OnlineTravelBookingTeamB.Controllers.Admin
 {
     [Route("Admin/Bookings")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class BookingsController : Controller
     {
         private readonly IMediator _mediator;
@@ -27,12 +28,8 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
             var bookingsQuery = new GetAllBookingsQuery(pageIndex, pageSize, searchTerm, status);
             var statsQuery = new GetBookingStatsQuery();
 
-            var bookingsTask = _mediator.Send(bookingsQuery);
-            var statsTask = _mediator.Send(statsQuery);
-            await Task.WhenAll(bookingsTask, statsTask);
-
-            var bookingsResult = await bookingsTask;
-            var statsResult = await statsTask;
+            var bookingsResult = await _mediator.Send(bookingsQuery);
+            var statsResult = await _mediator.Send(statsQuery);
 
             var viewModel = new Models.AdminBookingsViewModel
             {
@@ -46,7 +43,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
                 .Where(s => s != "Completed" && s != "Refunded")
                 .ToList();
             
-            return View("~/Views/Admin/Bookings/Index.cshtml", viewModel);
+            return View("~/Views/Admin/Bookings/Bookings/Index.cshtml", viewModel);
         }
 
         [HttpGet("Details/{id}")]
@@ -58,7 +55,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
             {
                 return RedirectToAction(nameof(Index));
             }
-            return View("~/Views/Admin/Bookings/Details.cshtml", result.Value);
+            return View("~/Views/Admin/Bookings/Bookings/Details.cshtml", result.Value);
         }
 
         [HttpGet("User/{userId}")]
@@ -66,7 +63,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
         {
             var query = new GetUserBookingsQuery(userId);
             var result = await _mediator.Send(query);
-            return View("~/Views/Admin/Bookings/UserBookings.cshtml", result.Value);
+            return View("~/Views/Admin/Bookings/Bookings/UserBookings.cshtml", result.Value);
         }
 
         [HttpGet("Export")]

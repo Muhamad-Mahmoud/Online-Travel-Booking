@@ -4,18 +4,21 @@ using OnlineTravel.Application.Features.CarPricingTiers.Commands;
 using OnlineTravel.Application.Features.CarPricingTiers.DTOs;
 using OnlineTravel.Application.Features.CarPricingTiers.Queries;
 
-namespace OnlineTravelBookingTeamB.Controllers
+namespace OnlineTravelBookingTeamB.Controllers.Admin
 {
-    public class CarPricingTiersMvcController : Controller
+    [Route("Admin/CarPricingTiers")]
+    [ApiExplorerSettings(IgnoreApi = true)]
+    public class CarPricingTiersController : Controller
     {
         private readonly IMediator _mediator;
 
-        public CarPricingTiersMvcController(IMediator mediator)
+        public CarPricingTiersController(IMediator mediator)
         {
             _mediator = mediator;
         }
 
         // GET: CarPricingTiers?carId=xxx
+        [HttpGet]
         public async Task<IActionResult> Index(Guid carId)
         {
             if (carId == Guid.Empty)
@@ -26,7 +29,7 @@ namespace OnlineTravelBookingTeamB.Controllers
             if (result.IsSuccess)
             {
                 ViewBag.CarId = carId; // لاستخدامه في الروابط
-                return View(result.Value);
+                return View("~/Views/Admin/Cars/PricingTiers/Index.cshtml", result.Value);
             }
 
             TempData["Error"] = result.Error.Description;
@@ -34,18 +37,20 @@ namespace OnlineTravelBookingTeamB.Controllers
         }
 
         // GET: CarPricingTiers/Details/5
+        [HttpGet("Details/{id}")]
         public async Task<IActionResult> Details(Guid id)
         {
             var query = new GetCarPricingTierByIdQuery { Id = id };
             var result = await _mediator.Send(query);
             if (result.IsSuccess)
-                return View(result.Value);
+                return View("~/Views/Admin/Cars/PricingTiers/Details.cshtml", result.Value);
 
             TempData["Error"] = result.Error.Description;
             return RedirectToAction(nameof(Index), new { carId = result.Value?.CarId });
         }
 
         // GET: CarPricingTiers/Create?carId=xxx
+        [HttpGet("Create")]
         public IActionResult Create(Guid carId)
         {
             if (carId == Guid.Empty)
@@ -56,7 +61,7 @@ namespace OnlineTravelBookingTeamB.Controllers
                 CarId = carId,
                 PricePerHour = new MoneyDto { Amount = 0, Currency = "USD" }
             };
-            return View(request);
+            return View("~/Views/Admin/Cars/PricingTiers/Create.cshtml", request);
         }
 
         // POST: CarPricingTiers/Create
@@ -65,7 +70,7 @@ namespace OnlineTravelBookingTeamB.Controllers
         public async Task<IActionResult> Create(CreateCarPricingTierRequest request)
         {
             if (!ModelState.IsValid)
-                return View(request);
+                return View("~/Views/Admin/Cars/PricingTiers/Create.cshtml", request);
 
             var command = new CreateCarPricingTierCommand { Data = request };
             var result = await _mediator.Send(command);
@@ -76,10 +81,11 @@ namespace OnlineTravelBookingTeamB.Controllers
             }
 
             ModelState.AddModelError(string.Empty, result.Error.Description);
-            return View(request);
+            return View("~/Views/Admin/Cars/PricingTiers/Create.cshtml", request);
         }
 
         // GET: CarPricingTiers/Edit/5
+        [HttpGet("Edit/{id}")]
         public async Task<IActionResult> Edit(Guid id)
         {
             var query = new GetCarPricingTierByIdQuery { Id = id };
@@ -99,7 +105,7 @@ namespace OnlineTravelBookingTeamB.Controllers
                 ToHours = result.Value.ToHours,
                 PricePerHour = result.Value.PricePerHour
             };
-            return View(updateRequest);
+            return View("~/Views/Admin/Cars/PricingTiers/Edit.cshtml", updateRequest);
         }
 
         // POST: CarPricingTiers/Edit/5
@@ -111,7 +117,7 @@ namespace OnlineTravelBookingTeamB.Controllers
                 return BadRequest("ID mismatch");
 
             if (!ModelState.IsValid)
-                return View(request);
+                return View("~/Views/Admin/Cars/PricingTiers/Edit.cshtml", request);
 
             var command = new UpdateCarPricingTierCommand { Data = request };
             var result = await _mediator.Send(command);
@@ -122,10 +128,11 @@ namespace OnlineTravelBookingTeamB.Controllers
             }
 
             ModelState.AddModelError(string.Empty, result.Error.Description);
-            return View(request);
+            return View("~/Views/Admin/Cars/PricingTiers/Edit.cshtml", request);
         }
 
         // GET: CarPricingTiers/Delete/5
+        [HttpGet("Delete/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var query = new GetCarPricingTierByIdQuery { Id = id };
@@ -135,7 +142,7 @@ namespace OnlineTravelBookingTeamB.Controllers
                 TempData["Error"] = result.Error.Description;
                 return RedirectToAction("Index", "Cars");
             }
-            return View(result.Value);
+            return View("~/Views/Admin/Cars/PricingTiers/Delete.cshtml", result.Value);
         }
 
         // POST: CarPricingTiers/Delete/5
