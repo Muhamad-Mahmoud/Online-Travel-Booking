@@ -17,9 +17,11 @@ namespace OnlineTravel.Application.Features.Bookings.Specifications.Availability
                          bd.StayRange.End > start && // Check for any overlap
                          bd.Booking.Status != BookingStatus.Cancelled &&
                          bd.Booking.Status != BookingStatus.Refunded &&
+                         bd.Booking.Status != BookingStatus.Expired &&
                          // Expired pending bookings are not considered overlapping
                          !(bd.Booking.Status == BookingStatus.PendingPayment && now > bd.Booking.ExpiresAt))
         {
+            AddIncludes(bd => bd.Booking);
         }
     }
 }

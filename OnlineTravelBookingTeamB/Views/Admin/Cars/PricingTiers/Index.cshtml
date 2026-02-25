@@ -6,15 +6,39 @@
     var carId = ViewBag.CarId;
 }
 
-<div class="page-title d-flex justify-content-between align-items-center">
-    <span><i class="fas fa-funnel-dollar me-2 text-success"></i> Dynamic Pricing Tiers</span>
-    <div>
-        <a asp-action="Create" asp-route-carId="@carId" class="btn btn-primary shadow-sm rounded-pill px-4 me-2">
-            <i class="fas fa-plus me-2"></i> Add New Tier
-        </a>
-        <a asp-controller="Cars" asp-action="Details" asp-route-id="@carId" class="btn btn-light shadow-sm rounded-pill px-4">
-            <i class="fas fa-arrow-left me-2"></i> Back to Vehicle
-        </a>
+<div class="row g-3 justify-content-between align-items-center mb-5 px-2">
+    <div class="col-12 col-lg-auto">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1 text-uppercase x-small fw-bold opacity-50">
+                <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index" class="text-decoration-none text-muted">Admin</a></li>
+                <li class="breadcrumb-item"><a asp-controller="Cars" asp-action="Index" class="text-decoration-none text-muted">Cars</a></li>
+                <li class="breadcrumb-item active">Pricing Strategy</li>
+            </ol>
+        </nav>
+        <div class="d-flex align-items-center gap-3">
+            <div class="authority-icon-box bg-success text-white rounded-3 shadow-sm">
+                <i class="fas fa-funnel-dollar"></i>
+            </div>
+            <div>
+                <h1 class="h2 fw-black text-dark mb-0 tracking-tight">Dynamic <span class="text-primary">Pricing</span></h1>
+                <div class="d-flex align-items-center gap-2 mt-1">
+                    <span class="status-pill status-operational">
+                        <i class="fas fa-coins me-1"></i> STRATEGY ACTIVE
+                    </span>
+                    <span class="asset-id-tag">CAR ID: @carId</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-auto">
+        <div class="d-flex gap-2 flex-wrap">
+            <a asp-action="Create" asp-route-carId="@carId" class="btn btn-premium-dark shadow-sm">
+                <i class="fas fa-plus-circle me-2"></i> NEW TIER
+            </a>
+            <a asp-controller="Cars" asp-action="Details" asp-route-id="@carId" class="btn btn-white shadow-sm border">
+                <i class="fas fa-arrow-left me-2 text-muted"></i> BACK TO CAR
+            </a>
+        </div>
     </div>
 </div>
 

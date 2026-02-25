@@ -1,269 +1,364 @@
 @model OnlineTravelBookingTeamB.Models.ManageHotelViewModel
 @{
-    ViewData["Title"] = $"Manage Property - {Model.Hotel.Name}";
+    ViewData["Title"] = $"Property Control - {Model.Hotel.Name}";
     var hotel = Model.Hotel;
 }
 
-<div class="admin-container">
-    <div class="container py-5">
-        <!-- Header Section -->
-        <div class="d-flex justify-content-between align-items-end mb-5 pb-4 border-bottom">
-            <div>
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb mb-2">
-                        <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index">Admin</a></li>
-                        <li class="breadcrumb-item"><a asp-action="Index">Hotels</a></li>
-                        <li class="breadcrumb-item active">@hotel.Name</li>
-                    </ol>
-                </nav>
-                <div class="d-flex align-items-center gap-3">
-                    <h1 class="fw-bold mb-0">@hotel.Name</h1>
-                    <span class="badge bg-primary-soft text-primary px-3 rounded-pill">Active Property</span>
+<div class="container-fluid py-4 hotel-admin-portal">
+    <!-- Authority Header -->
+    <div class="row g-3 justify-content-between align-items-center mb-4 px-2">
+        <div class="col-12 col-lg-auto">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1 text-uppercase ls-md x-small fw-bold opacity-50">
+                    <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index" class="text-decoration-none text-muted">Admin</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none text-muted">Hotels</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">@hotel.Name</li>
+                </ol>
+            </nav>
+            <div class="d-flex align-items-center gap-3">
+                <div class="authority-icon-box bg-dark text-white rounded-3 shadow-sm">
+                    <i class="fas fa-hotel"></i>
                 </div>
-                <p class="text-muted mt-2 mb-0"><i class="fas fa-map-marker-alt me-1"></i> @hotel.Address?.Street, @hotel.Address?.City, @hotel.Address?.Country</p>
+                <div>
+                    <h1 class="h2 fw-black text-dark mb-0 tracking-tight">@hotel.Name</h1>
+                    <div class="d-flex align-items-center gap-2 mt-1">
+                        <span class="status-pill status-operational">
+                            <i class="fas fa-circle-notch fa-spin me-1"></i> OPERATIONAL
+                        </span>
+                        <span class="asset-id-tag">ID: @hotel.Id.ToString().ToUpper().Substring(0,8)</span>
+                    </div>
+                </div>
             </div>
+        </div>
+        <div class="col-12 col-lg-auto">
             <div class="d-flex gap-2">
-                <a asp-action="Index" class="btn btn-outline-secondary px-4 rounded-3 text-dark border-light shadow-sm bg-white">
-                    <i class="fas fa-arrow-left me-2"></i>Back
+                <a asp-action="Index" class="btn btn-premium-white shadow-sm">
+                    <i class="fas fa-th-large me-2 text-muted"></i> Property Fleet
                 </a>
-                <button class="btn btn-primary px-4 rounded-3 shadow-sm" data-bs-toggle="collapse" data-bs-target="#editHotelSection">
-                    <i class="fas fa-edit me-2"></i>Edit Profile
+                <button class="btn btn-premium-dark shadow-sm" data-bs-toggle="collapse" data-bs-target="#editHotelSection">
+                    <i class="fas fa-sliders-h me-2"></i> Control Panel
                 </button>
             </div>
         </div>
+    </div>
 
-        @if (TempData["Success"] != null)
-        {
-            <div class="alert alert-success border-0 shadow-sm rounded-3 mb-4 d-flex align-items-center p-3 animate__animated animate__fadeIn">
-                <i class="fas fa-check-circle me-3 fs-4"></i>
-                <div class="fw-medium">@TempData["Success"]</div>
-                <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-premium-success border-0 shadow-sm rounded-4 mb-4 d-flex align-items-center p-3 animate__animated animate__slideInDown">
+            <div class="icon-square bg-success text-white me-3 rounded-circle" style="width: 38px; height: 38px;">
+                <i class="fas fa-check"></i>
             </div>
-        }
+            <div class="fw-bold">@TempData["Success"]</div>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+        </div>
+    }
 
-        <!-- Quick Stats Row -->
-        <div class="row g-4 mb-5">
-            <div class="col-md-3">
-                <div class="stat-card p-4 border rounded-4 bg-white shadow-sm h-100">
-                    <span class="text-muted x-small fw-bold text-uppercase d-block mb-1">Total Rooms</span>
-                    <h3 class="fw-bold mb-0">@hotel.Rooms.Count</h3>
+    <!-- Property Master Control Card (Ultra Premium) -->
+    <div class="card border-0 shadow-2xl rounded-5 overflow-hidden mb-5 master-property-card">
+        <div class="card-body p-0">
+            <div class="row g-0">
+                <div class="col-lg-4 position-relative overflow-hidden">
+                    <img src="@(hotel.MainImageUrl ?? "/images/placeholder-hotel.jpg")" class="h-100 w-100 object-fit-cover property-hero-img">
+                    <div class="image-overlay-premium"></div>
+                    <div class="position-absolute bottom-0 start-0 p-4 text-white z-2">
+                        <span class="badge glass-badge rounded-pill px-3 py-1 x-small fw-black mb-2 ls-lg">PRIMARY HUB</span>
+                        <h3 class="fw-black mb-0 text-shadow tracking-tight">Property Canvas</h3>
+                        <p class="x-small opacity-75 fw-bold mb-0">High-Resolution Visual Managed Asset</p>
+                    </div>
+                </div>
+                <div class="col-lg-8 bg-premium-dark text-white p-4 d-flex flex-column justify-content-center position-relative">
+                    <div class="row g-3 position-relative z-2">
+                        <div class="col-md-6 border-start-premium">
+                            <div class="d-flex justify-content-between align-items-end mb-1">
+                                <p class="text-uppercase ls-lg x-small opacity-50 fw-black mb-0">Inventory Load</p>
+                                <span class="x-small fw-bold text-primary">75% Capacity</span>
+                            </div>
+                            <h2 class="h1 fw-black mb-0">@hotel.Rooms.Count <span class="fs-5 opacity-50 fw-normal">Suites</span></h2>
+                            <div class="progress-premium mt-2">
+                                <div class="progress-bar-glow" style="width: 75%"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 border-start-premium">
+                            <p class="text-uppercase ls-lg x-small opacity-50 fw-black mb-1">Performance Yield</p>
+                            <h2 class="h1 fw-black mb-0">@(hotel.Rating?.Value.ToString("0.0") ?? "4.8") <span class="fs-5 opacity-50 fw-normal">Score</span></h2>
+                            <div class="d-flex align-items-center gap-2 mt-2">
+                                <div class="d-flex gap-1 text-warning x-small">
+                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                </div>
+                                <span class="badge bg-white bg-opacity-10 rounded-pill x-small fw-bold py-1"><i class="fas fa-arrow-up me-1 text-success"></i>+2.4%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 d-flex flex-wrap gap-2 position-relative z-2">
+                         <div class="glass-pill-premium">
+                             <div class="pill-icon"><i class="fas fa-map-marker-alt"></i></div>
+                             <span>@hotel.Address?.City</span>
+                         </div>
+                         <div class="glass-pill-premium active">
+                             <div class="pill-icon"><i class="fas fa-globe"></i></div>
+                             <span>GMT +2.0</span>
+                         </div>
+                         <div class="glass-pill-premium">
+                             <div class="pill-icon"><i class="fas fa-bolt"></i></div>
+                             <span>High Demand</span>
+                         </div>
+                    </div>
+
+                    <!-- Subtle Decorative Glow Background -->
+                    <div class="decorative-glow"></div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="stat-card p-4 border rounded-4 bg-white shadow-sm h-100">
-                    <span class="text-muted x-small fw-bold text-uppercase d-block mb-1">Star Rating</span>
-                    <h3 class="fw-bold mb-0 text-warning">@(hotel.Rating?.Value.ToString("0.0") ?? "N/A")</h3>
+        </div>
+    </div>
+
+    <!-- Management Deck -->
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <!-- Edit Panel (Collapsed) -->
+            <div class="collapse mb-4" id="editHotelSection">
+                <div class="card border-0 shadow-sm rounded-4 bg-white p-4 border-top border-4 border-primary">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="fw-black mb-0 text-dark"><i class="fas fa-sliders-h me-2 text-primary"></i>Operational Configuration</h5>
+                        <span class="x-small fw-bold text-muted">MODIFIED: @DateTime.Now.ToString("MMM dd, HH:mm")</span>
+                    </div>
+                    <form asp-action="Edit" method="post">
+                        <input type="hidden" asp-for="EditForm.Id" value="@hotel.Id" />
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="premium-meta-label">REGISTERED TRADENAME</label>
+                                <input asp-for="EditForm.Name" class="form-control premium-control" value="@hotel.Name" />
+                            </div>
+                            <div class="col-12">
+                                <label class="premium-meta-label">MARKETING SUMMARY</label>
+                                <textarea asp-for="EditForm.Description" class="form-control premium-control" rows="3">@hotel.Description</textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="premium-meta-label">STATION CITY</label>
+                                <input asp-for="EditForm.City" class="form-control premium-control" value="@hotel.Address?.City" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="premium-meta-label">OPERATIONAL COUNTRY</label>
+                                <input asp-for="EditForm.Country" class="form-control premium-control" value="@hotel.Address?.Country" />
+                            </div>
+                            <div class="col-12 text-end pt-3">
+                                <button type="button" class="btn btn-outline-secondary border-0 fw-bold px-4 me-2" data-bs-toggle="collapse" data-bs-target="#editHotelSection">Discard</button>
+                                <button type="submit" class="btn btn-premium-dark px-4 rounded-3 shadow-sm">Commit Sync</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="stat-card p-4 border rounded-4 bg-white shadow-sm h-100">
-                    <span class="text-muted x-small fw-bold text-uppercase d-block mb-1">Check-in Time</span>
-                    <h3 class="fw-bold mb-0">@hotel.CheckInTime.Start.ToString("HH:mm")</h3>
+
+            <!-- Suite Inventory Control -->
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white mb-4">
+                <div class="card-header bg-white p-4 border-bottom-light d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="fw-black mb-0 text-dark ls-tight">Suite Inventory Hub</h5>
+                        <p class="text-muted x-small fw-bold mb-0 opacity-75">LIVE PRICE CONTROL & RATE MANAGEMENT</p>
+                    </div>
+                    <button class="btn btn-premium-blue btn-sm px-3" data-bs-toggle="modal" data-bs-target="#addRoomModal">
+                        <i class="fas fa-plus-circle me-1"></i> Release New Suite
+                    </button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light text-muted x-small text-uppercase fw-black ls-md">
+                            <tr>
+                                <th class="ps-4 py-3 border-0">Suite Designator</th>
+                                <th class="py-3 border-0">Classification</th>
+                                <th class="py-3 border-0">Yield Rate</th>
+                                <th class="pe-4 py-3 border-0 text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var room in hotel.Rooms)
+                            {
+                                <tr class="suite-table-row">
+                                    <td class="ps-4">
+                                        <div class="d-flex align-items-center">
+                                            <div class="suite-node-box me-3">
+                                                <i class="fas fa-door-closed"></i>
+                                            </div>
+                                            <div>
+                                                <span class="fw-black text-dark d-block">Node #@room.RoomNumber</span>
+                                                <div class="badge bg-light text-muted x-small rounded-pill px-2">@room.Id.ToString().Substring(0, 8).ToUpper()</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="fw-bold text-dark small">@room.Name</div>
+                                        <div class="x-small text-muted text-truncate fw-medium" style="max-width: 250px;">@room.Description</div>
+                                    </td>
+                                    <td>
+                                        <div class="fw-black fs-5 text-dark tracking-tight">$@room.BasePricePerNight.Amount.ToString("N0")</div>
+                                        <div class="x-small text-primary fw-black opacity-75 ls-sm">SYNC'D PER NIGHT</div>
+                                    </td>
+                                    <td class="pe-4 text-end">
+                                        <div class="d-flex gap-2 justify-content-end">
+                                            <button class="btn-action-premium" onclick="editRoom('@room.Id','@room.Name')" title="Edit Parameters"><i class="fas fa-pen"></i></button>
+                                            <form asp-action="DeleteRoom" asp-route-id="@room.Id" asp-route-hotelId="@hotel.Id" method="post" class="d-inline">
+                                                <button type="submit" class="btn-action-premium danger" title="Decommission Node"><i class="fas fa-power-off"></i></button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="stat-card p-4 border rounded-4 bg-white shadow-sm h-100">
-                    <span class="text-muted x-small fw-bold text-uppercase d-block mb-1">Bookings</span>
-                    <h3 class="fw-bold mb-0">2.4k <small class="text-success fs-6 fw-normal">+12%</small></h3>
+
+            <!-- Service Policies -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-6">
+                    <div class="briefing-card h-100">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="brief-icon-box bg-soft-danger text-danger me-3"><i class="fas fa-shield-alt"></i></div>
+                            <h6 class="fw-black text-dark mb-0 ls-sm">Cancellation Protocol</h6>
+                        </div>
+                        <p class="policy-text mb-0 fw-medium">@hotel.CancellationPolicy</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="briefing-card h-100">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="brief-icon-box bg-soft-primary text-primary me-3"><i class="fas fa-fingerprint"></i></div>
+                            <h6 class="fw-black text-dark mb-0 ls-sm">Access Clearance</h6>
+                        </div>
+                        <p class="policy-text mb-0 fw-medium">Encrypted digital keys, secure perimeter monitoring, and standard high-level hospitality protocols apply.</p>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="row g-5">
-            <!-- Left Side: Main Management -->
-            <div class="col-lg-8">
-                <!-- Edit Section -->
-                <div class="collapse mb-4" id="editHotelSection">
-                    <div class="card border-primary-subtle shadow-sm rounded-4">
-                        <div class="card-body p-4">
-                            <h5 class="fw-bold mb-4">Edit Property Details</h5>
-                            <form asp-action="Edit" method="post">
-                                <input type="hidden" asp-for="EditForm.Id" value="@hotel.Id" />
-                                <div class="row g-3">
-                                    <div class="col-md-12">
-                                        <label class="form-label small fw-bold">Hotel Name</label>
-                                        <input asp-for="EditForm.Name" class="form-control" value="@hotel.Name" />
-                                    </div>
-                                    <div class="col-md-12">
-                                        <label class="form-label small fw-bold">Description</label>
-                                        <textarea asp-for="EditForm.Description" class="form-control" rows="3">@hotel.Description</textarea>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label small fw-bold">City</label>
-                                        <input asp-for="EditForm.City" class="form-control" value="@hotel.Address?.City" />
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label small fw-bold">Country</label>
-                                        <input asp-for="EditForm.Country" class="form-control" value="@hotel.Address?.Country" />
-                                    </div>
-                                    <div class="col-12 text-end mt-4">
-                                        <button type="button" class="btn btn-light me-2" data-bs-toggle="collapse" data-bs-target="#editHotelSection">Cancel</button>
-                                        <button type="submit" class="btn btn-primary px-4">Save Changes</button>
-                                    </div>
-                                </div>
-                            </form>
+        <div class="col-lg-4">
+            <!-- Contact Registry -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white border-top border-4 border-dark">
+                <h6 class="fw-black text-uppercase x-small text-muted mb-4 ls-lg opacity-75">Registry Contact Nodes</h6>
+                <div class="registry-item mb-2">
+                    <div class="d-flex align-items-center">
+                        <div class="registry-icon shadow-sm me-3"><i class="fas fa-envelope"></i></div>
+                        <div>
+                            <div class="registry-label">Official Mailbox</div>
+                            <div class="registry-value">@(hotel.ContactInfo?.Email?.Value ?? "concierge@hotel-portal.com")</div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Rooms Section -->
-                <div class="section-header d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="fw-bold mb-0">Rooms & Inventory</h4>
-                    <button class="btn btn-success btn-sm rounded-3 px-3 fw-bold" data-bs-toggle="modal" data-bs-target="#addRoomModal">
-                        <i class="fas fa-plus me-1"></i>Add New Room
-                    </button>
-                </div>
-
-                <div class="table-card border rounded-4 bg-white shadow-sm overflow-hidden mb-5">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="bg-light">
-                                <tr>
-                                    <th class="ps-4">No.</th>
-                                    <th>Room Name / Type</th>
-                                    <th>Price/Night</th>
-                                    <th class="text-end pe-4">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var room in hotel.Rooms)
-                                {
-                                    <tr>
-                                        <td class="ps-4 fw-bold">#@room.RoomNumber</td>
-                                        <td>
-                                            <div class="fw-bold">@room.Name</div>
-                                            <small class="text-muted d-block text-truncate" style="max-width: 250px;">@room.Description</small>
-                                        </td>
-                                        <td><span class="fw-bold text-success">$@room.BasePricePerNight.Amount.ToString("N0")</span></td>
-                                        <td class="text-end pe-4">
-                                            <button class="btn btn-icon text-muted" onclick="editRoom('@room.Id','@room.Name')"><i class="fas fa-edit"></i></button>
-                                            <form asp-action="DeleteRoom" asp-route-id="@room.Id" asp-route-hotelId="@hotel.Id" method="post" class="d-inline" data-confirm="Are you sure you want to delete this room?" data-confirm-title="Delete Room">
-                                                <button type="submit" class="btn btn-icon text-danger"><i class="fas fa-trash"></i></button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                }
-                                @if (!hotel.Rooms.Any())
-                                {
-                                    <tr>
-                                        <td colspan="4" class="text-center py-5 text-muted">No rooms found for this property.</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Content Info Section -->
-                <h4 class="fw-bold mb-4">Location & Policies</h4>
-                <div class="row g-4">
-                    <div class="col-md-6">
-                        <div class="card border-0 bg-light-soft rounded-4 p-4 h-100">
-                            <h6 class="fw-bold mb-3"><i class="fas fa-shield-alt text-primary me-2"></i>Cancellation Policy</h6>
-                            <p class="text-muted mb-0">@hotel.CancellationPolicy</p>
+                <div class="registry-item mb-2">
+                    <div class="d-flex align-items-center">
+                        <div class="registry-icon shadow-sm me-3"><i class="fas fa-phone"></i></div>
+                        <div>
+                            <div class="registry-label">Secure Voice Line</div>
+                            <div class="registry-value">@(hotel.ContactInfo?.Phone?.Value ?? "+1 800 - ADMIN - SECURE")</div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="card border-0 bg-light-soft rounded-4 p-4 h-100">
-                            <h6 class="fw-bold mb-3"><i class="fas fa-map-marked text-primary me-2"></i>Full Address</h6>
-                            <p class="text-muted mb-0">@hotel.Address?.Street<br>@hotel.Address?.City, @hotel.Address?.Country</p>
+                </div>
+                <div class="registry-item">
+                    <div class="d-flex align-items-center">
+                        <div class="registry-icon shadow-sm me-3"><i class="fas fa-link text-primary"></i></div>
+                        <div>
+                            <div class="registry-label">Secure Portal</div>
+                            <a href="#" class="registry-value text-primary text-decoration-none">Launch External Dashboard <i class="fas fa-external-link-alt x-small ms-1"></i></a>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Right Side: Sidebar Meta -->
-            <div class="col-lg-4">
-                <div class="card border rounded-4 shadow-sm bg-white p-4 mb-4">
-                    <h5 class="fw-bold mb-4">Property Visuals</h5>
-                    <img src="/@(hotel.MainImageUrl ?? "images/placeholder-hotel.jpg")" class="img-fluid rounded-4 mb-3 border shadow-sm" alt="@hotel.Name">
-                    <button class="btn btn-light w-100 rounded-3 fw-bold border">Manage Gallery</button>
-                </div>
-
-                <div class="card border rounded-4 shadow-sm bg-white p-4 mb-4">
-                    <h5 class="fw-bold mb-4">Operational Contacts</h5>
-                    <div class="mb-3">
-                        <label class="x-small text-muted fw-bold text-uppercase d-block mb-1">Email</label>
-                        <span class="fw-medium">@(hotel.ContactInfo?.Email?.Value ?? "N/A")</span>
-                    </div>
-                    <div class="mb-3">
-                        <label class="x-small text-muted fw-bold text-uppercase d-block mb-1">Phone</label>
-                        <span class="fw-medium">@(hotel.ContactInfo?.Phone?.Value ?? "N/A")</span>
-                    </div>
-                    <div>
-                        <label class="x-small text-muted fw-bold text-uppercase d-block mb-1">Website</label>
-                        <a href="@hotel.ContactInfo?.Website" target="_blank" class="text-primary text-decoration-none fw-medium">View Property Site</a>
+            <!-- Arrival/Departure Protocol -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-premium-dark text-white mb-4 position-relative overflow-hidden">
+                <div class="protocol-bg-glow"></div>
+                <h6 class="fw-black mb-4 x-small text-uppercase ls-md opacity-50 position-relative z-1">Service Protocols</h6>
+                <div class="protocol-box mb-3 position-relative z-1">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="x-small fw-bold text-uppercase opacity-50 mb-0 ls-md">Access Open</p>
+                            <p class="protocol-time mb-0">@hotel.CheckInTime.Start.ToString("HH:mm") <span class="opacity-25">—</span> @hotel.CheckInTime.End.ToString("HH:mm")</p>
+                        </div>
+                        <div class="protocol-icon bg-white bg-opacity-10 text-success shadow-sm"><i class="fas fa-sign-in-alt"></i></div>
                     </div>
                 </div>
+                <div class="protocol-box position-relative z-1">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="x-small fw-bold text-uppercase opacity-50 mb-0 ls-md">Access Closed</p>
+                            <p class="protocol-time mb-0">@hotel.CheckOutTime.Start.ToString("HH:mm") <span class="opacity-25">—</span> @hotel.CheckOutTime.End.ToString("HH:mm")</p>
+                        </div>
+                        <div class="protocol-icon bg-white bg-opacity-10 text-danger shadow-sm"><i class="fas fa-sign-out-alt"></i></div>
+                    </div>
+                </div>
+            </div>
 
-                <div class="card border-0 rounded-4 shadow-sm bg-dark text-white p-4">
-                    <h6 class="fw-bold mb-3">Timings</h6>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="opacity-75">Check-in:</span>
-                        <span class="fw-bold">@hotel.CheckInTime.Start.ToString("HH:mm") - @hotel.CheckInTime.End.ToString("HH:mm")</span>
+            <!-- System Nominal -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border-start border-4 border-primary">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <h6 class="fw-black mb-0 x-small text-uppercase ls-md text-muted">Aviation Performance</h6>
+                    <div class="sparkline-sim">
+                        <div class="bar" style="height: 40%"></div>
+                        <div class="bar" style="height: 60%"></div>
+                        <div class="bar" style="height: 50%"></div>
+                        <div class="bar" style="height: 80%"></div>
+                        <div class="bar" style="height: 70%"></div>
                     </div>
-                    <div class="d-flex justify-content-between">
-                        <span class="opacity-75">Check-out:</span>
-                        <span class="fw-bold">@hotel.CheckOutTime.Start.ToString("HH:mm") - @hotel.CheckOutTime.End.ToString("HH:mm")</span>
-                    </div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="x-small fw-black text-success d-flex align-items-center gap-1">
+                        <span class="pulse-green"></span> SYSTEMS NOMINAL
+                    </span>
+                    <span class="x-small text-muted fw-bold">LATENCY: 14ms</span>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Modal: Add Room -->
+<!-- Modal: Release Suite (Ultra Premium) -->
 <div class="modal fade" id="addRoomModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg rounded-4">
-            <div class="modal-header">
-                <h5 class="modal-title fw-bold">New Room Category</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <div class="modal-content border-0 shadow-2xl rounded-5 overflow-hidden">
+            <div class="modal-header bg-premium-dark text-white p-4 border-0 position-relative">
+                <div class="modal-header-glow"></div>
+                <h5 class="modal-title fw-black position-relative z-1 ls-tight">Suite Provisioning</h5>
+                <button type="button" class="btn-close btn-close-white z-1" data-bs-dismiss="modal"></button>
             </div>
             <form asp-action="AddRoom" method="post">
                 <input type="hidden" asp-for="RoomForm.HotelId" value="@hotel.Id" />
-                <div class="modal-body p-4">
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">Room Name</label>
-                        <input asp-for="RoomForm.Name" class="form-control" placeholder="e.g. Deluxe Suite" required />
-                    </div>
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label small fw-bold">Room No.</label>
-                            <input asp-for="RoomForm.RoomNumber" class="form-control" required />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label small fw-bold">Price per Night</label>
-                            <input name="RoomForm.BasePricePerNight" type="number" step="0.01" class="form-control" required />
+                <div class="modal-body p-4 bg-white">
+                    <div class="mb-4">
+                        <label class="premium-meta-label">SUITE DESIGNATOR</label>
+                        <div class="row g-2">
+                            <div class="col-8">
+                                <input asp-for="RoomForm.Name" class="form-control premium-control" placeholder="e.g. Executive Hub Suite" required />
+                            </div>
+                            <div class="col-4">
+                                <input asp-for="RoomForm.RoomNumber" class="form-control premium-control" placeholder="Node #" required />
+                            </div>
                         </div>
                     </div>
+                    
+                    <div class="mb-4">
+                        <label class="premium-meta-label">COMMERCIAL YIELD RATE (USD)</label>
+                        <div class="input-group premium-group">
+                            <span class="input-group-text bg-light border-0 text-dark fw-black">$</span>
+                            <input name="RoomForm.BasePricePerNight" type="number" step="0.01" class="form-control premium-control px-3" placeholder="0.00" required />
+                            <span class="input-group-text bg-light border-0 text-muted x-small fw-black ls-sm">/ UNIT</span>
+                        </div>
+                    </div>
+
                     <div class="mb-0">
-                        <label class="form-label small fw-bold">Features / Summary</label>
-                        <textarea asp-for="RoomForm.Description" class="form-control" rows="3"></textarea>
+                        <label class="premium-meta-label">ASSET METADATA</label>
+                        <textarea asp-for="RoomForm.Description" class="form-control premium-control" rows="3" placeholder="Define node parameters and amenities..."></textarea>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light rounded-2" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary px-4 rounded-2">Create Room</button>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-outline-secondary border-0 fw-bold px-4" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-premium-dark rounded-3 px-4 fw-black shadow-sm">Commit Inventory</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<style>
-    body { font-family: 'Inter', -apple-system, sans-serif; background-color: #fcfdfe; color: #1a1a1b; }
-    .x-small { font-size: 0.7rem; letter-spacing: 0.5px; }
-    .bg-primary-soft { background-color: rgba(67, 97, 238, 0.1); }
-    .bg-light-soft { background-color: #f8f9fa; }
-    .rounded-4 { border-radius: 1rem !important; }
-    .stat-card { transition: transform 0.2s; border: 1px solid #edf1f7; }
-    .stat-card:hover { border-color: #4361ee; }
-    .btn-icon { width: 34px; height: 34px; border-radius: 8px; border: 0; background: transparent; transition: 0.2s; }
-    .btn-icon:hover { background: #f0f2f5; }
-    .form-control, .form-select { border: 1px solid #e1e8f0; padding: 0.6rem 1rem; border-radius: 0.6rem; }
-    .form-control:focus { border-color: #4361ee; box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.1); }
-    .breadcrumb-item a { text-decoration: none; color: #6c757d; font-weight: 500; }
-    .breadcrumb-item.active { color: #1a1a1b; font-weight: 600; }
-    .table thead th { font-weight: 700; text-transform: uppercase; font-size: 0.75rem; color: #64748b; letter-spacing: 0.5px; border-bottom: none; }
-</style>
+
+    
+    

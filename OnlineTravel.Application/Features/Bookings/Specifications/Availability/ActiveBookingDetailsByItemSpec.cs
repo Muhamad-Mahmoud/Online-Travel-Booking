@@ -14,9 +14,11 @@ namespace OnlineTravel.Application.Features.Bookings.Specifications.Availability
             : base(bd => bd.ItemId == itemId &&
                          bd.Booking.Status != BookingStatus.Cancelled &&
                          bd.Booking.Status != BookingStatus.Refunded &&
+                         bd.Booking.Status != BookingStatus.Expired &&
                          // Expired pending bookings are not considered active
                          !(bd.Booking.Status == BookingStatus.PendingPayment && now > bd.Booking.ExpiresAt))
         {
+            AddIncludes(bd => bd.Booking);
         }
     }
 }

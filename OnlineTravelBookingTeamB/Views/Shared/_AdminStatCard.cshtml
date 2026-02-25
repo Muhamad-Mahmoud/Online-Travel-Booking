@@ -1,0 +1,19 @@
+@model OnlineTravelBookingTeamB.Models.Shared.AdminStatCardViewModel
+
+<div class="card border-0 shadow-sm rounded-4 p-3 hover-lift h-100">
+    <div class="d-flex align-items-center gap-3">
+        <div class="icon-square @(Model.IconBgClass ?? "bg-primary-light") @(Model.IconTextClass ?? "text-primary") rounded-3">
+            <i class="@Model.IconClass"></i>
+        </div>
+        <div>
+            <div class="fw-black text-dark h4 mb-0">@Model.Value</div>
+            <div class="x-small fw-bold text-muted text-uppercase">@Model.Title</div>
+            @if (!string.IsNullOrEmpty(Model.Subtitle))
+            {
+                <div class="stat-change @(Model.SubtitleClass ?? "text-muted") mt-1 x-small">
+                    <span>@Model.Subtitle</span>
+                </div>
+            }
+        </div>
+    </div>
+</div>

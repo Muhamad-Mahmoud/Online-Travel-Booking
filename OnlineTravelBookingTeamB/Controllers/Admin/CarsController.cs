@@ -43,11 +43,14 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
             var categoriesResult = await _mediator.Send(new GetCategoriesByTypeQuery(CategoryType.Car));
             ViewBag.Categories = categoriesResult.IsSuccess ? categoriesResult.Value : new List<CategoryDto>();
 
+            ViewBag.SearchTerm = query.SearchTerm;
+            ViewBag.BrandId = query.BrandId;
+
             if (result.IsSuccess)
                 return View("~/Views/Admin/Cars/Cars/Index.cshtml", result.Value);
 
             TempData["Error"] = result.Error.Description;
-            return View("~/Views/Admin/Cars/Cars/Index.cshtml", new PaginatedResult<CarSummaryDto>(1, 10, 0, new List<CarSummaryDto>()));
+            return View("~/Views/Admin/Cars/Cars/Index.cshtml", new PaginatedResult<CarSummaryDto>(1, 5, 0, new List<CarSummaryDto>()));
         }
 
         // GET: Cars/Details/5

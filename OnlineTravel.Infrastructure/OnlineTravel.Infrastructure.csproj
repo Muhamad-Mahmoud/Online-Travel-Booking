@@ -40,8 +40,4 @@
     <ProjectReference Include="..\OnlineTravel.Application\OnlineTravel.Application.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Migrations\" />
-  </ItemGroup>
-
 </Project>

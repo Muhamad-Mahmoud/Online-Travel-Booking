@@ -22,6 +22,7 @@ public sealed class GetAllCarsSummaryQueryHandler : IRequestHandler<GetAllCarsSu
 		var spec = new CarSpecification(request.BrandId)
 			.IncludeBrandAndCategory()
 			.IncludePricingTiers()
+			.WithSearchTerm(request.SearchTerm)
 			.OrderByCreatedDesc();
 
 		if (request.CategoryId.HasValue)
@@ -33,7 +34,8 @@ public sealed class GetAllCarsSummaryQueryHandler : IRequestHandler<GetAllCarsSu
 
 		var items = await _unitOfWork.Repository<Car>().GetAllWithSpecAsync(spec, cancellationToken);
 
-		var countSpec = new CarSpecification(request.BrandId);
+		var countSpec = new CarSpecification(request.BrandId)
+			.WithSearchTerm(request.SearchTerm);
 		if (request.CategoryId.HasValue)
 			countSpec.WithCategory(request.CategoryId.Value);
 		if (request.CarType.HasValue)

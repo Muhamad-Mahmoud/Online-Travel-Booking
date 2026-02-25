@@ -30,7 +30,8 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
 
         [HttpGet]
         [Route("")]
-        public async Task<IActionResult> Index(string? search = null)
+                public async Task<IActionResult> Index(string? search = null, int pageIndex = 1, int pageSize = 5)
+
         {
             var query = _context.Hotels
                 .Include(h => h.Rooms)
@@ -43,9 +44,16 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
                 query = query.Where(h => h.Name.ToLower().Contains(term) || h.Slug.ToLower().Contains(term));
             }
 
-            var hotels = await query.OrderByDescending(h => h.CreatedAt).ToListAsync();
+            var totalCount = await query.CountAsync();
+            var hotels = await query.OrderByDescending(h => h.CreatedAt)
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var result = new OnlineTravel.Domain.Exceptions.PaginatedResult<OnlineTravel.Domain.Entities.Hotels.Hotel>(pageIndex, pageSize, totalCount, hotels);
+
             ViewBag.SearchTerm = search;
-            return View("~/Views/Admin/Hotels/Index.cshtml", hotels);
+            return View("~/Views/Admin/Hotels/Index.cshtml", result);
         }
 
         [HttpGet("Create")]

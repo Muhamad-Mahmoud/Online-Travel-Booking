@@ -1,155 +1,172 @@
 @model OnlineTravelBookingTeamB.Models.AdminBookingsViewModel
-
 @{
-    ViewData["Title"] = "Bookings";
+    ViewData["Title"] = "Bookings Portal";
+    var search = ViewBag.SearchTerm as string;
+    var currentStatus = ViewBag.Status as string;
+    var statuses = ViewBag.BookingStatuses as List<string> ?? new List<string>();
 }
 
-<form method="get" action="@Url.Action("Index", "Bookings")" class="row g-3 justify-content-between align-items-center mb-4">
-    <div class="col-12 col-lg-auto">
-        <h1 class="h3 fw-bold text-dark mb-1">Bookings</h1>
-        <p class="text-muted small mb-0">Manage and track all customer reservations in one place.</p>
+<div class="container-fluid py-4">
+    <!-- Authority Header -->
+    <partial name="_AdminPageHeader" model='new AdminPageHeaderViewModel {
+        Title = "Booking",
+        TitleSuffix = "Portal",
+        IconClass = "fas fa-receipt",
+        IconBgClass = "bg-dark",
+        StatusText = "LIVE MONITORING",
+        BadgeText = $"TOTAL: {Model.Stats.TotalBookings} TRANSACTIONS",
+        Breadcrumbs = new List<BreadcrumbItem> {
+            new BreadcrumbItem { Text = "Bookings", IsActive = true }
+        },
+        ShowSearch = true,
+        SearchInputName = "searchTerm",
+        SearchValue = search,
+        SearchPlaceholder = "Reference, name, email...",
+        ShowStatusFilter = true,
+        StatusFilterName = "status",
+        StatusOptions = statuses.Select(s => new StatusOption { 
+            Text = s, 
+            Value = s, 
+            Selected = currentStatus == s 
+        }).ToList(),
+        ActionButtons = new List<ActionButtonViewModel> {
+            new ActionButtonViewModel { 
+                Text = "Export CSV", 
+                IconClass = "fas fa-file-export", 
+                Action = "Export", 
+                Class = "btn-outline-dark" 
+            }
+        }
+    }' />
+
+    <!-- Stats Row -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <partial name="_AdminStatCard" model='new AdminStatCardViewModel {
+                Title = "Total Bookings",
+                Value = Model.Stats.TotalBookings.ToString(),
+                IconClass = "fas fa-shopping-cart",
+                IconBgClass = "bg-primary-light",
+                IconTextClass = "text-primary"
+            }' />
+        </div>
+        <div class="col-6 col-md-3">
+            <partial name="_AdminStatCard" model='new AdminStatCardViewModel {
+                Title = "Pending Payment",
+                Value = Model.Stats.PendingBookings.ToString(),
+                IconClass = "fas fa-clock",
+                IconBgClass = "bg-warning-light",
+                IconTextClass = "text-warning"
+            }' />
+        </div>
+        <div class="col-6 col-md-3">
+            <partial name="_AdminStatCard" model='new AdminStatCardViewModel {
+                Title = "Total Revenue",
+                Value = Model.Stats.TotalRevenue.ToString("N2"),
+                IconClass = "fas fa-dollar-sign",
+                IconBgClass = "bg-success-light",
+                IconTextClass = "text-success"
+            }' />
+        </div>
+        <div class="col-6 col-md-3">
+            <partial name="_AdminStatCard" model='new AdminStatCardViewModel {
+                Title = "Cancelled",
+                Value = Model.Stats.CancelledBookings.ToString(),
+                IconClass = "fas fa-times-circle",
+                IconBgClass = "bg-danger-light",
+                IconTextClass = "text-danger"
+            }' />
+        </div>
     </div>
-    <div class="col-12 col-lg-auto">
-        <div class="d-flex flex-column flex-sm-row flex-lg-nowrap gap-2 filter-section">
-            <div class="input-group shadow-sm search-group">
-                <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
-                <input type="text" name="searchTerm" class="form-control border-start-0 ps-0" placeholder="Search reference, user, service..." value="@ViewBag.SearchTerm">
-            </div>
-            <select name="status" class="form-select shadow-sm status-select" onchange="this.form.submit()">
-                <option value="">All Status</option>
-                @if (ViewBag.BookingStatuses != null) {
-                    foreach (var status in ViewBag.BookingStatuses)
+
+    <!-- Bookings Table -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-header bg-white p-4 border-bottom-light d-flex justify-content-between align-items-center">
+            <h6 class="fw-black mb-0 text-dark">Transaction Registry</h6>
+            <span class="badge bg-primary-light text-primary rounded-pill px-3 fw-bold x-small">@Model.Bookings.TotalCount Records</span>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light x-small text-uppercase fw-black text-muted">
+                    <tr>
+                        <th class="ps-4 py-3">Reference</th>
+                        <th class="text-center">Customer</th>
+                        <th class="text-center d-none d-md-table-cell">Type/Item</th>
+                        <th class="text-center">Amount</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center d-none d-lg-table-cell">Date</th>
+                        <th class="pe-4"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Bookings.Data.Any())
                     {
-                        <!option value="@status" @(ViewBag.Status == status ? "selected" : "")>@status</!option>
+                        <tr>
+                            <td colspan="7" class="text-center py-5 text-muted">
+                                <i class="fas fa-receipt fa-3x opacity-25 mb-3 d-block"></i>
+                                <div class="fw-bold">No bookings found</div>
+                                <div class="x-small mt-1">Try adjusting your filters or search term.</div>
+                            </td>
+                        </tr>
                     }
-                }
-            </select>
-            <div class="d-flex gap-2 action-buttons">
-                <button type="submit" class="btn btn-primary shadow-sm"><i class="fas fa-filter me-2"></i>Filter</button>
-                <a asp-controller="Bookings" asp-action="Index" class="btn btn-white shadow-sm" title="Clear Filters"><i class="fas fa-undo text-muted"></i></a>
-            </div>
+                    @foreach (var booking in Model.Bookings.Data)
+                    {
+                        <tr>
+                            <td class="ps-4">
+                                <div class="fw-black text-dark small">#@booking.BookingReference</div>
+                                <div class="x-small text-muted">ID: @booking.Id.ToString().Substring(0, 8)...</div>
+                            </td>
+                            <td class="text-center">
+                                <div class="fw-bold text-dark small">@booking.UserName</div>
+                                <div class="x-small text-muted">@booking.UserEmail</div>
+                            </td>
+                            <td class="text-center d-none d-md-table-cell">
+                                <div class="badge bg-light text-dark mb-1 fw-bold">@booking.Type</div>
+                                <div class="small fw-semibold text-primary">@booking.ItemName</div>
+                            </td>
+                            <td class="text-center">
+                                <div class="fw-black text-dark small">@booking.TotalAmount.ToString("N2") @booking.Currency</div>
+                                @if (booking.PaidAt.HasValue)
+                                {
+                                    <div class="x-small text-success fw-bold"><i class="fas fa-check-double me-1"></i> PAID</div>
+                                }
+                            </td>
+                            <td class="text-center">
+                                @{
+                                    var statusClass = booking.Status switch
+                                    {
+                                        "Confirmed" => "status-operational",
+                                        "PendingPayment" => "status-warning",
+                                        "Cancelled" => "status-error",
+                                        "Paid" => "status-operational",
+                                        _ => "status-warning"
+                                    };
+                                }
+                                <span class="status-pill @statusClass">
+                                    @booking.Status.ToUpper()
+                                </span>
+                            </td>
+                            <td class="text-center d-none d-lg-table-cell">
+                                <div class="small fw-bold text-dark">@booking.BookingDate.ToString("MMM dd, yyyy")</div>
+                                <div class="x-small text-muted">@booking.BookingDate.ToString("HH:mm")</div>
+                            </td>
+                            <td class="pe-4 text-end">
+                                <a asp-action="Details" asp-route-id="@booking.Id" class="btn btn-icon-soft btn-soft-primary" title="Details">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
-    </div>
-</form>
-
-<!-- Stats Overview -->
-<div class="row g-3 mb-4">
-    <div class="col-md-3">
-        <div class="stat-card h-100 border-start border-4 border-primary">
-            <div class="stat-header mb-2">
-                <span class="text-uppercase text-muted small fw-bold">Total Bookings</span>
-                <i class="fas fa-calendar-check text-primary opacity-50 fa-lg"></i>
+        
+        <!-- Pagination -->
+        @if (Model.Bookings.TotalPages >= 1)
+        {
+            <div class="card-footer bg-white border-top p-3 text-center">
+                <partial name="_Pagination" model="@PaginationViewModel.Create(Model.Bookings, "Index", "Bookings", new { searchTerm = search, status = currentStatus })" />
             </div>
-            <div class="h3 fw-bold mb-0">@Model.Stats.TotalBookings</div>
-            <span class="small text-success"><i class="fas fa-arrow-up me-1"></i>12% increase</span>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="stat-card h-100 border-start border-4 border-warning">
-            <div class="stat-header mb-2">
-                <span class="text-uppercase text-muted small fw-bold">Pending</span>
-                <i class="fas fa-clock text-warning opacity-50 fa-lg"></i>
-            </div>
-            <div class="h3 fw-bold mb-0">@Model.Stats.PendingBookings</div>
-            <span class="small text-muted">Awaiting confirmation</span>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="stat-card h-100 border-start border-4 border-success">
-            <div class="stat-header mb-2">
-                <span class="text-uppercase text-muted small fw-bold">Revenue</span>
-                <i class="fas fa-dollar-sign text-success opacity-50 fa-lg"></i>
-            </div>
-            <div class="h3 fw-bold mb-0">@Model.Stats.TotalRevenue.ToString("N0") $</div>
-            <span class="small text-success">Confirmed bookings</span>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="stat-card h-100 border-start border-4 border-danger">
-            <div class="stat-header mb-2">
-                <span class="text-uppercase text-muted small fw-bold">Cancelled</span>
-                <i class="fas fa-ban text-danger opacity-50 fa-lg"></i>
-            </div>
-            <div class="h3 fw-bold mb-0">@Model.Stats.CancelledBookings</div>
-            <span class="small text-danger">Lost / Expired</span>
-        </div>
+        }
     </div>
 </div>
-
-<div class="card shadow-sm border-0 rounded-4 overflow-hidden">
-    <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
-        <h6 class="m-0 fw-bold text-dark">Recent Reservations</h6>
-    </div>
-    <partial name="~/Views/Admin/Bookings/_BookingList.cshtml" model="Model.Bookings.Data" />
-
-    <div class="card-footer bg-white py-3 border-top-0 d-flex justify-content-between align-items-center">
-        <span class="text-muted small">Showing @Model.Bookings.Data.Count entries of @Model.Bookings.TotalCount</span>
-        <nav>
-            <ul class="pagination pagination-sm mb-0 align-items-center">
-                <li class="page-item @(!Model.Bookings.HasPreviousPage ? "disabled" : "")">
-                    <a class="page-link" href="@Url.Action("Index", "Bookings", new { pageIndex = Model.Bookings.PageIndex - 1, searchTerm = ViewBag.SearchTerm, status = ViewBag.Status })"><i class="fas fa-chevron-left"></i></a>
-                </li>
-                
-                @for (int i = 1; i <= Model.Bookings.TotalPages; i++)
-                {
-                     <li class="page-item @(i == Model.Bookings.PageIndex ? "active" : "")">
-                        <a class="page-link" href="@Url.Action("Index", "Bookings", new { pageIndex = i, searchTerm = ViewBag.SearchTerm, status = ViewBag.Status })">@i</a>
-                    </li>
-                }
-
-                <li class="page-item @(!Model.Bookings.HasNextPage ? "disabled" : "")">
-                    <a class="page-link" href="@Url.Action("Index", "Bookings", new { pageIndex = Model.Bookings.PageIndex + 1, searchTerm = ViewBag.SearchTerm, status = ViewBag.Status })"><i class="fas fa-chevron-right"></i></a>
-                </li>
-            </ul>
-        </nav>
-    </div>
-</div>
-
-<style>
-    .stat-card {
-        background: #fff;
-        padding: 1.25rem;
-        border-radius: 0.75rem;
-        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-        transition: transform 0.2s;
-    }
-    .stat-card:hover { transform: translateY(-3px); }
-    .stat-header { display: flex; justify-content: space-between; align-items: center; }
-    .btn-white {
-        background-color: #fff;
-        border: 1px solid #e3e6f0;
-        color: #6e707e;
-    }
-    .btn-white:hover {
-        background-color: #f8f9fc;
-    }
-    
-    /* Search Group Styling */
-    .search-group {
-        border-radius: 0.375rem;
-        transition: box-shadow 0.2s;
-    }
-    .search-group:focus-within {
-        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
-        border-color: #86b7fe;
-    }
-    .search-group .input-group-text {
-        border-color: #dee2e6; /* Match default bootstrap border */
-    }
-    .search-group .form-control {
-        border-color: #dee2e6;
-    }
-    
-    /* Remove default focus from input to prevent double border look */
-    .search-group .form-control:focus {
-        box-shadow: none;
-        border-color: #dee2e6;
-    }
-    
-    /* Ensure borders match when focused via parent */
-    .search-group:focus-within .input-group-text,
-    .search-group:focus-within .form-control {
-        border-color: #86b7fe;
-        z-index: 2;
-    }
-</style>

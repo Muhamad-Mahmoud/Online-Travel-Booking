@@ -1,23 +1,33 @@
-@model IEnumerable<OnlineTravel.Domain.Entities.Flights.Airport>
+@model OnlineTravel.Domain.Exceptions.PaginatedResult<OnlineTravel.Domain.Entities.Flights.Airport>
 
 @{
     ViewData["Title"] = "Airports";
 }
 
-<div class="row g-3 justify-content-between align-items-center mb-4">
-    <div class="col-12 col-lg-auto">
-        <h1 class="h3 fw-bold text-dark mb-1">Airports</h1>
-        <p class="text-muted small mb-0">@Model.Count() airports registered in the system.</p>
-    </div>
-    <div class="col-12 col-lg-auto d-flex gap-2">
-        <a asp-action="Index" class="btn btn-white shadow-sm">
-            <i class="fas fa-arrow-left me-2 text-muted"></i>Back to Flights
-        </a>
-        <a asp-action="CreateAirport" class="btn btn-primary shadow-sm">
-            <i class="fas fa-plus me-2"></i>Add Airport
-        </a>
-    </div>
-</div>
+<div class="container-fluid py-4">
+    <!-- Authority Header -->
+    <partial name="_AdminPageHeader" model='new AdminPageHeaderViewModel {
+        Title = "Hub",
+        TitleSuffix = "Airports",
+        IconClass = "fas fa-map-marker-alt",
+        IconBgClass = "bg-primary",
+        StatusText = "HUB MONITORING",
+        StatusIconClass = "fas fa-satellite-dish",
+        BadgeText = $"TOTAL: {Model.TotalCount} HUBS",
+        Breadcrumbs = new List<BreadcrumbItem> {
+            new BreadcrumbItem { Text = "Flights", Controller = "Flights", Action = "Index" },
+            new BreadcrumbItem { Text = "Airports", IsActive = true }
+        },
+        ShowSearch = false,
+        ActionButtons = new List<ActionButtonViewModel> {
+            new ActionButtonViewModel { 
+                Text = "New Airport", 
+                IconClass = "fas fa-plus-circle", 
+                Action = "CreateAirport", 
+                Class = "btn-premium-dark" 
+            }
+        }
+    }' />
 
 @if (TempData["Success"] != null)
 {
@@ -29,7 +39,7 @@
 
 <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
     <div class="card-body p-0">
-        @if (Model.Any())
+        @if (Model.Items.Any())
         {
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
@@ -37,14 +47,14 @@
                         <tr>
                             <th class="ps-4">Code</th>
                             <th>Name</th>
-                            <th>Location</th>
-                            <th>Facilities</th>
+                            <th class="d-none d-sm-table-cell">Location</th>
+                            <th class="d-none d-md-table-cell">Facilities</th>
                             <th>Status</th>
                             <th class="text-end pe-4">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var airport in Model)
+                        @foreach (var airport in Model.Items)
                         {
                             <tr class="border-top">
                                 <td class="ps-4">
@@ -55,12 +65,12 @@
                                 <td>
                                     <div class="fw-bold text-dark small">@airport.Name</div>
                                 </td>
-                                <td>
+                                <td class="d-none d-sm-table-cell">
                                     <div class="text-muted small">
                                         @(airport.Address?.City ?? "—"), @(airport.Address?.Country ?? "")
                                     </div>
                                 </td>
-                                <td>
+                                <td class="d-none d-md-table-cell">
                                     @if (airport.Facilities != null && airport.Facilities.Any())
                                     {
                                         @foreach (var fac in airport.Facilities.Take(3))
@@ -88,15 +98,17 @@
                                     }
                                 </td>
                                 <td class="pe-4 text-end">
-                                    <a asp-action="EditAirport" asp-route-id="@airport.Id" class="btn btn-sm btn-icon btn-hover-primary" title="Edit">
-                                        <i class="fas fa-edit text-muted"></i>
-                                    </a>
-                                    <form asp-action="DeleteAirport" method="post" class="d-inline" data-confirm="Airport @airport.Name will be deleted. Are you sure?" data-confirm-title="Delete Airport">
-                                        <input type="hidden" name="id" value="@airport.Id" />
-                                        <button type="submit" class="btn btn-sm btn-icon btn-hover-danger" title="Delete">
-                                            <i class="fas fa-trash text-muted"></i>
-                                        </button>
-                                    </form>
+                                    <div class="d-flex gap-2 justify-content-end">
+                                        <a asp-controller="Flights" asp-action="EditAirport" asp-route-id="@airport.Id" class="btn btn-icon-soft btn-soft-primary" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form asp-controller="Flights" asp-action="DeleteAirport" method="post" class="d-inline" data-confirm="Airport @airport.Name will be deleted. Are you sure?" data-confirm-title="Delete Airport">
+                                            <input type="hidden" name="id" value="@airport.Id" />
+                                            <button type="submit" class="btn btn-icon-soft btn-soft-danger" title="Delete">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         }
@@ -112,14 +124,15 @@
             </div>
         }
     </div>
+    @if (Model.TotalPages >= 1)
+    {
+        <div class="card-footer bg-white border-top p-3 text-center">
+            <partial name="_Pagination" model="@PaginationViewModel.Create(Model, "Airports", "Flights")" />
+        </div>
+    }
+</div>
 </div>
 
-<style>
-    .btn-white { background-color: #fff; border: 1px solid #e3e6f0; color: #6e707e; }
-    .btn-white:hover { background-color: #f8f9fc; }
-    .x-small { font-size: 0.75rem; }
-    .bg-primary-light { background-color: rgba(78, 115, 223, 0.1); }
-    .bg-success-light { background-color: rgba(28, 200, 138, 0.1); }
-    .bg-danger-light { background-color: rgba(231, 74, 59, 0.1); }
-    .btn-hover-danger:hover i { color: #e74a3b !important; }
-</style>
+
+
+

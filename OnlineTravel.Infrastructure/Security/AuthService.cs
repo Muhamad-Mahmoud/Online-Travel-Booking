@@ -59,11 +59,15 @@ public class AuthService : IAuthService
         var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
 
         var frontendUrl = _configuration["AppSettings:FrontendBaseUrl"];
-        if (string.IsNullOrEmpty(frontendUrl))
+        var apiBaseUrl = _configuration["AppSettings:ApiBaseUrl"];
+        var useApiForTest = _configuration.GetValue<bool>("AppSettings:UseApiForConfirmation");
+
+        if (string.IsNullOrEmpty(frontendUrl) && !useApiForTest)
             return new RegisterResponse { IsSuccess = false, Message = "Base URL is not configured" };
 
-        var confirmationLink =
-            $"{frontendUrl}/confirm-email?userId={user.Id}&token={encodedToken}";
+        var confirmationLink = useApiForTest
+            ? $"{apiBaseUrl}/api/auth/confirm-email?userId={user.Id}&token={encodedToken}"
+            : $"{frontendUrl}/confirm-email?userId={user.Id}&token={encodedToken}";
 
         await _emailService.SendEmailAsync(
             user.Email!,
@@ -143,11 +147,15 @@ public class AuthService : IAuthService
         var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
 
         var frontendUrl = _configuration["AppSettings:FrontendBaseUrl"];
-        if (string.IsNullOrEmpty(frontendUrl))
+        var apiBaseUrl = _configuration["AppSettings:ApiBaseUrl"];
+        var useApiForTest = _configuration.GetValue<bool>("AppSettings:UseApiForConfirmation");
+
+        if (string.IsNullOrEmpty(frontendUrl) && !useApiForTest)
             return new ForgotPasswordResponse { IsSuccess = false, Message = "Base URL not configured" };
 
-        var resetLink =
-            $"{frontendUrl}/reset-password?email={user.Email}&token={encodedToken}";
+        var resetLink = useApiForTest
+            ? $"{apiBaseUrl}/api/auth/reset-password?email={user.Email}&token={encodedToken}"
+            : $"{frontendUrl}/reset-password?email={user.Email}&token={encodedToken}";
 
         await _emailService.SendEmailAsync(
             user.Email!,

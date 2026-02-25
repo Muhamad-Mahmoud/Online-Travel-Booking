@@ -14,6 +14,6 @@ namespace OnlineTravelBookingTeamB.Models
         public int PageSize { get; set; }
 
         // للعرض: مجموع الصفحات
-        public int TotalPages => (int)Math.Ceiling(Cars.TotalCount / (double)PageSize);
+        public int TotalPages => Cars == null ? 0 : (int)Math.Ceiling(Cars.TotalCount / (double)PageSize);
     }
 }

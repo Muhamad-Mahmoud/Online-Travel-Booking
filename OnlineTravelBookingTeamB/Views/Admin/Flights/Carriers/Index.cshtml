@@ -1,23 +1,33 @@
-@model IEnumerable<OnlineTravel.Domain.Entities.Flights.Carrier>
+@model OnlineTravel.Domain.Exceptions.PaginatedResult<OnlineTravel.Domain.Entities.Flights.Carrier>
 
 @{
     ViewData["Title"] = "Carriers (Airlines)";
 }
 
-<div class="row g-3 justify-content-between align-items-center mb-4">
-    <div class="col-12 col-lg-auto">
-        <h1 class="h3 fw-bold text-dark mb-1">Carriers</h1>
-        <p class="text-muted small mb-0">@Model.Count() airlines registered in the system.</p>
-    </div>
-    <div class="col-12 col-lg-auto d-flex gap-2">
-        <a asp-action="Index" class="btn btn-white shadow-sm">
-            <i class="fas fa-arrow-left me-2 text-muted"></i>Back to Flights
-        </a>
-        <a asp-action="CreateCarrier" class="btn btn-primary shadow-sm">
-            <i class="fas fa-plus me-2"></i>Add Carrier
-        </a>
-    </div>
-</div>
+<div class="container-fluid py-4">
+    <!-- Authority Header -->
+    <partial name="_AdminPageHeader" model='new AdminPageHeaderViewModel {
+        Title = "Airline",
+        TitleSuffix = "Carriers",
+        IconClass = "fas fa-plane",
+        IconBgClass = "bg-primary",
+        StatusText = "OPS MONITORING",
+        StatusIconClass = "fas fa-broadcast-tower",
+        BadgeText = $"TOTAL: {Model.TotalCount} CARRIERS",
+        Breadcrumbs = new List<BreadcrumbItem> {
+            new BreadcrumbItem { Text = "Flights", Controller = "Flights", Action = "Index" },
+            new BreadcrumbItem { Text = "Carriers", IsActive = true }
+        },
+        ShowSearch = false,
+        ActionButtons = new List<ActionButtonViewModel> {
+            new ActionButtonViewModel { 
+                Text = "New Carrier", 
+                IconClass = "fas fa-plus-circle", 
+                Action = "CreateCarrier", 
+                Class = "btn-premium-dark" 
+            }
+        }
+    }' />
 
 @if (TempData["Success"] != null)
 {
@@ -28,7 +38,7 @@
 }
 
 <div class="row g-3">
-    @foreach (var carrier in Model)
+    @foreach (var carrier in Model.Items)
     {
         <div class="col-md-6 col-lg-4">
             <div class="card shadow-sm border-0 rounded-4 overflow-hidden h-100">
@@ -72,10 +82,10 @@
                     </div>
                 </div>
                 <div class="card-footer bg-white border-top d-flex justify-content-end gap-2 py-2">
-                    <form asp-action="DeleteCarrier" method="post" class="d-inline" data-confirm="Carrier @carrier.Name will be deleted. Are you sure?" data-confirm-title="Delete Carrier">
+                    <form asp-controller="Flights" asp-action="DeleteCarrier" method="post" class="d-inline" data-confirm="Carrier @carrier.Name will be deleted. Are you sure?" data-confirm-title="Delete Carrier">
                         <input type="hidden" name="id" value="@carrier.Id" />
-                        <button type="submit" class="btn btn-sm btn-icon btn-hover-danger" title="Delete">
-                            <i class="fas fa-trash text-muted"></i>
+                        <button type="submit" class="btn btn-icon-soft btn-soft-danger" title="Delete">
+                            <i class="fas fa-trash"></i>
                         </button>
                     </form>
                 </div>
@@ -84,7 +94,7 @@
     }
 </div>
 
-@if (!Model.Any())
+@if (!Model.Items.Any())
 {
     <div class="card shadow-sm border-0 rounded-4 overflow-hidden mt-3">
         <div class="card-body text-center py-5">
@@ -94,12 +104,14 @@
     </div>
 }
 
-<style>
-    .btn-white { background-color: #fff; border: 1px solid #e3e6f0; color: #6e707e; }
-    .btn-white:hover { background-color: #f8f9fc; }
-    .x-small { font-size: 0.75rem; }
-    .bg-primary-light { background-color: rgba(78, 115, 223, 0.1); }
-    .bg-success-light { background-color: rgba(28, 200, 138, 0.1); }
-    .bg-danger-light { background-color: rgba(231, 74, 59, 0.1); }
-    .btn-hover-danger:hover i { color: #e74a3b !important; }
-</style>
+@if (Model.TotalPages >= 1)
+{
+    <div class="mt-4">
+        <partial name="_Pagination" model="@PaginationViewModel.Create(Model, "Carriers", "Flights")" />
+    </div>
+}
+</div>
+
+
+
+

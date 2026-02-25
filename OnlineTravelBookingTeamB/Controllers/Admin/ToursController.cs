@@ -35,9 +35,9 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
 
         [HttpGet]
         [Route("")]
-        public async Task<IActionResult> Index(int pageIndex = 1, int pageSize = 20)
+        public async Task<IActionResult> Index(string? search = null, int pageIndex = 1, int pageSize = 5)
         {
-            var query = new GetAllToursQuery(pageIndex, pageSize, null, null, null, null, null, null, null, null, null, null);
+            var query = new GetAllToursQuery(pageIndex, pageSize, search, null, null, null, null, null, null, null, null, null);
             var result = await _mediator.Send(query);
 
             var categories = await _context.Categories
@@ -45,8 +45,9 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
                 .AsNoTracking()
                 .ToListAsync();
             ViewBag.Categories = new SelectList(categories, "Id", "Title");
+            ViewBag.SearchTerm = search;
 
-            return View("~/Views/Admin/Tours/Tours/Index.cshtml", result.Data);
+            return View("~/Views/Admin/Tours/Tours/Index.cshtml", result);
         }
 
         [HttpGet("Create")]

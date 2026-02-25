@@ -1,149 +1,273 @@
 @model OnlineTravelBookingTeamB.Models.ManageFlightViewModel
 @{
-    ViewData["Title"] = $"Manage Flight - {Model.Flight.FlightNumber}";
+    ViewData["Title"] = $"Flight Admin - {Model.Flight.FlightNumber}";
     var flight = Model.Flight;
     var duration = flight.Schedule.End - flight.Schedule.Start;
 }
 
-<div class="admin-container">
-    <div class="container py-5">
-        <!-- Header -->
-        <div class="d-flex justify-content-between align-items-end mb-5 pb-4 border-bottom">
-            <div>
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb mb-2">
-                        <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index">Admin</a></li>
-                        <li class="breadcrumb-item"><a asp-action="Index">Flights</a></li>
-                        <li class="breadcrumb-item active">@flight.FlightNumber</li>
-                    </ol>
-                </nav>
-                <div class="d-flex align-items-center gap-3">
-                    <h1 class="fw-bold mb-0">@flight.FlightNumber</h1>
-                    <span class="badge bg-primary-soft text-primary px-3 rounded-pill">Flight Active</span>
+<div class="container-fluid py-4">
+    <!-- Immersive Header -->
+    <div class="row g-3 justify-content-between align-items-center mb-4">
+        <div class="col-12 col-lg-auto">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index" class="text-decoration-none text-muted small">Admin</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none text-muted small">Flights</a></li>
+                    <li class="breadcrumb-item active small">@flight.FlightNumber</li>
+                </ol>
+            </nav>
+            <div class="d-flex align-items-center gap-3">
+                <div class="icon-square bg-primary text-white rounded-3 shadow-sm" style="width: 48px; height: 48px;">
+                    <i class="fas fa-plane-departure fs-5"></i>
+                </div>
+                <div>
+                    <h1 class="h3 fw-bold text-dark mb-0">Flight @flight.FlightNumber</h1>
+                    <div class="d-flex align-items-center gap-2 mt-1">
+                        <span class="badge bg-soft-primary text-primary rounded-pill px-3 fw-bold x-small">
+                            <i class="fas fa-signal me-1"></i> ACTIVE SECTOR
+                        </span>
+                        <span class="text-muted small">@(flight.Carrier?.Name ?? "General Aviation")</span>
+                    </div>
                 </div>
             </div>
+        </div>
+        <div class="col-12 col-lg-auto">
             <div class="d-flex gap-2">
-                <a asp-action="Index" class="btn btn-outline-secondary px-4 rounded-3 text-dark border-light shadow-sm bg-white">
-                    <i class="fas fa-arrow-left me-2"></i>Back
+                <a asp-action="Index" class="btn btn-white shadow-sm border py-2 px-3 rounded-3">
+                    <i class="fas fa-arrow-left me-2 text-muted"></i> Sector List
                 </a>
-                <a asp-action="Edit" asp-route-id="@flight.Id" class="btn btn-primary px-4 rounded-3 shadow-sm">
-                    <i class="fas fa-cog me-2"></i>Config
+                <a asp-action="Edit" asp-route-id="@flight.Id" class="btn btn-primary shadow-sm py-2 px-4 rounded-3">
+                    <i class="fas fa-sliders-h me-2"></i> Configure Sector
                 </a>
             </div>
         </div>
+    </div>
 
-        @if (TempData["Success"] != null)
-        {
-            <div class="alert alert-success border-0 shadow-sm rounded-3 mb-4 d-flex align-items-center p-3">
-                <i class="fas fa-check-circle me-3 fs-4 text-success"></i>
-                <div class="fw-medium">@TempData["Success"]</div>
-                <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success border-0 shadow-sm rounded-4 mb-4 d-flex align-items-center p-3 animate__animated animate__fadeIn">
+            <div class="icon-square bg-success text-white me-3 rounded-circle" style="width: 38px; height: 38px;">
+                <i class="fas fa-check"></i>
             </div>
-        }
+            <div class="fw-medium">@TempData["Success"]</div>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+        </div>
+    }
 
-        <!-- Route Card -->
-        <div class="card border rounded-4 shadow-sm bg-white mb-5">
-            <div class="card-body p-4 p-md-5">
-                <div class="row align-items-center">
-                    <div class="col-md-4 text-center text-md-start">
-                        <h2 class="fw-black display-6 mb-0">@flight.OriginAirport?.Code?.Value</h2>
-                        <div class="fw-bold text-muted small">@flight.OriginAirport?.Name</div>
-                        <div class="mt-3">
-                            <span class="fw-bold fs-5">@flight.Schedule.Start.ToString("HH:mm")</span>
-                            <span class="ms-2 text-muted">@flight.Schedule.Start.ToString("MMM dd")</span>
+    <!-- Digital Boarding Sector Card -->
+    <div class="card border-0 shadow-lg rounded-5 overflow-hidden mb-5 flight-card-premium">
+        <div class="card-body p-4 py-md-4 px-md-5 position-relative">
+            <!-- Background Decorative Plane -->
+            <i class="fas fa-plane position-absolute end-0 top-50 translate-middle-y" style="font-size: 220px; transform: rotate(-45deg); margin-right: -80px; color: rgba(255,255,255,0.02); pointer-events: none; z-index: 0;"></i>
+            
+            <div class="row align-items-center position-relative text-white" style="z-index: 1;">
+                <!-- Departure Station -->
+                <div class="col-md-4 text-center text-md-start mb-3 mb-md-0">
+                    <div class="d-flex flex-column">
+                        <div class="d-flex align-items-center gap-2 mb-1 opacity-50">
+                             <i class="fas fa-plane-departure x-small"></i>
+                             <span class="text-uppercase ls-lg small fw-bold">Departure</span>
+                        </div>
+                        <h2 class="display-4 fw-black mb-0">@flight.OriginAirport?.Code?.Value</h2>
+                        <p class="small mb-2 opacity-75 fw-medium">@flight.OriginAirport?.Name</p>
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="h5 fw-bold mb-0">@flight.Schedule.Start.ToString("HH:mm")</span>
+                            <span class="glass-badge py-1 px-3">@flight.Schedule.Start.ToString("MMM dd, yyyy")</span>
                         </div>
                     </div>
-                    <div class="col-md-4 text-center py-4 py-md-0">
-                        <div class="d-flex flex-column align-items-center">
-                            <span class="badge bg-light text-dark rounded-pill mb-2 px-3 fw-bold">@((int)duration.TotalHours)h @(duration.Minutes)m</span>
-                            <div class="w-100 position-relative d-flex align-items-center">
-                                <hr class="w-100 m-0 border-2">
-                                <i class="fas fa-plane text-primary position-absolute start-50 top-50 translate-middle bg-white px-3"></i>
+                </div>
+
+                <!-- Flight Path Visualization -->
+                <div class="col-md-4 text-center py-3 py-md-0">
+                    <div class="d-flex flex-column align-items-center">
+                        <div class="glass-pill-badge px-3 py-1 mb-3">
+                            <i class="fas fa-clock me-2 text-primary-light small"></i>@((int)duration.TotalHours)h @(duration.Minutes)m
+                        </div>
+                        <div class="flight-path-viz w-100 px-4 position-relative" style="height: 30px;">
+                            <div class="path-line" style="margin: 15px auto;"></div>
+                            <div class="path-plane">
+                                <i class="fas fa-plane"></i>
                             </div>
-                            <span class="text-muted x-small fw-bold mt-2">DUR_TOTAL</span>
+                        </div>
+                        <div class="mt-3 d-flex flex-column align-items-center">
+                            <span class="badge bg-white bg-opacity-10 text-uppercase ls-md px-3 py-1 x-small fw-bold">Non-Stop</span>
+                            <span class="x-small opacity-50 mt-1">@flight.FlightNumber</span>
                         </div>
                     </div>
-                    <div class="col-md-4 text-center text-md-end">
-                        <h2 class="fw-black display-6 mb-0">@flight.DestinationAirport?.Code?.Value</h2>
-                        <div class="fw-bold text-muted small">@flight.DestinationAirport?.Name</div>
-                        <div class="mt-3">
-                            <span class="fw-bold fs-5">@flight.Schedule.End.ToString("HH:mm")</span>
-                            <span class="ms-2 text-muted">@flight.Schedule.End.ToString("MMM dd")</span>
+                </div>
+
+                <!-- Arrival Station -->
+                <div class="col-md-4 text-center text-md-end">
+                    <div class="d-flex flex-column align-items-center align-items-md-end">
+                        <div class="d-flex align-items-center gap-2 mb-1 opacity-50">
+                             <span class="text-uppercase ls-lg small fw-bold">Arrival</span>
+                             <i class="fas fa-plane-arrival x-small"></i>
+                        </div>
+                        <h2 class="display-4 fw-black mb-0">@flight.DestinationAirport?.Code?.Value</h2>
+                        <p class="small mb-2 opacity-75 fw-medium">@flight.DestinationAirport?.Name</p>
+                        <div class="d-flex align-items-center justify-content-center justify-content-md-end gap-3">
+                            <span class="glass-badge py-1 px-3">@flight.Schedule.End.ToString("MMM dd, yyyy")</span>
+                            <span class="h5 fw-bold mb-0">@flight.Schedule.End.ToString("HH:mm")</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        
+        <!-- High-Information Footer Dash -->
+        <div class="card-footer bg-black bg-opacity-20 py-3 px-5 border-0">
+            <div class="row g-3 text-center text-md-start text-white">
+                <div class="col-6 col-md-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="icon-circle-glass" style="width: 32px; height: 32px;"><i class="fas fa-door-open fs-6"></i></div>
+                        <div>
+                            <span class="meta-label">Gate</span>
+                            <span class="meta-value" style="font-size: 0.9rem;">@(flight.Metadata?.Gate ?? "D12")</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="icon-circle-glass" style="width: 32px; height: 32px;"><i class="fas fa-building fs-6"></i></div>
+                        <div>
+                            <span class="meta-label">Terminal</span>
+                            <span class="meta-value" style="font-size: 0.9rem;">T@(flight.Metadata?.Terminal ?? "02")</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="icon-circle-glass" style="width: 32px; height: 32px;"><i class="fas fa-shuttle-van fs-6"></i></div>
+                        <div>
+                            <span class="meta-label">Aircraft</span>
+                            <span class="meta-value text-truncate d-block" style="max-width: 100px; font-size: 0.9rem;">@(flight.Metadata?.AircraftType ?? "B737-800")</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="icon-circle-glass" style="width: 32px; height: 32px;"><i class="fas fa-id-card fs-6"></i></div>
+                        <div>
+                            <span class="meta-label">Operator</span>
+                            <span class="meta-value" style="font-size: 0.9rem;">@flight.Carrier?.Code?.Value</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        <div class="row g-5">
-            <div class="col-lg-8">
-                <!-- Tabbed Management -->
-                <ul class="nav nav-tabs border-0 bg-light p-1 rounded-3 mb-4" role="tablist">
-                    <li class="nav-item flex-fill">
-                        <button class="nav-link active w-100 rounded-2 fw-bold" data-bs-toggle="tab" data-bs-target="#seats">Cabin & Seats</button>
+    <!-- Management Deck -->
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="p-1 bg-soft-light rounded-4 mb-4 d-inline-flex border">
+                <ul class="nav nav-pills custom-pills" role="tablist">
+                    <li class="nav-item">
+                        <button class="nav-link active px-4 py-2 rounded-3 fw-bold" data-bs-toggle="tab" data-bs-target="#seats">
+                             <i class="fas fa-couch me-2 text-primary"></i> Configuration
+                        </button>
                     </li>
-                    <li class="nav-item flex-fill">
-                        <button class="nav-link w-100 rounded-2 fw-bold" data-bs-toggle="tab" data-bs-target="#fares">Fares & Pricing</button>
+                    <li class="nav-item">
+                        <button class="nav-link px-4 py-2 rounded-3 fw-bold" data-bs-toggle="tab" data-bs-target="#fares">
+                            <i class="fas fa-ticket-alt me-2 text-success"></i> Fare Management
+                        </button>
                     </li>
                 </ul>
+            </div>
 
-                <div class="tab-content">
-                    <div class="tab-pane fade show active" id="seats">
-                        <div class="d-flex justify-content-between align-items-center mb-4 ps-1">
-                            <h4 class="fw-bold mb-0">Seat Categories</h4>
-                            <button class="btn btn-dark btn-sm rounded-2 px-3 fw-bold" data-bs-toggle="modal" data-bs-target="#addSeatModal">
-                                Add Cabin
-                            </button>
+            <div class="tab-content">
+                <!-- Cabin Config -->
+                <div class="tab-pane fade show active" id="seats">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h4 class="fw-bold mb-0 text-dark">Cabin & Row Setup</h4>
+                            <p class="text-muted small mb-0">Configure seat layouts and service class surcharges.</p>
                         </div>
-                        <div class="row g-3">
-                            @foreach (var seat in flight.Seats)
-                            {
-                                <div class="col-md-6">
-                                    <div class="card border rounded-4 bg-white p-4 h-100">
-                                        <div class="d-flex justify-content-between mb-3">
-                                            <h6 class="fw-bold mb-0">@seat.CabinClass</h6>
-                                            <form asp-action="DeleteSeat" asp-route-id="@seat.Id" asp-route-flightId="@flight.Id" method="post" data-confirm="Are you sure you want to delete this seat class?" data-confirm-title="Delete Seats">
-                                                <button type="submit" class="btn-clean text-danger"><i class="fas fa-trash-alt"></i></button>
+                        <button class="btn btn-dark btn-sm rounded-3 px-3 shadow-sm" data-bs-toggle="modal" data-bs-target="#addSeatModal">
+                            <i class="fas fa-plus me-1"></i> Add Cabin Class
+                        </button>
+                    </div>
+                    <div class="row g-4">
+                        @foreach (var seat in flight.Seats)
+                        {
+                            <div class="col-md-6">
+                                <div class="card border-0 shadow-sm rounded-4 h-100 hover-lift bg-white">
+                                    <div class="card-body p-4">
+                                        <div class="d-flex justify-content-between align-items-start mb-3">
+                                            <div>
+                                                <span class="badge @(seat.CabinClass.ToString().Contains("Business") ? "bg-soft-warning text-warning" : "bg-soft-primary text-primary") rounded-pill px-3 mb-2 fw-bold x-small">@seat.CabinClass.ToString().ToUpper()</span>
+                                                <h5 class="fw-bold mb-0">Rows @seat.SeatLabel</h5>
+                                            </div>
+                                            <form asp-action="DeleteSeat" asp-route-id="@seat.Id" asp-route-flightId="@flight.Id" method="post" data-confirm="Delete this cabin configuration?">
+                                                <button type="submit" class="btn btn-icon-soft btn-soft-danger">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
                                             </form>
                                         </div>
-                                        <div class="mb-3">
-                                            <span class="badge bg-light text-muted border px-2">Rows: @seat.SeatLabel</span>
+                                        <div class="d-flex align-items-center gap-3 mb-3 bg-light p-2 rounded-3">
+                                            <div class="icon-circle bg-white text-primary shadow-sm small"> <i class="fas fa-couch"></i></div>
+                                            <span class="text-muted small">Standard seat pitch with premium amenities.</span>
                                         </div>
-                                        <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
-                                            <span class="small text-muted">Upcharge:</span>
-                                            <span class="fw-bold @(seat.ExtraCharge?.Amount > 0 ? "text-success" : "text-muted")">@(seat.ExtraCharge?.Amount > 0 ? $"+${seat.ExtraCharge.Amount:N0}" : "FREE")</span>
+                                        <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-auto">
+                                            <span class="text-muted x-small fw-bold text-uppercase ls-md">SURCHARGE</span>
+                                            <div class="fw-black fs-5 @(seat.ExtraCharge?.Amount > 0 ? "text-primary" : "text-muted")">
+                                                @(seat.ExtraCharge?.Amount > 0 ? $"+${seat.ExtraCharge.Amount:N0}" : "NO CHARGE")
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            }
-                        </div>
+                            </div>
+                        }
                     </div>
+                </div>
 
-                    <div class="tab-pane fade" id="fares">
-                        <div class="d-flex justify-content-between align-items-center mb-4 ps-1">
-                            <h4 class="fw-bold mb-0">Fare Classes</h4>
-                            <button class="btn btn-primary btn-sm rounded-2 px-3 fw-bold" data-bs-toggle="modal" data-bs-target="#addFareModal">
-                                Release Fare
-                            </button>
+                <!-- Fare Desk -->
+                <div class="tab-pane fade" id="fares">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h4 class="fw-bold mb-0 text-dark">Fare Inventory Control</h4>
+                            <p class="text-muted small mb-0">Manage pricing tiers and seat availability batches.</p>
                         </div>
-                        <div class="table-card border rounded-4 overflow-hidden bg-white">
+                        <button class="btn btn-primary btn-sm rounded-3 px-3 shadow-sm" data-bs-toggle="modal" data-bs-target="#addFareModal">
+                            <i class="fas fa-bolt me-1"></i> Release Price Node
+                        </button>
+                    </div>
+                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+                        <div class="table-responsive">
                             <table class="table table-hover align-middle mb-0">
-                                <thead class="bg-light">
+                                <thead class="bg-light text-muted small text-uppercase fw-bold">
                                     <tr>
-                                        <th class="ps-4">Price</th>
-                                        <th>Inventory</th>
-                                        <th class="text-end pe-4">Actions</th>
+                                        <th class="ps-4 py-3">Point of Sale (Base)</th>
+                                        <th class="py-3">Current Inventory</th>
+                                        <th class="py-3">Release Date</th>
+                                        <th class="pe-4 py-3 text-end">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach (var fare in flight.Fares)
                                     {
                                         <tr>
-                                            <td class="ps-4 fw-bold fs-5 text-dark">$@fare.BasePrice?.Amount.ToString("N2")</td>
-                                            <td><span class="badge bg-primary-soft text-primary px-3 rounded-pill">@fare.SeatsAvailable Available</span></td>
-                                            <td class="text-end pe-4">
-                                                <form asp-action="DeleteFare" asp-route-id="@fare.Id" asp-route-flightId="@flight.Id" method="post" data-confirm="Are you sure you want to delete this fare class?" data-confirm-title="Delete Fare">
-                                                    <button type="submit" class="btn-clean text-danger"><i class="fas fa-trash"></i></button>
+                                            <td class="ps-4">
+                                                <div class="fw-black fs-4 text-dark mb-0">$@fare.BasePrice?.Amount.ToString("N2")</div>
+                                                <span class="x-small text-muted fw-bold">BASE TICKET VALUE</span>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex flex-column" style="max-width: 140px;">
+                                                    <div class="d-flex justify-content-between mb-1">
+                                                        <span class="x-small fw-bold text-muted">@fare.SeatsAvailable Seats</span>
+                                                        <span class="x-small fw-bold text-success">@((int)(fare.SeatsAvailable * 0.75)) Sold</span>
+                                                    </div>
+                                                    <div class="progress" style="height: 6px;">
+                                                        <div class="progress-bar bg-success" style="width: 75%"></div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td><span class="text-muted small">@DateTime.Now.ToString("MMM dd, yyyy")</span></td>
+                                            <td class="pe-4 text-end">
+                                                <form asp-action="DeleteFare" asp-route-id="@fare.Id" asp-route-flightId="@flight.Id" method="post" data-confirm="Void this fare release?">
+                                                    <button type="submit" class="btn btn-icon-soft text-danger">
+                                                        <i class="fas fa-times-circle fs-5"></i>
+                                                    </button>
                                                 </form>
                                             </td>
                                         </tr>
@@ -154,50 +278,78 @@
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div class="col-lg-4">
-                <div class="card border rounded-4 p-4 bg-white mb-4">
-                    <h6 class="fw-bold text-uppercase x-small text-muted mb-4">Operational Meta</h6>
-                    
-                    <div class="mb-3">
-                        <label class="x-small fw-bold text-muted d-block mb-1">Carrier Provider</label>
-                        <div class="d-flex align-items-center">
-                            @if (!string.IsNullOrEmpty(flight.Carrier?.Logo)) {
-                                <img src="@flight.Carrier.Logo" alt="@flight.Carrier.Name" class="me-2" style="height: 20px;" />
-                            }
-                            <span class="fw-bold">@flight.Carrier?.Name</span>
-                        </div>
+        <div class="col-lg-4">
+            <!-- Provisioning Info -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
+                <h6 class="fw-bold text-uppercase x-small text-muted mb-4 ls-lg">Service Provisioning</h6>
+                
+                <div class="d-flex align-items-center mb-4 p-3 bg-light rounded-4">
+                    <div class="icon-square bg-white shadow-sm text-primary rounded-3 me-3" style="width: 50px; height: 50px;">
+                        @if (!string.IsNullOrEmpty(flight.Carrier?.Logo)) {
+                            <img src="@flight.Carrier.Logo" alt="@flight.Carrier.Name" style="width: 32px; filter: grayscale(1) opacity(0.5);" />
+                        } else {
+                            <i class="fas fa-building"></i>
+                        }
                     </div>
-
-                    <div class="mb-3">
-                        <label class="x-small fw-bold text-muted d-block mb-1">Aircraft</label>
-                        <span class="fw-bold">@(flight.Metadata?.AircraftType ?? "N/A")</span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="x-small fw-bold text-muted d-block mb-1">Gate / Terminal</label>
-                        <span class="fw-bold">T@(flight.Metadata?.Terminal ?? "1") / Gate @(flight.Metadata?.Gate ?? "A")</span>
-                    </div>
-
-                    <hr class="my-4">
-
-                    <div class="mb-3 d-flex justify-content-between align-items-center">
-                        <span class="small fw-bold text-muted">Refundable:</span>
-                        <span class="badge @(flight.Refundable ? "bg-success" : "bg-danger") rounded-pill">@(flight.Refundable ? "YES" : "NO")</span>
+                    <div>
+                        <p class="text-muted x-small fw-bold text-uppercase mb-0">Primary Operator</p>
+                        <p class="fw-bold text-dark mb-0">@flight.Carrier?.Name</p>
                     </div>
                 </div>
 
-                <div class="card border-0 rounded-4 p-4 bg-primary text-white shadow-sm">
-                    <h6 class="fw-bold mb-3 x-small text-uppercase">Baggage Rules</h6>
-                    <ul class="list-unstyled mb-0">
-                        @if (flight.BaggageRules != null)
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="p-3 bg-soft-light rounded-4 border hover-lift">
+                            <i class="fas fa-undo-alt text-primary mb-2 shadow-sm bg-white p-2 rounded-circle" style="width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center;"></i>
+                            <p class="x-small text-muted fw-bold text-uppercase mb-1">Refunds</p>
+                            <span class="badge @(flight.Refundable ? "bg-success" : "bg-danger") px-2 x-small">@(flight.Refundable ? "ALLOWED" : "RESTRICTED")</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 bg-soft-light rounded-4 border hover-lift">
+                            <i class="fas fa-utensils text-success mb-2 shadow-sm bg-white p-2 rounded-circle" style="width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center;"></i>
+                            <p class="x-small text-muted fw-bold text-uppercase mb-1">Meals</p>
+                            <span class="fw-bold small text-dark">Included</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Luggage Logic -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-dark text-white overflow-hidden position-relative">
+                <i class="fas fa-briefcase position-absolute end-0 bottom-0 opacity-10 m-3" style="font-size: 80px;"></i>
+                <h6 class="fw-bold mb-3 x-small text-uppercase ls-md opacity-75">Sector Baggage Rules</h6>
+                <div class="luggage-grid">
+                    @if (flight.BaggageRules != null && flight.BaggageRules.Any())
+                    {
+                        @foreach (var rule in flight.BaggageRules)
                         {
-                            @foreach (var rule in flight.BaggageRules)
-                            {
-                                <li class="small mb-1"><i class="fas fa-check-circle me-2 opacity-50"></i>@rule</li>
-                            }
+                            <div class="d-flex align-items-start mb-2 bg-white bg-opacity-10 p-2 rounded-3">
+                                <i class="fas fa-check-circle me-2 mt-1 fs-6 text-primary-light"></i>
+                                <span class="small fw-medium">@rule</span>
+                            </div>
                         }
-                    </ul>
+                    } else {
+                        <p class="small opacity-50 italic mb-0">No specific baggage rules configured for this sector.</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Performance Advisory -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border-start border-4 border-success">
+                <h6 class="fw-bold mb-3 x-small text-uppercase ls-md text-muted">Aviation Performance</h6>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="small text-muted">Yield Variance</span>
+                    <span class="small text-success fw-bold"><i class="fas fa-trending-up me-1"></i>+4.2%</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="small text-muted">Load Factor</span>
+                    <span class="small text-dark fw-bold">88.5%</span>
+                </div>
+                <div class="pt-2 border-top">
+                    <span class="badge bg-soft-success text-success fw-bold w-100 py-2">OPTIMAL REVENUE STATUS</span>
                 </div>
             </div>
         </div>
@@ -207,40 +359,41 @@
 <!-- Modals -->
 <div class="modal fade" id="addSeatModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg rounded-4">
-            <div class="modal-header">
-                <h5 class="modal-title fw-bold">New Cabin Config</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <div class="modal-content border-0 shadow-lg rounded-5 overflow-hidden">
+            <div class="modal-header bg-dark text-white p-4 border-0">
+                <h5 class="modal-title fw-bold">Sector Configuration</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <form asp-action="AddSeat" method="post">
                 <input type="hidden" asp-for="SeatForm.FlightId" value="@flight.Id" />
-                <div class="modal-body p-4">
-                    <div class="mb-3">
-                         <label class="form-label small fw-bold">Row Label</label>
-                         <input asp-for="SeatForm.SeatLabel" class="form-control" placeholder="e.g. 1-10" required />
+                <div class="modal-body p-4 bg-white">
+                    <div class="mb-4">
+                        <label class="form-label x-small fw-bold text-muted text-uppercase">Row Allocation</label>
+                        <input asp-for="SeatForm.SeatLabel" class="form-control border-0 bg-light py-2 rounded-3" placeholder="e.g. 1-12 or A-F" required />
                     </div>
-                    <div class="row g-3 mb-3">
+                    <div class="row g-3 mb-4">
                         <div class="col-md-6">
-                            <label class="form-label small fw-bold">Class</label>
-                            <select asp-for="SeatForm.CabinClass" class="form-select">
-                                <option value="Economy">Economy</option>
-                                <option value="Business">Business</option>
-                                <option value="FirstClass">First Class</option>
+                            <label class="form-label x-small fw-bold text-muted text-uppercase">Cabin Grade</label>
+                            <select asp-for="SeatForm.CabinClass" class="form-select border-0 bg-light py-2 rounded-3">
+                                <option value="Economy">Economy Saver</option>
+                                <option value="Business">Executive Business</option>
+                                <option value="First">Premium First</option>
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label small fw-bold">Charge ($)</label>
-                            <input name="SeatForm.ExtraCharge" type="number" step="0.01" class="form-control" value="0.00" />
+                            <label class="form-label x-small fw-bold text-muted text-uppercase">Price Loading ($)</label>
+                            <input asp-for="SeatForm.ExtraCharge" type="number" step="0.01" class="form-control border-0 bg-light py-2 rounded-3" value="0.00" />
                         </div>
                     </div>
-                    <div>
-                        <label class="form-label small fw-bold">Features (Comma Sep)</label>
-                        <input name="SeatForm.SeatFeaturesText" class="form-control" placeholder="WiFi, Window" />
+                    <div class="mb-0">
+                        <label class="form-label x-small fw-bold text-muted text-uppercase">Seat Features</label>
+                        <input asp-for="SeatForm.SeatFeaturesText" class="form-control border-0 bg-light py-2 rounded-3" placeholder="e.g. Extra Legroom, Window, WiFi" />
+                        <div class="x-small text-muted mt-1">Separate features with commas</div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-dark px-4">Save Config</button>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-light rounded-3 px-4" data-bs-dismiss="modal">Discard</button>
+                    <button type="submit" class="btn btn-dark rounded-3 px-4 fw-bold">Commit Layout</button>
                 </div>
             </form>
         </div>
@@ -248,48 +401,31 @@
 </div>
 
 <div class="modal fade" id="addFareModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg rounded-4">
-            <div class="modal-header">
-                <h5 class="modal-title fw-bold">Price Release</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content border-0 shadow-lg rounded-5 overflow-hidden">
+            <div class="modal-header bg-primary text-white p-3 border-0 text-center">
+                <h6 class="modal-title fw-bold w-100">Batch Fare Release</h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <form asp-action="AddFare" method="post">
                 <input type="hidden" asp-for="FareForm.FlightId" value="@flight.Id" />
-                <div class="modal-body p-4">
-                    <div class="row g-3">
-                        <div class="col-md-8">
-                            <label class="form-label small fw-bold">Price</label>
-                            <input name="FareForm.BasePrice" type="number" step="0.01" class="form-control" required />
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label small fw-bold">Currency</label>
-                            <input name="FareForm.Currency" class="form-control" value="USD" readonly />
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label small fw-bold">Quantity</label>
-                            <input name="FareForm.SeatsAvailable" type="number" class="form-control" required />
-                        </div>
+                <div class="modal-body p-4 text-center">
+                    <div class="mb-4">
+                        <label class="form-label x-small fw-bold text-muted text-uppercase mb-3">Base Price (USD)</label>
+                        <input name="FareForm.BasePrice" type="number" step="0.01" class="form-control border-0 bg-light text-center fs-2 fw-black py-2 rounded-3" placeholder="00.00" required />
+                    </div>
+                    <div class="mb-0">
+                        <label class="form-label x-small fw-bold text-muted text-uppercase mb-2">Inventory Qty</label>
+                        <input name="FareForm.SeatsAvailable" type="number" class="form-control border-0 bg-light py-2 text-center rounded-3 fs-5" placeholder="Seats" required />
                     </div>
                 </div>
-                <div class="modal-footer pt-0 border-0">
-                    <button type="submit" class="btn btn-primary w-100 py-3 fw-bold rounded-2">Release Tickets</button>
+                <div class="modal-footer border-0 p-3 pt-0">
+                    <button type="submit" class="btn btn-primary w-100 py-3 fw-black rounded-3 ls-md">DEPLOY NODES</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<style>
-    body { font-family: 'Inter', sans-serif; background-color: #fcfdfe; color: #1a1a1b; }
-    .fw-black { font-weight: 800; letter-spacing: -1px; }
-    .x-small { font-size: 0.73rem; letter-spacing: 0.4px; }
-    .bg-primary-soft { background-color: rgba(0, 102, 255, 0.08); }
-    .rounded-4 { border-radius: 1rem !important; }
-    .nav-tabs .nav-link { border: 0 !important; color: #64748b; padding: 0.8rem; }
-    .nav-tabs .nav-link.active { background-color: #fff !important; color: #000 !important; shadow: 0 1px 3px rgba(0,0,0,0.1); }
-    .btn-clean { background: transparent; border: 0; padding: 0; transition: 0.2s; opacity: 0.7; }
-    .btn-clean:hover { opacity: 1; }
-    .breadcrumb-item a { text-decoration: none; color: #6c757d; font-weight: 500; }
-    .form-control, .form-select { border: 1px solid #e2e8f0; padding: 0.65rem 1rem; border-radius: 0.6rem; font-size: 0.95rem; }
-</style>
+
+

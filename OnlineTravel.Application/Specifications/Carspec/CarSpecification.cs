@@ -31,6 +31,16 @@ namespace OnlineTravel.Application.Specifications.Carspec
             return this;
         }
 
+        public CarSpecification WithSearchTerm(string? searchTerm)
+        {
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                var term = searchTerm.ToLower();
+                Criteria = Criteria.AndAlso(x => x.Make.ToLower().Contains(term) || x.Model.ToLower().Contains(term));
+            }
+            return this;
+        }
+
         public CarSpecification IncludeBrandAndCategory()
         {
             AddIncludes(x => x.Brand);
