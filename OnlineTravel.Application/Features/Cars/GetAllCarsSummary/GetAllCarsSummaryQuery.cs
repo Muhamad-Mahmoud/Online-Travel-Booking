@@ -7,8 +7,9 @@ namespace OnlineTravel.Application.Features.Cars.GetAllCarsSummary;
 
 public sealed record GetAllCarsSummaryQuery(
     int PageIndex = 1,
-    int PageSize = 10,
+    int PageSize = 5,
     Guid? BrandId = null,
     Guid? CategoryId = null,
-    CarCategory? CarType = null
+    CarCategory? CarType = null,
+    string? SearchTerm = null
 ) : IRequest<Result<PaginatedResult<CarSummaryDto>>>;

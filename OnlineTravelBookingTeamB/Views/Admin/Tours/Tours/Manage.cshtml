@@ -1,125 +1,166 @@
 @model OnlineTravelBookingTeamB.Models.ManageTourViewModel
 @{
-    ViewData["Title"] = $"Manage {Model.Tour.Title}";
+    ViewData["Title"] = $"Tour Admin - {Model.Tour.Title}";
     var tour = Model.Tour;
 }
 
-<div class="container-fluid py-4 min-vh-100 bg-light-gradient">
-    <!-- Header -->
-    <div class="row mb-4 align-items-center">
-        <div class="col">
+<div class="container-fluid py-4 tour-admin-portal">
+    <!-- Authority Header -->
+    <div class="row g-3 justify-content-between align-items-center mb-4 px-2">
+        <div class="col-12 col-lg-auto">
             <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-1">
-                    <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index" class="text-primary-soft">Admin</a></li>
-                    <li class="breadcrumb-item"><a asp-action="Index" class="text-primary-soft">Tours</a></li>
-                    <li class="breadcrumb-item active">@tour.Title</li>
+                <ol class="breadcrumb mb-1 text-uppercase ls-md x-small fw-bold opacity-50">
+                    <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index" class="text-decoration-none text-muted small">Admin</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none text-muted small">Tours</a></li>
+                    <li class="breadcrumb-item active small">@tour.Title</li>
                 </ol>
             </nav>
-            <div class="d-flex align-items-center">
-                <h1 class="h2 fw-bold text-dark mb-0">
-                    <i class="fas fa-map-marked-alt text-success me-2"></i>@tour.Title
-                </h1>
-                @if (tour.Recommended)
-                {
-                    <span class="badge bg-warning-light text-warning border border-warning-subtle rounded-pill px-3 ms-3 py-2">
-                        <i class="fas fa-crown me-1"></i>Recommended
-                    </span>
-                }
+            <div class="d-flex align-items-center gap-3">
+                <div class="authority-icon-box bg-success text-white rounded-3 shadow-sm">
+                    <i class="fas fa-map-marked-alt"></i>
+                </div>
+                <div>
+                    <h1 class="h2 fw-black text-dark mb-0 tracking-tight">@tour.Title</h1>
+                    <div class="d-flex align-items-center gap-2 mt-1">
+                        <span class="status-pill status-operational">
+                            <i class="fas fa-circle-notch fa-spin me-1"></i> OPERATIONAL
+                        </span>
+                        <span class="asset-id-tag">REF: @tour.Id.ToString().ToUpper().Substring(0,8)</span>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="col-auto">
-            <a asp-action="Index" class="btn btn-outline-secondary border-0 rounded-pill px-4 bg-white shadow-sm">
-                <i class="fas fa-arrow-left me-2"></i>Back to List
-            </a>
+        <div class="col-12 col-lg-auto">
+            <div class="d-flex gap-2">
+                <a asp-action="Index" class="btn btn-premium-white shadow-sm">
+                    <i class="fas fa-arrow-left me-2 text-muted"></i> Tour Fleet
+                </a>
+                <button class="btn btn-premium-dark shadow-sm" data-bs-toggle="collapse" data-bs-target="#editTourSection">
+                    <i class="fas fa-sliders-h me-2"></i> Mission Control
+                </button>
+            </div>
         </div>
     </div>
 
     @if (TempData["Success"] != null)
     {
-        <div class="alert alert-success border-0 shadow-sm rounded-4 animate__animated animate__fadeInDown mb-4">
-            <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
-            <button type="button" class="btn-close float-end" data-bs-dismiss="alert"></button>
+        <div class="alert alert-premium-success border-0 shadow-sm rounded-4 mb-4 d-flex align-items-center p-3 animate__animated animate__slideInDown">
+            <div class="icon-square bg-success text-white me-3 rounded-circle" style="width: 38px; height: 38px;">
+                <i class="fas fa-check"></i>
+            </div>
+            <div class="fw-bold">@TempData["Success"]</div>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
         </div>
     }
 
-    <div class="row g-4">
-        <!-- Main Content (Left) -->
-        <div class="col-lg-8">
-            <!-- Tour Overview Section -->
-            <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white overflow-hidden">
-                <div class="row g-0">
-                    <div class="col-md-5 position-relative">
-                        <img src="/@(tour.MainImageUrl ?? "images/placeholder-tour.jpg")" class="img-fluid h-100 w-100 object-fit-cover" alt="@tour.Title">
-                        <div class="position-absolute bottom-0 start-0 p-3 bg-dark bg-opacity-50 text-white w-100 backdrop-blur">
-                            <i class="fas fa-calendar-alt me-2"></i>@tour.DurationDays Days / @tour.DurationNights Nights
-                        </div>
-                    </div>
-                    <div class="col-md-7">
-                        <div class="card-body p-4">
-                            <div class="d-flex justify-content-between align-items-start mb-3">
-                                <h5 class="fw-bold text-dark">Adventure Details</h5>
-                                <button class="btn btn-sm btn-outline-primary rounded-pill px-3 border-light shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#editTourSection">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                            </div>
-                            <p class="text-muted small mb-4">@tour.Description</p>
-                            <div class="row g-3">
-                                <div class="col-6">
-                                    <span class="text-muted d-block small">Category</span>
-                                    <span class="fw-bold">@tour.Category</span>
-                                </div>
-                                <div class="col-6">
-                                    <span class="text-muted d-block small">Expected Rating</span>
-                                    <span class="text-warning fw-bold"><i class="fas fa-star me-1"></i>@tour.Rating.ToString("0.0")</span>
-                                </div>
-                                <div class="col-12 mt-3">
-                                    <span class="text-muted d-block small mb-1">Destinations</span>
-                                    <div class="d-flex flex-wrap gap-1">
-                                        <span class="badge bg-light text-dark border rounded-pill px-3">@tour.Location?.City</span>
-                                        <span class="badge bg-light text-dark border rounded-pill px-3">@tour.Location?.Country</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+    <!-- Mission Master Card (Ultra Premium) -->
+    <div class="card border-0 shadow-2xl rounded-5 overflow-hidden mb-5 master-property-card">
+        <div class="card-body p-0">
+            <div class="row g-0">
+                <div class="col-lg-4 position-relative overflow-hidden">
+                    <img src="/@(tour.MainImageUrl ?? "images/placeholder-tour.jpg")" class="h-100 w-100 object-fit-cover property-hero-img" style="min-height: 300px;">
+                    <div class="image-overlay-premium"></div>
+                    <div class="position-absolute bottom-0 start-0 p-4 text-white z-2">
+                        <span class="badge glass-badge rounded-pill px-3 py-1 x-small fw-black mb-2 ls-lg">PRIMARY HUB</span>
+                        <h3 class="fw-black mb-0 text-shadow tracking-tight">Adventure Canvas</h3>
+                        <p class="x-small opacity-75 fw-bold mb-0">High-Resolution Visual Mission Asset</p>
                     </div>
                 </div>
-
-                <div class="collapse border-top" id="editTourSection">
-                    <div class="card-body p-4 bg-light-soft">
-                        <form asp-action="Update" method="post" enctype="multipart/form-data">
-                            <input type="hidden" asp-for="EditForm.TourId" value="@tour.Id" />
-                            <div class="row g-3">
-                                <div class="col-md-12">
-                                    <label class="form-label fw-bold small">Tour Title</label>
-                                    <input asp-for="EditForm.Title" class="form-control rounded-3 border-light shadow-sm" value="@tour.Title" />
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-bold small">Days</label>
-                                    <input asp-for="EditForm.DurationDays" type="number" class="form-control rounded-3 border-light shadow-sm" value="@tour.DurationDays" />
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-bold small">Nights</label>
-                                    <input asp-for="EditForm.DurationNights" type="number" class="form-control rounded-3 border-light shadow-sm" value="@tour.DurationNights" />
-                                </div>
-                                <div class="col-12">
-                                    <label class="form-label fw-bold small">Full Description</label>
-                                    <textarea asp-for="EditForm.Description" class="form-control rounded-3 border-light shadow-sm" rows="5">@tour.Description</textarea>
-                                </div>
-                                <div class="col-12 text-end">
-                                    <button type="submit" class="btn btn-primary rounded-pill px-5">Save Information</button>
-                                </div>
+                <div class="col-lg-8 bg-premium-dark text-white p-4 d-flex flex-column justify-content-center position-relative">
+                    <div class="row g-3 position-relative z-2">
+                        <div class="col-md-6 border-start-premium">
+                            <div class="d-flex justify-content-between align-items-end mb-1">
+                                <p class="text-uppercase ls-lg x-small opacity-50 fw-black mb-0">Engagement Depth</p>
+                                <span class="x-small fw-bold text-primary">@tour.DurationDays Days / @tour.DurationNights Nights</span>
                             </div>
-                        </form>
+                            <h2 class="h1 fw-black mb-0">@tour.Activities?.Count <span class="fs-5 opacity-50 fw-normal">Nodes</span></h2>
+                            <div class="progress-premium mt-2">
+                                <div class="progress-bar-glow" style="width: @(Math.Min(100, (tour.Activities?.Count ?? 0) * 10))%"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 border-start-premium">
+                            <p class="text-uppercase ls-lg x-small opacity-50 fw-black mb-1">Feedback Score</p>
+                            <h2 class="h1 fw-black mb-0">@tour.Rating.ToString("0.0") <span class="fs-5 opacity-50 fw-normal">Avg</span></h2>
+                            <div class="d-flex align-items-center gap-2 mt-2">
+                                <div class="d-flex gap-1 text-warning x-small">
+                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                </div>
+                                <span class="badge bg-white bg-opacity-10 rounded-pill x-small fw-bold py-1"><i class="fas fa-arrow-up me-1 text-success"></i>+5.2%</span>
+                            </div>
+                        </div>
                     </div>
+                    
+                    <div class="mt-4 d-flex flex-wrap gap-2 position-relative z-2">
+                         <div class="glass-pill-premium">
+                             <div class="pill-icon"><i class="fas fa-map-marker-alt"></i></div>
+                             <span>@tour.Location?.City, @tour.Location?.Country</span>
+                         </div>
+                         <div class="glass-pill-premium active">
+                             <div class="pill-icon"><i class="fas fa-tag"></i></div>
+                             <span>@tour.Category Adventure</span>
+                         </div>
+                         @if (tour.Recommended) {
+                            <div class="glass-pill-premium status-recommended">
+                                <div class="pill-icon text-warning"><i class="fas fa-crown"></i></div>
+                                <span class="text-warning fw-black">ELITE STATUS</span>
+                            </div>
+                         }
+                    </div>
+
+                    <!-- Subtle Decorative Glow Background -->
+                    <div class="decorative-glow"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Management Deck -->
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <!-- Edit Panel (Collapsed) -->
+            <div class="collapse mb-4" id="editTourSection">
+                <div class="card border-0 shadow-sm rounded-4 bg-white p-4 border-top border-4 border-primary">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="fw-black mb-0 text-dark"><i class="fas fa-sliders-h me-2 text-primary"></i>Operational Configuration</h5>
+                        <span class="x-small fw-bold text-muted text-uppercase ls-md">SYNC STATUS: NOMINAL</span>
+                    </div>
+                    <form asp-action="Update" method="post" enctype="multipart/form-data">
+                        <input type="hidden" asp-for="EditForm.TourId" value="@tour.Id" />
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="premium-meta-label">MISSION DESIGNATOR</label>
+                                <input asp-for="EditForm.Title" class="form-control premium-control" value="@tour.Title" />
+                            </div>
+                            <div class="col-12">
+                                <label class="premium-meta-label">MISSION BRIEFING</label>
+                                <textarea asp-for="EditForm.Description" class="form-control premium-control" rows="3">@tour.Description</textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="premium-meta-label">DURATION (DAYS)</label>
+                                <input asp-for="EditForm.DurationDays" type="number" class="form-control premium-control" value="@tour.DurationDays" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="premium-meta-label">DURATION (NIGHTS)</label>
+                                <input asp-for="EditForm.DurationNights" type="number" class="form-control premium-control" value="@tour.DurationNights" />
+                            </div>
+                            <div class="col-12 text-end pt-3">
+                                <button type="button" class="btn btn-outline-secondary border-0 fw-bold px-4 me-2" data-bs-toggle="collapse" data-bs-target="#editTourSection">Discard</button>
+                                <button type="submit" class="btn btn-premium-dark px-4 rounded-3 shadow-sm">Commit Mission Update</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
 
-            <!-- Itinerary / Timeline Section -->
+            <!-- Visual Itinerary -->
             <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white">
-                <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
-                    <h5 class="fw-bold text-dark mb-0"><i class="fas fa-hiking text-primary me-2"></i>Itinerary Builder</h5>
-                    <button class="btn btn-sm btn-primary rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#addActivityModal">
-                        <i class="fas fa-plus me-1"></i>Add Activity
+                <div class="card-header bg-white p-4 border-bottom-light d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="fw-black mb-0 text-dark ls-tight">Itinerary Journey</h5>
+                        <p class="text-muted x-small fw-bold mb-0 opacity-75 text-uppercase ls-sm">Sequential mission nodes and exploration nodes.</p>
+                    </div>
+                    <button class="btn btn-premium-dark btn-sm px-3" data-bs-toggle="modal" data-bs-target="#addActivityModal">
+                        <i class="fas fa-plus-circle me-1"></i> Add Adventure Node
                     </button>
                 </div>
                 <div class="card-body p-4">
@@ -128,36 +169,39 @@
                         {
                             @foreach (var activity in tour.Activities)
                             {
-                                <div class="timeline-item pb-4 position-relative">
-                                    <div class="timeline-marker bg-primary"></div>
-                                    <div class="card border-light shadow-none rounded-3 bg-light-soft">
-                                        <div class="card-body p-3">
-                                            <div class="row align-items-center">
-                                                <div class="col-auto">
+                                <div class="timeline-item pb-5 position-relative">
+                                    <div class="timeline-marker bg-primary shadow-sm"></div>
+                                    <div class="card border-0 shadow-sm rounded-4 h-100 hover-lift bg-soft-light overflow-hidden">
+                                        <div class="row g-0 align-items-center">
+                                            <div class="col-auto">
+                                                <div class="p-3">
                                                     @if (!string.IsNullOrEmpty(activity.ImageUrl))
                                                     {
-                                                        <img src="/@activity.ImageUrl" class="rounded-3 shadow-sm" style="width: 60px; height: 60px; object-fit: cover;" />
+                                                        <img src="/@activity.ImageUrl" class="rounded-3 shadow-sm object-fit-cover" style="width: 80px; height: 80px;" />
                                                     }
                                                     else
                                                     {
-                                                        <div class="bg-light rounded-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                                        <div class="bg-white rounded-3 d-flex align-items-center justify-content-center border" style="width: 80px; height: 80px;">
                                                             <i class="fas fa-camera text-muted opacity-25"></i>
                                                         </div>
                                                     }
                                                 </div>
-                                                <div class="col">
-                                                    <h6 class="fw-bold mb-1">@activity.Title</h6>
-                                                    <p class="text-muted small mb-0">@activity.Description</p>
+                                            </div>
+                                            <div class="col">
+                                                <div class="p-3 ps-0">
+                                                    <h6 class="fw-bold mb-1 text-dark">@activity.Title</h6>
+                                                    <p class="text-muted small mb-0 line-clamp-2">@activity.Description</p>
                                                 </div>
-                                                @* 
-                                                <div class="col-auto text-end">
-                                                    <form asp-action="DeleteActivity" asp-route-id="@activity.Id" asp-route-tourId="@tour.Id" method="post" class="d-inline">
-                                                        <button type="submit" class="btn btn-icon-soft text-danger-soft" onclick="return confirm('Remove this activity?')">
-                                                            <i class="fas fa-trash-alt"></i>
-                                                        </button>
-                                                    </form>
+                                            </div>
+                                            <div class="col-auto pe-4">
+                                                <div class="dropdown">
+                                                    <button class="btn btn-icon-soft" data-bs-toggle="dropdown"><i class="fas fa-ellipsis-v"></i></button>
+                                                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm rounded-3">
+                                                        <li><a class="dropdown-item small py-2" href="#"><i class="fas fa-edit me-2 opacity-50"></i>Edit</a></li>
+                                                        <li><hr class="dropdown-divider"></li>
+                                                        <li><a class="dropdown-item small text-danger py-2" href="#"><i class="fas fa-trash-alt me-2 opacity-50"></i>Remove Node</a></li>
+                                                    </ul>
                                                 </div>
-                                                *@
                                             </div>
                                         </div>
                                     </div>
@@ -166,18 +210,25 @@
                         }
                         else
                         {
-                            <div class="text-center py-4 text-muted border border-dashed rounded-4 bg-light-soft">
-                                <p class="mb-0">No activities planned yet. Start building the journey!</p>
+                            <div class="text-center py-5 text-muted border border-dashed rounded-4 bg-soft-light">
+                                <div class="mb-3 opacity-25">
+                                    <i class="fas fa-hiking fa-3x"></i>
+                                </div>
+                                <h6 class="fw-bold text-dark">No activities scheduled</h6>
+                                <p class="small mb-0">Start building the journey by adding your first mission activity.</p>
                             </div>
                         }
                     </div>
                 </div>
             </div>
 
-            <!-- Price Tiers -->
+            <!-- Commercial Inventory Hub -->
             <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white">
-                <div class="card-header bg-transparent border-0 pt-4 px-4">
-                    <h5 class="fw-bold text-dark mb-0"><i class="fas fa-tags text-info me-2"></i>Dynamic Pricing Tiers</h5>
+                <div class="card-header bg-white p-4 border-bottom-light d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="fw-black mb-0 text-dark ls-tight">Commercial Inventory Hub</h5>
+                        <p class="text-muted x-small fw-bold mb-0 opacity-75 text-uppercase ls-sm">Manage availability levels and price points.</p>
+                    </div>
                 </div>
                 <div class="card-body p-4">
                     <div class="row g-3">
@@ -185,25 +236,27 @@
                         {
                             @foreach (var tier in tour.PriceTiers)
                             {
-                                <div class="col-md-4">
-                                    <div class="tier-card p-3 rounded-4 border text-center hover-lift position-relative overflow-hidden">
-                                        <div class="badge bg-info-light text-info rounded-pill px-3 mb-2">@tier.Name</div>
-                                        <h3 class="fw-black text-dark mb-0">$@tier.Price.Amount.ToString("N0")</h3>
-                                        <p class="text-muted small mb-3">per person</p>
-                                        @* 
-                                        <form asp-action="DeletePriceTier" asp-route-id="@tier.Id" asp-route-tourId="@tour.Id" method="post">
-                                            <button type="submit" class="btn btn-sm btn-outline-danger w-100 rounded-pill border-light" onclick="return confirm('Delete tier?')">Delete</button>
-                                        </form>
-                                        *@
+                                <div class="col-md-6 col-xl-4">
+                                    <div class="tier-card p-4 rounded-4 border-0 shadow-sm bg-soft-light position-relative overflow-hidden hover-lift">
+                                        <div class="badge bg-soft-primary text-primary rounded-pill px-3 mb-3 fw-bold x-small">@tier.Name.ToUpper()</div>
+                                        <div class="d-flex align-items-baseline gap-1">
+                                            <span class="h2 fw-black text-dark mb-0">$@tier.Price.Amount.ToString("N0")</span>
+                                            <span class="text-muted x-small fw-bold">/ PP</span>
+                                        </div>
+                                        <hr class="my-3 opacity-10">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="x-small fw-bold text-muted">TIER STATUS</span>
+                                            <span class="badge bg-success rounded-circle p-1"><i class="fas fa-check text-white" style="font-size: 8px;"></i></span>
+                                        </div>
                                     </div>
                                 </div>
                             }
                         }
-                        <div class="col-md-4">
-                            <button class="tier-card p-3 rounded-4 border border-dashed text-center w-100 h-100 bg-light-soft text-muted hover-lift" 
+                        <div class="col-md-6 col-xl-4">
+                            <button class="btn w-100 h-100 p-4 rounded-4 border border-dashed bg-white text-muted hover-lift d-flex flex-column align-items-center justify-content-center" 
                                     data-bs-toggle="modal" data-bs-target="#addPriceTierModal">
-                                <i class="fas fa-plus fa-2x mb-2 opacity-50"></i>
-                                <span class="d-block fw-bold small">New Tier</span>
+                                <i class="fas fa-plus-circle fa-2x mb-2 opacity-25 text-primary"></i>
+                                <span class="fw-bold small">Release New Tier</span>
                             </button>
                         </div>
                     </div>
@@ -211,56 +264,52 @@
             </div>
         </div>
 
-        <!-- Sidebar Content (Right) -->
         <div class="col-lg-4">
-            <!-- Location & Map -->
-            <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white overflow-hidden">
+            <!-- Geospatial Intelligence -->
+            <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white overflow-hidden border-top border-4 border-primary">
                 <div class="card-body p-0">
-                    <div id="tourMap" style="height: 250px; background: #eee;">
-                        <!-- Map loading placeholder -->
-                        <div class="h-100 d-flex align-items-center justify-content-center flex-column text-muted">
-                            <i class="fas fa-map-marked-alt fa-3x mb-2 opacity-25"></i>
-                            <span class="small">Interactive Map View</span>
+                    <div class="map-placeholder" style="height: 220px; background: #0f172a; position: relative;">
+                         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1!2d0!3d0!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTPCsDAwJzAwLjAiTiAwwrAwMCswMC4wIlc!5e0!3m2!1sen!2sus!4v1" width="100%" height="100%" style="border:0; filter: invert(0.95) contrast(1.2) grayscale(0.2); opacity: 0.8;" allowfullscreen="" loading="lazy"></iframe>
+                        <div class="position-absolute bottom-0 start-0 m-3 z-2">
+                             <div class="glass-badge px-3 py-1 rounded-pill blur-bg text-white fw-bold x-small shadow-sm">
+                                <i class="fas fa-compass me-1"></i> COORD: @(tour.Location?.City ?? "GLOBAL")
+                             </div>
                         </div>
                     </div>
                     <div class="p-4">
-                        <h6 class="fw-bold mb-3">Location Details</h6>
-                        <div class="d-flex align-items-center mb-2">
-                            <i class="fas fa-map-pin text-danger me-2"></i>
-                            <span class="small text-dark fw-medium">@tour.Location?.City, @tour.Location?.Country</span>
+                        <h6 class="fw-black text-uppercase x-small text-muted mb-3 ls-lg">Geospatial Meta</h6>
+                        <div class="d-flex align-items-start gap-2 mb-3">
+                            <div class="icon-square-sm bg-soft-primary text-primary rounded-2 p-2"><i class="fas fa-map-pin"></i></div>
+                            <div>
+                                <p class="small fw-black text-dark mb-0">@tour.Location?.City, @tour.Location?.Country</p>
+                                <p class="x-small text-muted mb-0 fw-medium">@(tour.Location?.Street ?? "Primary Adventure Zone")</p>
+                            </div>
                         </div>
-                        <p class="text-muted small mb-0">@tour.Location?.Street</p>
-                        <button class="btn btn-sm btn-light-soft w-100 rounded-pill mt-3 border" data-bs-toggle="modal" data-bs-target="#updateLocationModal">
-                            Update Coordinates
+                        <button class="btn btn-premium-white w-100 rounded-3 py-2 fw-black x-small ls-sm border shadow-sm" data-bs-toggle="modal" data-bs-target="#updateLocationModal">
+                            SHIFT COORDINATES
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Image Gallery -->
+            <!-- Visual Asset Registry -->
             <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white">
                 <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
-                    <h6 class="fw-bold mb-0">Gallery</h6>
-                    <button class="btn btn-sm btn-outline-primary rounded-pill px-3 border-light py-0" data-bs-toggle="modal" data-bs-target="#addImageModal">
+                    <h6 class="fw-black text-uppercase x-small text-muted mb-0 ls-lg">Media Assets</h6>
+                    <button class="btn btn-icon-soft" data-bs-toggle="modal" data-bs-target="#addImageModal">
                         <i class="fas fa-plus small"></i>
                     </button>
                 </div>
-                <div class="card-body p-4">
+                <div class="card-body p-4 pt-2">
                     <div class="row g-2">
                         @if (tour.Images != null && tour.Images.Any())
                         {
                             @foreach (var img in tour.Images)
                             {
                                 <div class="col-4">
-                                    <div class="gallery-item rounded-3 overflow-hidden position-relative">
-                                        <img src="/@img.Url" class="img-fluid object-fit-cover w-100" style="height: 60px;" alt="@img.AltText" />
-                                        <div class="gallery-overlay d-flex align-items-center justify-content-center">
-                                            @* 
-                                            <form asp-action="DeleteTourImage" asp-route-id="@img.Id" asp-route-tourId="@tour.Id" method="post">
-                                                <button type="submit" class="btn text-white p-0"><i class="fas fa-times-circle"></i></button>
-                                            </form>
-                                            *@
-                                        </div>
+                                    <div class="gallery-item rounded-3 overflow-hidden shadow-sm hover-scale position-relative" style="height: 70px;">
+                                        <img src="/@img.Url" class="w-100 h-100 object-fit-cover" alt="@img.AltText" />
+                                        <div class="gallery-overlay"><i class="fas fa-trash-alt text-white small"></i></div>
                                     </div>
                                 </div>
                             }
@@ -268,182 +317,90 @@
                     </div>
                     @if (tour.Images == null || !tour.Images.Any())
                     {
-                        <p class="text-center text-muted small py-3 mb-0">No extra gallery images</p>
+                        <div class="text-center py-4 rounded-3 border border-dashed bg-light opacity-50">
+                             <p class="x-small text-muted mb-0 fw-black text-uppercase ls-sm">No Auxiliary Media</p>
+                        </div>
                     }
                 </div>
             </div>
 
-            <!-- Booking Stats (Placeholder for Premium look) -->
-            <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white">
-                <div class="card-body p-4">
-                    <h6 class="fw-bold mb-3">Performance</h6>
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="progress flex-grow-1 bg-light rounded-pill" style="height: 8px;">
-                            <div class="progress-bar bg-success rounded-pill" style="width: 75%"></div>
-                        </div>
-                        <span class="ms-3 fw-bold small">75%</span>
-                    </div>
-                    <p class="text-muted small mb-0">This tour is in the top 10% of popular choices this season.</p>
+            <!-- Market Advisory -->
+            <div class="card border-0 shadow-sm rounded-4 mb-4 bg-premium-dark text-white overflow-hidden p-4 position-relative">
+                <div class="protocol-bg-glow"></div>
+                <i class="fas fa-chart-line position-absolute end-0 bottom-0 m-2 opacity-10" style="font-size: 80px;"></i>
+                <h6 class="fw-black mb-3 x-small text-uppercase ls-lg opacity-50 position-relative z-1">Market Intelligence</h6>
+                <div class="d-flex align-items-center mb-2 position-relative z-1">
+                    <span class="h4 fw-black mb-0 me-2 tracking-tight">VIP Sector</span>
+                    <span class="badge bg-success rounded-pill x-small fw-black">+12% Yield</span>
                 </div>
+                <div class="progress-premium mb-3 position-relative z-1">
+                    <div class="progress-bar-glow" role="progressbar" style="width: 85%"></div>
+                </div>
+                <p class="x-small opacity-75 mb-0 position-relative z-1 fw-medium mt-3">This adventure sector is performing in the <span class="text-primary fw-black">TOP 5%</span> of global listings.</p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Modal: Add Activity -->
+<!-- Modals -->
 <div class="modal fade" id="addActivityModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow rounded-4">
-            <div class="modal-header border-0 pt-4 px-4">
-                <h5 class="modal-title fw-bold">Plan New Activity</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <div class="modal-content border-0 shadow-lg rounded-5 overflow-hidden">
+            <div class="modal-header bg-dark text-white p-4 border-0">
+                <h5 class="modal-title fw-bold">Create Adventure Node</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <form asp-action="AddActivity" method="post" enctype="multipart/form-data">
                 <input type="hidden" asp-for="ActivityForm.TourId" value="@tour.Id" />
-                <div class="modal-body p-4">
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">Title</label>
-                        <input asp-for="ActivityForm.Title" class="form-control rounded-3" placeholder="e.g. Scuba Diving" required />
+                <div class="modal-body p-4 bg-white">
+                    <div class="mb-4">
+                        <label class="form-label x-small fw-bold text-muted text-uppercase">Node Designation</label>
+                        <input asp-for="ActivityForm.Title" class="form-control border-0 bg-light py-2 rounded-3" placeholder="e.g. Desert Safari Night" required />
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">Description</label>
-                        <textarea asp-for="ActivityForm.Description" class="form-control rounded-3" rows="3"></textarea>
+                    <div class="mb-4">
+                        <label class="form-label x-small fw-bold text-muted text-uppercase">Logistics Briefing</label>
+                        <textarea asp-for="ActivityForm.Description" class="form-control border-0 bg-light py-2 rounded-3" rows="3"></textarea>
                     </div>
                     <div class="mb-0">
-                        <label class="form-label small fw-bold">Main Image</label>
-                        <input asp-for="ActivityForm.Image" type="file" class="form-control rounded-3" />
+                        <label class="form-label x-small fw-bold text-muted text-uppercase">Primary Visual</label>
+                        <input asp-for="ActivityForm.Image" type="file" class="form-control border-0 bg-light py-2 rounded-3" />
                     </div>
                 </div>
-                <div class="modal-footer border-0 pb-4 px-4">
-                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm">Save Activity</button>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-light rounded-3 px-4" data-bs-dismiss="modal">Discard</button>
+                    <button type="submit" class="btn btn-dark rounded-3 px-4 fw-bold">Deploy Activity</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<!-- Modal: Add Price Tier -->
 <div class="modal fade" id="addPriceTierModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow rounded-4">
-            <div class="modal-header border-0 pt-4 px-4">
-                <h5 class="modal-title fw-bold">New Price Tier</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content border-0 shadow-lg rounded-5 overflow-hidden">
+            <div class="modal-header bg-primary text-white p-3 border-0">
+                <h6 class="modal-title fw-bold">New Inventory Tier</h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <form asp-action="AddPriceTier" method="post">
                 <input type="hidden" asp-for="PriceTierForm.TourId" value="@tour.Id" />
-                <div class="modal-body p-4">
+                <div class="modal-body p-4 text-center">
                     <div class="mb-3">
-                        <label class="form-label small fw-bold">Tier Name</label>
-                        <input asp-for="PriceTierForm.Name" class="form-control rounded-3" placeholder="e.g. Early Bird" required />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">Price per Person ($)</label>
-                        <input asp-for="PriceTierForm.Amount" type="number" step="0.01" class="form-control rounded-3" required />
+                        <label class="form-label x-small fw-bold text-muted text-uppercase">Designation</label>
+                        <input asp-for="PriceTierForm.Name" class="form-control border-0 bg-light text-center py-2 rounded-3" placeholder="e.g. VIP" required />
                     </div>
                     <div class="mb-0">
-                        <label class="form-label small fw-bold">Min Participants (optional)</label>
-                        @* <input asp-for="PriceTierForm.MinParticipants" type="number" class="form-control rounded-3" value="1" /> *@
+                        <label class="form-label x-small fw-bold text-muted text-uppercase">Commercial Valve ($)</label>
+                        <input asp-for="PriceTierForm.Amount" type="number" step="0.01" class="form-control border-0 bg-light text-center fs-3 fw-black py-2 rounded-3" required />
                     </div>
                 </div>
-                <div class="modal-footer border-0 pb-4 px-4">
-                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-info text-white rounded-pill px-4 shadow-sm">Add Tier</button>
+                <div class="modal-footer border-0 p-3 pt-0">
+                    <button type="submit" class="btn btn-primary w-100 py-3 fw-bold rounded-3 ls-md">ACTIVATE TIER</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<!-- Modal: Add Gallery Image -->
-<div class="modal fade" id="addImageModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow rounded-4">
-            <div class="modal-header border-0 pt-4 px-4">
-                <h5 class="modal-title fw-bold">Add to Gallery</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <form asp-action="AddImage" method="post" enctype="multipart/form-data">
-                <input type="hidden" asp-for="ImageForm.TourId" value="@tour.Id" />
-                <div class="modal-body p-4">
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">Select Image</label>
-                        <input asp-for="ImageForm.Image" type="file" class="form-control rounded-3" required />
-                    </div>
-                    <div class="mb-0">
-                        <label class="form-label small fw-bold">Alternative Text</label>
-                        <input asp-for="ImageForm.AltText" class="form-control rounded-3" placeholder="Short description" />
-                    </div>
-                </div>
-                <div class="modal-footer border-0 pb-4 px-4">
-                    <button type="submit" class="btn btn-primary rounded-pill w-100 shadow-sm">Upload Image</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
-<style>
-    .bg-light-gradient { background: radial-gradient(circle at top right, #f8f9ff 0%, #f0f2f5 100%); }
-    .text-primary-soft { color: #5d78ff; text-decoration: none; transition: color 0.2s; }
-    .text-primary-soft:hover { color: #3d5afe; }
-    
-    .fw-black { font-weight: 800; letter-spacing: -0.5px; }
-    .backdrop-blur { backdrop-filter: blur(4px); }
 
-    /* Timeline Styles */
-    .itinerary-timeline { position: relative; padding-left: 20px; }
-    .itinerary-timeline::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 10px;
-        bottom: 0;
-        width: 2px;
-        background: #e9ecef;
-    }
-    .timeline-item { position: relative; }
-    .timeline-marker {
-        position: absolute;
-        left: -24px;
-        top: 10px;
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        border: 2px solid white;
-        box-shadow: 0 0 0 2px rgba(93, 120, 255, 0.3);
-    }
-
-    /* Card Tier Hover */
-    .tier-card { transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1); background: white; border-color: #f1f1f1 !important; }
-    .tier-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); border-color: #5d78ff !important; }
-
-    /* Gallery Overlay */
-    .gallery-item:hover .gallery-overlay { opacity: 1; }
-    .gallery-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(220, 53, 69, 0.8);
-        opacity: 0;
-        transition: opacity 0.2s;
-        cursor: pointer;
-    }
-
-    .bg-info-light { background-color: rgba(30, 189, 218, 0.1); }
-    .bg-warning-light { background-color: rgba(255, 193, 7, 0.1); }
-    .bg-light-soft { background-color: #f9fbfd; }
-
-    .btn-icon-soft { width: 34px; height: 34px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; background-color: #f8f9fa; border: none; transition: all 0.2s; }
-    .btn-icon-soft:hover { background-color: #eff2f7; color: #4361ee; }
-    .text-danger-soft { color: #ff5e5e; }
-
-    .rounded-4 { border-radius: 1.25rem !important; }
-    .rounded-3 { border-radius: 0.75rem !important; }
-    
-    .object-fit-cover { object-fit: cover; }
-    .hover-lift:hover { transform: translateY(-3px); }
-</style>

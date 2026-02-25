@@ -13,8 +13,8 @@ using OnlineTravel.Infrastructure.Persistence.Context;
 namespace OnlineTravel.Infrastructure.Migrations
 {
     [DbContext(typeof(OnlineTravelDbContext))]
-    [Migration("20260224013747_FixHotelCoordinatesAndContactInfo")]
-    partial class FixHotelCoordinatesAndContactInfo
+    [Migration("20260225035221_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

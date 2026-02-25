@@ -15,7 +15,7 @@
     <title>@ViewData["Title"] - Travel Admin</title>
 
     <!-- Google Fonts: Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -42,7 +42,7 @@
             </div>
 
             <div class="sidebar-content">
-                <div class="menu-category">Menu</div>
+                <div class="menu-category">Home</div>
                 
                 <div class="menu-item">
                     <a asp-controller="Dashboard" asp-action="Index" class="@ActiveClass("Dashboard") menu-link">
@@ -51,8 +51,7 @@
                     </a>
                 </div>
 
-                <div class="menu-category">Bookings & Services</div>
-
+                <div class="menu-category">Reservations</div>
                 <div class="menu-item">
                     <a asp-controller="Bookings" asp-action="Index" class="@ActiveClass("Bookings") menu-link">
                         <i class="fas fa-calendar-check"></i>
@@ -60,37 +59,11 @@
                     </a>
                 </div>
 
-                <div class="menu-item">
-                    <a asp-controller="Tours" asp-action="Index" class="@ActiveClass("Tours") menu-link">
-                        <i class="fas fa-globe-americas"></i>
-                        <span>Tours</span>
-                    </a>
-                </div>
-                <div class="menu-item">
-                    <a asp-controller="Hotels" asp-action="Index" class="@ActiveClass("Hotels") menu-link">
-                        <i class="fas fa-hotel"></i>
-                        <span>Hotels</span>
-                    </a>
-                </div>
-                <div class="menu-item">
-                    <a asp-controller="Cars" asp-action="Index" class="@ActiveClass("Cars") menu-link">
-                        <i class="fas fa-car"></i>
-                        <span>Cars</span>
-                    </a>
-                </div>
+                <div class="menu-category">Flight Management</div>
                 <div class="menu-item">
                     <a asp-controller="Flights" asp-action="Index" class="@ActiveClass("Flights") menu-link">
                         <i class="fas fa-plane-departure"></i>
-                        <span>Flights</span>
-                    </a>
-                </div>
-
-                <div class="menu-category">Administration</div>
-
-                <div class="menu-item">
-                    <a href="#" class="menu-link">
-                        <i class="fas fa-users"></i>
-                        <span>Users</span>
+                        <span>All Flights</span>
                     </a>
                 </div>
                 <div class="menu-item">
@@ -105,10 +78,43 @@
                         <span>Carriers</span>
                     </a>
                 </div>
+
+                <div class="menu-category">Hotel Management</div>
+                <div class="menu-item">
+                    <a asp-controller="Hotels" asp-action="Index" class="@ActiveClass("Hotels") menu-link">
+                        <i class="fas fa-hotel"></i>
+                        <span>Hotels</span>
+                    </a>
+                </div>
+
+                <div class="menu-category">Tour Management</div>
+                <div class="menu-item">
+                    <a asp-controller="Tours" asp-action="Index" class="@ActiveClass("Tours") menu-link">
+                        <i class="fas fa-globe-americas"></i>
+                        <span>Tours</span>
+                    </a>
+                </div>
+
+                <div class="menu-category">Car Management</div>
+                <div class="menu-item">
+                    <a asp-controller="Cars" asp-action="Index" class="@ActiveClass("Cars") menu-link">
+                        <i class="fas fa-car"></i>
+                        <span>Car Fleet</span>
+                    </a>
+                </div>
                 <div class="menu-item">
                     <a asp-controller="CarBrands" asp-action="Index" class="@ActiveClass("CarBrands") menu-link">
                         <i class="fas fa-tags"></i>
                         <span>Car Brands</span>
+                    </a>
+                </div>
+
+                <div class="menu-category">System</div>
+
+                <div class="menu-item">
+                    <a href="#" class="menu-link">
+                        <i class="fas fa-users"></i>
+                        <span>Users</span>
                     </a>
                 </div>
                 <div class="menu-item">

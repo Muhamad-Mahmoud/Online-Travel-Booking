@@ -7,6 +7,7 @@ using MediatR;
 using OnlineTravel.Application.Interfaces.Services;
 using OnlineTravelBookingTeamB.Models;
 using OnlineTravel.Application.Features.Flight.Flights.CreateFlight;
+using OnlineTravel.Domain.Exceptions;
 
 namespace OnlineTravelBookingTeamB.Controllers.Admin
 {
@@ -25,7 +26,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
 
         [HttpGet]
         [Route("")]
-        public async Task<IActionResult> Index(string? search = null, string? status = null)
+        public async Task<IActionResult> Index(string? search = null, string? status = null, int pageIndex = 1, int pageSize = 5)
         {
             var query = _context.Flights
                 .Include(f => f.Carrier)
@@ -50,11 +51,18 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
                 query = query.Where(f => f.Status == flightStatus);
             }
 
-            var flights = await query.OrderByDescending(f => f.Schedule.Start).ToListAsync();
+            var totalCount = await query.CountAsync();
+            var flights = await query.OrderByDescending(f => f.Schedule.Start)
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var result = new PaginatedResult<OnlineTravel.Domain.Entities.Flights.Flight>(pageIndex, pageSize, totalCount, flights);
+
             ViewBag.SearchTerm = search;
             ViewBag.Status = status;
             ViewBag.FlightStatuses = Enum.GetNames(typeof(FlightStatus)).ToList();
-            return View("~/Views/Admin/Flights/Flights/Index.cshtml", flights);
+            return View("~/Views/Admin/Flights/Flights/Index.cshtml", result);
         }
 
         [HttpGet("Create")]
@@ -245,7 +253,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
         }
 
         [HttpPost("AddSeat")]
-        public async Task<IActionResult> AddSeat(Models.AddFlightSeatViewModel model)
+        public async Task<IActionResult> AddSeat([Bind(Prefix = "SeatForm")] Models.AddFlightSeatViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -289,7 +297,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
         }
 
         [HttpPost("AddFare")]
-        public async Task<IActionResult> AddFare(Models.AddFlightFareViewModel model)
+        public async Task<IActionResult> AddFare([Bind(Prefix = "FareForm")] Models.AddFlightFareViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -347,10 +355,17 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
 
         // --- Airports ---
         [HttpGet("Airports")]
-        public async Task<IActionResult> Airports()
+        public async Task<IActionResult> Airports(int pageIndex = 1, int pageSize = 5)
         {
-            var airports = await _context.Airports.AsNoTracking().OrderBy(a => a.Name).ToListAsync();
-            return View("~/Views/Admin/Flights/Airports/Index.cshtml", airports);
+            var query = _context.Airports
+                .AsNoTracking()
+                .OrderBy(a => a.Name);
+
+            var totalCount = await query.CountAsync();
+            var items = await query.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            var result = new PaginatedResult<OnlineTravel.Domain.Entities.Flights.Airport>(pageIndex, pageSize, totalCount, items);
+            return View("~/Views/Admin/Flights/Airports/Index.cshtml", result);
         }
 
         [HttpGet("Airports/Create")]
@@ -467,10 +482,17 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
 
         // --- Carriers ---
         [HttpGet("Carriers")]
-        public async Task<IActionResult> Carriers()
+        public async Task<IActionResult> Carriers(int pageIndex = 1, int pageSize = 5)
         {
-            var carriers = await _context.Carriers.AsNoTracking().OrderBy(c => c.Name).ToListAsync();
-            return View("~/Views/Admin/Flights/Carriers/Index.cshtml", carriers);
+            var query = _context.Carriers
+                .AsNoTracking()
+                .OrderBy(c => c.Name);
+
+            var totalCount = await query.CountAsync();
+            var items = await query.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            var result = new PaginatedResult<OnlineTravel.Domain.Entities.Flights.Carrier>(pageIndex, pageSize, totalCount, items);
+            return View("~/Views/Admin/Flights/Carriers/Index.cshtml", result);
         }
 
         [HttpGet("Carriers/Create")]

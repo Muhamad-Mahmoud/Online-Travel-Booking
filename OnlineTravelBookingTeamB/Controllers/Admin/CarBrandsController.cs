@@ -28,7 +28,7 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
 
         // GET: CarBrand
         [HttpGet]
-        public async Task<IActionResult> Index(int pageIndex = 1, int pageSize = 10, string? searchTerm = null)
+        public async Task<IActionResult> Index(int pageIndex = 1, int pageSize = 5, string? searchTerm = null)
         {
             var query = new GetCarBrandsPaginatedQuery(pageIndex, pageSize, searchTerm);
             var result = await _mediator.Send(query);

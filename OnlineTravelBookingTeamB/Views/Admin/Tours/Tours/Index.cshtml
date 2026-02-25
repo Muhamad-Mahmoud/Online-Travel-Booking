@@ -1,171 +1,196 @@
-@model IEnumerable<OnlineTravel.Application.Features.Tours.GetAllTours.DTOs.TourResponse>
-
+@model OnlineTravel.Application.Common.PagedResult<OnlineTravel.Application.Features.Tours.GetAllTours.DTOs.TourResponse>
+@using OnlineTravel.Application.Features.Tours.GetAllTours.DTOs
+@using System.Linq
 @{
     ViewData["Title"] = "Tours Management";
+    var tours = Model?.Data ?? new List<TourResponse>();
+    var totalTours = Model?.TotalCount ?? 0;
+    var avgPrice = tours.Any() ? tours.Average(t => t.Price) : 0;
+    var topRated = tours.Count(t => t.Rating >= 4.5);
+    var search = ViewBag.SearchTerm as string;
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Tours Management</h1>
-    <a asp-controller="Tours" asp-action="Create" class="btn btn-primary d-none d-sm-inline-block shadow-sm">
-        <i class="bi bi-plus-lg text-white-50"></i> Create New Tour
-    </a>
-</div>
-
-<div class="card shadow mb-4">
-    <div class="card-header py-3 d-flex justify-content-between align-items-center">
-        <h6 class="m-0 font-weight-bold text-primary">All Tours</h6>
-        <div class="d-flex align-items-center gap-2">
-            <span id="tourCount" class="badge bg-light text-secondary border small"></span>
-            <div class="input-group input-group-sm" style="width: 280px;">
-                <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
-                <input type="text" id="tourSearch" class="form-control border-start-0 ps-0" placeholder="Search tours..." />
-                <button type="button" id="clearSearch" class="btn btn-outline-secondary d-none"><i class="bi bi-x-lg"></i></button>
-            </div>
-        </div>
-    </div>
-    <div class="card-body">
-        @if (Model != null && Model.Any())
-        {
-            <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>Image</th>
-                            <th>Title</th>
-                            <th class="text-center">Category</th>
-                            <th class="text-center">Price</th>
-                            <th class="text-center">Rating</th>
-                            <th class="text-center">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var tour in Model)
-                        {
-                            <tr data-city="@tour.City" data-country="@tour.Country" data-description="@tour.Description">
-                                <td style="width: 120px;">
-                                    @if (!string.IsNullOrEmpty(tour.ImageUrl))
-                                    {
-                                        <img src="@tour.ImageUrl" alt="@tour.Title" class="img-fluid rounded" style="max-height: 80px; width: 100%; object-fit: cover;" />
-                                    }
-                                    else
-                                    {
-                                        <div class="bg-light d-flex align-items-center justify-content-center text-muted rounded" style="height: 80px;">
-                                            <i class="bi bi-image"></i>
-                                        </div>
-                                    }
-                                </td>
-                                <td class="align-middle fw-bold">@tour.Title</td>
-                                <td class="align-middle text-center"><span class="badge bg-secondary">@tour.Category</span></td>
-                                <td class="align-middle text-center">@tour.Currency @tour.Price.ToString("N2")</td>
-                                <td class="align-middle text-center">
-                                    @if (tour.Rating > 0)
-                                    {
-                                        <div class="text-warning small">
-                                            @for (int i = 0; i < Math.Floor(tour.Rating); i++)
-                                            {
-                                                <i class="bi bi-star-fill"></i>
-                                            }
-                                            @if (tour.Rating % 1 > 0)
-                                            {
-                                                <i class="bi bi-star-half"></i>
-                                            }
-                                            <span class="text-secondary ms-1">(@tour.Rating.ToString("0.0"))</span>
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted small">No Rating</span>
-                                    }
-                                </td>
-                                <td class="align-middle">
-                                    <div class="d-flex gap-2 justify-content-center">
-                                        <a asp-action="Manage" asp-route-id="@tour.Id" class="btn btn-icon-soft btn-soft-primary" title="Manage Everything">
-                                            <i class="bi bi-gear-fill fs-6"></i>
-                                        </a>
-                                        <form asp-action="Delete" asp-route-id="@tour.Id" method="post" class="d-inline" data-confirm="This tour will be permanently deleted. Are you sure?" data-confirm-title="Delete Tour">
-                                            <button type="submit" class="btn btn-icon-soft btn-soft-danger" title="Delete">
-                                                <i class="bi bi-trash-fill fs-6"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-            <div id="noResults" class="text-center py-4 d-none">
-                <i class="bi bi-search display-4 text-gray-300"></i>
-                <p class="mt-3 text-secondary">No tours match your search.</p>
-            </div>
-        }
-        else
-        {
-            <div class="text-center py-5">
-                <i class="bi bi-folder2-open display-4 text-gray-300"></i>
-                <p class="mt-3 text-secondary">No tours found. Get started by creating one!</p>
-            </div>
-        }
-    </div>
-</div>
-
-<style>
-    .btn-icon-soft { width: 34px; height: 34px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; border: none; transition: all 0.2s; }
-    .btn-soft-primary { background-color: rgba(13, 110, 253, 0.1); color: #0d6efd; }
-    .btn-soft-primary:hover { background-color: #0d6efd; color: #fff; }
-    .btn-soft-danger { background-color: rgba(220, 53, 69, 0.1); color: #dc3545; }
-    .btn-soft-danger:hover { background-color: #dc3545; color: #fff; }
-</style>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var searchInput = document.getElementById('tourSearch');
-        var clearBtn = document.getElementById('clearSearch');
-        var table = document.getElementById('dataTable');
-        var countBadge = document.getElementById('tourCount');
-        var noResults = document.getElementById('noResults');
-        if (!searchInput || !table) return;
-
-        var rows = table.querySelectorAll('tbody tr');
-        var totalCount = rows.length;
-        countBadge.textContent = totalCount + ' tour' + (totalCount !== 1 ? 's' : '');
-
-        function filterTable() {
-            var query = searchInput.value.toLowerCase().trim();
-            clearBtn.classList.toggle('d-none', !query);
-            var visibleCount = 0;
-
-            rows.forEach(function (row) {
-                var title = row.cells[1].textContent.toLowerCase();
-                var category = row.cells[2].textContent.toLowerCase();
-                var city = (row.dataset.city || '').toLowerCase();
-                var country = (row.dataset.country || '').toLowerCase();
-                var desc = (row.dataset.description || '').toLowerCase();
-                var match = title.includes(query) || category.includes(query) || city.includes(query) || country.includes(query) || desc.includes(query);
-                row.style.display = match ? '' : 'none';
-                if (match) visibleCount++;
-            });
-
-            countBadge.textContent = (query ? visibleCount + ' of ' + totalCount : totalCount) + ' tour' + (totalCount !== 1 ? 's' : '');
-
-            if (noResults) {
-                var tableWrapper = table.closest('.table-responsive');
-                if (visibleCount === 0 && query) {
-                    noResults.classList.remove('d-none');
-                    if (tableWrapper) tableWrapper.classList.add('d-none');
-                } else {
-                    noResults.classList.add('d-none');
-                    if (tableWrapper) tableWrapper.classList.remove('d-none');
-                }
+<div class="container-fluid py-4">
+    <!-- Authority Header -->
+    <partial name="_AdminPageHeader" model='new AdminPageHeaderViewModel {
+        Title = "Tours",
+        TitleSuffix = "Fleet",
+        IconClass = "fas fa-globe-americas",
+        IconBgClass = "bg-primary",
+        StatusText = "DISCOVERY ACTIVE",
+        StatusIconClass = "fas fa-map-marked-alt",
+        BadgeText = $"NODES: {totalTours}",
+        Breadcrumbs = new List<BreadcrumbItem> {
+            new BreadcrumbItem { Text = "Tours", IsActive = true }
+        },
+        ShowSearch = true,
+        SearchValue = search,
+        SearchPlaceholder = "Search mission nodes...",
+        ActionButtons = new List<ActionButtonViewModel> {
+            new ActionButtonViewModel { 
+                Text = "New Tour", 
+                IconClass = "fas fa-plus", 
+                Action = "Create", 
+                Class = "btn-premium-dark" 
             }
         }
+    }' />
 
-        searchInput.addEventListener('input', filterTable);
-        clearBtn.addEventListener('click', function () {
-            searchInput.value = '';
-            filterTable();
-            searchInput.focus();
-        });
-    });
-</script>
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success border-0 shadow-sm rounded-4 mb-4 d-flex align-items-center p-3 text-success bg-success-light">
+            <div class="icon-square bg-success text-white me-3 rounded-circle" style="width:38px;height:38px;">
+                <i class="fas fa-check"></i>
+            </div>
+            <div class="fw-bold">@TempData["Success"]</div>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Stats Row -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <partial name="_AdminStatCard" model='new AdminStatCardViewModel {
+                Title = "Total Inventory",
+                Value = totalTours.ToString(),
+                IconClass = "fas fa-globe",
+                IconBgClass = "bg-primary-light",
+                IconTextClass = "text-primary"
+            }' />
+        </div>
+        <div class="col-6 col-md-3">
+            <partial name="_AdminStatCard" model='new AdminStatCardViewModel {
+                Title = "Avg Anchor",
+                Value = $"${avgPrice:N0}",
+                IconClass = "fas fa-dollar-sign",
+                IconBgClass = "bg-success-light",
+                IconTextClass = "text-success"
+            }' />
+        </div>
+        <div class="col-6 col-md-3">
+            <partial name="_AdminStatCard" model='new AdminStatCardViewModel {
+                Title = "Elite Rated",
+                Value = topRated.ToString(),
+                IconClass = "fas fa-award",
+                IconBgClass = "bg-info-light",
+                IconTextClass = "text-info"
+            }' />
+        </div>
+        <div class="col-6 col-md-3">
+            <partial name="_AdminStatCard" model='new AdminStatCardViewModel {
+                Title = "Active Review",
+                Value = tours.Count(t => t.Rating > 0).ToString(),
+                IconClass = "fas fa-star",
+                IconBgClass = "bg-warning-light",
+                IconTextClass = "text-warning"
+            }' />
+        </div>
+    </div>
+
+    <!-- Main Content Card -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+        <div class="card-body p-0">
+            @if (tours.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light small">
+                            <tr>
+                                <th class="ps-4">Tour Discovery</th>
+                                <th>Category</th>
+                                <th class="text-center">Commercial</th>
+                                <th class="text-center">Status Index</th>
+                                <th class="text-end pe-4">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var tour in tours)
+                            {
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="d-flex align-items-center">
+                                            @if (!string.IsNullOrEmpty(tour.ImageUrl))
+                                            {
+                                                <img src="@tour.ImageUrl" alt="@tour.Title" class="rounded-3 me-3" style="width:45px; height:45px; object-fit:cover;" />
+                                            }
+                                            else
+                                            {
+                                                <div class="icon-square me-3 bg-light text-muted rounded-3" style="width:45px; height:45px;">
+                                                    <i class="fas fa-image"></i>
+                                                </div>
+                                            }
+                                            <div>
+                                                <div class="fw-bold text-dark mb-0">@tour.Title</div>
+                                                <div class="x-small text-muted"><i class="fas fa-map-marker-alt me-1"></i>@tour.City, @tour.Country</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-primary-light text-primary rounded-pill px-3">@tour.Category</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="fw-bold text-dark">@tour.Currency @tour.Price.ToString("N2")</div>
+                                        <div class="x-small text-muted text-uppercase fw-bold">BASE UNIT</div>
+                                    </td>
+                                    <td class="text-center">
+                                        @if (tour.Rating > 0)
+                                        {
+                                            <div class="d-flex align-items-center justify-content-center gap-1">
+                                                <div class="text-warning small"><i class="fas fa-star"></i></div>
+                                                <span class="fw-bold text-dark">@tour.Rating.ToString("0.0")</span>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted x-small">UNRATED</span>
+                                        }
+                                    </td>
+                                    <td class="pe-4">
+                                        <div class="d-flex gap-2 justify-content-end">
+                                            <a asp-action="Manage" asp-route-id="@tour.Id" class="btn btn-icon-soft btn-soft-primary" title="Edit Properties">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <form asp-action="Delete" asp-route-id="@tour.Id" method="post" class="d-inline" data-confirm="Are you sure you want to delete this tour?" data-confirm-title="Confirm Deletion">
+                                                <button type="submit" class="btn btn-icon-soft btn-soft-danger" title="Purge Node">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                @if (Model.TotalPages >= 1)
+                {
+                    <div class="card-footer bg-white border-top p-3 text-center">
+                        <partial name="_Pagination" model="@PaginationViewModel.Create(Model, "Index", "Tours", new { search = search })" />
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                        <i class="fas fa-globe-americas fa-2x text-muted opacity-50"></i>
+                    </div>
+                    <h4 class="fw-bold text-dark">No Tours Found</h4>
+                    <p class="text-muted mb-4">The discovery hub has no active mission nodes. Start by provisioning a new tour.</p>
+                    <a asp-action="Create" class="btn btn-primary rounded-pill px-5 py-2 fw-bold shadow-sm">
+                        <i class="fas fa-plus me-2"></i> PROVISION FIRST TOUR
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+@* JS filtering script removed in favor of server-side pagination/search *@
 

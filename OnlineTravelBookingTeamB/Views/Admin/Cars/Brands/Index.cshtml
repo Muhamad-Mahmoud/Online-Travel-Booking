@@ -4,28 +4,48 @@
 
 @{
     ViewData["Title"] = "Car Brands Fleet";
+    var search = Context.Request.Query["searchTerm"];
 }
 
-<div class="page-title">
-    <span><i class="fas fa-tag me-2 text-primary"></i> Manufacturer Brands</span>
-    <a asp-action="Create" class="btn btn-primary shadow-sm rounded-pill px-4">
-        <i class="fas fa-plus me-2"></i> Add New Brand
-    </a>
-</div>
+<div class="container-fluid py-4">
+    <!-- Authority Header -->
+    <partial name="_AdminPageHeader" model='new AdminPageHeaderViewModel {
+        Title = "Manufacturer",
+        TitleSuffix = "Brands",
+        IconClass = "fas fa-tags",
+        IconBgClass = "bg-dark",
+        StatusText = "VERIFIED REGISTRY",
+        StatusIconClass = "fas fa-certificate",
+        BadgeText = $"TOTAL: {Model.TotalCount} LABELS",
+        Breadcrumbs = new List<BreadcrumbItem> {
+            new BreadcrumbItem { Text = "Cars", Controller = "Cars", Action = "Index" },
+            new BreadcrumbItem { Text = "Manufacturers", IsActive = true }
+        },
+        ShowSearch = false,
+        ActionButtons = new List<ActionButtonViewModel> {
+            new ActionButtonViewModel { 
+                Text = "New Brand", 
+                IconClass = "fas fa-plus-circle", 
+                Action = "Create", 
+                Class = "btn-premium-dark" 
+            }
+        }
+    }' />
 
 <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
     <div class="card-body p-0">
         <!-- Modern Filters -->
-        <div class="p-4 bg-light border-bottom">
-            <form asp-action="Index" method="get" class="row g-3">
-                <div class="col-md-8">
-                    <div class="input-group bg-white rounded-pill overflow-hidden border px-3">
-                        <span class="input-group-text bg-transparent border-0 text-muted"><i class="fas fa-search"></i></span>
-                        <input type="text" name="searchTerm" value="@Context.Request.Query["searchTerm"]" class="form-control border-0 shadow-none" placeholder="Search by manufacturer name..." />
+        <div class="p-4 bg-white border-bottom">
+            <form asp-action="Index" method="get" class="row g-3 align-items-center">
+                <div class="col-md-6 col-lg-4">
+                    <div class="input-group shadow-sm search-group">
+                        <span class="input-group-text bg-white border-end-0 text-muted"><i class="fas fa-search"></i></span>
+                        <input type="text" name="searchTerm" value="@Context.Request.Query["searchTerm"]" class="form-control border-start-0 ps-0" placeholder="Search by name..." />
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <button type="submit" class="btn btn-dark w-100 rounded-pill">Apply Filter</button>
+                <div class="col-md-auto">
+                    <button type="submit" class="btn btn-primary shadow-sm px-4">Apply Filter</button>
+                    <a asp-action="Index" class="btn btn-white shadow-sm" title="Clear Filters"><i class="fas fa-undo text-muted"></i></a>
                 </div>
             </form>
         </div>
@@ -75,10 +95,16 @@
                             </td>
                             <td class="text-muted small">@item.CreatedAt.ToString("MMM dd, yyyy")</td>
                             <td class="text-end pe-4">
-                                <div class="btn-group shadow-sm rounded-pill overflow-hidden">
-                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-white border-end" title="View Details"><i class="fas fa-eye text-primary"></i></a>
-                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-white border-end" title="Edit Brand"><i class="fas fa-edit text-warning"></i></a>
-                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-white" title="Remove"><i class="fas fa-trash text-danger"></i></a>
+                                <div class="d-flex gap-2 justify-content-end">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-icon-soft btn-soft-primary" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-icon-soft btn-soft-primary" title="Edit Brand">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-icon-soft btn-soft-danger" title="Remove">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
                                 </div>
                             </td>
                         </tr>
@@ -89,29 +115,13 @@
     </div>
     
     <!-- Premium Pagination -->
-    <div class="card-footer bg-white py-4 border-top-0 d-flex justify-content-between align-items-center">
+    <div class="card-footer bg-white p-3 border-top d-flex justify-content-between align-items-center">
         <div class="small text-muted">
             Showing <span class="fw-bold">@Model.Items.Count</span> of <span class="fw-bold">@Model.TotalCount</span> Manufacturers
         </div>
-        <nav>
-            <ul class="pagination pagination-sm mb-0">
-                <li class="page-item @(!Model.HasPrevious ? "disabled" : "")">
-                    <a class="page-link rounded-circle me-1 border-0" asp-action="Index" asp-route-pageIndex="@(Model.PageIndex - 1)" asp-route-searchTerm="@Context.Request.Query["searchTerm"]">
-                        <i class="fas fa-chevron-left"></i>
-                    </a>
-                </li>
-                @for (int i = 1; i <= Model.TotalPages; i++)
-                {
-                    <li class="page-item @(i == Model.PageIndex ? "active" : "")">
-                        <a class="page-link rounded-circle me-1 border-0" asp-action="Index" asp-route-pageIndex="@i" asp-route-searchTerm="@Context.Request.Query["searchTerm"]">@i</a>
-                    </li>
-                }
-                <li class="page-item @(!Model.HasNext ? "disabled" : "")">
-                    <a class="page-link rounded-circle border-0" asp-action="Index" asp-route-pageIndex="@(Model.PageIndex + 1)" asp-route-searchTerm="@Context.Request.Query["searchTerm"]">
-                        <i class="fas fa-chevron-right"></i>
-                    </a>
-                </li>
-            </ul>
-        </nav>
+        @if (Model.TotalPages >= 1)
+        {
+            <partial name="_Pagination" model="@PaginationViewModel.Create(Model, "Index", "CarBrands", new { searchTerm = search })" />
+        }
     </div>
 </div>

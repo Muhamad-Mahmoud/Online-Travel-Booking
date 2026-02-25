@@ -1,5 +1,5 @@
 /* Modern SaaS Admin Dashboard - Premium Design */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 :root {
     /* Color Palette - Deep & Sophisticated */
@@ -37,13 +37,18 @@
     padding: 0;
 }
 
+body, h1, h2, h3, h4, h5, h6, p, span, a, div, input, button, select, textarea {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+}
+
 body {
-    font-family: 'Inter', sans-serif;
     font-size: 0.925rem;
     font-weight: 400;
     line-height: 1.6;
     color: var(--gray-600);
     background-color: var(--gray-100);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 a {
@@ -592,3 +597,190 @@ ul {
     justify-content: center;
     border-radius: 6px;
 }
+
+/* =========================================
+   Premium Elite Refinements (Global)
+   ========================================= */
+
+.tracking-tight { letter-spacing: -0.02em; }
+.tracking-tighter { letter-spacing: -0.05em; }
+.tracking-normal { letter-spacing: 0; }
+.fw-black { font-weight: 800; letter-spacing: -0.02em; }
+
+
+
+/* Elite Custom Scrollbars */
+.table-responsive {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+}
+.table-responsive::-webkit-scrollbar { height: 6px; }
+.table-responsive::-webkit-scrollbar-track { background: transparent; }
+.table-responsive::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 20px; border: 2px solid transparent; }
+
+/* Enhanced Utilities */
+.x-small { font-size: 0.72rem; }
+.fw-black { font-weight: 800; letter-spacing: -0.02em; }
+.hover-lift { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.hover-lift:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important; }
+
+/* Icon Utilities */
+.icon-square { 
+    width: 44px; 
+    height: 44px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    transition: var(--transition);
+}
+.icon-square i { font-size: 1.2rem; }
+.icon-square.rounded-3 { border-radius: 12px !important; }
+.icon-square.bg-primary-light { background-color: rgba(67, 97, 238, 0.1) !important; color: var(--primary); }
+
+
+/* Color Badges & Backgrounds */
+.bg-primary-light { background-color: rgba(67, 97, 238, 0.08) !important; color: #4361ee !important; }
+.bg-success-light { background-color: rgba(0, 171, 85, 0.08) !important; color: #00ab55 !important; }
+.bg-danger-light { background-color: rgba(231, 81, 90, 0.08) !important; color: #e7515a !important; }
+.bg-warning-light { background-color: rgba(245, 158, 11, 0.08) !important; color: #f59e0b !important; }
+
+/* =========================================
+   Module Specific - Flights (Boarding Pass)
+   ========================================= */
+.flight-card-premium { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important; }
+.glass-badge { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; font-weight: 600; font-size: 0.85rem; }
+.glass-pill-badge { background: rgba(37, 99, 235, 0.2); backdrop-filter: blur(12px); border: 1px solid rgba(37, 99, 235, 0.3); border-radius: 50px; font-weight: 800; color: #fff; letter-spacing: 0.5px; }
+
+.path-line { height: 2px; background: rgba(255,255,255,0.1); flex-grow: 1; position: relative; }
+.path-line::before, .path-line::after { content: ""; width: 8px; height: 8px; background: #fff; border-radius: 50%; position: absolute; top: -3px; box-shadow: 0 0 10px #fff; }
+.path-line::before { left: 0; }
+.path-line::after { right: 0; }
+.plane-icon { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); color: #fff; text-shadow: 0 0 15px rgba(255,255,255,0.5); font-size: 1.2rem; }
+
+.icon-circle-glass { width: 36px; height: 36px; border-radius: 10px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+.meta-label { display: block; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; color: rgba(255,255,255,0.4); letter-spacing: 1px; margin-bottom: 2px; }
+.meta-value { display: block; font-weight: 700; font-size: 1rem; color: #fff; }
+
+.custom-pills .nav-link.active { background-color: #fff !important; color: #000 !important; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border-color: #e2e8f0; }
+
+/* =========================================
+   Module Specific - Hotels (Manage)
+   ========================================= */
+.briefing-card { background: white; padding: 1.5rem; border-radius: 1.5rem; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 20px rgba(0,0,0,0.02); transition: 0.3s; }
+.briefing-card:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.04); }
+.brief-icon-box { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+.policy-text { color: #64748b; line-height: 1.7; font-size: 0.82rem; font-weight: 500; }
+.protocol-box { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 14px 18px; transition: 0.3s; }
+.protocol-box:hover { background: rgba(255,255,255,0.04); border-color: rgba(37, 99, 235, 0.2); }
+.protocol-time { font-size: 1.3rem; font-weight: 900; letter-spacing: -0.5px; }
+.protocol-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+
+.registry-item { padding: 10px 14px; border-radius: 12px; transition: 0.2s; border: 1px solid transparent; }
+.registry-item:hover { background: #f8fafc; border-color: #f1f5f9; }
+.registry-icon { width: 30px; height: 30px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: #4361ee; }
+
+.pulse-green { width: 8px; height: 8px; background: #10b981; border-radius: 50%; position: relative; }
+.pulse-green::after { content: ''; position: absolute; inset: 0; border-radius: 50%; border: 2px solid #10b981; animation: pulse-ring 1.5s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite; }
+@keyframes pulse-ring { from { transform: scale(1); opacity: 1; } to { transform: scale(3); opacity: 0; } }
+
+/* =========================================
+   Mobile Overrides (Consolidated)
+   ========================================= */
+@media (max-width: 768px) {
+    .display-4 { font-size: 2.5rem !important; }
+    .flight-path-viz { padding: 0 !important; }
+    .path-line { width: 60% !important; }
+    .meta-value { font-size: 0.8rem !important; }
+    .meta-label { font-size: 0.6rem !important; }
+    
+    .timeline-marker { left: -25px !important; }
+    .itinerary-timeline { padding-left: 20px !important; }
+}
+
+/* =========================================
+   Module Specific - Tours (Elite Overhaul)
+   ========================================= */
+
+/* Hero & Stats */
+.premium-hero-card { transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.premium-hero-card:hover { transform: translateY(-5px) scale(1.005); }
+
+.glass-badge { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; }
+.glass-badge-dark { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); color: #fff; }
+
+.premium-search-group .form-control { border-radius: 12px 0 0 12px !important; }
+.premium-search-group .btn { border-radius: 0 12px 12px 0 !important; }
+
+.btn-premium-blue { background: #2563eb; color: #fff; border: none; transition: 0.3s; }
+.btn-premium-blue:hover { background: #1d4ed8; color: #fff; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3); }
+
+.btn-premium-dark { background: #0f172a; color: #fff; border: none; transition: 0.3s; font-weight: 800; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; padding: 10px 20px; border-radius: 12px; }
+.btn-premium-dark:hover { background: #000; color: #fff; transform: translateY(-2px); box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); }
+
+.btn-premium-white { background: #fff; color: #0f172a; border: 1px solid #e2e8f0; transition: 0.3s; font-weight: 800; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; padding: 10px 20px; border-radius: 12px; }
+.btn-premium-white:hover { background: #f8fafc; transform: translateY(-2px); box-shadow: 0 5px 10px rgba(0, 0, 0, 0.05); }
+
+.shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important; }
+.shadow-glow { box-shadow: 0 0 15px currentColor; }
+
+/* Status Pills */
+.status-pill { padding: 4px 12px; border-radius: 50px; font-size: 0.65rem; font-weight: 900; letter-spacing: 0.5px; display: inline-flex; align-items: center; }
+.status-operational { background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
+.status-draft { background: rgba(59, 130, 246, 0.1); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.2); }
+.status-warning { background: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.2); }
+.status-error { background: rgba(231, 81, 90, 0.1); color: #e7515a; border: 1px solid rgba(231, 81, 90, 0.2); }
+
+/* Car Specific Badges */
+.badge-sedan { background: #eff6ff; color: #1d4ed8; }
+.badge-suv { background: #fdf2f8; color: #9d174d; }
+.badge-luxury { background: #fff7ed; color: #9a3412; }
+.badge-electric { background: #ecfdf5; color: #065f46; }
+
+.asset-id-tag { font-size: 0.65rem; font-weight: 800; color: #64748b; background: #f1f5f9; padding: 4px 10px; border-radius: 6px; letter-spacing: 0.5px; }
+
+
+/* Master Card Styles */
+.master-property-card { border: none !important; }
+.image-overlay-premium { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%); }
+.border-start-premium { border-left: 2px solid rgba(255,255,255,0.1); padding-left: 1.5rem; }
+.bg-premium-dark { background: #1e293b; }
+
+.progress-premium { height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+.progress-bar-glow { height: 100%; background: #3b82f6; box-shadow: 0 0 10px #3b82f6; border-radius: 10px; }
+
+.glass-pill-premium { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 8px 16px; color: #cbd5e1; font-weight: 700; font-size: 0.75rem; display: flex; align-items: center; gap: 10px; transition: 0.3s; }
+.glass-pill-premium:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.1); }
+.glass-pill-premium.active { background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3); color: #3b82f6; }
+.status-recommended { background: rgba(245, 158, 11, 0.05); border-color: rgba(245, 158, 11, 0.2); }
+
+.decorative-glow { position: absolute; pointer-events: none; width: 300px; height: 300px; background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%); bottom: -100px; right: -100px; }
+.protocol-bg-glow { position: absolute; inset: 0; background: radial-gradient(circle at 100% 100%, rgba(37, 99, 235, 0.1) 0%, transparent 50%); }
+
+/* Pricing & Tiering */
+.tier-card { transition: 0.3s; }
+.tier-card:hover { background: #fff !important; box-shadow: var(--shadow-md); transform: scale(1.02); }
+
+/* Create View - Provisioning Deck */
+.premium-meta-label { display: block; font-size: 0.68rem; font-weight: 900; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.premium-control { border-radius: 12px !important; border: 1.5px solid #e2e8f0 !important; padding: 10px 15px !important; font-size: 0.9rem !important; transition: 0.3s !important; background: #fdfdfd !important; }
+.premium-control:focus { border-color: #3b82f6 !important; background: #fff !important; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1) !important; }
+
+.upload-zone { border: 2px dashed #e2e8f0; transition: 0.3s; background: #f8fafc; }
+.upload-zone:hover { border-color: #3b82f6; background: rgba(59, 130, 246, 0.02); }
+
+.custom-switch-premium .form-check-input { width: 3em; height: 1.5em; cursor: pointer; }
+
+/* Custom Map Marker */
+.custom-marker { position: relative; }
+.marker-core { width: 12px; height: 12px; background: #3b82f6; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 10px rgba(59, 130, 246, 0.5); }
+.marker-pulse { position: absolute; top: 50%; left: 50%; width: 12px; height: 12px; margin: -6px 0 0 -6px; background: rgba(59, 130, 246, 0.4); border-radius: 50%; animation: marker-pulse 2s ease-out infinite; }
+
+@keyframes marker-pulse {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(4); opacity: 0; }
+}
+
+.authority-icon-box { width: 54px; height: 54px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
+
+/* Animation Overrides */
+.animate__animated { --animate-duration: 0.6s; }

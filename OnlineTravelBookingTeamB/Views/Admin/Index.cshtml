@@ -8,75 +8,77 @@
     var categoryData = JsonSerializer.Serialize(Model.CategoryDistribution.Select(c => c.Count));
 }
 
-<div class="page-title">
-    Dashboard Overview
-    <a asp-controller="Bookings" asp-action="Export" class="btn btn-primary btn-sm rounded-3 shadow-sm px-3">
-        <i class="fas fa-download me-2"></i> Export Report
-    </a>
-</div>
+<div class="container-fluid py-4">
+    <!-- Authority Header -->
+    <partial name="_AdminPageHeader" model='new AdminPageHeaderViewModel {
+        Title = "Dashboard",
+        TitleSuffix = "Overview",
+        IconClass = "fas fa-th-large",
+        IconBgClass = "bg-primary",
+        StatusText = "SYSTEM ONLINE",
+        BadgeText = $"SYNCED: {DateTime.Now:HH:mm}",
+        Breadcrumbs = new List<BreadcrumbItem> {
+            new BreadcrumbItem { Text = "Dashboard", IsActive = true }
+        },
+        ShowSearch = false,
+        ActionButtons = new List<ActionButtonViewModel> {
+            new ActionButtonViewModel { 
+                Text = "Export Report", 
+                IconClass = "fas fa-download", 
+                Controller = "Bookings", 
+                Action = "Export", 
+                Class = "btn-primary" 
+            }
+        }
+    }' />
 
-<!-- Stats Grid -->
-<div class="card-grid">
-    <!-- Stat Card 1 -->
-    <div class="stat-card">
-        <div class="stat-header">
-            <span class="stat-title">Total Revenue</span>
-            <div class="stat-icon bg-primary-light">
-                <i class="fas fa-dollar-sign"></i>
-            </div>
+    <!-- Stats Row -->
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-sm-6 col-lg-3">
+            <partial name="_AdminStatCard" model='new AdminStatCardViewModel {
+                Title = "Total Revenue",
+                Value = $"${Model.TotalRevenue:N0}",
+                IconClass = "fas fa-dollar-sign",
+                IconBgClass = "bg-primary-light",
+                IconTextClass = "text-primary",
+                Subtitle = "Calculated from confirmed bookings",
+                SubtitleClass = "change-up"
+            }' />
         </div>
-        <div class="stat-value">$@Model.TotalRevenue.ToString("N0")</div>
-        <div class="stat-change change-up">
-            <i class="fas fa-arrow-up"></i>
-            <span>Calculated from confirmed bookings</span>
+        <div class="col-12 col-sm-6 col-lg-3">
+            <partial name="_AdminStatCard" model='new AdminStatCardViewModel {
+                Title = "New Bookings",
+                Value = Model.NewBookingsCount.ToString(),
+                IconClass = "fas fa-ticket-alt",
+                IconBgClass = "bg-info-light",
+                IconTextClass = "text-info",
+                Subtitle = "In the last 30 days",
+                SubtitleClass = "change-up"
+            }' />
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3">
+            <partial name="_AdminStatCard" model='new AdminStatCardViewModel {
+                Title = "Active Tours",
+                Value = Model.ActiveToursCount.ToString(),
+                IconClass = "fas fa-route",
+                IconBgClass = "bg-success-light",
+                IconTextClass = "text-success",
+                Subtitle = "Upcoming schedules",
+                SubtitleClass = "text-muted"
+            }' />
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3">
+            <partial name="_AdminStatCard" model='new AdminStatCardViewModel {
+                Title = "Pending Requests",
+                Value = Model.PendingRequestsCount.ToString(),
+                IconClass = "fas fa-clock",
+                IconBgClass = "bg-warning-light",
+                IconTextClass = "text-warning",
+                Subtitle = "Awaiting payment",
+                SubtitleClass = "text-warning"
+            }' />
         </div>
     </div>
-
-    <!-- Stat Card 2 -->
-    <div class="stat-card">
-        <div class="stat-header">
-            <span class="stat-title">New Bookings</span>
-            <div class="stat-icon bg-info-light">
-                <i class="fas fa-ticket-alt"></i>
-            </div>
-        </div>
-        <div class="stat-value">@Model.NewBookingsCount</div>
-        <div class="stat-change change-up">
-            <i class="fas fa-arrow-up"></i>
-            <span>In the last 30 days</span>
-        </div>
-    </div>
-
-    <!-- Stat Card 3 -->
-    <div class="stat-card">
-        <div class="stat-header">
-            <span class="stat-title">Active Tours</span>
-            <div class="stat-icon bg-success-light">
-                <i class="fas fa-route"></i>
-            </div>
-        </div>
-        <div class="stat-value">@Model.ActiveToursCount</div>
-        <div class="stat-change text-muted">
-            <i class="fas fa-info-circle"></i>
-            <span>Upcoming schedules</span>
-        </div>
-    </div>
-
-    <!-- Stat Card 4 -->
-    <div class="stat-card">
-        <div class="stat-header">
-            <span class="stat-title">Pending Requests</span>
-            <div class="stat-icon bg-warning-light">
-                <i class="fas fa-clock"></i>
-            </div>
-        </div>
-        <div class="stat-value">@Model.PendingRequestsCount</div>
-        <div class="stat-change text-warning">
-            <i class="fas fa-exclamation-circle"></i>
-            <span>Awaiting payment</span>
-        </div>
-    </div>
-</div>
 
 <!-- Charts Section -->
 <div class="chart-row">
@@ -141,6 +143,7 @@
                 }
             </tbody>
         </table>
+    </div>
     </div>
 </div>
 

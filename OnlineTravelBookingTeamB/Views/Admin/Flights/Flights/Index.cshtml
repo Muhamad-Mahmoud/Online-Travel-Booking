@@ -1,269 +1,186 @@
-@model IEnumerable<OnlineTravel.Domain.Entities.Flights.Flight>
-@using OnlineTravel.Domain.Entities.Flights
+@model OnlineTravel.Domain.Exceptions.PaginatedResult<OnlineTravel.Domain.Entities.Flights.Flight>
 @using OnlineTravel.Domain.Enums
-
 @{
-    ViewData["Title"] = "Flights Management";
-    var flightList = Model?.ToList() ?? new List<Flight>();
-    var statuses = ViewBag.FlightStatuses as List<string> ?? new List<string>();
+    ViewData["Title"] = "Flight Sectors";
+    var search = ViewBag.SearchTerm as string;
     var currentStatus = ViewBag.Status as string;
-    var searchTerm = ViewBag.SearchTerm as string;
+    var statuses = ViewBag.FlightStatuses as List<string> ?? new List<string>();
 }
 
-<form method="get" action="@Url.Action("Index", "Flights")" class="row g-3 justify-content-between align-items-center mb-4">
-    <div class="col-12 col-lg-auto">
-        <h1 class="h3 fw-bold text-dark mb-1">Flights</h1>
-        <p class="text-muted small mb-0">Manage and track all flight schedules and availability.</p>
-    </div>
-    <div class="col-12 col-lg-auto">
-        <div class="d-flex flex-column flex-sm-row flex-lg-nowrap gap-2 filter-section">
-            <div class="input-group shadow-sm search-group">
-                <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
-                <input type="text" name="search" class="form-control border-start-0 ps-0" placeholder="Search flight, carrier, airport..." value="@searchTerm">
-            </div>
-            <select name="status" class="form-select shadow-sm status-select" onchange="this.form.submit()">
-                <option value="">All Status</option>
-                @foreach (var s in statuses)
-                {
-                    <!option value="@s" @(currentStatus == s ? "selected" : "")>@s</!option>
-                }
-            </select>
-            <div class="d-flex gap-2 action-buttons">
-                <button type="submit" class="btn btn-primary shadow-sm"><i class="fas fa-filter me-2"></i>Filter</button>
-                <a asp-controller="Flights" asp-action="Index" class="btn btn-white shadow-sm" title="Clear Filters"><i class="fas fa-undo text-muted"></i></a>
-                <a asp-controller="Flights" asp-action="Create" class="btn btn-success shadow-sm"><i class="fas fa-plus me-2"></i>Add Flight</a>
-            </div>
-        </div>
-    </div>
-</form>
+<div class="container-fluid py-4">
+    <!-- Authority Header -->
+    <partial name="_AdminPageHeader" model='new AdminPageHeaderViewModel {
+        Title = "Flight",
+        TitleSuffix = "Sectors",
+        IconClass = "fas fa-plane-departure",
+        IconBgClass = "bg-primary",
+        StatusText = "ATC ONLINE",
+        StatusIconClass = "fas fa-signal",
+        BadgeText = $"SECTORS: {Model.TotalCount}",
+        Breadcrumbs = new List<BreadcrumbItem> {
+            new BreadcrumbItem { Text = "Flights", IsActive = true }
+        },
+        ShowSearch = true,
+        SearchValue = search,
+        SearchPlaceholder = "Search flights...",
+        ShowStatusFilter = true,
+        StatusFilterName = "status",
+        StatusOptions = statuses.Select(s => new StatusOption { 
+            Text = s, 
+            Value = s, 
+            Selected = s == currentStatus 
+        }).ToList(),
+        ActionButtons = new List<ActionButtonViewModel> {
+            new ActionButtonViewModel { 
+                Text = "New Sector", 
+                IconClass = "fas fa-plus", 
+                Action = "Create", 
+                Class = "btn-premium-dark" 
+            }
+        }
+    }' />
 
-<!-- Stats Overview -->
-<div class="row g-3 mb-4">
-    <div class="col-md-3">
-        <div class="stat-card h-100 border-start border-4 border-primary">
-            <div class="stat-header mb-2">
-                <span class="text-uppercase text-muted small fw-bold">Total Flights</span>
-                <i class="fas fa-plane text-primary opacity-50 fa-lg"></i>
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success border-0 shadow-sm rounded-4 mb-4 d-flex align-items-center p-3 text-success bg-success-light">
+            <div class="icon-square bg-success text-white me-3 rounded-circle" style="width:38px;height:38px;">
+                <i class="fas fa-check"></i>
             </div>
-            <div class="h3 fw-bold mb-0">@flightList.Count</div>
-            <span class="small text-muted">All scheduled flights</span>
+            <div class="fw-bold">@TempData["Success"]</div>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
         </div>
-    </div>
-    <div class="col-md-3">
-        <div class="stat-card h-100 border-start border-4 border-success">
-            <div class="stat-header mb-2">
-                <span class="text-uppercase text-muted small fw-bold">Scheduled</span>
-                <i class="fas fa-check-circle text-success opacity-50 fa-lg"></i>
-            </div>
-            <div class="h3 fw-bold mb-0">@flightList.Count(f => f.Status == FlightStatus.Scheduled)</div>
-            <span class="small text-success">Active flights</span>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="stat-card h-100 border-start border-4 border-warning">
-            <div class="stat-header mb-2">
-                <span class="text-uppercase text-muted small fw-bold">Delayed</span>
-                <i class="fas fa-clock text-warning opacity-50 fa-lg"></i>
-            </div>
-            <div class="h3 fw-bold mb-0">@flightList.Count(f => f.Status == FlightStatus.Delayed)</div>
-            <span class="small text-warning">Needs attention</span>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="stat-card h-100 border-start border-4 border-danger">
-            <div class="stat-header mb-2">
-                <span class="text-uppercase text-muted small fw-bold">Cancelled</span>
-                <i class="fas fa-ban text-danger opacity-50 fa-lg"></i>
-            </div>
-            <div class="h3 fw-bold mb-0">@flightList.Count(f => f.Status == FlightStatus.Cancelled)</div>
-            <span class="small text-danger">Cancelled flights</span>
-        </div>
-    </div>
-</div>
+    }
 
-<!-- Flights Table -->
-<div class="card shadow-sm border-0 rounded-4 overflow-hidden">
-    <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
-        <h6 class="m-0 fw-bold text-dark">All Flights</h6>
-        <span class="badge bg-light text-secondary border small">@flightList.Count flight@(flightList.Count != 1 ? "s" : "")</span>
+    <!-- Stats Row -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <partial name="_AdminStatCard" model='new AdminStatCardViewModel {
+                Title = "Total Sectors",
+                Value = Model.TotalCount.ToString(),
+                IconClass = "fas fa-plane",
+                IconBgClass = "bg-primary-light",
+                IconTextClass = "text-primary"
+            }' />
+        </div>
+        <div class="col-6 col-md-3">
+            <partial name="_AdminStatCard" model='new AdminStatCardViewModel {
+                Title = "Scheduled",
+                Value = Model.Items.Count(f => f.Status == FlightStatus.Scheduled).ToString(),
+                IconClass = "fas fa-check-circle",
+                IconBgClass = "bg-success-light",
+                IconTextClass = "text-success"
+            }' />
+        </div>
+        <div class="col-6 col-md-3">
+            <partial name="_AdminStatCard" model='new AdminStatCardViewModel {
+                Title = "Page Seats",
+                Value = Model.Items.Sum(f => f.Seats.Count).ToString(),
+                IconClass = "fas fa-chair",
+                IconBgClass = "bg-warning-light",
+                IconTextClass = "text-warning"
+            }' />
+        </div>
+        <div class="col-6 col-md-3">
+            <partial name="_AdminStatCard" model='new AdminStatCardViewModel {
+                Title = "Cancelled",
+                Value = Model.Items.Count(f => f.Status == FlightStatus.Cancelled).ToString(),
+                IconClass = "fas fa-times-circle",
+                IconBgClass = "bg-danger-light",
+                IconTextClass = "text-danger"
+            }' />
+        </div>
     </div>
-    <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0" id="flightsTable">
-            <thead class="bg-light text-muted small text-uppercase">
-                <tr>
-                    <th class="ps-4 py-3 border-0 rounded-start">Flight</th>
-                    <th class="py-3 border-0">Route</th>
-                    <th class="py-3 border-0">Schedule</th>
-                    <th class="py-3 border-0">Duration</th>
-                    <th class="py-3 border-0">Seats</th>
-                    <th class="py-3 border-0">Status</th>
-                    <th class="pe-4 py-3 border-0 text-end rounded-end">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (flightList.Any())
-                {
-                    foreach (var flight in flightList)
+
+    <!-- Flights Table -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-header bg-white p-4 border-bottom-light d-flex justify-content-between align-items-center">
+            <h6 class="fw-black mb-0 text-dark">Sector Registry</h6>
+            <span class="badge bg-primary-light text-primary rounded-pill px-3 fw-bold x-small">@Model.TotalCount Records</span>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light x-small text-uppercase fw-black text-muted">
+                    <tr>
+                        <th class="ps-4 py-3">Flight</th>
+                        <th class="text-center d-none d-sm-table-cell">Route</th>
+                        <th class="text-center d-none d-md-table-cell">Carrier</th>
+                        <th class="text-center d-none d-md-table-cell">Departure</th>
+                        <th class="text-center d-none d-lg-table-cell">Seats</th>
+                        <th class="text-center d-none d-lg-table-cell">Status</th>
+                        <th class="pe-4"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Items.Any())
                     {
-                        var duration = flight.Schedule != null ? (flight.Schedule.End - flight.Schedule.Start) : TimeSpan.Zero;
-                        var durationStr = duration.TotalHours >= 1
-                            ? $"{(int)duration.TotalHours}h {duration.Minutes}m"
-                            : $"{duration.Minutes}m";
-
-                        var statusBadgeClass = flight.Status switch
-                        {
-                            FlightStatus.Scheduled => "bg-success-light text-success",
-                            FlightStatus.Delayed => "bg-warning-light text-warning",
-                            FlightStatus.Cancelled => "bg-danger-light text-danger",
-                            FlightStatus.Completed => "bg-info-light text-info",
-                            _ => "bg-light text-secondary"
-                        };
-
-                        var statusIcon = flight.Status switch
-                        {
-                            FlightStatus.Scheduled => "fa-check-circle",
-                            FlightStatus.Delayed => "fa-clock",
-                            FlightStatus.Cancelled => "fa-times-circle",
-                            FlightStatus.Completed => "fa-flag-checkered",
-                            _ => "fa-question-circle"
-                        };
-
-                        var typeColorClass = flight.Refundable ? "bg-success-light text-success" : "bg-primary-light text-primary";
-
                         <tr>
-                            <td class="ps-4">
-                                <div class="d-flex align-items-center">
-                                    @if (!string.IsNullOrEmpty(flight.Carrier?.Logo))
-                                    {
-                                        <img src="@flight.Carrier.Logo" alt="@flight.Carrier.Name" class="rounded me-3" style="width:35px; height:35px; object-fit:cover;" />
-                                    }
-                                    else
-                                    {
-                                        <div class="icon-square me-2 bg-primary-light text-primary">
-                                            <i class="fas fa-plane"></i>
-                                        </div>
-                                    }
-                                    <div>
-                                        <div class="fw-bold text-dark small">@flight.FlightNumber?.Value</div>
-                                        <div class="text-muted x-small">@flight.Carrier?.Name</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="d-flex align-items-center gap-2">
-                                    <div class="text-end">
-                                        <div class="fw-bold text-dark small">@flight.OriginAirport?.Code?.Value</div>
-                                        <div class="text-muted x-small d-none d-md-block">@flight.OriginAirport?.Name</div>
-                                    </div>
-                                    <i class="fas fa-long-arrow-alt-right text-primary x-small"></i>
-                                    <div>
-                                        <div class="fw-bold text-dark small">@flight.DestinationAirport?.Code?.Value</div>
-                                        <div class="text-muted x-small d-none d-md-block">@flight.DestinationAirport?.Name</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="text-muted small">
-                                @if (flight.Schedule != null)
-                                {
-                                    <div>@flight.Schedule.Start.ToString("MMM dd, yyyy")</div>
-                                    <div class="x-small">@flight.Schedule.Start.ToString("HH:mm") — @flight.Schedule.End.ToString("HH:mm")</div>
-                                }
-                            </td>
-                            <td>
-                                <span class="badge bg-light text-dark border px-2 py-1 rounded-pill fw-normal x-small">
-                                    <i class="far fa-clock me-1"></i>@durationStr
-                                </span>
-                            </td>
-                            <td>
-                                @{
-                                    var totalSeats = flight.Seats?.Count ?? 0;
-                                    var availableSeats = flight.Seats?.Count(s => s.IsAvailable) ?? 0;
-                                }
-                                <div class="fw-bold text-dark small">@totalSeats <small class="text-muted fw-normal">total</small></div>
-                                <div class="x-small @(availableSeats > 0 ? "text-success" : "text-danger")">
-                                    @availableSeats available
-                                </div>
-                            </td>
-                            <td>
-                                <span class="badge @statusBadgeClass px-3 py-2 rounded-pill fw-normal">
-                                    <i class="fas @statusIcon me-1"></i>@flight.Status
-                                </span>
-                            </td>
-                            <td class="pe-4 text-end">
-                                <a asp-action="Manage" asp-route-id="@flight.Id" class="btn btn-sm btn-icon btn-hover-primary" title="Manage Seats & Fares">
-                                    <i class="fas fa-tasks text-muted"></i>
-                                </a>
-                                <a asp-action="Edit" asp-route-id="@flight.Id" class="btn btn-sm btn-icon btn-hover-primary" title="Edit">
-                                    <i class="fas fa-edit text-muted"></i>
-                                </a>
-                                <form asp-action="Delete" asp-route-id="@flight.Id" method="post" class="d-inline" data-confirm="Flight @flight.FlightNumber and all its data will be deleted. Are you sure?" data-confirm-title="Delete Flight">
-                                    <input type="hidden" name="id" value="@flight.Id" />
-                                    <button type="submit" class="btn btn-sm btn-icon btn-hover-danger" title="Delete">
-                                        <i class="fas fa-trash text-muted"></i>
-                                    </button>
-                                </form>
+                            <td colspan="7" class="text-center py-5 text-muted">
+                                <i class="fas fa-plane fa-3x opacity-25 mb-3 d-block"></i>
+                                <div class="fw-bold">No flight sectors found</div>
+                                <div class="x-small mt-1">@(string.IsNullOrEmpty(search) ? "Start by creating your first sector." : $"No results for \"{search}\"")</div>
                             </td>
                         </tr>
                     }
-                }
-                else
-                {
-                    <tr>
-                        <td colspan="7" class="text-center py-5">
-                            <div class="d-flex flex-column align-items-center">
-                                <i class="fas fa-plane fa-3x text-muted opacity-25 mb-3"></i>
-                                <h6 class="text-muted">No flights found</h6>
-                                <p class="text-muted small mb-0">Create your first flight via 'Add Flight'.</p>
-                            </div>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-    <div class="card-footer bg-white py-3 border-top-0 d-flex justify-content-between align-items-center">
-        <span class="text-muted small">Showing @flightList.Count entries</span>
+                    @foreach (var flight in Model.Items)
+                    {
+                        var statusColor = flight.Status switch {
+                            FlightStatus.Scheduled => "success",
+                            FlightStatus.Cancelled => "danger",
+                            FlightStatus.Delayed => "warning",
+                            _ => "secondary"
+                        };
+                        <tr>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="icon-square bg-primary-light text-primary rounded-3" style="width:42px;height:42px;">
+                                        <i class="fas fa-plane-departure"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-black text-dark small">@flight.FlightNumber?.Value</div>
+                                        <div class="x-small text-muted">@(flight.Refundable ? "Refundable" : "Non-Refundable")</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-center d-none d-sm-table-cell">
+                                <div class="d-flex align-items-center justify-content-center gap-2">
+                                    <span class="fw-black text-dark small">@(flight.OriginAirport?.Code?.Value ?? "—")</span>
+                                    <i class="fas fa-long-arrow-alt-right text-muted"></i>
+                                    <span class="fw-black text-dark small">@(flight.DestinationAirport?.Code?.Value ?? "—")</span>
+                                </div>
+                            </td>
+                            <td class="text-center d-none d-md-table-cell">
+                                <span class="badge bg-primary-light text-primary px-3 py-2 rounded-pill fw-bold">@(flight.Carrier?.Name ?? "—")</span>
+                            </td>
+                            <td class="text-center d-none d-md-table-cell">
+                                <div class="small fw-bold text-dark">@flight.Schedule.Start.ToString("MMM dd, yyyy")</div>
+                                <div class="x-small text-muted">@flight.Schedule.Start.ToString("HH:mm")</div>
+                            </td>
+                            <td class="text-center d-none d-lg-table-cell">
+                                <span class="fw-black text-dark small">@flight.Seats.Count</span>
+                            </td>
+                            <td class="text-center d-none d-lg-table-cell">
+                                <span class="badge bg-@(statusColor)-light text-@statusColor px-3 py-2 rounded-pill fw-bold x-small">@flight.Status</span>
+                            </td>
+                            <td class="pe-4">
+                                <div class="d-flex gap-2 justify-content-end">
+                                    <a asp-controller="Flights" asp-action="Manage" asp-route-id="@flight.Id" class="btn btn-icon-soft btn-soft-primary" title="Manage">
+                                        <i class="fas fa-cog"></i>
+                                    </a>
+                                    <a asp-controller="Flights" asp-action="Edit" asp-route-id="@flight.Id" class="btn btn-icon-soft btn-soft-primary" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @if (Model.TotalPages >= 1)
+        {
+            <div class="card-footer bg-white border-top p-3 text-center">
+                <partial name="_Pagination" model="@PaginationViewModel.Create(Model, "Index", "Flights", new { search = search, status = currentStatus })" />
+            </div>
+        }
     </div>
 </div>
-
-
-<style>
-    .stat-card {
-        background: #fff;
-        padding: 1.25rem;
-        border-radius: 0.75rem;
-        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-        transition: transform 0.2s;
-    }
-    .stat-card:hover { transform: translateY(-3px); }
-    .stat-header { display: flex; justify-content: space-between; align-items: center; }
-    .btn-white {
-        background-color: #fff;
-        border: 1px solid #e3e6f0;
-        color: #6e707e;
-    }
-    .btn-white:hover { background-color: #f8f9fc; }
-    .icon-square { width: 35px; height: 35px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
-    .btn-icon { width: 32px; height: 32px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s; }
-    .btn-hover-primary:hover { background-color: rgba(67, 97, 238, 0.1); color: #4361ee !important; }
-    .x-small { font-size: 0.75rem; }
-    .bg-primary-light { background-color: rgba(67, 97, 238, 0.1); }
-    .bg-success-light { background-color: rgba(25, 135, 84, 0.1); }
-    .bg-info-light { background-color: rgba(13, 202, 240, 0.1); }
-    .bg-warning-light { background-color: rgba(255, 193, 7, 0.1); }
-    .bg-danger-light { background-color: rgba(220, 53, 69, 0.1); }
-
-    .search-group {
-        border-radius: 0.375rem;
-        transition: box-shadow 0.2s;
-    }
-    .search-group:focus-within {
-        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
-        border-color: #86b7fe;
-    }
-    .search-group .input-group-text { border-color: #dee2e6; }
-    .search-group .form-control { border-color: #dee2e6; }
-    .search-group .form-control:focus { box-shadow: none; border-color: #dee2e6; }
-    .search-group:focus-within .input-group-text,
-    .search-group:focus-within .form-control { border-color: #86b7fe; z-index: 2; }
-</style>

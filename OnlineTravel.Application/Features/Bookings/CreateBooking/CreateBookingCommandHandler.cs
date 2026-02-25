@@ -114,9 +114,7 @@ public sealed class CreateBookingCommandHandler : IRequestHandler<CreateBookingC
 		if (paymentResult.IsFailure)
 		{
 			_logger.LogWarning("Stripe session creation failed for Booking {BookingId}: {Error}", booking.Id, paymentResult.Error.Description);
-			
-			var responseFail = _mapper.Map<BookingResponse>(booking);
-			return Result<CreateBookingResponse>.Success(new CreateBookingResponse { Booking = responseFail }); // Still returning success for the booking, but without URL
+			return Result<CreateBookingResponse>.Failure(paymentResult.Error);
 		}
 
 		var paymentData = paymentResult.Value;
@@ -134,11 +132,10 @@ public sealed class CreateBookingCommandHandler : IRequestHandler<CreateBookingC
 			_logger.LogError(ex, "Failed to update Booking {BookingId} with Stripe IDs, but session was created.", booking.Id);
 		}
 
-		var bookingResponse = _mapper.Map<BookingResponse>(booking);
+		var bookingResponse = _mapper.Map<BookingResponse>(booking) with { PaymentUrl = paymentData.PaymentUrl };
 		return Result<CreateBookingResponse>.Success(new CreateBookingResponse
 		{
-			Booking = bookingResponse,
-			PaymentUrl = paymentData.PaymentUrl
+			Booking = bookingResponse
 		});
 	}
 }

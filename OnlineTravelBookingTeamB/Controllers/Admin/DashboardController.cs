@@ -30,5 +30,21 @@ namespace OnlineTravelBookingTeamB.Controllers.Admin
         {
             return View("~/Views/Admin/System/SeedData.cshtml");
         }
+
+        [HttpPost]
+        [Route("SeedData/Trigger")]
+        public async Task<IActionResult> TriggerSeed()
+        {
+            using var scope = HttpContext.RequestServices.CreateScope();
+            var services = scope.ServiceProvider;
+            var context = services.GetRequiredService<OnlineTravelDbContext>();
+            var userManager = services.GetRequiredService<Microsoft.AspNetCore.Identity.UserManager<OnlineTravel.Domain.Entities.Users.AppUser>>();
+            var roleManager = services.GetRequiredService<Microsoft.AspNetCore.Identity.RoleManager<Microsoft.AspNetCore.Identity.IdentityRole<Guid>>>();
+
+            await OnlineTravel.Infrastructure.Persistence.Seed.ApplicationDbContextSeed.SeedAsync(context, userManager, roleManager);
+
+            TempData["Success"] = "Database seeded successfully with unified data!";
+            return RedirectToAction("SeedData");
+        }
     }
 }
