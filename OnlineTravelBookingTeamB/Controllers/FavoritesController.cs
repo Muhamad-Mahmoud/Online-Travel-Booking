@@ -1,46 +1,28 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnlineTravel.Application.Features.Favorites.Commands.AddFavorite;
 using OnlineTravel.Application.Features.Favorites.DTOs;
 using OnlineTravel.Application.Features.Favorites.Queries.GetUserFavorites;
-using OnlineTravelBookingTeamB.Extensions;
 
 namespace OnlineTravelBookingTeamB.Controllers;
 
 [Authorize]
+[Route("api/v1/favorites")]
 public class FavoritesController : BaseApiController
 {
     [HttpPost]
     public async Task<ActionResult> Add([FromBody] AddFavoriteRequest request)
     {
-        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        
-        if (!Guid.TryParse(userIdString, out var userId))
-        {
-            return Unauthorized();
-        }
-
-        var command = new AddFavoriteCommand(userId, request.ItemId);
-        
+        var command = new AddFavoriteCommand(UserId, request.ItemId);
         var result = await Mediator.Send(command);
-
-        return result.ToResponse(201);
+        return HandleResult(result);
     }
 
     [HttpGet]
     public async Task<ActionResult> Get()
     {
-        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-        if (!Guid.TryParse(userIdString, out var userId))
-        {
-            return Unauthorized();
-        }
-
-        var query = new GetUserFavoritesQuery(userId);
+        var query = new GetUserFavoritesQuery(UserId);
         var result = await Mediator.Send(query);
-
-        return result.ToResponse();
+        return HandleResult(result);
     }
 }

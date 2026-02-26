@@ -2,7 +2,7 @@ using MediatR;
 
 namespace OnlineTravel.Application.Features.Tours.Manage.Commands.AddPriceTier;
 
-public class AddTourPriceTierCommand : IRequest<Guid>
+public class AddTourPriceTierCommand : IRequest<OnlineTravel.Domain.ErrorHandling.Result<Guid>>
 {
     public Guid TourId { get; set; }
     public string Name { get; set; } = string.Empty;

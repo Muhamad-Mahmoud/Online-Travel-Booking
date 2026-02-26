@@ -1,0 +1,127 @@
+@using OnlineTravel.Application.Features.CarBrands.Shared.DTOs
+@model CarBrandDto
+@{
+    ViewData["Title"] = "Car Brand Details";
+}
+
+<div class="page-title d-flex justify-content-between align-items-center">
+    <span><i class="fas fa-copyright me-2 text-primary"></i> Car Brand Details</span>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning shadow-sm rounded-pill px-4 me-2">
+            <i class="fas fa-edit me-2"></i> Edit Brand
+        </a>
+        <a asp-action="Index" class="btn btn-light shadow-sm rounded-pill px-4">
+            <i class="fas fa-arrow-left me-2"></i> Back to List
+        </a>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <div class="icon-wrap">
+                        @if (!string.IsNullOrEmpty(Model.Logo))
+                        {
+                            <img src="@Model.Logo" alt="@Model.Name" class="brand-logo rounded-3" />
+                        }
+                        else
+                        {
+                            <i class="fas fa-car-side text-primary fs-4"></i>
+                        }
+                    </div>
+                    <div>
+                        <h3 class="fw-bold text-dark mb-1">@Model.Name</h3>
+                        <span class="badge @(Model.IsActive ? "bg-success-light text-success" : "bg-danger-light text-danger") rounded-pill px-3 py-2">
+                            @(Model.IsActive ? "Active" : "Inactive")
+                        </span>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="data-box">
+                            <label class="x-small text-muted fw-bold text-uppercase mb-1">Brand ID</label>
+                            <div class="fw-semibold text-dark text-break">@Model.Id</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="data-box">
+                            <label class="x-small text-muted fw-bold text-uppercase mb-1">Last Updated</label>
+                            <div class="fw-semibold text-dark">@((Model.UpdatedAt?.ToString("MMM dd, yyyy HH:mm")) ?? "N/A")</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="data-box">
+                            <label class="x-small text-muted fw-bold text-uppercase mb-1">Created At</label>
+                            <div class="fw-semibold text-dark">@Model.CreatedAt.ToString("MMM dd, yyyy HH:mm")</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="data-box">
+                            <label class="x-small text-muted fw-bold text-uppercase mb-1">Logo</label>
+                            <div class="fw-semibold text-dark">@(string.IsNullOrEmpty(Model.Logo) ? "No logo configured" : "Configured")</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-header bg-transparent border-bottom py-3">
+                <h6 class="m-0 fw-bold text-dark">Quick Actions</h6>
+            </div>
+            <div class="card-body p-4 d-grid gap-2">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning rounded-3 fw-bold">
+                    <i class="fas fa-pen me-2"></i> Edit Brand
+                </a>
+                <a asp-action="Index" class="btn btn-light rounded-3 fw-bold border">
+                    <i class="fas fa-list me-2"></i> Back to Brands
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .icon-wrap {
+        width: 72px;
+        height: 72px;
+        border-radius: 16px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .brand-logo {
+        width: 56px;
+        height: 56px;
+        object-fit: contain;
+    }
+    .data-box {
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 12px 14px;
+        background: #fff;
+        height: 100%;
+    }
+</style>

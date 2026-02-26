@@ -1,90 +1,90 @@
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using OnlineTravelBookingTeamB.Extensions;
-using OnlineTravel.Domain.ErrorHandling;
-using OnlineTravel.Application.Features.Bookings.CreateBooking;
-using OnlineTravel.Application.Features.Bookings.GetBookingById;
+using Microsoft.AspNetCore.Mvc;
+using OnlineTravel.Application.Features.Admin.Export;
 using OnlineTravel.Application.Features.Bookings.CancelBooking;
-using OnlineTravel.Application.Features.Bookings.GetUserBookings;
+using OnlineTravel.Application.Features.Bookings.CreateBooking;
 using OnlineTravel.Application.Features.Bookings.GetAllBookings;
+using OnlineTravel.Application.Features.Bookings.GetBookingById;
+using OnlineTravel.Application.Features.Bookings.GetBookingStats;
+using OnlineTravel.Application.Features.Bookings.GetUserBookings;
 
-namespace OnlineTravelBookingTeamB.Controllers
+namespace OnlineTravelBookingTeamB.Controllers;
+
+[Authorize]
+[Route("api/v1/bookings")]
+public class BookingsController : BaseApiController
 {
-    /// <summary>
-    /// Controller for managing flight, hotel, tour, and car bookings.
-    /// </summary>
-    [Authorize]
-    public class BookingsController : BaseApiController
+    [HttpPost]
+    public async Task<ActionResult> Create([FromBody] CreateBookingCommand command)
     {
-        /// <summary>
-        /// Creates a new booking for the authenticated user.
-        /// </summary>
-        [HttpPost]
-        [Authorize]
-        public async Task<ActionResult> Create([FromBody] CreateBookingCommand command)
+        var commandWithUser = command with { UserId = UserId };
+        var result = await Mediator.Send(commandWithUser);
+        return HandleResult(result);
+    }
+
+    [HttpGet]
+    public async Task<ActionResult> GetMyBookings([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
+    {
+        var query = new GetUserBookingsQuery(UserId, pageIndex, pageSize);
+        var result = await Mediator.Send(query);
+        return HandleResult(result);
+    }
+
+    [HttpPost("cancel")]
+    public async Task<ActionResult> Cancel([FromBody] CancelBookingCommand command)
+    {
+        var commandWithUser = command with { UserId = UserId };
+        var result = await Mediator.Send(commandWithUser);
+        return HandleResult(result);
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpGet("admin")]
+    public async Task<ActionResult> GetAll([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10, [FromQuery] string? searchTerm = null, [FromQuery] string? status = null)
+    {
+        var result = await Mediator.Send(new GetAllBookingsQuery(pageIndex, pageSize, searchTerm, status));
+        return HandleResult(result);
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpGet("admin/stats")]
+    public async Task<ActionResult> GetStats()
+    {
+        var result = await Mediator.Send(new GetBookingStatsQuery());
+        return HandleResult(result);
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpGet("admin/{id:guid}")]
+    public async Task<ActionResult> GetById(Guid id)
+    {
+        var result = await Mediator.Send(new GetBookingByIdQuery(id));
+        return HandleResult(result);
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpGet("admin/users/{userId:guid}")]
+    public async Task<ActionResult> GetByUserId(Guid userId, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
+    {
+        var result = await Mediator.Send(new GetUserBookingsQuery(userId, pageIndex, pageSize));
+        return HandleResult(result);
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpGet("admin/export")]
+    public async Task<ActionResult> Export()
+    {
+        var result = await Mediator.Send(new ExportBookingsQuery());
+        if (!result.IsSuccess)
         {
-            var commandWithUser = command with { UserId = UserId };
-            var result = await Mediator.Send(commandWithUser);
-            return result.ToResponse(201);
+            return HandleResult(result);
         }
 
-        /// <summary>
-        /// Retrieves all bookings for the currently authenticated user.
-        /// </summary>
-        [HttpGet]
-        public async Task<ActionResult> GetMyBookings([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
+        if (result.Value is null || result.Value.Length == 0)
         {
-            var query = new GetUserBookingsQuery(UserId, pageIndex, pageSize);
-            var result = await Mediator.Send(query);
-            return result.ToResponse();
+            return NotFound("No export data available.");
         }
 
-        /// <summary>
-        /// Cancels an existing booking for the authenticated user.
-        /// </summary>
-        [HttpPost("cancel")]
-        public async Task<ActionResult> Cancel([FromBody] CancelBookingCommand command)
-        {
-            var commandWithUser = command with { UserId = UserId };
-            var result = await Mediator.Send(commandWithUser);
-            return result.ToResponse();
-        }
-
-        /// <summary>
-        /// Retrieves a specific booking by its unique identifier.
-        /// </summary>
-        [Authorize(Roles = "Admin")]
-        [HttpGet("{id}")]
-        public async Task<ActionResult> GetById(Guid id)
-        {
-            var query = new GetBookingByIdQuery(id);
-            var result = await Mediator.Send(query);
-            return result.ToResponse();
-        }
-
-        /// <summary>
-        /// Retrieves all bookings for a specific user.
-        /// </summary>
-        [Authorize(Roles = "Admin")]
-        [HttpGet("user/{userId}")]
-        public async Task<ActionResult> GetUserBookings(Guid userId, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
-        {
-            var query = new GetUserBookingsQuery(userId, pageIndex, pageSize);
-            var result = await Mediator.Send(query);
-            return result.ToResponse();
-        }
-
-        /// <summary>
-        /// Retrieves a paginated list of all bookings in the system.
-        /// </summary>
-        [Authorize(Roles = "Admin")]
-        [HttpGet("admin/all")]
-        public async Task<ActionResult> GetAllBookings([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
-        {
-            var query = new GetAllBookingsQuery(pageIndex, pageSize);
-            var result = await Mediator.Send(query);
-            return result.ToResponse();
-        }
+        return File(result.Value, "text/csv", $"bookings-{DateTime.UtcNow:yyyyMMddHHmmss}.csv");
     }
 }

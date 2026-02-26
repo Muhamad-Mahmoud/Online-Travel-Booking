@@ -1,15 +1,10 @@
-﻿using MediatR;
+using MediatR;
 using OnlineTravel.Application.Interfaces.Persistence;
-using OnlineTravel.Domain.Entities.Flights;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using OnlineTravel.Domain.ErrorHandling;
 
 namespace OnlineTravel.Application.Features.Flight.Airport.GetAirportById
 {
-    public class GetAirportByIdHandler: IRequestHandler<GetAirportByIdQuery, GetAirportByIdDto>
+    public class GetAirportByIdHandler : IRequestHandler<GetAirportByIdQuery, Result<GetAirportByIdDto>>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -18,26 +13,22 @@ namespace OnlineTravel.Application.Features.Flight.Airport.GetAirportById
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<GetAirportByIdDto> Handle(GetAirportByIdQuery request, CancellationToken cancellationToken)
+        public async Task<Result<GetAirportByIdDto>> Handle(GetAirportByIdQuery request, CancellationToken cancellationToken)
         {
-            // Fetch the entity from repository using the Id
-            var airport = await _unitOfWork.Repository< OnlineTravel.Domain.Entities.Flights.Airport> ().GetByIdAsync(request.Id);
-
-            //  Check if airport exists
+            var airport = await _unitOfWork.Repository<OnlineTravel.Domain.Entities.Flights.Airport>().GetByIdAsync(request.Id);
             if (airport == null)
             {
-                return null; // Or throw a NotFoundException
+                return Result<GetAirportByIdDto>.Failure(Error.NotFound($"Airport with id '{request.Id}' was not found."));
             }
 
-            //  Map Entity to Dto
-            return new GetAirportByIdDto
+            return Result<GetAirportByIdDto>.Success(new GetAirportByIdDto
             {
                 Id = airport.Id,
                 Name = airport.Name,
                 Code = airport.Code.Value,
                 FullAddress = $"{airport.Address.Street}, {airport.Address.City}, {airport.Address.Country}",
                 Facilities = airport.Facilities
-            };
+            });
         }
     }
 }

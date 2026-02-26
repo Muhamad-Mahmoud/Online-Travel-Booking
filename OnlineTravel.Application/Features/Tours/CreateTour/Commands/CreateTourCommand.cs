@@ -3,7 +3,7 @@ using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 
 namespace OnlineTravel.Application.Features.Tours.CreateTour.Commands
 {
-    public class CreateTourCommand : IRequest<Guid>
+    public class CreateTourCommand : IRequest<OnlineTravel.Domain.ErrorHandling.Result<Guid>>
     {
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
@@ -29,3 +29,4 @@ namespace OnlineTravel.Application.Features.Tours.CreateTour.Commands
         public string Currency { get; set; } = "USD";
     }
 }
+

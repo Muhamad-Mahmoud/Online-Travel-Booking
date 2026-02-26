@@ -1,19 +1,17 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using OnlineTravel.Application.Features.Auth.Account;
 using OnlineTravel.Application.Features.Auth.Login;
 using OnlineTravel.Application.Features.Auth.Password;
 using OnlineTravel.Application.Features.Auth.Register;
 using OnlineTravel.Application.Interfaces.Services.Auth;
-using OnlineTravel.Domain.Entities.Users;
 using System.Security.Claims;
 
-namespace OnlineTravel.API.Controllers.Auth
+namespace OnlineTravelBookingTeamB.Controllers.Auth
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/v1/auth")]
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
@@ -111,7 +109,7 @@ namespace OnlineTravel.API.Controllers.Auth
 
             var frontendUrl = _configuration["AppSettings:FrontendBaseUrl"];
 
-            return Redirect($"{frontendUrl}/auth/google-success?token={response.Token}");
+            return Redirect($"{frontendUrl}/auth/google-success#token={response.Token}");
 
 
         }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace OnlineTravel.Application.Features.Flight.Flights.CreateFlight
 {
-    public class CreateFlightCommand: IRequest<Guid>
+    public class CreateFlightCommand: IRequest<OnlineTravel.Domain.ErrorHandling.Result<Guid>>
     {
         public string FlightNumber { get; set; } = string.Empty;
         public Guid CarrierId { get; set; }

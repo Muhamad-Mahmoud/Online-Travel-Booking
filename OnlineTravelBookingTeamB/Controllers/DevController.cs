@@ -1,11 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using OnlineTravel.Infrastructure.Persistence.Context;
 
 namespace OnlineTravelBookingTeamB.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/v1/dev")]
+    [Authorize(Roles = "Admin")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class DevController : ControllerBase
     {
         private readonly OnlineTravelDbContext _context;

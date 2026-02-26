@@ -1,85 +1,106 @@
 using Microsoft.AspNetCore.Mvc;
-using OnlineTravel.Application.Features.Tours.GetTourById.Queries;
-using OnlineTravel.Application.Features.Tours.GetTourById.DTOs;
-using OnlineTravel.Application.Features.Tours.GetAllTours.Queries;
-using OnlineTravel.Application.Features.Tours.GetAllTours.DTOs;
 using Microsoft.AspNetCore.Authorization;
+using OnlineTravel.Application.Features.Tours.CreateTour.Commands;
+using OnlineTravel.Application.Features.Tours.DeleteTour.Commands;
+using OnlineTravel.Application.Features.Tours.GetAllTours.Queries;
+using OnlineTravel.Application.Features.Tours.GetTourById.Queries;
+using OnlineTravel.Application.Features.Tours.Manage.Commands.AddActivity;
+using OnlineTravel.Application.Features.Tours.Manage.Commands.AddImage;
+using OnlineTravel.Application.Features.Tours.Manage.Commands.AddPriceTier;
+using OnlineTravel.Application.Features.Tours.Manage.Commands.UpdateCoordinates;
+using OnlineTravel.Application.Features.Tours.Manage.Commands.UpdateTour;
 
 namespace OnlineTravelBookingTeamB.Controllers;
 
+[Route("api/v1/tours")]
 public class ToursController : BaseApiController
 {
     [HttpGet]
-    [Authorize]
-    [ProducesResponseType(typeof(OnlineTravel.Application.Common.PagedResult<TourResponse>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetAll(
-        [FromQuery] OnlineTravel.Application.Common.PaginationParams paginationParams,
-        [FromQuery] string? search,
-        [FromQuery] double? lat,
-        [FromQuery] double? lon,
-        [FromQuery] double? radiusKm,
-        [FromQuery] decimal? minPrice,
-        [FromQuery] decimal? maxPrice,
-        [FromQuery] int? rating,
-        [FromQuery] string? city,
-        [FromQuery] string? country,
-        [FromQuery] string? sortOrder)
+    public async Task<ActionResult> GetAll([FromQuery] GetAllToursQuery query)
     {
-        var result = await Mediator.Send(new GetAllToursQuery(paginationParams.PageIndex, paginationParams.PageSize, search, lat, lon, radiusKm, minPrice, maxPrice, rating, city, country, sortOrder));
+        var result = await Mediator.Send(query);
         return Ok(result);
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(Guid id)
+    public async Task<ActionResult> GetById(Guid id)
     {
-        var query = new GetTourByIdQuery(Id: id);
-        var result = await Mediator.Send(query);
-
-        if (result == null)
-        {
-            return NotFound();
-        }
-
-        return Ok(result);
+        var result = await Mediator.Send(new GetTourByIdQuery(id));
+        return HandleResult(result);
     }
 
-    [HttpPost("{id}/reviews")]
-    [Authorize] 
-    public async Task<IActionResult> CreateReview(Guid id, [FromBody] OnlineTravel.Application.Features.Reviews.DTOs.CreateReviewRequest request)
+    [Authorize(Roles = "Admin")]
+    [HttpPost]
+    public async Task<ActionResult> Create([FromBody] CreateTourCommand command)
     {
-        var userIdString = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-        if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
-        {
-             return Unauthorized("User ID not found in token.");
-        }
-
-        var command = new OnlineTravel.Application.Features.Reviews.Commands.CreateReviewCommand(
-            TourId: id,
-            UserId: userId, 
-            Rating: request.Rating,
-            Comment: request.Comment
-        );
-
         var result = await Mediator.Send(command);
-
         if (!result.IsSuccess)
-        {
-            return BadRequest(result.Error);
-        }
+            return HandleResult(result);
 
-        return Ok(result.Value);
+        return CreatedAtAction(nameof(GetById), new { id = result.Value }, new { id = result.Value });
     }
 
-    [HttpGet("{id}/reviews")]
-    [ProducesResponseType(typeof(List<OnlineTravel.Application.Features.Reviews.DTOs.ReviewResponse>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetReviews(Guid id)
+    [Authorize(Roles = "Admin")]
+    [HttpPut("{id:guid}")]
+    public async Task<ActionResult> Update(Guid id, [FromBody] UpdateTourCommand command)
     {
-        var result = await Mediator.Send(new OnlineTravel.Application.Features.Reviews.Queries.GetTourReviewsQuery(id));
-        
-        if (!result.IsSuccess)
-             return BadRequest(result.Error); // Or NotFound check inside handler
+        command.TourId = id;
+        var result = await Mediator.Send(command);
+        return HandleResult(result);
+    }
 
-        return Ok(result.Value);
+    [Authorize(Roles = "Admin")]
+    [HttpDelete("{id:guid}")]
+    public async Task<ActionResult> Delete(Guid id)
+    {
+        var result = await Mediator.Send(new DeleteTourCommand(id));
+        if (!result.IsSuccess)
+            return HandleResult(result);
+        return NoContent();
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPost("{id:guid}/activities")]
+    public async Task<ActionResult> AddActivity(Guid id, [FromBody] AddTourActivityCommand command)
+    {
+        command.TourId = id;
+        var result = await Mediator.Send(command);
+        if (!result.IsSuccess)
+            return HandleResult(result);
+
+        return CreatedAtAction(nameof(GetById), new { id }, new { id = result.Value });
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPost("{id:guid}/images")]
+    public async Task<ActionResult> AddImage(Guid id, [FromBody] AddTourImageCommand command)
+    {
+        command.TourId = id;
+        var result = await Mediator.Send(command);
+        if (!result.IsSuccess)
+            return HandleResult(result);
+
+        return CreatedAtAction(nameof(GetById), new { id }, new { id = result.Value });
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPost("{id:guid}/price-tiers")]
+    public async Task<ActionResult> AddPriceTier(Guid id, [FromBody] AddTourPriceTierCommand command)
+    {
+        command.TourId = id;
+        var result = await Mediator.Send(command);
+        if (!result.IsSuccess)
+            return HandleResult(result);
+
+        return CreatedAtAction(nameof(GetById), new { id }, new { id = result.Value });
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPut("{id:guid}/coordinates")]
+    public async Task<ActionResult> UpdateCoordinates(Guid id, [FromBody] UpdateTourCoordinatesCommand command)
+    {
+        command.TourId = id;
+        var result = await Mediator.Send(command);
+        return HandleResult(result);
     }
 }

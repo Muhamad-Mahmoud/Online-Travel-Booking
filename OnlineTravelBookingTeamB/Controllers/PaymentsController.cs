@@ -1,4 +1,3 @@
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using OnlineTravel.Application.Features.Payments.ConfirmPayment;
 using OnlineTravel.Application.Features.Payments.DTOs;
@@ -9,6 +8,7 @@ using OnlineTravel.Infrastructure.Services.Payments;
 
 namespace OnlineTravelBookingTeamB.Controllers;
 
+[Route("api/v1/payments")]
 public class PaymentsController : BaseApiController
 {
     private readonly StripeOptions _options;

@@ -1,0 +1,549 @@
+@model OnlineTravelBookingTeamB.Models.TourViewModel
+
+@{
+    ViewData["Title"] = "Create Tour";
+}
+
+<div class="container-fluid py-4 provisioning-deck">
+    <!-- Provisioning Header -->
+    <div class="row g-3 justify-content-between align-items-center mb-5 px-2">
+        <div class="col-12 col-lg-auto">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1 text-uppercase ls-md x-small fw-bold opacity-50">
+                    <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index" class="text-decoration-none text-muted small">Admin</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none text-muted small">Tours</a></li>
+                    <li class="breadcrumb-item active small">New Provision</li>
+                </ol>
+            </nav>
+            <div class="d-flex align-items-center gap-3">
+                <div class="authority-icon-box bg-primary text-white rounded-3 shadow-sm">
+                    <i class="fas fa-plus-circle"></i>
+                </div>
+                <div>
+                    <h1 class="h2 fw-black text-dark mb-0 tracking-tight">Provision <span class="text-primary">New Tour</span></h1>
+                    <div class="d-flex align-items-center gap-2 mt-1">
+                        <span class="status-pill status-draft">
+                            <i class="fas fa-edit me-1"></i> INITIALIZING SECTOR
+                        </span>
+                        <span class="asset-id-tag">OPERATIONAL STATUS: READY</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-auto">
+            <a asp-action="Index" class="btn btn-premium-white shadow-sm">
+                <i class="fas fa-arrow-left me-2 text-muted"></i> Abort Mission
+            </a>
+        </div>
+    </div>
+
+    <form asp-action="Create" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="alert alert-premium-danger border-0 shadow-sm rounded-4 mb-4"></div>
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <!-- Data Entry Module -->
+                <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white overflow-hidden">
+                    <div class="card-header bg-white p-4 border-bottom-light">
+                        <h5 class="fw-black mb-0 text-dark ls-tight">Mission Briefing</h5>
+                        <p class="text-muted x-small fw-bold mb-0 opacity-75 text-uppercase ls-sm">Define the core narrative and duration parameters.</p>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row g-4">
+                            <div class="col-12">
+                                <label asp-for="Title" class="premium-meta-label">MISSION DESIGNATOR</label>
+                                <input asp-for="Title" class="form-control premium-control" placeholder="Enter elite mission title..." />
+                                <span asp-validation-for="Title" class="text-danger x-small fw-bold"></span>
+                            </div>
+                            <div class="col-12">
+                                <label asp-for="Description" class="premium-meta-label">MISSION NARRATIVE</label>
+                                <textarea asp-for="Description" class="form-control premium-control" rows="4" placeholder="Describe the adventure node details..."></textarea>
+                                <span asp-validation-for="Description" class="text-danger x-small fw-bold"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="CategoryId" class="premium-meta-label">SECTOR CATEGORY</label>
+                                <select asp-for="CategoryId" class="form-select premium-control" asp-items="ViewBag.Categories">
+                                    <option value="">-- Select Sector --</option>
+                                </select>
+                                <span asp-validation-for="CategoryId" class="text-danger x-small fw-bold"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="premium-meta-label">TEMPORAL DEPTH (DAYS/NIGHTS)</label>
+                                <div class="input-group">
+                                    <input asp-for="DurationDays" class="form-control premium-control" placeholder="Days" />
+                                    <span class="input-group-text bg-light border-0 fw-black x-small">D</span>
+                                    <input asp-for="DurationNights" class="form-control premium-control border-start" placeholder="Nights" />
+                                    <span class="input-group-text bg-light border-0 fw-black x-small">N</span>
+                                </div>
+                                <span asp-validation-for="DurationDays" class="text-danger x-small fw-bold"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tactical Map Interface -->
+                <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white overflow-hidden">
+                    <div class="card-header bg-white p-4 border-bottom-light d-flex justify-content-between align-items-center flex-wrap gap-3">
+                        <div>
+                            <h5 class="fw-black mb-0 text-dark ls-tight">Tactical Map Unit</h5>
+                            <p class="text-muted x-small fw-bold mb-0 opacity-75 text-uppercase ls-sm">Precision coordinate drops and geospatial registry.</p>
+                        </div>
+                        <div class="input-group premium-search-group shadow-sm" style="max-width: 250px;">
+                            <span class="input-group-text bg-light border-0"><i class="fas fa-search"></i></span>
+                            <input type="text" id="mapSearchInput" class="form-control border-0 bg-light x-small fw-bold" placeholder="SEARCH SECTOR...">
+                            <button type="button" class="btn btn-primary btn-sm border-0" id="mapSearchBtn"><i class="fas fa-crosshairs"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-body p-3 p-md-4 position-relative">
+                        <div class="map-shell shadow-sm">
+                            <div class="map-toolbar">
+                                <button type="button" id="locateBtn" class="btn btn-map-tool" title="Use my location">
+                                    <i class="fas fa-location-crosshairs"></i>
+                                    Locate
+                                </button>
+                                <button type="button" id="resetMapBtn" class="btn btn-map-tool" title="Reset view">
+                                    <i class="fas fa-rotate-left"></i>
+                                    Reset
+                                </button>
+                                <button type="button" id="styleStreetBtn" class="btn btn-map-tool active" title="Street style">Street</button>
+                                <button type="button" id="styleDarkBtn" class="btn btn-map-tool" title="Dark style">Dark</button>
+                            </div>
+                            <div id="createMap" class="pro-map"></div>
+                            <div class="map-coordinates" id="mapCoordinates">
+                                LAT: ---, LNG: ---
+                            </div>
+                        </div>
+                        <div class="position-absolute bottom-0 start-0 m-4 z-3">
+                             <div class="glass-badge-dark px-3 py-2 rounded-3 blur-bg text-white fw-bold x-small shadow-lg">
+                                <i class="fas fa-satellite me-1"></i> LIVE GEOSPATIAL FEED: ACTIVE
+                             </div>
+                        </div>
+                        <div id="mapStatus" class="map-status-note x-small fw-bold mt-3">Tip: click on map or search location to pin coordinates.</div>
+                    </div>
+                    <div class="card-footer bg-soft-light p-4 border-top-light">
+                        <div class="row g-3">
+                            <div class="col-md-12 mb-2">
+                                <label asp-for="Street" class="premium-meta-label">SECTOR ADDRESS</label>
+                                <input asp-for="Street" class="form-control premium-control" placeholder="Enter street deployment point..." />
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="City" class="premium-meta-label">CITY NODE</label>
+                                <input asp-for="City" class="form-control premium-control" />
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Country" class="premium-meta-label">GLOBAL REGION</label>
+                                <input asp-for="Country" class="form-control premium-control" />
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Latitude" class="premium-meta-label">LATITUDE</label>
+                                <input asp-for="Latitude" class="form-control premium-control bg-soft-light fw-black border-dashed" id="createLat" readonly />
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Longitude" class="premium-meta-label">LONGITUDE</label>
+                                <input asp-for="Longitude" class="form-control premium-control bg-soft-light fw-black border-dashed" id="createLng" readonly />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <!-- Commercial Configuration -->
+                <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white overflow-hidden border-top border-4 border-success">
+                    <div class="card-header bg-white p-4 border-bottom-light">
+                        <h6 class="fw-black text-uppercase x-small text-muted mb-0 ls-lg">Commercial Parameters</h6>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="mb-4">
+                            <label asp-for="StandardPrice" class="premium-meta-label">BASELINE VALUATION</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-0 fw-black">$</span>
+                                <input asp-for="StandardPrice" class="form-control premium-control" placeholder="0.00" />
+                                <select asp-for="Currency" class="form-select premium-control border-start" style="max-width: 90px;">
+                                    <option value="USD">USD</option>
+                                    <option value="EUR">EUR</option>
+                                    <option value="EGP">EGP</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="StandardPrice" class="text-danger x-small fw-bold"></span>
+                        </div>
+                        <div class="mb-4">
+                            <label asp-for="BestTimeToVisit" class="premium-meta-label">OPTIMAL WINDOW</label>
+                            <input asp-for="BestTimeToVisit" class="form-control premium-control" placeholder="e.g. SEP - NOV (Peak)" />
+                        </div>
+                        <div class="form-check form-switch custom-switch-premium">
+                            <input class="form-check-input" type="checkbox" asp-for="Recommended">
+                            <label class="form-check-label fw-black text-dark x-small ls-sm mt-1" asp-for="Recommended">ASSIGN ELITE STATUS</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visual Staging Deck -->
+                <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white overflow-hidden">
+                    <div class="card-header bg-white p-4 border-bottom-light">
+                        <h6 class="fw-black text-uppercase x-small text-muted mb-0 ls-lg">Visual Staging</h6>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="mb-3">
+                            <label asp-for="MainImage" class="premium-meta-label">PRIMARY MISSION HERO</label>
+                            <div class="premium-file-upload">
+                                <input asp-for="MainImage" class="form-control d-none" type="file" id="mainImageUpload" accept="image/*" />
+                                <label for="mainImageUpload" class="upload-zone rounded-3 text-center p-4 d-block cursor-pointer">
+                                    <i class="fas fa-cloud-upload-alt fa-2x text-primary opacity-50 mb-2"></i>
+                                    <p class="x-small fw-bold text-muted mb-0">TAP TO DEPLOY IMAGE</p>
+                                </label>
+                            </div>
+                            <span asp-validation-for="MainImage" class="text-danger x-small fw-bold"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Provision Controls -->
+                <div class="card border-0 shadow-2xl rounded-4 bg-premium-dark text-white p-4 position-relative">
+                    <div class="protocol-bg-glow"></div>
+                    <h6 class="fw-black x-small text-uppercase ls-lg opacity-50 mb-3 position-relative z-1">Provisioning Protocol</h6>
+                    <p class="x-small opacity-75 mb-4 position-relative z-1 fw-medium leading-relaxed">Ensure all geospatial nodes and commercial parameters are validated before deployment.</p>
+                    <div class="d-grid gap-2 position-relative z-1">
+                        <button type="submit" class="btn btn-premium-blue py-3 fw-black rounded-3">COMPLETING PROVISIONING</button>
+                        <a asp-action="Index" class="btn btn-link text-white text-decoration-none x-small fw-bold opacity-50">Cancel Deployment</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<style>
+    .map-shell {
+        position: relative;
+        border: 1px solid #dbe5f2;
+        border-radius: 18px;
+        overflow: hidden;
+        background: linear-gradient(145deg, #f8fbff 0%, #eef4ff 100%);
+    }
+
+    .pro-map {
+        height: 420px;
+        z-index: 1;
+    }
+
+    .map-toolbar {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        z-index: 800;
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        max-width: calc(100% - 24px);
+    }
+
+    .btn-map-tool {
+        border: 1px solid rgba(15, 23, 42, 0.15);
+        background: rgba(255, 255, 255, 0.92);
+        color: #0f172a;
+        font-size: 0.72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.45px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        backdrop-filter: blur(6px);
+    }
+
+    .btn-map-tool.active,
+    .btn-map-tool:hover {
+        background: #0f172a;
+        border-color: #0f172a;
+        color: #fff;
+    }
+
+    .map-coordinates {
+        position: absolute;
+        right: 12px;
+        bottom: 12px;
+        z-index: 800;
+        background: rgba(15, 23, 42, 0.86);
+        color: #fff;
+        font-size: 0.68rem;
+        font-weight: 900;
+        letter-spacing: 0.6px;
+        padding: 8px 12px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .map-status-note {
+        color: #475569;
+        letter-spacing: 0.2px;
+    }
+
+    .map-shell .leaflet-control-zoom a {
+        width: 34px;
+        height: 34px;
+        line-height: 32px;
+        border-radius: 10px;
+        border: 1px solid #d8e2f0;
+        color: #0f172a;
+        font-weight: 700;
+    }
+
+    .map-shell .leaflet-control-attribution {
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 8px 0 0 0;
+        padding: 2px 8px;
+    }
+
+    .map-shell .leaflet-popup-content-wrapper {
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.18);
+    }
+
+    .map-shell .leaflet-popup-content {
+        margin: 12px 14px;
+        font-size: 0.78rem;
+        font-weight: 600;
+    }
+
+    .map-shell .custom-marker .marker-core {
+        width: 14px;
+        height: 14px;
+        border: 2px solid #fff;
+        background: radial-gradient(circle at 35% 35%, #60a5fa 0%, #2563eb 70%);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15), 0 0 18px rgba(37, 99, 235, 0.55);
+    }
+
+    .map-shell .custom-marker .marker-pulse {
+        width: 14px;
+        height: 14px;
+        margin: -7px 0 0 -7px;
+    }
+
+    @@media (max-width: 767.98px) {
+        .pro-map {
+            height: 340px;
+        }
+        .map-toolbar {
+            gap: 6px;
+        }
+        .btn-map-tool {
+            font-size: 0.64rem;
+            padding: 6px 8px;
+        }
+    }
+</style>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var defaultCenter = [30.0444, 31.2357];
+            var defaultZoom = 3;
+            var map = L.map('createMap', {
+                zoomControl: false
+            }).setView(defaultCenter, defaultZoom);
+
+            L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+            var streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors',
+                maxZoom: 19,
+                detectRetina: true
+            });
+            var darkLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OpenStreetMap &copy; CARTO',
+                maxZoom: 19,
+                detectRetina: true
+            });
+
+            streetLayer.addTo(map);
+
+            var marker = null;
+            var latInput = document.getElementById('createLat');
+            var lngInput = document.getElementById('createLng');
+            var streetInput = document.getElementById('Street');
+            var cityInput = document.getElementById('City');
+            var countryInput = document.getElementById('Country');
+            var searchInput = document.getElementById('mapSearchInput');
+            var searchBtn = document.getElementById('mapSearchBtn');
+            var mapStatus = document.getElementById('mapStatus');
+            var mapCoordinates = document.getElementById('mapCoordinates');
+            var locateBtn = document.getElementById('locateBtn');
+            var resetMapBtn = document.getElementById('resetMapBtn');
+            var styleStreetBtn = document.getElementById('styleStreetBtn');
+            var styleDarkBtn = document.getElementById('styleDarkBtn');
+
+            function setStatus(text, isError) {
+                mapStatus.textContent = text;
+                mapStatus.style.color = isError ? '#b91c1c' : '#475569';
+            }
+
+            function setActiveStyleButton(activeBtn) {
+                styleStreetBtn.classList.remove('active');
+                styleDarkBtn.classList.remove('active');
+                activeBtn.classList.add('active');
+            }
+
+            function updateCoordinates(lat, lng) {
+                latInput.value = lat.toFixed(6);
+                lngInput.value = lng.toFixed(6);
+                mapCoordinates.textContent = 'LAT: ' + lat.toFixed(6) + ', LNG: ' + lng.toFixed(6);
+            }
+
+            function updateAddressFields(address) {
+                if (!address) return;
+                var street = address.road || address.pedestrian || address.footway || address.neighbourhood || '';
+                var city = address.city || address.town || address.village || address.state || '';
+                var country = address.country || '';
+
+                if (streetInput) streetInput.value = street;
+                if (cityInput) cityInput.value = city;
+                if (countryInput) countryInput.value = country;
+            }
+
+            function reverseGeocode(lat, lng) {
+                var url = 'https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat='
+                    + encodeURIComponent(lat) + '&lon=' + encodeURIComponent(lng) + '&addressdetails=1';
+
+                fetch(url, { headers: { 'Accept-Language': 'en' } })
+                    .then(function (r) { return r.ok ? r.json() : null; })
+                    .then(function (data) {
+                        if (!data) return;
+                        updateAddressFields(data.address);
+                    })
+                    .catch(function () { });
+            }
+
+            function placeMarker(lat, lng, focus) {
+                if (marker) map.removeLayer(marker);
+                marker = L.marker([lat, lng], {
+                    draggable: true,
+                    icon: L.divIcon({
+                        className: 'custom-marker',
+                        html: '<div class="marker-pulse"></div><div class="marker-core"></div>',
+                        iconSize: [24, 24],
+                        iconAnchor: [12, 12]
+                    })
+                }).addTo(map);
+                updateCoordinates(lat, lng);
+
+                if (focus !== false) map.setView([lat, lng], 13);
+                marker.bindPopup('<strong>Tour pin selected</strong><br/>Lat: ' + lat.toFixed(6) + '<br/>Lng: ' + lng.toFixed(6));
+
+                marker.on('dragend', function (e) {
+                    var pos = e.target.getLatLng();
+                    updateCoordinates(pos.lat, pos.lng);
+                    reverseGeocode(pos.lat, pos.lng);
+                    marker.setPopupContent('<strong>Tour pin selected</strong><br/>Lat: ' + pos.lat.toFixed(6) + '<br/>Lng: ' + pos.lng.toFixed(6));
+                    setStatus('Pin moved successfully.', false);
+                });
+            }
+
+            map.on('click', function (e) {
+                placeMarker(e.latlng.lat, e.latlng.lng, false);
+                reverseGeocode(e.latlng.lat, e.latlng.lng);
+                setStatus('Coordinates selected from map click.', false);
+            });
+
+            function syncFromInputs() {
+                var lat = parseFloat(latInput.value);
+                var lng = parseFloat(lngInput.value);
+                if (!isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
+                    placeMarker(lat, lng, true);
+                }
+            }
+
+            latInput.addEventListener('change', syncFromInputs);
+            lngInput.addEventListener('change', syncFromInputs);
+
+            function doSearch() {
+                var q = searchInput.value.trim();
+                if (!q) return;
+                setStatus('Searching location...', false);
+                var searchUrl = 'https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&q='
+                    + encodeURIComponent(q) + '&limit=1';
+
+                fetch(searchUrl, { headers: { 'Accept-Language': 'en' } })
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        if (data.length > 0) {
+                            var lat = parseFloat(data[0].lat);
+                            var lng = parseFloat(data[0].lon);
+                            placeMarker(lat, lng, true);
+                            updateAddressFields(data[0].address);
+                            marker.openPopup();
+                            setStatus('Location found and pinned.', false);
+                        } else {
+                            alert('Location not found.');
+                            setStatus('No result found for this search.', true);
+                        }
+                    })
+                    .catch(function () {
+                        alert('Map search failed. Try again.');
+                        setStatus('Search request failed. Check internet connection.', true);
+                    });
+            }
+
+            searchBtn.addEventListener('click', doSearch);
+            searchInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); doSearch(); } });
+
+            styleStreetBtn.addEventListener('click', function () {
+                if (!map.hasLayer(streetLayer)) {
+                    map.removeLayer(darkLayer);
+                    map.addLayer(streetLayer);
+                }
+                setActiveStyleButton(styleStreetBtn);
+            });
+
+            styleDarkBtn.addEventListener('click', function () {
+                if (!map.hasLayer(darkLayer)) {
+                    map.removeLayer(streetLayer);
+                    map.addLayer(darkLayer);
+                }
+                setActiveStyleButton(styleDarkBtn);
+            });
+
+            locateBtn.addEventListener('click', function () {
+                if (!navigator.geolocation) {
+                    setStatus('Geolocation is not supported by this browser.', true);
+                    return;
+                }
+
+                setStatus('Detecting your current location...', false);
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    var lat = position.coords.latitude;
+                    var lng = position.coords.longitude;
+                    placeMarker(lat, lng, true);
+                    reverseGeocode(lat, lng);
+                    marker.openPopup();
+                    setStatus('Current location pinned successfully.', false);
+                }, function () {
+                    setStatus('Could not access your location.', true);
+                }, { enableHighAccuracy: true, timeout: 10000 });
+            });
+
+            resetMapBtn.addEventListener('click', function () {
+                map.setView(defaultCenter, defaultZoom);
+                if (marker) {
+                    map.removeLayer(marker);
+                    marker = null;
+                }
+                latInput.value = '';
+                lngInput.value = '';
+                mapCoordinates.textContent = 'LAT: ---, LNG: ---';
+                setStatus('Map view reset.', false);
+            });
+
+            map.whenReady(function () {
+                map.invalidateSize();
+            });
+
+            setTimeout(function () {
+                map.invalidateSize();
+                syncFromInputs();
+            }, 200);
+        });
+    </script>
+}
+
+

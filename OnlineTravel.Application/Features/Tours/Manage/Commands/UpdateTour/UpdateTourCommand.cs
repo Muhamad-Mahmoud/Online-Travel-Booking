@@ -2,7 +2,7 @@ using MediatR;
 
 namespace OnlineTravel.Application.Features.Tours.Manage.Commands.UpdateTour;
 
-public class UpdateTourCommand : IRequest<bool>
+public class UpdateTourCommand : IRequest<OnlineTravel.Domain.ErrorHandling.Result<bool>>
 {
     public Guid TourId { get; set; }
     public string Title { get; set; } = string.Empty;
@@ -23,3 +23,4 @@ public class UpdateTourCommand : IRequest<bool>
     // Main Image (only updated if not null/empty)
     public string? MainImageUrl { get; set; }
 }
+

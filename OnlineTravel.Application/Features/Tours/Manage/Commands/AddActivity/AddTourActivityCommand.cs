@@ -2,7 +2,7 @@ using MediatR;
 
 namespace OnlineTravel.Application.Features.Tours.Manage.Commands.AddActivity;
 
-public class AddTourActivityCommand : IRequest<Guid>
+public class AddTourActivityCommand : IRequest<OnlineTravel.Domain.ErrorHandling.Result<Guid>>
 {
     public Guid TourId { get; set; }
     public string Title { get; set; } = string.Empty;

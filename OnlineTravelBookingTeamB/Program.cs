@@ -43,12 +43,6 @@ builder.Services
 builder.Services.AddApplication();
 
 // Add API Services
-builder.Services.AddControllersWithViews()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-    });
-
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -92,10 +86,6 @@ if (app.Environment.IsDevelopment())
 app.UseAuthentication();
 app.UseStatusCodePagesWithReExecute("/errors/{0}");
 app.UseAuthorization();
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapControllers();
 app.MapHealthChecks("/health");
