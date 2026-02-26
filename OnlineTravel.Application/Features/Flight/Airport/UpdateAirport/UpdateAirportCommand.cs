@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace OnlineTravel.Application.Features.Flight.Airport.UpdateAirport
 {
-    public class UpdateAirportCommand:IRequest<UpdateAirportResponse>
+    public class UpdateAirportCommand:IRequest<OnlineTravel.Domain.ErrorHandling.Result<UpdateAirportResponse>>
     {
         public Guid Id { get; set; } // Required to know which airport to update
         public string Name { get; set; } = string.Empty;
@@ -23,3 +23,4 @@ namespace OnlineTravel.Application.Features.Flight.Airport.UpdateAirport
         public List<string> Facilities { get; set; } = new List<string>();
     }
 }
+

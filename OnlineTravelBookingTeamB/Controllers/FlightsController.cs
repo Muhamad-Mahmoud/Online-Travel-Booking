@@ -1,64 +1,28 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using OnlineTravel.Application.Features.Flight.Flights.CreateFlight;
-// using OnlineTravel.Application.Features.Flight.Flights.FlightDetails;
 using OnlineTravel.Application.Features.Flight.Flights.SearchFlights.Queries;
-using OnlineTravel.Application.Features.Flight.Flights.SearchFlights.DTOs;
-// using OnlineTravel.Application.Features.Flight.Seats.AllSeats;
 
-namespace OnlineTravelBookingTeamB.Controllers
+namespace OnlineTravelBookingTeamB.Controllers;
+
+[Route("api/v1/flights")]
+public class FlightsController : BaseApiController
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class FlightsController : ControllerBase
+    [HttpGet]
+    public async Task<ActionResult> Search([FromQuery] SearchFlightsQuery query)
     {
-        private readonly IMediator _mediator;
-      public  FlightsController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
-        [HttpPost]
-        public async Task<ActionResult<Guid>> Create(CreateFlightCommand command)
-        {
-            return Ok(await _mediator.Send(command));
-        }
-        [HttpGet("search")]
-        public async Task<ActionResult<List<SearchFlightsDto>>> Search([FromQuery] SearchFlightsQuery query)
-        {
-           
-            var result = await _mediator.Send(query);
+        var result = await Mediator.Send(query);
+        return Ok(result);
+    }
 
-            if (result == null || !result.Any())
-            {
-                return NotFound("No flights found matching your criteria.");
-            }
+    [Authorize(Roles = "Admin")]
+    [HttpPost]
+    public async Task<ActionResult> Create([FromBody] CreateFlightCommand command)
+    {
+        var result = await Mediator.Send(command);
+        if (!result.IsSuccess)
+            return HandleResult(result);
 
-            return Ok(result);
-        }
-        /*
-        [HttpGet("{flightId}/seats")]
-        public async Task<ActionResult<List<AllSeatsDto>>> GetAllSeats(Guid flightId)
-        {
-           
-            var result = await _mediator.Send(new AllSeatsQuery(flightId));
-
-            if (result == null || !result.Any())
-            {
-                return NotFound($"No seats found for flight with ID: {flightId}");
-            }
-
-            return Ok(result);
-        }
-        [HttpGet("{id}")]
-        public async Task<ActionResult<FlightDetailsDto>> GetFlightDetails(Guid id)
-        {
-            var result = await _mediator.Send(new FlightDetailsQuery(id));
-
-            if (result == null) return NotFound();
-
-            return Ok(result);
-        }
-        */
+        return Ok(new { id = result.Value });
     }
 }

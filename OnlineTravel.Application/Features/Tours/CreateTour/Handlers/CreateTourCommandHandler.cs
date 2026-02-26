@@ -1,13 +1,14 @@
 using MediatR;
+using NetTopologySuite.Geometries;
 using OnlineTravel.Application.Features.Tours.CreateTour.Commands;
 using OnlineTravel.Application.Interfaces.Persistence;
-using OnlineTravel.Domain.Entities.Tours;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
-using NetTopologySuite.Geometries;
+using OnlineTravel.Domain.Entities.Tours;
+using OnlineTravel.Domain.ErrorHandling;
 
 namespace OnlineTravel.Application.Features.Tours.CreateTour.Handlers
 {
-    public class CreateTourCommandHandler : IRequestHandler<CreateTourCommand, Guid>
+    public class CreateTourCommandHandler : IRequestHandler<CreateTourCommand, Result<Guid>>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -16,7 +17,7 @@ namespace OnlineTravel.Application.Features.Tours.CreateTour.Handlers
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Guid> Handle(CreateTourCommand request, CancellationToken cancellationToken)
+        public async Task<Result<Guid>> Handle(CreateTourCommand request, CancellationToken cancellationToken)
         {
             var tour = new Tour
             {
@@ -27,15 +28,18 @@ namespace OnlineTravel.Application.Features.Tours.CreateTour.Handlers
                 DurationNights = request.DurationNights,
                 Recommended = request.Recommended,
                 BestTimeToVisit = request.BestTimeToVisit,
-
-                Address = new Address(request.Street, request.City, request.State, request.Country, request.PostalCode, 
-                    (request.Latitude.HasValue && request.Longitude.HasValue) 
-                        ? new Point(request.Longitude.Value, request.Latitude.Value) { SRID = 4326 } 
+                Address = new Address(
+                    request.Street,
+                    request.City,
+                    request.State,
+                    request.Country,
+                    request.PostalCode,
+                    (request.Latitude.HasValue && request.Longitude.HasValue)
+                        ? new Point(request.Longitude.Value, request.Latitude.Value) { SRID = 4326 }
                         : null),
                 MainImage = !string.IsNullOrEmpty(request.MainImageUrl) ? new ImageUrl(request.MainImageUrl) : null
             };
 
-            // Add Price Tier
             if (request.StandardPrice > 0)
             {
                 tour.PriceTiers.Add(new TourPriceTier
@@ -47,9 +51,13 @@ namespace OnlineTravel.Application.Features.Tours.CreateTour.Handlers
             }
 
             await _unitOfWork.Repository<Tour>().AddAsync(tour, cancellationToken);
-            await _unitOfWork.Complete();
+            var affectedRows = await _unitOfWork.Complete();
+            if (affectedRows <= 0)
+            {
+                return Result<Guid>.Failure(Error.InternalServer("Failed to create tour."));
+            }
 
-            return tour.Id;
+            return Result<Guid>.Success(tour.Id);
         }
     }
 }

@@ -1,79 +1,50 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnlineTravel.Application.Features.CarPricingTiers.Create;
-using OnlineTravelBookingTeamB.Extensions;
-using OnlineTravel.Application.Features.CarPricingTiers.Update;
-using OnlineTravel.Application.Features.CarPricingTiers.GetById;
-using OnlineTravel.Application.Features.CarPricingTiers.GetAll;
-using MoneyCommand = OnlineTravel.Application.Features.CarPricingTiers.Common.MoneyCommand;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using OnlineTravel.Application.Features.CarPricingTiers.Delete;
+using OnlineTravel.Application.Features.CarPricingTiers.GetAll;
+using OnlineTravel.Application.Features.CarPricingTiers.GetById;
+using OnlineTravel.Application.Features.CarPricingTiers.Update;
 
-namespace OnlineTravelBookingTeamB.Controllers
+namespace OnlineTravelBookingTeamB.Controllers;
+
+[Route("api/v1/car-pricing-tiers")]
+[Authorize(Roles = "Admin")]
+public class CarPricingTiersController : BaseApiController
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class CarPricingTiersController : ControllerBase
+    [HttpGet]
+    public async Task<ActionResult> GetAll([FromQuery] Guid? carId = null)
     {
-        private readonly IMediator _mediator;
+        var result = await Mediator.Send(new GetAllCarPricingTiersQuery(carId));
+        return HandleResult(result);
+    }
 
-        public CarPricingTiersController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult> GetById(Guid id)
+    {
+        var result = await Mediator.Send(new GetCarPricingTierByIdQuery(id));
+        return HandleResult(result);
+    }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult> GetById(Guid id)
-        {
-            var query = new GetCarPricingTierByIdQuery(id);
-            var result = await _mediator.Send(query);
-            return result.IsSuccess ? Ok(result.Value) : result.ToProblem();
-        }
+    [HttpPost]
+    public async Task<ActionResult> Create([FromBody] CreateCarPricingTierCommand command)
+    {
+        var result = await Mediator.Send(command);
+        return HandleResult(result);
+    }
 
-        [HttpGet]
-        public async Task<ActionResult> GetAll([FromQuery] GetAllCarPricingTiersQuery query)
-        {
-            var result = await _mediator.Send(query);
-            return result.IsSuccess ? Ok(result.Value) : result.ToProblem();
-        }
+    [HttpPut("{id:guid}")]
+    public async Task<ActionResult> Update(Guid id, [FromBody] UpdateCarPricingTierCommand command)
+    {
+        var payload = command with { Id = id };
+        var result = await Mediator.Send(payload);
+        return HandleResult(result);
+    }
 
-        [HttpPost]
-        public async Task<ActionResult> Create(CreateCarPricingTierFormModel formModel)
-        {
-            var command = new CreateCarPricingTierCommand(
-                formModel.CarId,
-                formModel.FromHours,
-                formModel.ToHours,
-				new MoneyCommand(formModel.PricePerHour.Amount, formModel.PricePerHour.Currency));
-
-            var result = await _mediator.Send(command);
-            return result.IsSuccess ? Ok(result.Value) : result.ToProblem(); 
-        }
-
-        [HttpPut("{id}")]
-        public async Task<ActionResult> Update(Guid id, UpdateCarPricingTierFormModel formModel)
-        {
-            if (id != formModel.Id)
-                return BadRequest("ID mismatch");
-
-            var command = new UpdateCarPricingTierCommand(
-                formModel.Id,
-                formModel.CarId,
-                formModel.FromHours,
-                formModel.ToHours,
-                new MoneyCommand(formModel.PricePerHour.Amount, formModel.PricePerHour.Currency));
-
-            var result = await _mediator.Send(command);
-            return result.IsSuccess ? Ok(result.Value) : result.ToProblem(); 
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(Guid id)
-        {
-            var command = new DeleteCarPricingTierCommand(id);
-            var result = await _mediator.Send(command);
-            return result.IsSuccess ? Ok() : result.ToProblem(); 
-        }
+    [HttpDelete("{id:guid}")]
+    public async Task<ActionResult> Delete(Guid id)
+    {
+        var result = await Mediator.Send(new DeleteCarPricingTierCommand(id));
+        return HandleResult(result);
     }
 }

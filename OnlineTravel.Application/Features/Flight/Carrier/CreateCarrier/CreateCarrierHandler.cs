@@ -1,5 +1,6 @@
 using MediatR;
 using OnlineTravel.Application.Interfaces.Persistence;
+using OnlineTravel.Domain.ErrorHandling;
 using OnlineTravel.Domain.Entities.Flights.ValueObjects;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace OnlineTravel.Application.Features.Flight.Carrier.CreateCarrier
 {
-    public class CreateCarrierHandler : IRequestHandler<CreateCarrierCommand, Guid>
+    public class CreateCarrierHandler : IRequestHandler<CreateCarrierCommand, Result<Guid>>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -18,7 +19,7 @@ namespace OnlineTravel.Application.Features.Flight.Carrier.CreateCarrier
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Guid> Handle(CreateCarrierCommand request, CancellationToken cancellationToken)
+        public async Task<Result<Guid>> Handle(CreateCarrierCommand request, CancellationToken cancellationToken)
         {
             // 1. Map to Entity using the full path to avoid conflicts
             var carrier = new OnlineTravel.Domain.Entities.Flights.Carrier
@@ -32,9 +33,13 @@ namespace OnlineTravel.Application.Features.Flight.Carrier.CreateCarrier
 
             // 2. Add and Save
             await _unitOfWork.Repository<OnlineTravel.Domain.Entities.Flights.Carrier>().AddAsync(carrier);
-            await _unitOfWork.Complete();
+            var affectedRows = await _unitOfWork.Complete();
+            if (affectedRows <= 0)
+            {
+                return Result<Guid>.Failure(Error.InternalServer("Failed to create carrier."));
+            }
 
-            return carrier.Id;
+            return Result<Guid>.Success(carrier.Id);
         }
     }
 }

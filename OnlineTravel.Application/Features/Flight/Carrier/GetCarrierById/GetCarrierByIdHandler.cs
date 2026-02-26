@@ -1,14 +1,10 @@
-﻿using MediatR;
+using MediatR;
 using OnlineTravel.Application.Interfaces.Persistence;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using OnlineTravel.Domain.ErrorHandling;
 
 namespace OnlineTravel.Application.Features.Flight.Carrier.GetCarrierById
 {
-    public class GetCarrierByIdHandler : IRequestHandler<GetCarrierByIdQuery, GetCarrierByIdDto>
+    public class GetCarrierByIdHandler : IRequestHandler<GetCarrierByIdQuery, Result<GetCarrierByIdDto>>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -17,22 +13,22 @@ namespace OnlineTravel.Application.Features.Flight.Carrier.GetCarrierById
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<GetCarrierByIdDto?> Handle(GetCarrierByIdQuery request, CancellationToken cancellationToken)
+        public async Task<Result<GetCarrierByIdDto>> Handle(GetCarrierByIdQuery request, CancellationToken cancellationToken)
         {
-            // 1. Fetch carrier from repository
             var carrier = await _unitOfWork.Repository<OnlineTravel.Domain.Entities.Flights.Carrier>().GetByIdAsync(request.Id);
+            if (carrier == null)
+            {
+                return Result<GetCarrierByIdDto>.Failure(Error.NotFound($"Carrier with id '{request.Id}' was not found."));
+            }
 
-            if (carrier == null) return null;
-
-            // 2. Map Entity to DTO
-            return new GetCarrierByIdDto
+            return Result<GetCarrierByIdDto>.Success(new GetCarrierByIdDto
             {
                 Id = carrier.Id,
                 Name = carrier.Name,
-                Code = carrier.Code.Value, // Accessing Value from IataCode Value Object
+                Code = carrier.Code.Value,
                 Logo = carrier.Logo,
                 IsActive = carrier.IsActive
-            };
+            });
         }
     }
 }

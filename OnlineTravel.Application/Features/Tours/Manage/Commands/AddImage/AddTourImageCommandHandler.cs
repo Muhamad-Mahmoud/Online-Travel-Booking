@@ -1,10 +1,11 @@
 using MediatR;
-using OnlineTravel.Domain.Entities.Tours;
 using OnlineTravel.Application.Interfaces.Persistence;
+using OnlineTravel.Domain.Entities.Tours;
+using OnlineTravel.Domain.ErrorHandling;
 
 namespace OnlineTravel.Application.Features.Tours.Manage.Commands.AddImage;
 
-public class AddTourImageCommandHandler : IRequestHandler<AddTourImageCommand, Guid>
+public class AddTourImageCommandHandler : IRequestHandler<AddTourImageCommand, Result<Guid>>
 {
     private readonly IUnitOfWork _unitOfWork;
 
@@ -13,12 +14,12 @@ public class AddTourImageCommandHandler : IRequestHandler<AddTourImageCommand, G
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Guid> Handle(AddTourImageCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Guid>> Handle(AddTourImageCommand request, CancellationToken cancellationToken)
     {
         var tour = await _unitOfWork.Repository<Tour>().GetByIdAsync(request.TourId);
         if (tour == null)
         {
-            throw new KeyNotFoundException($"Tour with ID {request.TourId} not found.");
+            return Result<Guid>.Failure(Error.NotFound($"Tour with id '{request.TourId}' was not found."));
         }
 
         var image = new TourImage
@@ -29,8 +30,12 @@ public class AddTourImageCommandHandler : IRequestHandler<AddTourImageCommand, G
         };
 
         await _unitOfWork.Repository<TourImage>().AddAsync(image, cancellationToken);
-        await _unitOfWork.Complete();
+        var affectedRows = await _unitOfWork.Complete();
+        if (affectedRows <= 0)
+        {
+            return Result<Guid>.Failure(Error.InternalServer("Failed to add tour image."));
+        }
 
-        return image.Id;
+        return Result<Guid>.Success(image.Id);
     }
 }

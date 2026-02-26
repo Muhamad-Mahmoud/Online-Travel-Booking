@@ -1,53 +1,51 @@
-﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OnlineTravel.Application.Features.Flight.Airport.GetAirportById;
 using OnlineTravel.Application.Features.Flight.Airport.GetAllAirports;
+using OnlineTravel.Application.Features.Flight.Airport.GetAirportById;
 using OnlineTravel.Application.Features.Flight.Airport.UpdateAirport;
-using OnlineTravelBookingTeamB.Extensions;
 using OnlineTravel.Application.Features.Flight.CreateAirport;
 
-namespace OnlineTravelBookingTeamB.Controllers
+namespace OnlineTravelBookingTeamB.Controllers;
+
+[Route("api/v1/flights/airports")]
+public class AirportsController : BaseApiController
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class AirportsController : ControllerBase
+    [Authorize(Roles = "Admin")]
+    [HttpGet]
+    public async Task<ActionResult> GetAll([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 100)
     {
-        private readonly IMediator _mediator;
+        if (pageIndex <= 0 || pageSize <= 0)
+            return BadRequest("pageIndex and pageSize must be greater than 0.");
 
-        public AirportsController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
+        var result = await Mediator.Send(new GetAllAirportsQuery { PageIndex = pageIndex, PageSize = pageSize });
+        return HandleResult(result);
+    }
 
-        [HttpPost]
-        public async Task<ActionResult> Create(CreateAirportCommand command)
-        {
-            var result = await _mediator.Send(command);
+    [Authorize(Roles = "Admin")]
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult> GetById(Guid id)
+    {
+        var result = await Mediator.Send(new GetAirportByIdQuery(id));
+        return HandleResult(result);
+    }
 
-            return Ok(result);
-        }
-        [HttpGet("{id}")]
-        public async Task<ActionResult<GetAirportByIdDto>> GetById(Guid id)
-        {
-            var result = await _mediator.Send(new GetAirportByIdQuery(id));
-            if (result == null) return NotFound();
-            return Ok(result);
-        }
-        [HttpGet]
-        public async Task<ActionResult<List<GetAllAirportsDto>>> GetAll(
-            [FromQuery] int pageIndex = 1,
-            [FromQuery] int pageSize = 100)
-        {
-            var result = await _mediator.Send(new GetAllAirportsQuery { PageIndex = pageIndex, PageSize = pageSize });
-            return Ok(result);
-        }
-        [HttpPut("{id}")]
-        public async Task<ActionResult<UpdateAirportResponse>> Update(Guid id, UpdateAirportCommand command)
-        {
-            if (id != command.Id) return BadRequest("ID mismatch");
+    [Authorize(Roles = "Admin")]
+    [HttpPost]
+    public async Task<ActionResult> Create([FromBody] CreateAirportCommand command)
+    {
+        var result = await Mediator.Send(command);
+        if (!result.IsSuccess)
+            return HandleResult(result);
 
-            var result = await _mediator.Send(command);
-            return Ok(result);
-        }
+        return CreatedAtAction(nameof(GetById), new { id = result.Value.Id }, result.Value);
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPut("{id:guid}")]
+    public async Task<ActionResult> Update(Guid id, [FromBody] UpdateAirportCommand command)
+    {
+        command.Id = id;
+        var result = await Mediator.Send(command);
+        return HandleResult(result);
     }
 }

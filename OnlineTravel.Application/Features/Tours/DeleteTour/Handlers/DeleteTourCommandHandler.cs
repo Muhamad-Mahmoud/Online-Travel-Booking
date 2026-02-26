@@ -2,10 +2,11 @@ using MediatR;
 using OnlineTravel.Application.Features.Tours.DeleteTour.Commands;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities.Tours;
+using OnlineTravel.Domain.ErrorHandling;
 
 namespace OnlineTravel.Application.Features.Tours.DeleteTour.Handlers
 {
-    public class DeleteTourCommandHandler : IRequestHandler<DeleteTourCommand>
+    public class DeleteTourCommandHandler : IRequestHandler<DeleteTourCommand, Result<bool>>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -14,18 +15,22 @@ namespace OnlineTravel.Application.Features.Tours.DeleteTour.Handlers
             _unitOfWork = unitOfWork;
         }
 
-        public async Task Handle(DeleteTourCommand request, CancellationToken cancellationToken)
+        public async Task<Result<bool>> Handle(DeleteTourCommand request, CancellationToken cancellationToken)
         {
             var tour = await _unitOfWork.Repository<Tour>().GetByIdAsync(request.Id);
-            
             if (tour == null)
             {
-                // Handle not found
-                throw new KeyNotFoundException($"Tour with ID {request.Id} not found.");
+                return Result<bool>.Failure(Error.NotFound($"Tour with id '{request.Id}' was not found."));
             }
 
             _unitOfWork.Repository<Tour>().Delete(tour);
-            await _unitOfWork.Complete();
+            var affectedRows = await _unitOfWork.Complete();
+            if (affectedRows <= 0)
+            {
+                return Result<bool>.Failure(Error.InternalServer("Failed to delete tour."));
+            }
+
+            return Result<bool>.Success(true);
         }
     }
 }

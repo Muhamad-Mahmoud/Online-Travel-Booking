@@ -1,31 +1,29 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnlineTravel.Application.Features.Flight.Carrier.CreateCarrier;
 using OnlineTravel.Application.Features.Flight.Carrier.GetCarrierById;
-using OnlineTravel.Application.Features.Flight.Flights.CreateFlight;
 
-namespace OnlineTravelBookingTeamB.Controllers
+namespace OnlineTravelBookingTeamB.Controllers;
+
+[Route("api/v1/flights/carriers")]
+public class CarriersController : BaseApiController
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class CarriersController : ControllerBase
+    [Authorize(Roles = "Admin")]
+    [HttpPost]
+    public async Task<ActionResult> Create([FromBody] CreateCarrierCommand command)
     {
-        private readonly IMediator _mediator;
-        public CarriersController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
-        [HttpPost]
-        public async Task<ActionResult<Guid>> Create(CreateCarrierCommand command)
-        {
-            return Ok(await _mediator.Send(command));
-        }
-        [HttpGet("{id}")]
-        public async Task<ActionResult<GetCarrierByIdDto>> GetById(Guid id)
-        {
-            var result = await _mediator.Send(new GetCarrierByIdQuery(id));
-            return result != null ? Ok(result) : NotFound();
-        }
+        var result = await Mediator.Send(command);
+        if (!result.IsSuccess)
+            return HandleResult(result);
+
+        return CreatedAtAction(nameof(GetById), new { id = result.Value }, new { id = result.Value });
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult> GetById(Guid id)
+    {
+        var result = await Mediator.Send(new GetCarrierByIdQuery(id));
+        return HandleResult(result);
     }
 }

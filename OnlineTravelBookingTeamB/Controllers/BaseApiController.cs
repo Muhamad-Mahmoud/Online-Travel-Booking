@@ -1,10 +1,12 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using OnlineTravel.Domain.ErrorHandling;
+using OnlineTravelBookingTeamB.Extensions;
+using AppResult = OnlineTravel.Application.Common;
 
 namespace OnlineTravelBookingTeamB.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
 public abstract class BaseApiController : ControllerBase
 {
     private IMediator? _mediator;
@@ -20,8 +22,15 @@ public abstract class BaseApiController : ControllerBase
 			if (string.IsNullOrEmpty(userId))
 				throw new UnauthorizedAccessException("User is not authenticated.");
 
-			return Guid.Parse(userId);
+            if (!Guid.TryParse(userId, out var parsedUserId))
+                throw new UnauthorizedAccessException("Invalid user id claim.");
+
+			return parsedUserId;
 		}
 	}
+
+    protected ActionResult HandleResult(Result result) => result.ToResponse();
+    protected ActionResult HandleResult<T>(Result<T> result) => result.ToResponse();
+    protected ActionResult HandleResult<T>(AppResult.Result<T> result) => result.ToResponse();
 
 }

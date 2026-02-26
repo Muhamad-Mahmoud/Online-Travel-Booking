@@ -1,5 +1,6 @@
 using MediatR;
 using OnlineTravel.Application.Interfaces.Persistence;
+using OnlineTravel.Domain.ErrorHandling;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 using OnlineTravel.Domain.Entities.Flights.ValueObjects;
 using System;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace OnlineTravel.Application.Features.Flight.Flights.CreateFlight
 {
-    public class CreateFlightHandler:IRequestHandler<CreateFlightCommand,Guid>
+    public class CreateFlightHandler:IRequestHandler<CreateFlightCommand, Result<Guid>>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -19,7 +20,7 @@ namespace OnlineTravel.Application.Features.Flight.Flights.CreateFlight
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Guid> Handle(CreateFlightCommand request, CancellationToken cancellationToken)
+        public async Task<Result<Guid>> Handle(CreateFlightCommand request, CancellationToken cancellationToken)
         {
             // 1. Create Value Objects
             var flightNumber = new FlightNumber(request.FlightNumber);
@@ -52,9 +53,13 @@ namespace OnlineTravel.Application.Features.Flight.Flights.CreateFlight
 
             // 3. Persist via Unit of Work
             await _unitOfWork.Repository<OnlineTravel.Domain.Entities.Flights.Flight>().AddAsync(flight);
-            await _unitOfWork.Complete();
+            var affectedRows = await _unitOfWork.Complete();
+            if (affectedRows <= 0)
+            {
+                return Result<Guid>.Failure(Error.InternalServer("Failed to create flight."));
+            }
 
-            return flight.Id;
+            return Result<Guid>.Success(flight.Id);
         }
     }
 }
