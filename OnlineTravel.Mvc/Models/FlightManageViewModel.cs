@@ -91,4 +91,5 @@ public class FareFormDto
     public Guid FlightId { get; set; }
     public decimal Amount { get; set; }
     public string Type { get; set; } = string.Empty;
+    public int SeatsAvailable { get; set; }
 }

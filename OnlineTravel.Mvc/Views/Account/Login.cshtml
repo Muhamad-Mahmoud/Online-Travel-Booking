@@ -1,0 +1,218 @@
+@model OnlineTravel.Mvc.Models.Account.LoginViewModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Admin Login";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - OnlineTravel Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --text-main: #2b3445;
+            --text-muted: #7d879c;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f4f7f6;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(67, 97, 238, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(58, 12, 163, 0.1) 0px, transparent 50%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .login-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 450px;
+            padding: 3rem;
+            position: relative;
+            z-index: 10;
+            border: 1px solid rgba(255,255,255,0.3);
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @@keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .brand-logo {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-gradient);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 20px rgba(67, 97, 238, 0.3);
+        }
+
+        h2 {
+            color: var(--text-main);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text-main);
+            margin-bottom: 0.6rem;
+            display: block;
+        }
+
+        .input-group {
+            background: #f8fafb;
+            border: 1.5px solid #eceff2;
+            border-radius: 12px;
+            padding: 0.25rem 1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group:focus-within {
+            border-color: #4361ee;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.1);
+        }
+
+        .input-group i {
+            color: #b0b9c5;
+            font-size: 1.1rem;
+            width: 20px;
+        }
+
+        .form-control {
+            background: transparent;
+            border: none;
+            padding: 0.75rem 0.5rem;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+
+        .form-control:focus {
+            box-shadow: none;
+            background: transparent;
+        }
+
+        .btn-login {
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            padding: 1rem;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 16px rgba(67, 97, 238, 0.2);
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(67, 97, 238, 0.3);
+            filter: brightness(1.1);
+        }
+
+        .form-check-input:checked {
+            background-color: #4361ee;
+            border-color: #4361ee;
+        }
+
+        .text-danger {
+            font-size: 0.85rem;
+            margin-top: -1rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .alert-danger {
+            border-radius: 12px;
+            font-size: 0.9rem;
+            border: none;
+            background: #fff5f5;
+            color: #e03131;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <div class="brand-logo">
+            <i class="fas fa-plane-departure"></i>
+        </div>
+        
+        <h2>Welcome back</h2>
+        <p class="subtitle">Please enter your admin credentials.</p>
+
+        <form asp-action="Login" asp-controller="Account" method="post" asp-route-returnUrl="@ViewData["ReturnUrl"]">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+            <div>
+                <label class="form-label">Email Address</label>
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input asp-for="Email" class="form-control" placeholder="admin@onlinetravel.com" required />
+                </div>
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div>
+                <label class="form-label">Password</label>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input asp-for="Password" class="form-control" type="password" placeholder="••••••••" required />
+                </div>
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="form-check">
+                    <input asp-for="RememberMe" class="form-check-input" />
+                    <label class="form-check-label small" asp-for="RememberMe">Remember me</label>
+                </div>
+                <a href="#" class="small text-decoration-none" style="color: #4361ee">Forgot password?</a>
+            </div>
+
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-login">
+                Sign In <i class="fas fa-arrow-right ms-2 small"></i>
+            </button>
+        </form>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

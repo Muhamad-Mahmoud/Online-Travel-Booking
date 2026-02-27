@@ -18,7 +18,8 @@ public sealed class GetCarByIdWithDetailsQueryHandler : IRequestHandler<GetCarDe
 
 	public async Task<Result<CarDetailsDto>> Handle(GetCarDetailsByIdQuery request, CancellationToken cancellationToken)
 	{
-		var spec = new CarSpecification(request.Id)
+		var spec = new CarSpecification()
+			.WithId(request.Id)
 			.IncludeBrandAndCategory()
 			.IncludePricingTiers();
 

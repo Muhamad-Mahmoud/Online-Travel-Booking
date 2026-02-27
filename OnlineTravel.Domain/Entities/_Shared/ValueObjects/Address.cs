@@ -12,7 +12,7 @@ public record Address
 	public string? FullAddress { get; init; }
 	public Point? Coordinates { get; init; }
 
-	protected Address() { } // For EF
+	public Address() { } // For EF
 
 	public Address(string fullAddress, Point? coordinates = null)
 	{

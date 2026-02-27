@@ -18,7 +18,8 @@ public sealed class GetCarByIdQueryHandler : IRequestHandler<GetCarByIdQuery, Re
 
 	public async Task<Result<CarDto>> Handle(GetCarByIdQuery request, CancellationToken cancellationToken)
 	{
-		var spec = new CarSpecification(request.Id)
+		var spec = new CarSpecification()
+			.WithId(request.Id)
 			.IncludeBrandAndCategory();
 
 		var car = await _unitOfWork.Repository<Car>().GetEntityWithAsync(spec, cancellationToken);

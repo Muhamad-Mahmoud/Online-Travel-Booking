@@ -96,6 +96,8 @@ public class AuthService : IAuthService
 			return new AuthResponse { IsSuccess = false, Message = "Please confirm your email first" };
 
 		var jwt = await _jwtService.GenerateToken(user);
+		var userDto = _mapper.Map<UserDto>(user);
+		userDto.Roles = (await _userManager.GetRolesAsync(user)).ToList();
 
 		return new AuthResponse
 		{
@@ -103,7 +105,7 @@ public class AuthService : IAuthService
 			Token = jwt.Token,
 			ExpiresAt = jwt.ExpiresAt,
 			Message = "Login successful",
-			User = _mapper.Map<UserDto>(user)
+			User = userDto
 		};
 	}
 
@@ -226,6 +228,8 @@ public class AuthService : IAuthService
 		}
 
 		var jwt = await _jwtService.GenerateToken(user);
+		var userDto = _mapper.Map<UserDto>(user);
+		userDto.Roles = (await _userManager.GetRolesAsync(user)).ToList();
 
 		return new AuthResponse
 		{
@@ -233,7 +237,7 @@ public class AuthService : IAuthService
 			Token = jwt.Token,
 			ExpiresAt = jwt.ExpiresAt,
 			Message = "Google login successful",
-			User = _mapper.Map<UserDto>(user)
+			User = userDto
 		};
 	}
 

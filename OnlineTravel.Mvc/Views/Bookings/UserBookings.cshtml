@@ -66,7 +66,7 @@
         <h6 class="m-0 fw-bold text-dark">Bookings History</h6>
     </div>
     @{ ViewData["ShowCustomer"] = false; }
-    <partial name="~/Views/Admin/Bookings/_BookingList.cshtml" model="Model.Data" />
+    <partial name="~/Views/Bookings/_BookingList.cshtml" model="Model.Data" />
     
     @if (Model.TotalPages > 1)
     {

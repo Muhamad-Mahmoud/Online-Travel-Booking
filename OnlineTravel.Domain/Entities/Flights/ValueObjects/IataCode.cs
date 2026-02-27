@@ -16,6 +16,8 @@ public record IataCode
 
 		Value = trimmed;
 	}
+	
+	public static IataCode Create(string value) => new IataCode(value);
 
 	public static implicit operator string(IataCode code) => code.Value;
 	public override string ToString() => Value;

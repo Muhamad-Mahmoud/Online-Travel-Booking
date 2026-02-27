@@ -24,6 +24,7 @@ namespace OnlineTravel.Application.Features.Hotels.Dtos
 		public string ContactEmail { get; set; }
 		public string Website { get; set; }
 		public List<ReviewDto> Reviews { get; set; }
+		public List<RoomDto> Rooms { get; set; }
 	}
 
 }
