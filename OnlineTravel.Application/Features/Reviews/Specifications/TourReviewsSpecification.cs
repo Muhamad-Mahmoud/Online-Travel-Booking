@@ -1,4 +1,4 @@
-using OnlineTravel.Application.Specifications;
+using OnlineTravel.Application.Common.Specifications;
 using OnlineTravel.Domain.Entities.Reviews;
 
 namespace OnlineTravel.Application.Features.Reviews.Specifications;

@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnlineTravel.Application.Features.Hotels.Admin.AddRoom;
 using OnlineTravel.Application.Features.Hotels.Admin.ConfigureSeasonalPricing;
-using OnlineTravel.Application.Features.Hotels.Admin.CreateHotelCommand;
+using OnlineTravel.Application.Features.Hotels.Admin.CreateHotel;
 using OnlineTravel.Application.Features.Hotels.Admin.EditRoom;
 using OnlineTravel.Application.Features.Hotels.Admin.ManageAvailability;
 using OnlineTravel.Application.Features.Hotels.Admin.UpdateHotel;

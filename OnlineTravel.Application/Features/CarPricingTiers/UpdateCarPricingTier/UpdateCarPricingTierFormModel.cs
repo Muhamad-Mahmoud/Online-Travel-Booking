@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace OnlineTravel.Application.Features.CarPricingTiers.Update
+namespace OnlineTravel.Application.Features.CarPricingTiers.UpdateCarPricingTier
 {
 	public class UpdateCarPricingTierFormModel
 	{

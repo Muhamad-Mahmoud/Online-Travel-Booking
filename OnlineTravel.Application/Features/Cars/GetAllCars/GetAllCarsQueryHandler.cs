@@ -2,7 +2,7 @@ using Mapster;
 using MediatR;
 using OnlineTravel.Application.Features.Cars.GetCarById;
 using OnlineTravel.Application.Interfaces.Persistence;
-using OnlineTravel.Application.Specifications.Carspec;
+using OnlineTravel.Application.Features.Cars.Specifications;
 using OnlineTravel.Domain.Entities.Cars;
 using OnlineTravel.Domain.ErrorHandling;
 using OnlineTravel.Domain.Exceptions;

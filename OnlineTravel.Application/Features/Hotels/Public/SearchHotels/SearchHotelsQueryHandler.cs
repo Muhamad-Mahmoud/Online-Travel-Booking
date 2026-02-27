@@ -2,7 +2,7 @@ using AutoMapper;
 using MediatR;
 using NetTopologySuite.Geometries;
 using OnlineTravel.Application.Common;
-using OnlineTravel.Application.Hotels.Specifications;
+using OnlineTravel.Application.Features.Hotels.Specifications;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 using OnlineTravel.Domain.Entities.Hotels;

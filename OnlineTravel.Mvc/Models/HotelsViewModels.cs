@@ -1,4 +1,4 @@
-using OnlineTravel.Application.Features.Hotels.Admin.CreateHotelCommand;
+using OnlineTravel.Application.Features.Hotels.Admin.CreateHotel;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 
 namespace OnlineTravel.Mvc.Models;

@@ -1,6 +1,0 @@
-using MediatR;
-using OnlineTravel.Domain.ErrorHandling;
-
-namespace OnlineTravel.Application.Features.CarPricingTiers.GetAll;
-
-public sealed record GetAllCarPricingTiersQuery(Guid? CarId = null) : IRequest<Result<IReadOnlyList<GetAllCarPricingTiersResponse>>>;

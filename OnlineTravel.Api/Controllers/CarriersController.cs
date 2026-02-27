@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OnlineTravel.Application.Features.Flight.Carrier.CreateCarrier;
-using OnlineTravel.Application.Features.Flight.Carrier.GetCarrierById;
+using OnlineTravel.Application.Features.Flights.Carrier.CreateCarrier;
+using OnlineTravel.Application.Features.Flights.Carrier.GetCarrierById;
 
 namespace OnlineTravel.Api.Controllers;
 

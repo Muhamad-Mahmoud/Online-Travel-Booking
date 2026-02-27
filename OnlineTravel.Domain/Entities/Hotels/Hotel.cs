@@ -65,6 +65,51 @@ public class Hotel : SoftDeletableEntity
 		UpdatedAt = DateTime.UtcNow;
 	}
 
+	public static Hotel Create(
+		string name,
+		string slug,
+		string description,
+		string street,
+		string city,
+		string state,
+		string country,
+		string postalCode,
+		double? latitude,
+		double? longitude,
+		TimeOnly checkInTimeStart,
+		TimeOnly checkInTimeEnd,
+		TimeOnly checkOutTimeStart,
+		TimeOnly checkOutTimeEnd,
+		string cancellationPolicy,
+		string contactPhone,
+		string contactEmail,
+		string website,
+		string mainImage)
+	{
+		var coordinates = latitude.HasValue && longitude.HasValue
+			? new NetTopologySuite.Geometries.Point(longitude.Value, latitude.Value) { SRID = 4326 }
+			: null;
+
+		var address = new Address(street, city, state, country, postalCode, coordinates);
+
+		var phone = !string.IsNullOrWhiteSpace(contactPhone) ? new PhoneNumber(contactPhone) : null;
+		var email = !string.IsNullOrWhiteSpace(contactEmail) ? new EmailAddress(contactEmail) : null;
+		var url = !string.IsNullOrWhiteSpace(website) ? new Url(website) : null;
+		var contactInfo = new ContactInfo(email, phone, url);
+
+		return new Hotel(
+			name,
+			slug,
+			description,
+			address,
+			contactInfo,
+			new TimeRange(checkInTimeStart, checkInTimeEnd),
+			new TimeRange(checkOutTimeStart, checkOutTimeEnd),
+			cancellationPolicy,
+			mainImage
+		);
+	}
+
 	public void UpdateDetails(string name, string description, string cancellationPolicy)
 	{
 		if (string.IsNullOrWhiteSpace(name))

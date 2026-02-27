@@ -8,7 +8,7 @@ using OnlineTravel.Application.Features.Hotels.Admin.UpdateHotel;
 using OnlineTravel.Application.Features.Hotels.Public.GetHotelDetails;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 using OnlineTravel.Mvc.Models;
-using OnlineTravel.Application.Features.Hotels.Admin.CreateHotelCommand; // This using is needed because HotelsCreateViewModel is sent as a command.
+using OnlineTravel.Application.Features.Hotels.Admin.CreateHotel; // This using is needed because HotelsCreateViewModel is sent as a command.
 using System; // For TimeOnly.FromTimeSpan
 
 namespace OnlineTravel.Mvc.Controllers;

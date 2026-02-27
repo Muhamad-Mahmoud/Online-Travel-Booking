@@ -3,7 +3,7 @@ using MediatR;
 using OnlineTravel.Application.Features.CarPricingTiers.Common;
 using OnlineTravel.Domain.ErrorHandling;
 
-namespace OnlineTravel.Application.Features.CarPricingTiers.Update;
+namespace OnlineTravel.Application.Features.CarPricingTiers.UpdateCarPricingTier;
 
 public sealed record UpdateCarPricingTierCommand(
 	[Required] Guid Id,

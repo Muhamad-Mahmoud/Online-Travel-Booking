@@ -3,19 +3,19 @@ using Microsoft.AspNetCore.Mvc;
 using OnlineTravel.Domain.Exceptions;
 using OnlineTravel.Mvc.Helpers;
 using OnlineTravel.Application.Features.Categories.GetCategoriesByType;
-using OnlineTravel.Application.Features.Flight.Airport.DeleteAirport;
-using OnlineTravel.Application.Features.Flight.Airport.GetAllAirports;
-using OnlineTravel.Application.Features.Flight.Airport.GetAirportById;
-using OnlineTravel.Application.Features.Flight.Airport.UpdateAirport;
-using OnlineTravel.Application.Features.Flight.CreateAirport;
-using OnlineTravel.Application.Features.Flight.Carrier.DeleteCarrier;
-using OnlineTravel.Application.Features.Flight.Carrier.GetAllCarriers;
-using OnlineTravel.Application.Features.Flight.Carrier.CreateCarrier;
-using OnlineTravel.Application.Features.Flight.Flights.GetFlightById;
-using OnlineTravel.Application.Features.Flight.Flights.Manage;
-using OnlineTravel.Application.Features.Flight.Flights.UpdateFlight;
-using OnlineTravel.Application.Features.Flight.Flights.GetFlights;
-using OnlineTravel.Application.Features.Flight.Flights.CreateFlight;
+using OnlineTravel.Application.Features.Flights.Airport.DeleteAirport;
+using OnlineTravel.Application.Features.Flights.Airport.GetAllAirports;
+using OnlineTravel.Application.Features.Flights.Airport.GetAirportById;
+using OnlineTravel.Application.Features.Flights.Airport.UpdateAirport;
+using OnlineTravel.Application.Features.Flights.CreateAirport;
+using OnlineTravel.Application.Features.Flights.Carrier.DeleteCarrier;
+using OnlineTravel.Application.Features.Flights.Carrier.GetAllCarriers;
+using OnlineTravel.Application.Features.Flights.Carrier.CreateCarrier;
+using OnlineTravel.Application.Features.Flights.Flights.GetFlightById;
+using OnlineTravel.Application.Features.Flights.Flights.Manage;
+using OnlineTravel.Application.Features.Flights.Flights.UpdateFlight;
+using OnlineTravel.Application.Features.Flights.Flights.GetFlights;
+using OnlineTravel.Application.Features.Flights.Flights.CreateFlight;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 using OnlineTravel.Domain.Entities.Flights;
 using OnlineTravel.Domain.Entities;
@@ -328,8 +328,8 @@ public class FlightsController : BaseController
 
 	private async Task PopulateEditViewBags()
 	{
-		var carriers = await Mediator.Send(new OnlineTravel.Application.Features.Flight.Carrier.GetAllCarriers.GetAllCarriersQuery());
-		var airports = await Mediator.Send(new OnlineTravel.Application.Features.Flight.Airport.GetAllAirports.GetAllAirportsQuery());
+		var carriers = await Mediator.Send(new OnlineTravel.Application.Features.Flights.Carrier.GetAllCarriers.GetAllCarriersQuery());
+		var airports = await Mediator.Send(new OnlineTravel.Application.Features.Flights.Airport.GetAllAirports.GetAllAirportsQuery());
 		var categories = await Mediator.Send(new GetCategoriesByTypeQuery(CategoryType.Flight));
 
 		ViewBag.Carriers = carriers.IsSuccess ? new Microsoft.AspNetCore.Mvc.Rendering.SelectList(carriers.Value, "Id", "Name") : null;
