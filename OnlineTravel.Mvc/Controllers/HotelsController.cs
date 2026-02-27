@@ -11,12 +11,12 @@ public class HotelsController : BaseController
 	{
 		var result = await Mediator.Send(new GetHotelsQuery(pageIndex, pageSize, search));
 		ViewBag.SearchTerm = search;
-		return View("~/Views/Admin/Hotels/Index.cshtml", result.Value);
+		return View(result.Value);
 	}
 
 	public IActionResult Create()
 	{
-		return View("~/Views/Admin/Hotels/Create.cshtml", new CreateHotelCommand());
+		return View(new CreateHotelCommand());
 	}
 
 	[HttpPost]
@@ -24,7 +24,7 @@ public class HotelsController : BaseController
 	{
 		if (!ModelState.IsValid)
 		{
-			return View("~/Views/Admin/Hotels/Create.cshtml", command);
+			return View(command);
 		}
 
 		var result = await Mediator.Send(command);
@@ -36,7 +36,7 @@ public class HotelsController : BaseController
 		}
 
 		ModelState.AddModelError(string.Empty, result.Error);
-		return View("~/Views/Admin/Hotels/Create.cshtml", command);
+		return View(command);
 	}
 
 	public async Task<IActionResult> Manage(Guid id)
@@ -74,7 +74,7 @@ public class HotelsController : BaseController
         
         // Correcting room mapping - I need to check if HotelDetailsDto has rooms.
         // It doesn't seem to have rooms in the file view. Let me check GetHotelRoomsQuery.
-		return View("~/Views/Admin/Hotels/Manage.cshtml", viewModel);
+		return View(viewModel);
 	}
 
 	public async Task<IActionResult> Edit(Guid id)
@@ -104,7 +104,7 @@ public class HotelsController : BaseController
 			CancellationPolicy = dto.CancellationPolicy
 		};
 
-		return View("~/Views/Admin/Hotels/Edit.cshtml", viewModel);
+		return View(viewModel);
 	}
 
 	[HttpPost]
@@ -138,7 +138,7 @@ public class HotelsController : BaseController
 			return RedirectToAction("Manage", new { id = model.Id });
 		}
 
-		return View("~/Views/Admin/Hotels/Edit.cshtml", model);
+		return View(model);
 	}
 
 	[HttpPost]

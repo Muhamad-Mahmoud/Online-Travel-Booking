@@ -4,7 +4,7 @@ using OnlineTravel.Application.Features.Admin.Dashboard;
 
 namespace OnlineTravel.Mvc.Controllers;
 
-public class AdminController : BaseController
+public class DashboardController : BaseController
 {
 	public async Task<IActionResult> Index()
 	{
@@ -12,9 +12,9 @@ public class AdminController : BaseController
 
 		if (result.IsSuccess)
 		{
-			return View("~/Views/Admin/Index.cshtml", result.Value);
+			return View(result.Value);
 		}
 
-		return View("~/Views/Admin/Index.cshtml", new AdminDashboardResponse()); // Or handle error
+		return View(new AdminDashboardResponse()); // Or handle error
 	}
 }

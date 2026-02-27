@@ -25,7 +25,7 @@ public class CarsController : BaseController
 		ViewBag.Brands = brandsResult.IsSuccess ? brandsResult.Value : [];
 		ViewBag.Categories = categoriesResult.IsSuccess ? categoriesResult.Value : [];
 
-		return View("~/Views/Admin/Cars/Cars/Index.cshtml", result.Value);
+		return View("~/Views/Cars/Cars/Index.cshtml", result.Value);
 	}
 
 	public async Task<IActionResult> Details(Guid id)
@@ -33,7 +33,7 @@ public class CarsController : BaseController
 		var result = await Mediator.Send(new GetCarDetailsByIdQuery(id));
 		if (!result.IsSuccess) return NotFound();
 
-		return View("~/Views/Admin/Cars/Cars/Details.cshtml", result.Value);
+		return View("~/Views/Cars/Cars/Details.cshtml", result.Value);
 	}
 
 	public async Task<IActionResult> Create()
@@ -44,7 +44,7 @@ public class CarsController : BaseController
 		ViewBag.Brands = brandsResult.IsSuccess ? brandsResult.Value : [];
 		ViewBag.Categories = categoriesResult.IsSuccess ? categoriesResult.Value : [];
 
-		return View("~/Views/Admin/Cars/Cars/Create.cshtml", new CreateCarRequest());
+		return View("~/Views/Cars/Cars/Create.cshtml", new CreateCarRequest());
 	}
 
 	[HttpPost]
@@ -56,7 +56,7 @@ public class CarsController : BaseController
 			var categoriesResult = await Mediator.Send(new GetCategoriesByTypeQuery(CategoryType.Car));
 			ViewBag.Brands = brandsResult.IsSuccess ? brandsResult.Value : [];
 			ViewBag.Categories = categoriesResult.IsSuccess ? categoriesResult.Value : [];
-			return View("~/Views/Admin/Cars/Cars/Create.cshtml", model);
+			return View("~/Views/Cars/Cars/Create.cshtml", model);
 		}
 
 		var result = await Mediator.Send(new CreateCarCommand(model));
@@ -72,7 +72,7 @@ public class CarsController : BaseController
 		var categoriesResultOnError = await Mediator.Send(new GetCategoriesByTypeQuery(CategoryType.Car));
 		ViewBag.Brands = brandsResultOnError.IsSuccess ? brandsResultOnError.Value : [];
 		ViewBag.Categories = categoriesResultOnError.IsSuccess ? categoriesResultOnError.Value : [];
-		return View("~/Views/Admin/Cars/Cars/Create.cshtml", model);
+		return View("~/Views/Cars/Cars/Create.cshtml", model);
 	}
 
 	public async Task<IActionResult> Edit(Guid id)
@@ -81,10 +81,32 @@ public class CarsController : BaseController
 		if (!result.IsSuccess) return NotFound();
 
 		var car = result.Value;
-		var brandsResult = await Mediator.Send(new GetCarBrandsQuery());
-		ViewBag.Brands = brandsResult.IsSuccess ? new Microsoft.AspNetCore.Mvc.Rendering.SelectList(brandsResult.Value, "Id", "Name") : null;
+		
+		var updateRequest = new OnlineTravel.Application.Features.Cars.UpdateCar.UpdateCarRequest
+		{
+			Id = car.Id,
+			BrandId = car.BrandId,
+			Make = car.Make,
+			Model = car.Model,
+			CarType = car.CarType,
+			SeatsCount = car.SeatsCount,
+			FuelType = car.FuelType,
+			Transmission = car.Transmission,
+			Features = car.Features,
+			AvailableDates = car.AvailableDates,
+			CancellationPolicy = car.CancellationPolicy,
+			CategoryId = car.CategoryId,
+			Location = car.Location,
+			Images = car.Images
+		};
 
-		return View("~/Views/Admin/Cars/Cars/Edit.cshtml", car);
+		var brandsResult = await Mediator.Send(new GetCarBrandsQuery());
+		var categoriesResult = await Mediator.Send(new GetCategoriesByTypeQuery(CategoryType.Car));
+		
+		ViewBag.Brands = brandsResult.IsSuccess ? brandsResult.Value : [];
+		ViewBag.Categories = categoriesResult.IsSuccess ? categoriesResult.Value : [];
+
+		return View("~/Views/Cars/Cars/Edit.cshtml", updateRequest);
 	}
 
 	[HttpPost]
@@ -98,8 +120,11 @@ public class CarsController : BaseController
 		}
 
 		var brandsResult = await Mediator.Send(new GetCarBrandsQuery());
-		ViewBag.Brands = brandsResult.IsSuccess ? new Microsoft.AspNetCore.Mvc.Rendering.SelectList(brandsResult.Value, "Id", "Name") : null;
-		return View("~/Views/Admin/Cars/Cars/Edit.cshtml", model);
+		var categoriesResult = await Mediator.Send(new GetCategoriesByTypeQuery(CategoryType.Car));
+		ViewBag.Brands = brandsResult.IsSuccess ? brandsResult.Value : [];
+		ViewBag.Categories = categoriesResult.IsSuccess ? categoriesResult.Value : [];
+		
+		return View("~/Views/Cars/Cars/Edit.cshtml", model);
 	}
 
 	public async Task<IActionResult> Delete(Guid id)
@@ -107,7 +132,7 @@ public class CarsController : BaseController
 		var result = await Mediator.Send(new GetCarByIdQuery(id));
 		if (!result.IsSuccess) return NotFound();
 
-		return View("~/Views/Admin/Cars/Cars/Delete.cshtml", result.Value);
+		return View("~/Views/Cars/Cars/Delete.cshtml", result.Value);
 	}
 
 	[HttpPost, ActionName("Delete")]

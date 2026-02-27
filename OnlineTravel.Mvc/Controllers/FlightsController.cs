@@ -21,13 +21,13 @@ public class FlightsController : BaseController
 		ViewBag.SearchTerm = search;
 		ViewBag.Status = status;
 		ViewBag.FlightStatuses = new List<string> { "Scheduled", "Cancelled", "Delayed", "InAir", "Landed" };
-		return View("~/Views/Admin/Flights/Flights/Index.cshtml", result.Value);
+		return View("~/Views/Flights/Flights/Index.cshtml", result.Value);
 	}
 
 	public async Task<IActionResult> Create()
 	{
 		await PopulateEditViewBags();
-		return View("~/Views/Admin/Flights/Flights/Create.cshtml", new CreateFlightCommand());
+		return View("~/Views/Flights/Flights/Create.cshtml", new CreateFlightCommand());
 	}
 
 	[HttpPost]
@@ -36,7 +36,7 @@ public class FlightsController : BaseController
 		if (!ModelState.IsValid)
 		{
 			await PopulateEditViewBags();
-			return View("~/Views/Admin/Flights/Flights/Create.cshtml", command);
+			return View("~/Views/Flights/Flights/Create.cshtml", command);
 		}
 
 		var result = await Mediator.Send(command);
@@ -49,7 +49,7 @@ public class FlightsController : BaseController
 
 		ModelState.AddModelError(string.Empty, result.Error.Description);
 		await PopulateEditViewBags();
-		return View("~/Views/Admin/Flights/Flights/Create.cshtml", command);
+		return View("~/Views/Flights/Flights/Create.cshtml", command);
 	}
 
 	public async Task<IActionResult> Manage(Guid id)
@@ -78,7 +78,7 @@ public class FlightsController : BaseController
 			}
 		};
 
-		return View("~/Views/Admin/Flights/Flights/Manage.cshtml", viewModel);
+		return View("~/Views/Flights/Flights/Manage.cshtml", viewModel);
 	}
 
 	public async Task<IActionResult> Edit(Guid id)
@@ -107,7 +107,7 @@ public class FlightsController : BaseController
 		};
 
 		await PopulateEditViewBags();
-		return View("~/Views/Admin/Flights/Flights/Edit.cshtml", viewModel);
+		return View("~/Views/Flights/Flights/Edit.cshtml", viewModel);
 	}
 
 	[HttpPost]
@@ -139,7 +139,7 @@ public class FlightsController : BaseController
 		}
 
 		await PopulateEditViewBags();
-		return View("~/Views/Admin/Flights/Flights/Edit.cshtml", model);
+		return View("~/Views/Flights/Flights/Edit.cshtml", model);
 	}
 
 	[HttpPost]
@@ -202,18 +202,18 @@ public class FlightsController : BaseController
 		var totalCount = airports.Count; 
 		var paginatedResult = new PaginatedResult<Airport>(pageIndex, pageSize, totalCount, airports);
 
-		return View("~/Views/Admin/Flights/Airports/Index.cshtml", paginatedResult);
+		return View("~/Views/Flights/Airports/Index.cshtml", paginatedResult);
 	}
 
 	public IActionResult CreateAirport()
 	{
-		return View("~/Views/Admin/Flights/Airports/Create.cshtml", new CreateAirportCommand());
+		return View("~/Views/Flights/Airports/Create.cshtml", new CreateAirportCommand());
 	}
 
 	[HttpPost]
 	public async Task<IActionResult> CreateAirport(CreateAirportCommand command)
 	{
-		if (!ModelState.IsValid) return View("~/Views/Admin/Flights/Airports/Create.cshtml", command);
+		if (!ModelState.IsValid) return View("~/Views/Flights/Airports/Create.cshtml", command);
 
 		var result = await Mediator.Send(command);
 		if (result.IsSuccess)
@@ -223,7 +223,7 @@ public class FlightsController : BaseController
 		}
 
 		ModelState.AddModelError(string.Empty, result.Error.Description);
-		return View("~/Views/Admin/Flights/Airports/Create.cshtml", command);
+		return View("~/Views/Flights/Airports/Create.cshtml", command);
 	}
 
 	public async Task<IActionResult> EditAirport(Guid id)
@@ -241,13 +241,13 @@ public class FlightsController : BaseController
 			Country = airport.Country
 		};
 
-		return View("~/Views/Admin/Flights/Airports/Edit.cshtml", command);
+		return View("~/Views/Flights/Airports/Edit.cshtml", command);
 	}
 
 	[HttpPost]
 	public async Task<IActionResult> EditAirport(UpdateAirportCommand command)
 	{
-		if (!ModelState.IsValid) return View("~/Views/Admin/Flights/Airports/Edit.cshtml", command);
+		if (!ModelState.IsValid) return View("~/Views/Flights/Airports/Edit.cshtml", command);
 
 		var result = await Mediator.Send(command);
 		if (result.IsSuccess)
@@ -257,7 +257,7 @@ public class FlightsController : BaseController
 		}
 
 		ModelState.AddModelError(string.Empty, result.Error.Description);
-		return View("~/Views/Admin/Flights/Airports/Edit.cshtml", command);
+		return View("~/Views/Flights/Airports/Edit.cshtml", command);
 	}
 
 	public async Task<IActionResult> Carriers(int pageIndex = 1, int pageSize = 10)
@@ -266,18 +266,18 @@ public class FlightsController : BaseController
 		var carriers = result.Value ?? new List<OnlineTravel.Domain.Entities.Flights.Carrier>();
 		var paginatedResult = new PaginatedResult<Carrier>(pageIndex, pageSize, carriers.Count, carriers.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList());
 
-		return View("~/Views/Admin/Flights/Carriers/Index.cshtml", paginatedResult);
+		return View("~/Views/Flights/Carriers/Index.cshtml", paginatedResult);
 	}
 
 	public IActionResult CreateCarrier()
 	{
-		return View("~/Views/Admin/Flights/Carriers/Create.cshtml", new CreateCarrierCommand());
+		return View("~/Views/Flights/Carriers/Create.cshtml", new CreateCarrierCommand());
 	}
 
 	[HttpPost]
 	public async Task<IActionResult> CreateCarrier(CreateCarrierCommand command)
 	{
-		if (!ModelState.IsValid) return View("~/Views/Admin/Flights/Carriers/Create.cshtml", command);
+		if (!ModelState.IsValid) return View("~/Views/Flights/Carriers/Create.cshtml", command);
 
 		var result = await Mediator.Send(command);
 		if (result.IsSuccess)
@@ -287,7 +287,7 @@ public class FlightsController : BaseController
 		}
 
 		ModelState.AddModelError(string.Empty, result.Error.Description);
-		return View("~/Views/Admin/Flights/Carriers/Create.cshtml", command);
+		return View("~/Views/Flights/Carriers/Create.cshtml", command);
 	}
 
 	[HttpPost]

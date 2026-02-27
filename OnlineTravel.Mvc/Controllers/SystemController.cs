@@ -10,7 +10,7 @@ public class SystemController : BaseController
 	[HttpGet("SeedData")]
 	public IActionResult SeedData()
 	{
-		return View("~/Views/Admin/System/SeedData.cshtml");
+		return View();
 	}
 
 	[HttpPost("TriggerSeed")]

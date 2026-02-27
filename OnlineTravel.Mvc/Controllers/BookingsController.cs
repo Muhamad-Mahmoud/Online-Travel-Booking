@@ -25,7 +25,7 @@ public class BookingsController : BaseController
 		ViewBag.Status = status;
 		ViewBag.BookingStatuses = (List<string>)["Confirmed", "PendingPayment", "Cancelled", "Paid"];
 
-		return View("~/Views/Admin/Bookings/Index.cshtml", model);
+		return View(model);
 	}
 
 	public async Task<IActionResult> Details(Guid id)
@@ -33,7 +33,7 @@ public class BookingsController : BaseController
 		var result = await Mediator.Send(new GetBookingByIdQuery(id));
 		if (result.IsSuccess)
 		{
-			return View("~/Views/Admin/Bookings/Details.cshtml", result.Value);
+			return View(result.Value);
 		}
 		return NotFound();
 	}
@@ -54,7 +54,7 @@ public class BookingsController : BaseController
 		var result = await Mediator.Send(new GetUserBookingsQuery(userId, pageIndex, pageSize));
 		if (result.IsSuccess)
 		{
-			return View("~/Views/Admin/Bookings/UserBookings.cshtml", result.Value);
+			return View(result.Value);
 		}
 		return NotFound();
 	}

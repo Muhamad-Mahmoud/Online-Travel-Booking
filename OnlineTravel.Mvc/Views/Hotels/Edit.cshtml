@@ -29,19 +29,19 @@
                 </div>
                 <div class="card-body">
                     <div class="mb-3">
-                        <label class="form-label fw-bold small text-uppercase text-muted"></label>
-                        <input name="Name" class="form-control" />
+                        <label asp-for="Name" class="form-label fw-bold small text-uppercase text-muted">Hotel Name</label>
+                        <input asp-for="Name" class="form-control" />
                         <span asp-validation-for="Name" class="text-danger small"></span>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label fw-bold small text-uppercase text-muted"></label>
-                        <textarea name="Description" class="form-control" rows="3"></textarea>
+                        <label asp-for="Description" class="form-label fw-bold small text-uppercase text-muted">Description</label>
+                        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label fw-bold small text-uppercase text-muted">Image URL</label>
-                        <input name="MainImage" class="form-control" placeholder="New image URL (leave empty to keep current)" />
+                        <label asp-for="MainImage" class="form-label fw-bold small text-uppercase text-muted">Image URL</label>
+                        <input asp-for="MainImage" class="form-control" placeholder="New image URL (leave empty to keep current)" />
                         @if (!string.IsNullOrEmpty(Model.CurrentImageUrl))
                         {
                             <div class="mt-2 d-flex align-items-center gap-2">
@@ -60,39 +60,39 @@
                 </div>
                 <div class="card-body">
                     <div class="mb-3">
-                        <label class="form-label small text-muted">Street Address</label>
-                        <input name="Street" class="form-control" />
+                        <label asp-for="Street" class="form-label small text-muted">Street Address</label>
+                        <input asp-for="Street" class="form-control" />
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label class="form-label small text-muted">City</label>
-                            <input name="City" class="form-control" />
-                            <span class="text-danger small"></span>
+                            <label asp-for="City" class="form-label small text-muted">City</label>
+                            <input asp-for="City" class="form-control" />
+                            <span asp-validation-for="City" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label small text-muted">State/Province</label>
-                            <input name="State" class="form-control" />
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label small text-muted">Country</label>
-                            <input name="Country" class="form-control" />
-                            <span class="text-danger small"></span>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label small text-muted">Postal Code</label>
-                            <input name="PostalCode" class="form-control" />
+                            <label asp-for="State" class="form-label small text-muted">State/Province</label>
+                            <input asp-for="State" class="form-control" />
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label class="form-label small text-muted">Latitude</label>
-                            <input name="Latitude" class="form-control" />
+                            <label asp-for="Country" class="form-label small text-muted">Country</label>
+                            <input asp-for="Country" class="form-control" />
+                            <span asp-validation-for="Country" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label small text-muted">Longitude</label>
-                            <input name="Longitude" class="form-control" />
+                            <label asp-for="PostalCode" class="form-label small text-muted">Postal Code</label>
+                            <input asp-for="PostalCode" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Latitude" class="form-label small text-muted">Latitude</label>
+                            <input asp-for="Latitude" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Longitude" class="form-label small text-muted">Longitude</label>
+                            <input asp-for="Longitude" class="form-control" />
                         </div>
                     </div>
                     <div class="pro-map-wrapper mt-3">
@@ -127,12 +127,12 @@
                 <div class="card-body">
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label class="form-label small text-muted">Check-In Time</label>
-                            <input name="CheckInTime" class="form-control" type="time" />
+                            <label asp-for="CheckInTime" class="form-label small text-muted">Check-In Time</label>
+                            <input asp-for="CheckInTime" class="form-control" type="time" />
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label small text-muted">Check-Out Time</label>
-                            <input name="CheckOutTime" class="form-control" type="time" />
+                            <label asp-for="CheckOutTime" class="form-label small text-muted">Check-Out Time</label>
+                            <input asp-for="CheckOutTime" class="form-control" type="time" />
                         </div>
                     </div>
                     <div class="mb-3">
@@ -155,8 +155,8 @@
                             <input asp-for="ContactPhone" class="form-control" />
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label small text-muted">Email</label>
-                            <input name="ContactEmail" class="form-control" type="email" />
+                            <label asp-for="ContactEmail" class="form-label small text-muted">Email</label>
+                            <input asp-for="ContactEmail" class="form-control" type="email" />
                         </div>
                         <div class="col-md-4">
                             <label asp-for="Website" class="form-label small text-muted">Website</label>

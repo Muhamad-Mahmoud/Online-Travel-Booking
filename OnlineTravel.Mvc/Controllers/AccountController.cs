@@ -81,7 +81,7 @@ public class AccountController(IAuthService authService) : BaseController
                 return Redirect(model.ReturnUrl);
             }
 
-            return RedirectToAction("Index", "Admin");
+            return RedirectToAction("Index", "Dashboard");
         }
 
         ModelState.AddModelError(string.Empty, result.Message ?? "Invalid login attempt.");

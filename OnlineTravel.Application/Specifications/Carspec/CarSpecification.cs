@@ -12,6 +12,12 @@ namespace OnlineTravel.Application.Specifications.Carspec
 			Criteria = x => x.DeletedAt == null;
 		}
 
+		public CarSpecification WithId(Guid id)
+		{
+			Criteria = Criteria.AndAlso(x => x.Id == id);
+			return this;
+		}
+
 		public CarSpecification(Guid? brandId = null) : this()
 		{
 			if (brandId.HasValue)

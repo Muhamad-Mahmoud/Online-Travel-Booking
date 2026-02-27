@@ -29,29 +29,30 @@
                 <div class="card-body">
                     <div class="row mb-3">
                         <div class="col-md-4">
-                            <label class="form-label fw-bold small text-uppercase text-muted">Flight Number</label>
-                            <input name="FlightNumber" class="form-control" />
+                            <label asp-for="FlightNumber" class="form-label fw-bold small text-uppercase text-muted">Flight Number</label>
+                            <input asp-for="FlightNumber" class="form-control" />
+                        </div>
                         <div class="col-md-4">
-                            <label class="form-label fw-bold small text-uppercase text-muted">Carrier</label>
-                            <select name="CarrierId" class="form-select" asp-items="ViewBag.Carriers">
+                            <label asp-for="CarrierId" class="form-label fw-bold small text-uppercase text-muted">Carrier</label>
+                            <select asp-for="CarrierId" class="form-select" asp-items="ViewBag.Carriers">
                                 <option value="">-- Select --</option>
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label fw-bold small text-uppercase text-muted">Category</label>
-                            <select name="CategoryId" class="form-select" asp-items="ViewBag.Categories">
+                            <label asp-for="CategoryId" class="form-label fw-bold small text-uppercase text-muted">Category</label>
+                            <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.Categories">
                                 <option value="">-- Select --</option>
                             </select>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-4">
-                            <label class="form-label fw-bold small text-uppercase text-muted">Status</label>
-                            <select name="Status" class="form-select" asp-items="ViewBag.Statuses"></select>
+                            <label asp-for="Status" class="form-label fw-bold small text-uppercase text-muted">Status</label>
+                            <select asp-for="Status" class="form-select" asp-items="ViewBag.Statuses"></select>
                         </div>
                         <div class="col-md-4 d-flex align-items-end">
                             <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" name="Refundable" />
+                                <input class="form-check-input" type="checkbox" asp-for="Refundable" />
                                 <label class="form-check-label">
                                     <i class="fas fa-undo text-success me-1"></i>Refundable
                                 </label>
@@ -69,14 +70,14 @@
                 <div class="card-body">
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label class="form-label small text-muted">Origin Airport</label>
-                            <select name="OriginAirportId" class="form-select" asp-items="ViewBag.Airports">
+                            <label asp-for="OriginAirportId" class="form-label small text-muted">Origin Airport</label>
+                            <select asp-for="OriginAirportId" class="form-select" asp-items="ViewBag.Airports">
                                 <option value="">-- Select --</option>
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label small text-muted">Destination Airport</label>
-                            <select name="DestinationAirportId" class="form-select" asp-items="ViewBag.Airports">
+                            <label asp-for="DestinationAirportId" class="form-label small text-muted">Destination Airport</label>
+                            <select asp-for="DestinationAirportId" class="form-select" asp-items="ViewBag.Airports">
                                 <option value="">-- Select --</option>
                             </select>
                         </div>
@@ -92,12 +93,12 @@
                 <div class="card-body">
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label class="form-label small text-muted">Departure</label>
-                            <input name="DepartureTime" class="form-control" type="datetime-local" />
+                            <label asp-for="DepartureTime" class="form-label small text-muted">Departure</label>
+                            <input asp-for="DepartureTime" class="form-control" type="datetime-local" />
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label small text-muted">Arrival</label>
-                            <input name="ArrivalTime" class="form-control" type="datetime-local" />
+                            <label asp-for="ArrivalTime" class="form-label small text-muted">Arrival</label>
+                            <input asp-for="ArrivalTime" class="form-control" type="datetime-local" />
                         </div>
                     </div>
                 </div>
@@ -111,21 +112,21 @@
                 <div class="card-body">
                     <div class="row mb-3">
                         <div class="col-md-4">
-                            <label class="form-label small text-muted">Gate</label>
-                            <input name="Gate" class="form-control" placeholder="e.g. B12" />
+                            <label asp-for="Gate" class="form-label small text-muted">Gate</label>
+                            <input asp-for="Gate" class="form-control" placeholder="e.g. B12" />
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label small text-muted">Terminal</label>
-                            <input name="Terminal" class="form-control" placeholder="e.g. Terminal 2" />
+                            <label asp-for="Terminal" class="form-label small text-muted">Terminal</label>
+                            <input asp-for="Terminal" class="form-control" placeholder="e.g. Terminal 2" />
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label small text-muted">Aircraft Type</label>
-                            <input name="AircraftType" class="form-control" placeholder="e.g. Boeing 737" />
+                            <label asp-for="AircraftType" class="form-label small text-muted">Aircraft Type</label>
+                            <input asp-for="AircraftType" class="form-control" placeholder="e.g. Boeing 737" />
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label small text-muted">Baggage Rules</label>
-                        <input name="BaggageRulesText" class="form-control" placeholder="Rule 1, Rule 2 (comma-separated)" />
+                        <label asp-for="BaggageRulesText" class="form-label small text-muted">Baggage Rules</label>
+                        <input asp-for="BaggageRulesText" class="form-control" placeholder="Rule 1, Rule 2 (comma-separated)" />
                     </div>
                 </div>
             </div>
