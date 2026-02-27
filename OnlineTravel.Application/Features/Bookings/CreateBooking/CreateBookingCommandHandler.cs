@@ -7,7 +7,6 @@ using OnlineTravel.Application.Features.Bookings.Strategies;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Application.Interfaces.Services;
 using OnlineTravel.Domain.Entities.Bookings;
-using OnlineTravel.Domain.Entities.Bookings.ValueObjects;
 using OnlineTravel.Domain.Entities.Core;
 using OnlineTravel.Domain.Entities.Users;
 using OnlineTravel.Domain.ErrorHandling;
@@ -110,7 +109,7 @@ public sealed class CreateBookingCommandHandler : IRequestHandler<CreateBookingC
 
 		//  External Service Call (Outside DB Transaction) 
 		var paymentResult = await _paymentService.CreateCheckoutSessionAsync(booking, cancellationToken);
-		
+
 		if (paymentResult.IsFailure)
 		{
 			_logger.LogWarning("Stripe session creation failed for Booking {BookingId}: {Error}", booking.Id, paymentResult.Error.Description);
@@ -120,11 +119,11 @@ public sealed class CreateBookingCommandHandler : IRequestHandler<CreateBookingC
 		var paymentData = paymentResult.Value;
 
 		// Isolated Persistence Update 
-		try 
+		try
 		{
 			booking.UpdateStripeInfo(paymentData.StripeSessionId!, paymentData.PaymentIntentId!);
 			await _unitOfWork.Complete();
-			
+
 			_logger.LogInformation("Booking {BookingId} metadata updated with Stripe Session {SessionId}", booking.Id, paymentData.StripeSessionId);
 		}
 		catch (Exception ex)

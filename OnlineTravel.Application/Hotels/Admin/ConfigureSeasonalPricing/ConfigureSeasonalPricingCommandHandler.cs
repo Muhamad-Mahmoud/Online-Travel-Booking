@@ -7,34 +7,34 @@ using OnlineTravel.Domain.Entities.Hotels;
 
 namespace OnlineTravel.Application.Hotels.Admin.ConfigureSeasonalPricing
 {
-    public class ConfigureSeasonalPricingCommandHandler : IRequestHandler<ConfigureSeasonalPricingCommand, Result<ConfigureSeasonalPricingResponse>>
-    {
-        private readonly IUnitOfWork _unitOfWork;
+	public class ConfigureSeasonalPricingCommandHandler : IRequestHandler<ConfigureSeasonalPricingCommand, Result<ConfigureSeasonalPricingResponse>>
+	{
+		private readonly IUnitOfWork _unitOfWork;
 
-        public ConfigureSeasonalPricingCommandHandler(IUnitOfWork unitOfWork)
-        {
-            _unitOfWork = unitOfWork;
-        }
+		public ConfigureSeasonalPricingCommandHandler(IUnitOfWork unitOfWork)
+		{
+			_unitOfWork = unitOfWork;
+		}
 
-        public async Task<Result<ConfigureSeasonalPricingResponse>> Handle(ConfigureSeasonalPricingCommand request, CancellationToken cancellationToken)
-        {
-            var room = await _unitOfWork.Rooms.GetWithSeasonalPricesAsync(request.RoomId);
-            if (room == null)
-                return Result<ConfigureSeasonalPricingResponse>.Failure("Room not found");
+		public async Task<Result<ConfigureSeasonalPricingResponse>> Handle(ConfigureSeasonalPricingCommand request, CancellationToken cancellationToken)
+		{
+			var room = await _unitOfWork.Rooms.GetWithSeasonalPricesAsync(request.RoomId);
+			if (room == null)
+				return Result<ConfigureSeasonalPricingResponse>.Failure("Room not found");
 
-            var dateRange = new DateRange(request.StartDate, request.EndDate);
-            var pricePerNight = new Money(request.Price, "USD");
-            var seasonalPrice = new SeasonalPrice(room.Id, dateRange, pricePerNight);
-            room.AddSeasonalPrice(seasonalPrice);
+			var dateRange = new DateRange(request.StartDate, request.EndDate);
+			var pricePerNight = new Money(request.Price, "USD");
+			var seasonalPrice = new SeasonalPrice(room.Id, dateRange, pricePerNight);
+			room.AddSeasonalPrice(seasonalPrice);
 
-            await _unitOfWork.Repository<SeasonalPrice>().AddAsync(seasonalPrice, cancellationToken);
-            await _unitOfWork.Complete();
+			await _unitOfWork.Repository<SeasonalPrice>().AddAsync(seasonalPrice, cancellationToken);
+			await _unitOfWork.Complete();
 
-            return Result<ConfigureSeasonalPricingResponse>.Success(new ConfigureSeasonalPricingResponse
-            {
-                RoomId = room.Id,
-                Message = $"Seasonal pricing configured for period {request.StartDate:yyyy-MM-dd} to {request.EndDate:yyyy-MM-dd}"
-            });
-        }
-    }
+			return Result<ConfigureSeasonalPricingResponse>.Success(new ConfigureSeasonalPricingResponse
+			{
+				RoomId = room.Id,
+				Message = $"Seasonal pricing configured for period {request.StartDate:yyyy-MM-dd} to {request.EndDate:yyyy-MM-dd}"
+			});
+		}
+	}
 }

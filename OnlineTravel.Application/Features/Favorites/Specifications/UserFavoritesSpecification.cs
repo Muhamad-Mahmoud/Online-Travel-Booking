@@ -9,9 +9,9 @@ namespace OnlineTravel.Application.Features.Favorites.Specifications;
 /// </summary>
 public sealed class UserFavoritesSpecification : BaseSpecification<Favorite>
 {
-    public UserFavoritesSpecification(Guid userId)
-        : base(f => f.UserId == userId)
-    {
-        AddOrderByDesc(f => f.AddedAt);
-    }
+	public UserFavoritesSpecification(Guid userId)
+		: base(f => f.UserId == userId)
+	{
+		AddOrderByDesc(f => f.AddedAt);
+	}
 }

@@ -3,7 +3,6 @@ using MediatR;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities.Cars;
 using OnlineTravel.Domain.ErrorHandling;
-using OnlineTravel.Domain.Exceptions;
 
 namespace OnlineTravel.Application.Features.Cars.UpdateCar;
 

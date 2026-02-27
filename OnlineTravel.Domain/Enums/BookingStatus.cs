@@ -2,17 +2,17 @@ namespace OnlineTravel.Domain.Enums;
 
 public enum BookingStatus
 {
-    PendingPayment = 0,
-    
-    Confirmed = 1,
+	PendingPayment = 0,
 
-    Cancelled = 2,
+	Confirmed = 1,
 
-    Completed = 3,
+	Cancelled = 2,
 
-    Refunded = 4,
+	Completed = 3,
 
-    Expired = 5
+	Refunded = 4,
+
+	Expired = 5
 }
 
 

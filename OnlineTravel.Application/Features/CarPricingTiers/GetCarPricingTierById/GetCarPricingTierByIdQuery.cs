@@ -1,6 +1,5 @@
 using MediatR;
 using OnlineTravel.Domain.ErrorHandling;
-using System;
 
 namespace OnlineTravel.Application.Features.CarPricingTiers.GetById;
 

@@ -7,9 +7,9 @@ using OnlineTravel.Domain.Exceptions;
 namespace OnlineTravel.Application.Features.Cars.GetAllCars;
 
 public sealed record GetAllCarsQuery(
-    int PageIndex = 1,
-    int PageSize = 10,
-    Guid? BrandId = null,
-    Guid? CategoryId = null,
-    CarCategory? CarType = null
+	int PageIndex = 1,
+	int PageSize = 10,
+	Guid? BrandId = null,
+	Guid? CategoryId = null,
+	CarCategory? CarType = null
 ) : IRequest<Result<PaginatedResult<CarDto>>>;

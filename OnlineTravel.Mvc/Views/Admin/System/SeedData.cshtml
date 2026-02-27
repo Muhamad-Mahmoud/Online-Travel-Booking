@@ -1,0 +1,98 @@
+@using OnlineTravel.Mvc.Models.Shared
+@{
+    ViewData["Title"] = "System Maintenance";
+}
+
+<div class="container-fluid py-4">
+    <!-- Authority Header -->
+    <partial name="_AdminPageHeader" model='new AdminPageHeaderViewModel {
+        Title = "System",
+        TitleSuffix = "Maintenance",
+        IconClass = "fas fa-tools",
+        IconBgClass = "bg-dark",
+        StatusText = "STAGING ENVIRONMENT",
+        StatusIconClass = "fas fa-database",
+        BadgeText = "V1.0.4 - DEV MODE",
+        Breadcrumbs = new List<BreadcrumbItem> {
+            new BreadcrumbItem { Text = "Dashboard", Controller = "Dashboard", Action = "Index" },
+            new BreadcrumbItem { Text = "System", IsActive = true }
+        },
+        ShowSearch = false
+    }' />
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm rounded-3 mb-4" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-check-circle me-3 fs-4 text-success"></i>
+                <div>
+                    <strong class="d-block">Success Protocol Executed</strong>
+                    <span class="small font-monospace text-uppercase opacity-75">@TempData["Success"]</span>
+                </div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-premium-dark text-white p-5 text-center">
+                <div class="authority-icon-box bg-white text-dark mx-auto mb-4" style="width: 64px; height: 64px;">
+                    <i class="fas fa-seedling fs-3"></i>
+                </div>
+                <h2 class="fw-black mb-3">Unified Data Seeding</h2>
+                <p class="text-white-50 max-w-600 mx-auto mb-4">
+                    Populate the database with a curated set of 5+ records for every major entity. 
+                    This will ensure the Admin Dashboard and all index views have robust data for review and testing.
+                </p>
+                <form asp-action="TriggerSeed" method="post">
+                    <button type="submit" class="btn btn-primary btn-lg px-5 py-3 rounded-pill fw-bold shadow">
+                        <i class="fas fa-play-circle me-2"></i> EXECUTE GLOBAL SEED
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden text-center p-4">
+                <div class="bg-primary-light text-primary rounded-3 mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                    <i class="fas fa-plane"></i>
+                </div>
+                <h6 class="fw-bold mb-2">Transport Registry</h6>
+                <p class="x-small text-muted mb-3">Schedules, Carriers, & Hubs</p>
+                <a asp-controller="Flights" asp-action="Index" class="btn btn-outline-primary btn-sm rounded-pill w-100">Browse Flights</a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden text-center p-4">
+                <div class="bg-success-light text-success rounded-3 mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                    <i class="fas fa-hotel"></i>
+                </div>
+                <h6 class="fw-bold mb-2">Lodging Registry</h6>
+                <p class="x-small text-muted mb-3">Resorts, Hotels, & Suites</p>
+                <a asp-controller="Hotels" asp-action="Index" class="btn btn-outline-success btn-sm rounded-pill w-100">Browse Hotels</a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden text-center p-4">
+                <div class="bg-warning-light text-warning rounded-3 mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                    <i class="fas fa-map-marked-alt"></i>
+                </div>
+                <h6 class="fw-bold mb-2">Activity Registry</h6>
+                <p class="x-small text-muted mb-3">Guided Tours & Excursions</p>
+                <a asp-controller="Tours" asp-action="Index" class="btn btn-outline-warning btn-sm rounded-pill w-100">Browse Tours</a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden text-center p-4">
+                <div class="bg-info-light text-info rounded-3 mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                    <i class="fas fa-car-side"></i>
+                </div>
+                <h6 class="fw-bold mb-2">Fleet Registry</h6>
+                <p class="x-small text-muted mb-3">Rentals & Manufacturers</p>
+                <a asp-controller="Cars" asp-action="Index" class="btn btn-outline-info btn-sm rounded-pill w-100">Browse Fleet</a>
+            </div>
+        </div>
+    </div>
+</div>
+

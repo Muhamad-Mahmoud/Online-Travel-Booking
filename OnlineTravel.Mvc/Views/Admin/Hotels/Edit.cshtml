@@ -1,0 +1,336 @@
+@model HotelsEditViewModel
+
+@{
+    ViewData["Title"] = "Edit Hotel";
+}
+
+<div class="row g-3 justify-content-between align-items-center mb-4">
+    <div class="col-12 col-lg-auto">
+        <h1 class="h3 fw-bold text-dark mb-1">Edit Hotel</h1>
+        <p class="text-muted small mb-0">Update hotel information for <strong>@Model.Name</strong>.</p>
+    </div>
+    <div class="col-12 col-lg-auto">
+        <a asp-controller="Hotels" asp-action="Index" class="btn btn-white shadow-sm">
+            <i class="fas fa-arrow-left me-2 text-muted"></i>Back to Hotels
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <form asp-action="Edit" method="post">
+            <input type="hidden" name="Id" />
+            <input type="hidden" name="CurrentImageUrl" />
+
+            <!-- Basic Info -->
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="m-0 fw-bold text-dark"><i class="fas fa-hotel text-primary me-2"></i>Hotel Details</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-uppercase text-muted"></label>
+                        <input name="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-uppercase text-muted"></label>
+                        <textarea name="Description" class="form-control" rows="3"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-uppercase text-muted">Image URL</label>
+                        <input name="MainImage" class="form-control" placeholder="New image URL (leave empty to keep current)" />
+                        @if (!string.IsNullOrEmpty(Model.CurrentImageUrl))
+                        {
+                            <div class="mt-2 d-flex align-items-center gap-2">
+                                <img src="@Model.CurrentImageUrl" alt="Current" class="rounded admin-thumb-60x40" />
+                                <span class="text-muted x-small">Current image</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Location -->
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="m-0 fw-bold text-dark"><i class="fas fa-map-marker-alt text-danger me-2"></i>Location</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label small text-muted">Street Address</label>
+                        <input name="Street" class="form-control" />
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted">City</label>
+                            <input name="City" class="form-control" />
+                            <span class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted">State/Province</label>
+                            <input name="State" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted">Country</label>
+                            <input name="Country" class="form-control" />
+                            <span class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted">Postal Code</label>
+                            <input name="PostalCode" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted">Latitude</label>
+                            <input name="Latitude" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted">Longitude</label>
+                            <input name="Longitude" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="pro-map-wrapper mt-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+                            <label class="form-label small text-muted mb-0 fw-bold text-uppercase">Map Picker</label>
+                            <div class="input-group shadow-sm" style="max-width: 280px;">
+                                <span class="input-group-text bg-light border-0"><i class="fas fa-search"></i></span>
+                                <input type="text" id="hotelEditMapSearchInput" class="form-control border-0 bg-light small" placeholder="Search location..." />
+                                <button type="button" class="btn btn-primary btn-sm border-0" id="hotelEditMapSearchBtn"><i class="fas fa-crosshairs"></i></button>
+                            </div>
+                        </div>
+                        <div class="map-shell">
+                            <div class="map-toolbar">
+                                <button type="button" id="hotelEditLocateBtn" class="btn btn-map-tool"><i class="fas fa-location-crosshairs"></i> Locate</button>
+                                <button type="button" id="hotelEditResetMapBtn" class="btn btn-map-tool"><i class="fas fa-rotate-left"></i> Reset</button>
+                                <button type="button" id="hotelEditStyleStreetBtn" class="btn btn-map-tool active">Street</button>
+                                <button type="button" id="hotelEditStyleDarkBtn" class="btn btn-map-tool">Dark</button>
+                            </div>
+                            <div id="hotelEditMap" class="pro-map"></div>
+                            <div class="map-coordinates" id="hotelEditMapCoordinates">LAT: ---, LNG: ---</div>
+                        </div>
+                        <div id="hotelEditMapStatus" class="map-status-note x-small fw-bold mt-2">Tip: click map to set coordinates.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schedule & Policy -->
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="m-0 fw-bold text-dark"><i class="fas fa-clock text-warning me-2"></i>Schedule & Policy</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted">Check-In Time</label>
+                            <input name="CheckInTime" class="form-control" type="time" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted">Check-Out Time</label>
+                            <input name="CheckOutTime" class="form-control" type="time" />
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="CancellationPolicy" class="form-label fw-bold small text-uppercase text-muted">Cancellation Policy</label>
+                        <input asp-for="CancellationPolicy" class="form-control" />
+                        <span asp-validation-for="CancellationPolicy" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="m-0 fw-bold text-dark"><i class="fas fa-address-book text-info me-2"></i>Contact Information</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label asp-for="ContactPhone" class="form-label small text-muted">Phone</label>
+                            <input asp-for="ContactPhone" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-muted">Email</label>
+                            <input name="ContactEmail" class="form-control" type="email" />
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="Website" class="form-label small text-muted">Website</label>
+                            <input asp-for="Website" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="d-flex gap-2 justify-content-end mb-4">
+                <a asp-controller="Hotels" asp-action="Index" class="btn btn-white px-4">Cancel</a>
+                <button type="submit" class="btn btn-primary px-4 shadow-sm"><i class="fas fa-save me-2"></i>Save Changes</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Info Sidebar -->
+    <div class="col-lg-4">
+        <div class="card shadow-sm border-0 rounded-4 overflow-hidden sticky-top" style="top:1rem;">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h6 class="m-0 fw-bold text-dark"><i class="fas fa-info-circle text-primary me-2"></i>Info</h6>
+            </div>
+            <div class="card-body">
+                <p class="small text-muted mb-2"><strong>Hotel ID:</strong> <code>@Model.Id</code></p>
+                @if (!string.IsNullOrEmpty(Model.CurrentImageUrl))
+                {
+                    <p class="small text-muted mb-2"><strong>Current Image:</strong></p>
+                    <img src="@Model.CurrentImageUrl" alt="Hotel" class="img-fluid rounded-3 mb-3 admin-panel-image" />
+                }
+                <hr />
+                <p class="small text-muted mb-2"><i class="fas fa-check-circle text-success me-2"></i>Leave the image URL empty to keep the current image.</p>
+                <p class="small text-muted mb-0"><i class="fas fa-check-circle text-success me-2"></i>Check-in/out times use 24-hour format.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .btn-white {
+        background-color: #fff;
+        border: 1px solid #e3e6f0;
+        color: #6e707e;
+    }
+    .btn-white:hover { background-color: #f8f9fc; }
+    .x-small { font-size: 0.75rem; }
+
+    .map-shell { position: relative; border: 1px solid #dbe5f2; border-radius: 16px; overflow: hidden; background: linear-gradient(145deg, #f8fbff 0%, #eef4ff 100%); }
+    .pro-map { height: 360px; z-index: 1; }
+    .map-toolbar { position: absolute; top: 12px; left: 12px; z-index: 800; display: flex; gap: 8px; flex-wrap: wrap; max-width: calc(100% - 24px); }
+    .btn-map-tool { border: 1px solid rgba(15, 23, 42, 0.15); background: rgba(255, 255, 255, 0.92); color: #0f172a; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; padding: 6px 10px; border-radius: 999px; }
+    .btn-map-tool.active, .btn-map-tool:hover { background: #0f172a; border-color: #0f172a; color: #fff; }
+    .map-coordinates { position: absolute; right: 12px; bottom: 12px; z-index: 800; background: rgba(15, 23, 42, 0.86); color: #fff; font-size: 0.66rem; font-weight: 900; letter-spacing: 0.5px; padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.15); }
+    .map-status-note { color: #475569; }
+    .map-shell .leaflet-control-zoom a { width: 34px; height: 34px; line-height: 32px; border-radius: 10px; border: 1px solid #d8e2f0; color: #0f172a; font-weight: 700; }
+    .map-shell .leaflet-control-attribution { background: rgba(255,255,255,0.8); border-radius: 8px 0 0 0; padding: 2px 8px; }
+    @@media (max-width: 767.98px) { .pro-map { height: 300px; } }
+</style>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        (function () {
+            var latInput = document.getElementById('Latitude');
+            var lngInput = document.getElementById('Longitude');
+            var streetInput = document.getElementById('Street');
+            var cityInput = document.getElementById('City');
+            var countryInput = document.getElementById('Country');
+            if (!latInput || !lngInput || typeof L === 'undefined') return;
+
+            var defaultCenter = [30.0444, 31.2357];
+            var defaultZoom = 4;
+            var map = L.map('hotelEditMap', { zoomControl: false }).setView(defaultCenter, defaultZoom);
+            L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+            var streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors', maxZoom: 19, detectRetina: true });
+            var darkLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 19, detectRetina: true });
+            streetLayer.addTo(map);
+
+            var searchInput = document.getElementById('hotelEditMapSearchInput');
+            var searchBtn = document.getElementById('hotelEditMapSearchBtn');
+            var mapStatus = document.getElementById('hotelEditMapStatus');
+            var mapCoordinates = document.getElementById('hotelEditMapCoordinates');
+            var locateBtn = document.getElementById('hotelEditLocateBtn');
+            var resetMapBtn = document.getElementById('hotelEditResetMapBtn');
+            var styleStreetBtn = document.getElementById('hotelEditStyleStreetBtn');
+            var styleDarkBtn = document.getElementById('hotelEditStyleDarkBtn');
+            var marker = null;
+
+            function setStatus(text, isError) { mapStatus.textContent = text; mapStatus.style.color = isError ? '#b91c1c' : '#475569'; }
+            function setActiveStyleButton(btn) { styleStreetBtn.classList.remove('active'); styleDarkBtn.classList.remove('active'); btn.classList.add('active'); }
+            function updateCoordinates(lat, lng) { latInput.value = lat.toFixed(6); lngInput.value = lng.toFixed(6); mapCoordinates.textContent = 'LAT: ' + lat.toFixed(6) + ', LNG: ' + lng.toFixed(6); }
+            function updateAddressFields(address) {
+                if (!address) return;
+                if (streetInput) streetInput.value = address.road || address.pedestrian || address.footway || address.neighbourhood || streetInput.value || '';
+                if (cityInput) cityInput.value = address.city || address.town || address.village || address.state || cityInput.value || '';
+                if (countryInput) countryInput.value = address.country || countryInput.value || '';
+            }
+            function reverseGeocode(lat, lng) {
+                var url = 'https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=' + encodeURIComponent(lat) + '&lon=' + encodeURIComponent(lng) + '&addressdetails=1';
+                fetch(url, { headers: { 'Accept-Language': 'en' } })
+                    .then(function (r) { return r.ok ? r.json() : null; })
+                    .then(function (data) { if (data) updateAddressFields(data.address); })
+                    .catch(function () { });
+            }
+            function placeMarker(lat, lng, focus) {
+                if (marker) map.removeLayer(marker);
+                marker = L.marker([lat, lng], { draggable: true }).addTo(map);
+                marker.bindPopup('<strong>Hotel location</strong><br/>Lat: ' + lat.toFixed(6) + '<br/>Lng: ' + lng.toFixed(6));
+                updateCoordinates(lat, lng);
+                if (focus !== false) map.setView([lat, lng], 14);
+                marker.on('dragend', function (e) {
+                    var pos = e.target.getLatLng();
+                    updateCoordinates(pos.lat, pos.lng);
+                    reverseGeocode(pos.lat, pos.lng);
+                    marker.setPopupContent('<strong>Hotel location</strong><br/>Lat: ' + pos.lat.toFixed(6) + '<br/>Lng: ' + pos.lng.toFixed(6));
+                    setStatus('Pin moved successfully.', false);
+                });
+            }
+            function syncFromInputs() {
+                var lat = parseFloat(latInput.value), lng = parseFloat(lngInput.value);
+                if (!isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) placeMarker(lat, lng, true);
+            }
+            function doSearch() {
+                var q = searchInput.value.trim();
+                if (!q) return;
+                setStatus('Searching location...', false);
+                fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&q=' + encodeURIComponent(q) + '&limit=1', { headers: { 'Accept-Language': 'en' } })
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        if (data.length > 0) {
+                            var lat = parseFloat(data[0].lat), lng = parseFloat(data[0].lon);
+                            placeMarker(lat, lng, true);
+                            updateAddressFields(data[0].address);
+                            marker.openPopup();
+                            setStatus('Location found and pinned.', false);
+                        } else {
+                            setStatus('No result found for this search.', true);
+                        }
+                    })
+                    .catch(function () { setStatus('Search request failed. Check internet connection.', true); });
+            }
+
+            map.on('click', function (e) { placeMarker(e.latlng.lat, e.latlng.lng, false); reverseGeocode(e.latlng.lat, e.latlng.lng); setStatus('Coordinates selected from map click.', false); });
+            latInput.addEventListener('change', syncFromInputs);
+            lngInput.addEventListener('change', syncFromInputs);
+            searchBtn.addEventListener('click', doSearch);
+            searchInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); doSearch(); } });
+            styleStreetBtn.addEventListener('click', function () { if (!map.hasLayer(streetLayer)) { map.removeLayer(darkLayer); map.addLayer(streetLayer); } setActiveStyleButton(styleStreetBtn); });
+            styleDarkBtn.addEventListener('click', function () { if (!map.hasLayer(darkLayer)) { map.removeLayer(streetLayer); map.addLayer(darkLayer); } setActiveStyleButton(styleDarkBtn); });
+            locateBtn.addEventListener('click', function () {
+                if (!navigator.geolocation) { setStatus('Geolocation is not supported by this browser.', true); return; }
+                setStatus('Detecting your current location...', false);
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    placeMarker(position.coords.latitude, position.coords.longitude, true);
+                    reverseGeocode(position.coords.latitude, position.coords.longitude);
+                    marker.openPopup();
+                    setStatus('Current location pinned successfully.', false);
+                }, function () { setStatus('Could not access your location.', true); }, { enableHighAccuracy: true, timeout: 10000 });
+            });
+            resetMapBtn.addEventListener('click', function () {
+                map.setView(defaultCenter, defaultZoom);
+                if (marker) { map.removeLayer(marker); marker = null; }
+                latInput.value = ''; lngInput.value = '';
+                mapCoordinates.textContent = 'LAT: ---, LNG: ---';
+                setStatus('Map view reset.', false);
+            });
+
+            map.whenReady(function () { map.invalidateSize(); });
+            setTimeout(function () { map.invalidateSize(); syncFromInputs(); }, 200);
+        })();
+    </script>
+}
+
+

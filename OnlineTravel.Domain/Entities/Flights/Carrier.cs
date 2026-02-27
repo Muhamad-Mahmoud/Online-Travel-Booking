@@ -6,21 +6,21 @@ namespace OnlineTravel.Domain.Entities.Flights;
 
 public class Carrier : BaseEntity
 {
-    public string Name { get; set; } = string.Empty;
+	public string Name { get; set; } = string.Empty;
 
-    public IataCode Code { get; set; } = null!;
-
-
-    public string? Logo { get; set; }
-
-    public ContactInfo? ContactInfo { get; set; }
-
-    public bool IsActive { get; set; } = true;
+	public IataCode Code { get; set; } = null!;
 
 
-    // Navigation Properties
+	public string? Logo { get; set; }
 
-    public virtual ICollection<Flight> Flights { get; set; } = new List<Flight>();
+	public ContactInfo? ContactInfo { get; set; }
+
+	public bool IsActive { get; set; } = true;
+
+
+	// Navigation Properties
+
+	public virtual ICollection<Flight> Flights { get; set; } = new List<Flight>();
 }
 
 

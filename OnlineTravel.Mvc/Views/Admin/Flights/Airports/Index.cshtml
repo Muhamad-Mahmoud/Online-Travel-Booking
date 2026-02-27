@@ -1,0 +1,138 @@
+@model OnlineTravel.Domain.Exceptions.PaginatedResult<OnlineTravel.Domain.Entities.Flights.Airport>
+
+@{
+    ViewData["Title"] = "Airports";
+}
+
+<div class="container-fluid py-4">
+    <!-- Authority Header -->
+    <partial name="_AdminPageHeader" model='new AdminPageHeaderViewModel {
+        Title = "Hub",
+        TitleSuffix = "Airports",
+        IconClass = "fas fa-map-marker-alt",
+        IconBgClass = "bg-primary",
+        StatusText = "HUB MONITORING",
+        StatusIconClass = "fas fa-satellite-dish",
+        BadgeText = $"TOTAL: {Model.TotalCount} HUBS",
+        Breadcrumbs = new List<BreadcrumbItem> {
+            new BreadcrumbItem { Text = "Flights", Controller = "Flights", Action = "Index" },
+            new BreadcrumbItem { Text = "Airports", IsActive = true }
+        },
+        ShowSearch = false,
+        ActionButtons = new List<ActionButtonViewModel> {
+            new ActionButtonViewModel { 
+                Text = "New Airport", 
+                IconClass = "fas fa-plus-circle", 
+                Action = "CreateAirport", 
+                Class = "btn-premium-dark" 
+            }
+        }
+    }' />
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+    <div class="card-body p-0">
+        @if (Model.Items.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light small text-uppercase text-muted">
+                        <tr>
+                            <th class="ps-4">Code</th>
+                            <th>Name</th>
+                            <th class="d-none d-sm-table-cell">Location</th>
+                            <th class="d-none d-md-table-cell">Facilities</th>
+                            <th>Status</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var airport in Model.Items)
+                        {
+                            <tr class="border-top">
+                                <td class="ps-4">
+                                    <span class="badge bg-primary-light text-primary px-3 py-2 rounded-pill fw-bold">
+                                        @airport.Code?.Value
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-dark small">@airport.Name</div>
+                                </td>
+                                <td class="d-none d-sm-table-cell">
+                                    <div class="text-muted small">
+                                        @(airport.Address?.City ?? "—"), @(airport.Address?.Country ?? "")
+                                    </div>
+                                </td>
+                                <td class="d-none d-md-table-cell">
+                                    @if (airport.Facilities != null && airport.Facilities.Any())
+                                    {
+                                        @foreach (var fac in airport.Facilities.Take(3))
+                                        {
+                                            <span class="badge bg-light text-dark border px-2 py-1 rounded-pill fw-normal x-small me-1">@fac</span>
+                                        }
+                                        @if (airport.Facilities.Count > 3)
+                                        {
+                                            <span class="text-muted x-small">+@(airport.Facilities.Count - 3) more</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted x-small">—</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (airport.IsActive)
+                                    {
+                                        <span class="badge bg-success-light text-success px-2 py-1 rounded-pill fw-normal x-small">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger-light text-danger px-2 py-1 rounded-pill fw-normal x-small">Inactive</span>
+                                    }
+                                </td>
+                                <td class="pe-4 text-end">
+                                    <div class="d-flex gap-2 justify-content-end">
+                                        <a asp-controller="Flights" asp-action="EditAirport" asp-route-id="@airport.Id" class="btn btn-icon-soft btn-soft-primary" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form asp-controller="Flights" asp-action="DeleteAirport" method="post" class="d-inline" data-confirm="Airport @airport.Name will be deleted. Are you sure?" data-confirm-title="Delete Airport">
+                                            <input type="hidden" name="id" value="@airport.Id" />
+                                            <button type="submit" class="btn btn-icon-soft btn-soft-danger" title="Delete">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <i class="fas fa-map-marker-alt display-4 text-muted opacity-25"></i>
+                <p class="text-muted mt-3">No airports found. Click <strong>Add Airport</strong> to create one.</p>
+            </div>
+        }
+    </div>
+    @if (Model.TotalPages >= 1)
+    {
+        <div class="card-footer bg-white border-top p-3 text-center">
+            <partial name="_Pagination" model="@(PaginationViewModel.Create<OnlineTravel.Domain.Entities.Flights.Airport>(Model, "Airports", "Flights"))" />
+        </div>
+    }
+</div>
+</div>
+
+
+
+

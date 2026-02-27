@@ -5,5 +5,5 @@ using OnlineTravel.Domain.ErrorHandling;
 namespace OnlineTravel.Application.Features.Favorites.Queries.GetUserFavorites;
 
 public sealed record GetUserFavoritesQuery(
-    Guid UserId
+	Guid UserId
 ) : IRequest<Result<List<FavoriteDto>>>;

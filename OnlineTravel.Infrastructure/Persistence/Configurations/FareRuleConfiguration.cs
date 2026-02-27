@@ -6,10 +6,10 @@ namespace OnlineTravel.Infrastructure.Persistence.Configurations;
 
 public class FareRuleConfiguration : IEntityTypeConfiguration<FareRule>
 {
-    public void Configure(EntityTypeBuilder<FareRule> builder)
-    {
-        builder.ToTable("FareRules", "flights");
-    }
+	public void Configure(EntityTypeBuilder<FareRule> builder)
+	{
+		builder.ToTable("FareRules", "flights");
+	}
 }
 
 

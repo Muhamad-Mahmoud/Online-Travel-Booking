@@ -6,7 +6,7 @@ using OnlineTravel.Domain.Exceptions;
 namespace OnlineTravel.Application.Features.CarBrands.GetCarBrandsPaginated;
 
 public sealed record GetCarBrandsPaginatedQuery(
-    int PageIndex,
-    int PageSize,
-    string? SearchTerm = null
+	int PageIndex,
+	int PageSize,
+	string? SearchTerm = null
 ) : IRequest<Result<PaginatedResult<CarBrandDto>>>;

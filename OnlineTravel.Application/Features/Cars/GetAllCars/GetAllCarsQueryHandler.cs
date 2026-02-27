@@ -31,7 +31,7 @@ public sealed class GetAllCarsQueryHandler : IRequestHandler<GetAllCarsQuery, Re
 		spec.ApplyPagination((request.PageIndex - 1) * request.PageSize, request.PageSize);
 
 		var items = await _unitOfWork.Repository<Car>().GetAllWithSpecAsync(spec, cancellationToken);
-		
+
 		var countSpec = new CarSpecification(request.BrandId);
 		if (request.CategoryId.HasValue)
 			countSpec.WithCategory(request.CategoryId.Value);

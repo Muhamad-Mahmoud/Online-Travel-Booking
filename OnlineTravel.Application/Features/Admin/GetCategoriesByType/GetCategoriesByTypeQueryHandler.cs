@@ -3,31 +3,27 @@ using MediatR;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities.Core;
 using OnlineTravel.Domain.ErrorHandling;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace OnlineTravel.Application.Features.Admin.GetCategoriesByType
 {
-    public class GetCategoriesByTypeQueryHandler : IRequestHandler<GetCategoriesByTypeQuery, Result<List<CategoryDto>>>
-    {
-        private readonly IUnitOfWork _unitOfWork;
+	public class GetCategoriesByTypeQueryHandler : IRequestHandler<GetCategoriesByTypeQuery, Result<List<CategoryDto>>>
+	{
+		private readonly IUnitOfWork _unitOfWork;
 
-        public GetCategoriesByTypeQueryHandler(IUnitOfWork unitOfWork)
-        {
-            _unitOfWork = unitOfWork;
-        }
+		public GetCategoriesByTypeQueryHandler(IUnitOfWork unitOfWork)
+		{
+			_unitOfWork = unitOfWork;
+		}
 
-        public async Task<Result<List<CategoryDto>>> Handle(GetCategoriesByTypeQuery request, CancellationToken cancellationToken)
-        {
-            var categories = await _unitOfWork.Repository<Category>()
-                .GetAllAsync(cancellationToken);
+		public async Task<Result<List<CategoryDto>>> Handle(GetCategoriesByTypeQuery request, CancellationToken cancellationToken)
+		{
+			var categories = await _unitOfWork.Repository<Category>()
+				.GetAllAsync(cancellationToken);
 
-            var filtered = categories.Where(c => c.Type == request.Type).ToList();
-            var dtos = filtered.Adapt<List<CategoryDto>>();
+			var filtered = categories.Where(c => c.Type == request.Type).ToList();
+			var dtos = filtered.Adapt<List<CategoryDto>>();
 
-            return Result<List<CategoryDto>>.Success(dtos);
-        }
-    }
+			return Result<List<CategoryDto>>.Success(dtos);
+		}
+	}
 }

@@ -6,23 +6,23 @@ namespace OnlineTravel.Domain.Entities.Flights;
 
 public class Airport : BaseEntity
 {
-    public IataCode Code { get; set; } = null!;
+	public IataCode Code { get; set; } = null!;
 
-    public string Name { get; set; } = string.Empty;
-
-
-    public Address Address { get; set; } = null!;
+	public string Name { get; set; } = string.Empty;
 
 
-    public List<string> Facilities { get; set; } = new();
+	public Address Address { get; set; } = null!;
 
-    public bool IsActive { get; set; } = true;
 
-    // Navigation Properties
+	public List<string> Facilities { get; set; } = new();
 
-    public virtual ICollection<Flight> DepartingFlights { get; set; } = new List<Flight>();
+	public bool IsActive { get; set; } = true;
 
-    public virtual ICollection<Flight> ArrivingFlights { get; set; } = new List<Flight>();
+	// Navigation Properties
+
+	public virtual ICollection<Flight> DepartingFlights { get; set; } = new List<Flight>();
+
+	public virtual ICollection<Flight> ArrivingFlights { get; set; } = new List<Flight>();
 }
 
 

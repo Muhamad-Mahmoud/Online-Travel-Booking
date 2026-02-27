@@ -4,17 +4,17 @@ namespace OnlineTravel.Domain.Entities.Flights;
 
 public class FareRule : BaseEntity
 {
-    public string Name { get; set; } = string.Empty;
+	public string Name { get; set; } = string.Empty;
 
-    public string? Description { get; set; }
+	public string? Description { get; set; }
 
-    public List<string> CancellationRules { get; set; } = new();
+	public List<string> CancellationRules { get; set; } = new();
 
-    public bool IsActive { get; set; } = true;
+	public bool IsActive { get; set; } = true;
 
-    // Navigation Properties
+	// Navigation Properties
 
-    public virtual ICollection<FlightFare> FlightFares { get; set; } = new List<FlightFare>();
+	public virtual ICollection<FlightFare> FlightFares { get; set; } = new List<FlightFare>();
 }
 
 

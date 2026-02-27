@@ -2,11 +2,11 @@ namespace OnlineTravel.Domain.Enums;
 
 public enum TourScheduleStatus
 {
-    Active = 0,
+	Active = 0,
 
-    Full = 1,
+	Full = 1,
 
-    Cancelled = 2
+	Cancelled = 2
 }
 
 

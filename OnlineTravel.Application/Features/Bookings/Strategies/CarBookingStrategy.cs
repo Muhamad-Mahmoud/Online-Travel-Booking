@@ -28,10 +28,10 @@ public class CarBookingStrategy : IBookingStrategy
 	{
 		_logger.LogDebug("Checking availability for Car {CarId}", itemId);
 
-        if (stayRange == null)
-        {
-            return Result<BookingProcessResult>.Failure(Error.Validation("Stay range is required for car bookings."));
-        }
+		if (stayRange == null)
+		{
+			return Result<BookingProcessResult>.Failure(Error.Validation("Stay range is required for car bookings."));
+		}
 
 		var car = await _unitOfWork.Repository<Car>().GetByIdAsync(itemId, cancellationToken);
 		if (car == null)

@@ -1,8 +1,8 @@
 namespace OnlineTravel.Application.Features.Hotels.Dtos
 {
-    public class GalleryImageDto
-    {
-        public string Url { get; set; }
-        public string Alt { get; set; }
-    }
+	public class GalleryImageDto
+	{
+		public string Url { get; set; }
+		public string Alt { get; set; }
+	}
 }

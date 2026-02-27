@@ -8,86 +8,86 @@ using OnlineTravel.Infrastructure.Persistence.Specifications;
 
 namespace OnlineTravel.Infrastructure.Persistence.Repositories
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
-    {
+	public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
+	{
 
-        private readonly OnlineTravelDbContext _dbContext;
+		private readonly OnlineTravelDbContext _dbContext;
 
-        public GenericRepository(OnlineTravelDbContext dbContext)
-        {
-            _dbContext = dbContext;
-        }
-
-
-        public async Task<IReadOnlyList<T>> GetAllAsync(CancellationToken cancellationToken = default)
-        {
-            return await _dbContext.Set<T>().ToListAsync(cancellationToken);
-        }
-
-        public void MarkPropertyModified<TProperty>(
-    T entity,
-    Expression<Func<T, TProperty>> propertyExpression)
-        {
-            _dbContext.Attach(entity);
-            _dbContext.Entry(entity).Property(propertyExpression).IsModified = true;
-        }
-
-        public async Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
-        {
-            return await _dbContext.Set<T>().FindAsync(new object[] { id }, cancellationToken);
-        }
-
-        public async Task<IReadOnlyList<T>> GetAllWithSpecAsync(ISpecification<T> spec, CancellationToken cancellationToken = default)
-        {
-            return await ApplySpecifications(spec).ToListAsync(cancellationToken);
-        }
+		public GenericRepository(OnlineTravelDbContext dbContext)
+		{
+			_dbContext = dbContext;
+		}
 
 
-        public async Task<T?> GetEntityWithAsync(ISpecification<T> spec, CancellationToken cancellationToken = default)
-        {
-            return await ApplySpecifications(spec).FirstOrDefaultAsync(cancellationToken);
+		public async Task<IReadOnlyList<T>> GetAllAsync(CancellationToken cancellationToken = default)
+		{
+			return await _dbContext.Set<T>().ToListAsync(cancellationToken);
+		}
 
-        }
+		public void MarkPropertyModified<TProperty>(
+	T entity,
+	Expression<Func<T, TProperty>> propertyExpression)
+		{
+			_dbContext.Attach(entity);
+			_dbContext.Entry(entity).Property(propertyExpression).IsModified = true;
+		}
 
-        public async Task<T?> FindAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
-        {
-            return await _dbContext.Set<T>().FirstOrDefaultAsync(predicate, cancellationToken);
-        }
+		public async Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+		{
+			return await _dbContext.Set<T>().FindAsync(new object[] { id }, cancellationToken);
+		}
 
-
-
-        public void Delete(T entity)
-        {
-            _dbContext.Set<T>().Remove(entity);
-        }
-
-
-        public void Update(T entity)
-        {
-            _dbContext.Set<T>().Update(entity);
-        } 
-
-        
-        public async Task AddAsync(T entity, CancellationToken cancellationToken = default)
-        {
-            await _dbContext.Set<T>().AddAsync(entity, cancellationToken);
-        }
-
-        public async Task<int> GetCountAsync(ISpecification<T> spec, CancellationToken cancellationToken = default)
-        {
-            return await ApplySpecifications(spec).CountAsync(cancellationToken);
-        }
+		public async Task<IReadOnlyList<T>> GetAllWithSpecAsync(ISpecification<T> spec, CancellationToken cancellationToken = default)
+		{
+			return await ApplySpecifications(spec).ToListAsync(cancellationToken);
+		}
 
 
-        public IQueryable<T> Query()
-        {
-            return _dbContext.Set<T>().AsQueryable();
-        }
+		public async Task<T?> GetEntityWithAsync(ISpecification<T> spec, CancellationToken cancellationToken = default)
+		{
+			return await ApplySpecifications(spec).FirstOrDefaultAsync(cancellationToken);
 
-        private IQueryable<T> ApplySpecifications(ISpecification<T> spec)
-        {
-            return SpecificationEvaluator<T>.GetQuery(_dbContext.Set<T>(), spec);
-        }
+		}
 
-    }
+		public async Task<T?> FindAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
+		{
+			return await _dbContext.Set<T>().FirstOrDefaultAsync(predicate, cancellationToken);
+		}
+
+
+
+		public void Delete(T entity)
+		{
+			_dbContext.Set<T>().Remove(entity);
+		}
+
+
+		public void Update(T entity)
+		{
+			_dbContext.Set<T>().Update(entity);
+		}
+
+
+		public async Task AddAsync(T entity, CancellationToken cancellationToken = default)
+		{
+			await _dbContext.Set<T>().AddAsync(entity, cancellationToken);
+		}
+
+		public async Task<int> GetCountAsync(ISpecification<T> spec, CancellationToken cancellationToken = default)
+		{
+			return await ApplySpecifications(spec).CountAsync(cancellationToken);
+		}
+
+
+		public IQueryable<T> Query()
+		{
+			return _dbContext.Set<T>().AsQueryable();
+		}
+
+		private IQueryable<T> ApplySpecifications(ISpecification<T> spec)
+		{
+			return SpecificationEvaluator<T>.GetQuery(_dbContext.Set<T>(), spec);
+		}
+
+	}
 }
