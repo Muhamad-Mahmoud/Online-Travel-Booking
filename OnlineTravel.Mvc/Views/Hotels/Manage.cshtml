@@ -119,28 +119,51 @@
                         <h5 class="fw-black mb-0 text-dark"><i class="fas fa-sliders-h me-2 text-primary"></i>Operational Configuration</h5>
                         <span class="x-small fw-bold text-muted">MODIFIED: @DateTime.Now.ToString("MMM dd, HH:mm")</span>
                     </div>
-                    <form asp-action="Edit" method="post">
-                        <input type="hidden" name="EditForm.Id" value="@hotel.Id" />
+                    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="Id" value="@hotel.Id" />
+                        <input type="hidden" name="CurrentImageUrl" value="@hotel.MainImageUrl" />
+                        
+                        <!-- Preserving deep properties for quick edit sync -->
+                        <input type="hidden" name="Street" value="@(hotel.Address?.Street)" />
+                        <input type="hidden" name="State" value="@(hotel.Address?.State)" />
+                        <input type="hidden" name="PostalCode" value="@(hotel.Address?.PostalCode)" />
+                        <input type="hidden" name="Latitude" value="@(hotel.Address?.Latitude)" />
+                        <input type="hidden" name="Longitude" value="@(hotel.Address?.Longitude)" />
+                        <input type="hidden" name="CheckInTime" value="@(hotel.CheckInTime?.Start.ToTimeSpan())" />
+                        <input type="hidden" name="CheckOutTime" value="@(hotel.CheckOutTime?.Start.ToTimeSpan())" />
+                        <input type="hidden" name="ContactPhone" value="@hotel.ContactPhone" />
+                        <input type="hidden" name="ContactEmail" value="@hotel.ContactEmail" />
+                        <input type="hidden" name="Website" value="@hotel.Website" />
+                        <input type="hidden" name="CancellationPolicy" value="@hotel.CancellationPolicy" />
+
                         <div class="row g-3">
                             <div class="col-12">
                                 <label class="premium-meta-label">REGISTERED TRADENAME</label>
-                                <input name="EditForm.Name" class="form-control premium-control" value="@hotel.Name" />
+                                <input name="Name" class="form-control premium-control" value="@hotel.Name" />
                             </div>
                             <div class="col-12">
                                 <label class="premium-meta-label">MARKETING SUMMARY</label>
-                                <textarea name="EditForm.Description" class="form-control premium-control" rows="3">@hotel.Description</textarea>
+                                <textarea name="Description" class="form-control premium-control" rows="3">@hotel.Description</textarea>
                             </div>
                             <div class="col-md-6">
                                 <label class="premium-meta-label">STATION CITY</label>
-                                <input name="EditForm.City" class="form-control premium-control" value="@hotel.Address?.City" />
+                                <input name="City" class="form-control premium-control" value="@hotel.Address?.City" />
                             </div>
                             <div class="col-md-6">
                                 <label class="premium-meta-label">OPERATIONAL COUNTRY</label>
-                                <input name="EditForm.Country" class="form-control premium-control" value="@hotel.Address?.Country" />
+                                <input name="Country" class="form-control premium-control" value="@hotel.Address?.Country" />
                             </div>
+                            
+                            <!-- New Image Upload for Quick Edit -->
+                            <div class="col-12">
+                                <label class="premium-meta-label text-primary">UPDATE PRIMARY ASSET (IMAGE)</label>
+                                <input name="ImageFile" type="file" class="form-control premium-control bg-light bg-opacity-10 text-white" accept="image/*" />
+                                <small class="text-muted x-small">Select a new high-resolution visual to update the property hero.</small>
+                            </div>
+
                             <div class="col-12 text-end pt-3">
                                 <button type="button" class="btn btn-outline-secondary border-0 fw-bold px-4 me-2" data-bs-toggle="collapse" data-bs-target="#editHotelSection">Discard</button>
-                                <button type="submit" class="btn btn-premium-dark px-4 rounded-3 shadow-sm">Commit Sync</button>
+                                <button type="submit" class="btn btn-premium-blue px-4 rounded-3 shadow-sm fw-black">Commit Sync</button>
                             </div>
                         </div>
                     </form>

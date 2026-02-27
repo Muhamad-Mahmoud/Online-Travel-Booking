@@ -1,14 +1,14 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OnlineTravel.Application.Features.Tours.CreateTour.Commands;
-using OnlineTravel.Application.Features.Tours.DeleteTour.Commands;
-using OnlineTravel.Application.Features.Tours.GetAllTours.Queries;
-using OnlineTravel.Application.Features.Tours.GetTourById.Queries;
-using OnlineTravel.Application.Features.Tours.Manage.Commands.AddActivity;
-using OnlineTravel.Application.Features.Tours.Manage.Commands.AddImage;
-using OnlineTravel.Application.Features.Tours.Manage.Commands.AddPriceTier;
-using OnlineTravel.Application.Features.Tours.Manage.Commands.UpdateCoordinates;
-using OnlineTravel.Application.Features.Tours.Manage.Commands.UpdateTour;
+using OnlineTravel.Application.Features.Tours.CreateTour;
+using OnlineTravel.Application.Features.Tours.DeleteTour;
+using OnlineTravel.Application.Features.Tours.GetAllTours;
+using OnlineTravel.Application.Features.Tours.GetTourById;
+using OnlineTravel.Application.Features.Tours.Manage.AddActivity;
+using OnlineTravel.Application.Features.Tours.Manage.AddImage;
+using OnlineTravel.Application.Features.Tours.Manage.AddPriceTier;
+using OnlineTravel.Application.Features.Tours.Manage.UpdateCoordinates;
+using OnlineTravel.Application.Features.Tours.Manage.UpdateTour;
 
 namespace OnlineTravel.Api.Controllers;
 

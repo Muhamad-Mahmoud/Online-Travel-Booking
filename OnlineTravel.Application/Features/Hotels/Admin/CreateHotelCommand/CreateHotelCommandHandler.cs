@@ -42,8 +42,7 @@ namespace OnlineTravel.Application.Features.Hotels.Admin.CreateHotelCommand
 				: null;
 			var contactInfo = new ContactInfo(email, phone, website);
 
-			var checkInTime = new TimeRange(request.CheckInTimeStart, request.CheckInTimeEnd);
-			var checkOutTime = new TimeRange(request.CheckOutTimeStart, request.CheckOutTimeEnd);
+
 
 			var hotel = new Hotel(
 				request.Name,
@@ -51,10 +50,10 @@ namespace OnlineTravel.Application.Features.Hotels.Admin.CreateHotelCommand
 				request.Description,
 				address,
 				contactInfo,
-				checkInTime,
-				checkOutTime,
+				new TimeRange(request.CheckInTimeStart, request.CheckInTimeEnd),
+				new TimeRange(request.CheckOutTimeStart, request.CheckOutTimeEnd),
 				request.CancellationPolicy,
-				request.MainImageUrl
+				request.MainImage
 			);
 
 			await _unitOfWork.Hotels.AddAsync(hotel);

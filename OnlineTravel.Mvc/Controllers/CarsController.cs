@@ -1,5 +1,7 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OnlineTravel.Mvc.Helpers;
+using OnlineTravel.Mvc.Models;
+using OnlineTravel.Application.Features.Cars.Shared.DTOs;
 using OnlineTravel.Application.Features.Cars.GetAllCarsSummary;
 using OnlineTravel.Application.Features.CarBrands.GetCarBrands;
 using OnlineTravel.Application.Features.Cars.CreateCar;
@@ -8,12 +10,13 @@ using OnlineTravel.Application.Features.Cars.GetCarById;
 using OnlineTravel.Application.Features.Cars.GetCarByIdWithDetails;
 using OnlineTravel.Application.Features.Categories.GetCategoriesByType;
 using OnlineTravel.Domain.Enums;
+using OnlineTravel.Application.Features.Cars.UpdateCar;
 
 namespace OnlineTravel.Mvc.Controllers;
 
 public class CarsController : BaseController
 {
-	public async Task<IActionResult> Index(int pageIndex = 1, int pageSize = 10, string? searchTerm = null, Guid? brandId = null)
+	public async Task<IActionResult> Index(int pageIndex = 1, int pageSize = 5, string? searchTerm = null, Guid? brandId = null)
 	{
 		var result = await Mediator.Send(new GetAllCarsSummaryQuery(pageIndex, pageSize, brandId, null, null, searchTerm));
 
@@ -44,11 +47,11 @@ public class CarsController : BaseController
 		ViewBag.Brands = brandsResult.IsSuccess ? brandsResult.Value : [];
 		ViewBag.Categories = categoriesResult.IsSuccess ? categoriesResult.Value : [];
 
-		return View("~/Views/Cars/Cars/Create.cshtml", new CreateCarRequest());
+		return View("~/Views/Cars/Cars/Create.cshtml", new CarCreateViewModel());
 	}
 
 	[HttpPost]
-	public async Task<IActionResult> Create(CreateCarRequest model)
+	public async Task<IActionResult> Create(CarCreateViewModel command)
 	{
 		if (!ModelState.IsValid)
 		{
@@ -56,14 +59,26 @@ public class CarsController : BaseController
 			var categoriesResult = await Mediator.Send(new GetCategoriesByTypeQuery(CategoryType.Car));
 			ViewBag.Brands = brandsResult.IsSuccess ? brandsResult.Value : [];
 			ViewBag.Categories = categoriesResult.IsSuccess ? categoriesResult.Value : [];
-			return View("~/Views/Cars/Cars/Create.cshtml", model);
+			return View("~/Views/Cars/Cars/Create.cshtml", command);
+		}
+// turbo
+		if (command.ImageFiles != null && command.ImageFiles.Count > 0)
+		{
+			foreach (var file in command.ImageFiles)
+			{
+				var path = await FileUploadHelper.UploadFileAsync(file, "cars");
+				if (path != null)
+				{
+					command.Images.Add(new ImageUrlDto { Url = path });
+				}
+			}
 		}
 
-		var result = await Mediator.Send(new CreateCarCommand(model));
+		var result = await Mediator.Send(new CreateCarCommand(command));
 
 		if (result.IsSuccess)
 		{
-			TempData["Success"] = "Car created successfully";
+			TempData["Success"] = "Car Created Successfully!";
 			return RedirectToAction(nameof(Index));
 		}
 
@@ -72,17 +87,17 @@ public class CarsController : BaseController
 		var categoriesResultOnError = await Mediator.Send(new GetCategoriesByTypeQuery(CategoryType.Car));
 		ViewBag.Brands = brandsResultOnError.IsSuccess ? brandsResultOnError.Value : [];
 		ViewBag.Categories = categoriesResultOnError.IsSuccess ? categoriesResultOnError.Value : [];
-		return View("~/Views/Cars/Cars/Create.cshtml", model);
+		return View("~/Views/Cars/Cars/Create.cshtml", command);
 	}
 
 	public async Task<IActionResult> Edit(Guid id)
 	{
-		var result = await Mediator.Send(new OnlineTravel.Application.Features.Cars.GetCarById.GetCarByIdQuery(id));
+		var result = await Mediator.Send(new GetCarByIdQuery(id));
 		if (!result.IsSuccess) return NotFound();
 
 		var car = result.Value;
 		
-		var updateRequest = new OnlineTravel.Application.Features.Cars.UpdateCar.UpdateCarRequest
+		var updateRequest = new CarEditViewModel
 		{
 			Id = car.Id,
 			BrandId = car.BrandId,
@@ -110,12 +125,24 @@ public class CarsController : BaseController
 	}
 
 	[HttpPost]
-	public async Task<IActionResult> Edit(OnlineTravel.Application.Features.Cars.UpdateCar.UpdateCarRequest model)
+	public async Task<IActionResult> Edit(CarEditViewModel command)
 	{
-		var result = await Mediator.Send(new OnlineTravel.Application.Features.Cars.UpdateCar.UpdateCarCommand(model));
+		if (command.ImageFiles != null && command.ImageFiles.Count > 0)
+		{
+			foreach (var file in command.ImageFiles)
+			{
+				var path = await FileUploadHelper.UploadFileAsync(file, "cars");
+				if (path != null)
+				{
+					command.Images.Add(new ImageUrlDto { Url = path });
+				}
+			}
+		}
+
+		var result = await Mediator.Send(new UpdateCarCommand(command));
 		if (result.IsSuccess)
 		{
-			TempData["Success"] = "Car updated successfully";
+			TempData["Success"] = "Car Updated Successfully!";
 			return RedirectToAction("Index");
 		}
 
@@ -124,7 +151,7 @@ public class CarsController : BaseController
 		ViewBag.Brands = brandsResult.IsSuccess ? brandsResult.Value : [];
 		ViewBag.Categories = categoriesResult.IsSuccess ? categoriesResult.Value : [];
 		
-		return View("~/Views/Cars/Cars/Edit.cshtml", model);
+		return View("~/Views/Cars/Cars/Edit.cshtml", command);
 	}
 
 	public async Task<IActionResult> Delete(Guid id)
@@ -141,7 +168,7 @@ public class CarsController : BaseController
 		var result = await Mediator.Send(new DeleteCarCommand(id));
 		if (result.IsSuccess)
 		{
-			TempData["Success"] = "Car deleted successfully";
+			TempData["Success"] = "Car Deleted Successfully!";
 			return RedirectToAction(nameof(Index));
 		}
 
@@ -149,3 +176,4 @@ public class CarsController : BaseController
 		return RedirectToAction(nameof(Index));
 	}
 }
+

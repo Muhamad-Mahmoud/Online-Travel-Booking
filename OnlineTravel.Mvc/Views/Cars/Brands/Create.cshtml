@@ -1,5 +1,5 @@
 @using OnlineTravel.Application.Features.CarBrands.CreateCarBrand
-@model CreateCarBrandRequest
+@model OnlineTravel.Mvc.Models.BrandCreateViewModel
 @{
     ViewData["Title"] = "Create Car Brand";
 }
@@ -26,7 +26,7 @@
                 <h6 class="m-0 fw-bold text-dark"><i class="fas fa-industry text-primary me-2"></i>Brand Registration</h6>
             </div>
             <div class="card-body p-4">
-                <form asp-action="Create" method="post">
+                <form asp-action="Create" method="post" enctype="multipart/form-data">
                     @Html.AntiForgeryToken()
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger border-0 rounded-3"></div>
 
@@ -37,12 +37,11 @@
                     </div>
 
                     <div class="mb-3">
-                        <label asp-for="Logo" class="form-label fw-bold small text-uppercase text-muted"></label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0"><i class="fas fa-image text-muted"></i></span>
-                            <input asp-for="Logo" class="form-control border-start-0 rounded-end-3" placeholder="logo url or file name" />
+                        <label asp-for="LogoFile" class="form-label fw-bold small text-uppercase text-muted">Brand Logo</label>
+                        <div class="premium-file-upload">
+                            <input asp-for="LogoFile" class="form-control" type="file" accept="image/*" />
                         </div>
-                        <span asp-validation-for="Logo" class="text-danger small"></span>
+                        <span asp-validation-for="LogoFile" class="text-danger small"></span>
                     </div>
 
                     <div class="form-check form-switch mb-4">

@@ -5,17 +5,18 @@ using OnlineTravel.Application.Features.Bookings.GetAllBookings;
 using OnlineTravel.Application.Features.Bookings.GetBookingById;
 using OnlineTravel.Application.Features.Bookings.GetBookingStats;
 using OnlineTravel.Application.Features.Bookings.GetUserBookings;
+using OnlineTravel.Mvc.Models;
 
 namespace OnlineTravel.Mvc.Controllers;
 
 public class BookingsController : BaseController
 {
-	public async Task<IActionResult> Index(int pageIndex = 1, int pageSize = 10, string? searchTerm = null, string? status = null)
+	public async Task<IActionResult> Index(int pageIndex = 1, int pageSize = 5, string? searchTerm = null, string? status = null)
 	{
 		var bookingsResult = await Mediator.Send(new GetAllBookingsQuery(pageIndex, pageSize, searchTerm, status));
 		var statsResult = await Mediator.Send(new GetBookingStatsQuery());
 
-		var model = new OnlineTravel.Mvc.Models.BookingsIndexViewModel
+		var model = new BookingsIndexViewModel
 		{
 			Bookings = bookingsResult.Value,
 			Stats = statsResult.Value
@@ -49,7 +50,7 @@ public class BookingsController : BaseController
 		return File(result.Value ?? [], "text/csv", $"bookings-{DateTime.UtcNow:yyyyMMddHHmmss}.csv");
 	}
 
-	public async Task<IActionResult> UserBookings(Guid userId, int pageIndex = 1, int pageSize = 10)
+	public async Task<IActionResult> UserBookings(Guid userId, int pageIndex = 1, int pageSize = 5)
 	{
 		var result = await Mediator.Send(new GetUserBookingsQuery(userId, pageIndex, pageSize));
 		if (result.IsSuccess)

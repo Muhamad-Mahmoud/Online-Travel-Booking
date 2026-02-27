@@ -37,6 +37,10 @@ namespace OnlineTravel.Application.Features.Hotels.Admin.UpdateHotel
 
 			RuleFor(x => x.Longitude)
 				.InclusiveBetween(-180, 180).WithMessage("Longitude must be between -180 and 180");
+
+			RuleFor(x => x.Website)
+				.Must(x => string.IsNullOrWhiteSpace(x) || Uri.TryCreate(x, UriKind.Absolute, out _))
+				.WithMessage("Invalid website URL format. Please include protocol (e.g., https://)");
 		}
 	}
 

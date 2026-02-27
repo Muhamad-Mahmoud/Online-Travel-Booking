@@ -23,10 +23,9 @@ namespace OnlineTravel.Application.Features.Hotels.Admin.CreateHotelCommand
 		public TimeOnly CheckOutTimeEnd { get; init; }
 
 		public string CancellationPolicy { get; init; } = string.Empty;
-		public string? ContactPhone { get; init; }
-		public string? ContactEmail { get; init; }
-		public string? Website { get; init; }
-		public string? MainImageUrl { get; init; }
-		public string? MainImage { get; set; }
+		public string ContactPhone { get; init; } = string.Empty;
+		public string ContactEmail { get; init; } = string.Empty;
+		public string Website { get; init; } = string.Empty;
+		public string MainImage { get; set; } = string.Empty;
 	}
 }

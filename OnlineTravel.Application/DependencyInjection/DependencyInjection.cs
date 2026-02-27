@@ -15,7 +15,11 @@ public static class DependencyInjection
 		// Register MediatR for CQRS pattern
 		services.AddMediatR(cfg =>
 			cfg.RegisterServicesFromAssemblies(typeof(DependencyInjection).Assembly));
-		services.AddMapster();
+		// Register Mapster
+		var config = TypeAdapterConfig.GlobalSettings;
+		config.Scan(typeof(DependencyInjection).Assembly);
+		services.AddSingleton(config);
+		services.AddScoped<IMapper, ServiceMapper>();
 
 		services.AddAutoMapper(typeof(DependencyInjection).Assembly);
 

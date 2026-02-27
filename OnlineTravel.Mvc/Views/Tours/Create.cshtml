@@ -1,4 +1,4 @@
-@model CreateTourCommand
+@model TourCreateViewModel
 
 @{
     ViewData["Title"] = "Create Tour";
@@ -187,7 +187,7 @@
                         <div class="mb-3">
                             <label asp-for="MainImage" class="premium-meta-label">PRIMARY MISSION HERO</label>
                             <div class="premium-file-upload">
-                                <input asp-for="MainImage" class="form-control d-none" type="file" id="mainImageUpload" accept="image/*" />
+                                <input name="ImageFile" class="form-control d-none" type="file" id="mainImageUpload" accept="image/*" />
                                 <label for="mainImageUpload" class="upload-zone rounded-3 text-center p-4 d-block cursor-pointer">
                                     <i class="fas fa-cloud-upload-alt fa-2x text-primary opacity-50 mb-2"></i>
                                     <p class="x-small fw-bold text-muted mb-0">TAP TO DEPLOY IMAGE</p>

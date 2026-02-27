@@ -2,7 +2,7 @@
 @using OnlineTravel.Application.Features.CarBrands.Shared.DTOs
 @using OnlineTravel.Application.Features.Categories.Shared.DTOs
 @using OnlineTravel.Domain.Enums
-@model UpdateCarRequest
+@model OnlineTravel.Mvc.Models.CarEditViewModel
 
 @{
     ViewData["Title"] = "Edit Vehicle";
@@ -17,7 +17,7 @@
     </a>
 </div>
 
-<form asp-action="Edit" method="post">
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
     @Html.AntiForgeryToken()
     <input type="hidden" asp-for="Id" />
     <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-4 border-0 shadow-sm mb-4"></div>
@@ -148,17 +148,30 @@
                     </button>
                 </div>
                 <div class="card-body p-4">
-                    <div id="images">
+                    <div class="row g-2 mb-4" id="existing-images">
                         @for (int i = 0; i < Model.Images.Count; i++)
                         {
-                            <div class="mb-4 border-bottom pb-3 image-item">
-                                <div class="mb-2">
-                                    <input asp-for="Images[i].Url" class="form-control border-0 bg-light mb-2" placeholder="Image URL" value="@Model.Images[i].Url" />
-                                    <input asp-for="Images[i].AltText" class="form-control border-0 bg-light" placeholder="Description/Alt Text" value="@Model.Images[i].AltText" />
+                            <div class="col-4 position-relative image-preview-item">
+                                <input type="hidden" name="Images[@i].Url" value="@Model.Images[i].Url" />
+                                <input type="hidden" name="Images[@i].AltText" value="@Model.Images[i].AltText" />
+                                <div class="rounded-3 overflow-hidden shadow-sm" style="height: 80px;">
+                                    <img src="/@Model.Images[i].Url" class="w-100 h-100 object-fit-cover" alt="Preview" />
                                 </div>
-                                <button type="button" class="btn btn-sm btn-soft-danger w-100" onclick="this.closest('.image-item').remove()">Remove Image</button>
+                                <button type="button" class="btn btn-danger btn-sm rounded-circle position-absolute top-0 end-0 m-1 p-0 d-flex align-items-center justify-content-center" style="width: 20px; height: 20px;" onclick="this.closest('.image-preview-item').remove()">
+                                    <i class="fas fa-times" style="font-size: 10px;"></i>
+                                </button>
                             </div>
                         }
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ImageFiles" class="form-label small fw-bold text-muted">UPLOAD NEW VISUALS (MULTIPLE)</label>
+                        <div class="premium-file-upload">
+                            <input asp-for="ImageFiles" class="form-control" type="file" multiple accept="image/*" />
+                            <div class="mt-2 x-small text-muted fw-bold">
+                                <i class="fas fa-info-circle me-1"></i> These will be appended to the current gallery.
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

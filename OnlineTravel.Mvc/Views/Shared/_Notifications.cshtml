@@ -1,0 +1,34 @@
+@if (TempData["Success"] != null || TempData["Error"] != null)
+{
+    @* We assume jQuery and toastr JS/CSS are already in _Layout.cshtml *@
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": true,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "5000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            };
+
+            @if (TempData["Success"] != null)
+            {
+                <text>toastr.success('@TempData["Success"]');</text>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <text>toastr.error('@TempData["Error"]');</text>
+            }
+        });
+    </script>
+}

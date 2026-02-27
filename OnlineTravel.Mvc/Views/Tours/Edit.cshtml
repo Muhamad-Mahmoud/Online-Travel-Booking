@@ -1,0 +1,106 @@
+@model OnlineTravel.Mvc.Models.TourEditFormDto
+
+@{
+    ViewData["Title"] = "Edit Tour";
+}
+
+<div class="row g-3 justify-content-between align-items-center mb-4">
+    <div class="col-12 col-lg-auto">
+        <h1 class="h3 fw-bold text-dark mb-1">Edit Tour Node</h1>
+        <p class="text-muted small mb-0">Modify configuration for <strong>@Model.Title</strong>.</p>
+    </div>
+    <div class="col-12 col-lg-auto">
+        <a asp-action="Index" class="btn btn-white shadow-sm">
+            <i class="fas fa-arrow-left me-2 text-muted"></i>Back to Fleet
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <form asp-action="Edit" method="post" enctype="multipart/form-data">
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="TourId" />
+            <input type="hidden" asp-for="CurrentImageUrl" />
+
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="m-0 fw-bold text-dark"><i class="fas fa-sliders-h text-primary me-2"></i>Operational Configuration</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3 mb-3">
+                        <div class="col-12">
+                            <label asp-for="Title" class="form-label small fw-bold text-uppercase text-muted">MISSION DESIGNATOR</label>
+                            <input asp-for="Title" class="form-control" />
+                            <span asp-validation-for="Title" class="text-danger small"></span>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Description" class="form-label small fw-bold text-uppercase text-muted">MISSION BRIEFING</label>
+                            <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-12">
+                            <label asp-for="ImageFile" class="form-label small fw-bold text-uppercase text-muted">REPLACE HERO IMAGE</label>
+                            <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" />
+                            <small class="text-muted">Leave blank to retain current visuals.</small>
+                        </div>
+                        @if (!string.IsNullOrEmpty(Model.CurrentImageUrl))
+                        {
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label small fw-bold text-uppercase text-muted d-block">Current Asset Feed</label>
+                                <img src="/@Model.CurrentImageUrl" alt="Current" class="rounded shadow-sm" style="max-height: 120px; width: auto;" />
+                            </div>
+                        }
+                        <div class="col-md-6">
+                            <label asp-for="DurationDays" class="form-label small fw-bold text-uppercase text-muted">DURATION (DAYS)</label>
+                            <input asp-for="DurationDays" type="number" class="form-control" />
+                            <span asp-validation-for="DurationDays" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="DurationNights" class="form-label small fw-bold text-uppercase text-muted">DURATION (NIGHTS)</label>
+                            <input asp-for="DurationNights" type="number" class="form-control" />
+                            <span asp-validation-for="DurationNights" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="d-flex gap-2 justify-content-end mb-4">
+                <a asp-action="Index" class="btn btn-white px-4">Cancel</a>
+                <button type="submit" class="btn btn-primary px-4 shadow-sm"><i class="fas fa-save me-2"></i>Save Changes</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Sidebar Info -->
+    <div class="col-lg-4">
+        <div class="card shadow-sm border-0 rounded-4 overflow-hidden sticky-top" style="top:1rem;">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h6 class="m-0 fw-bold text-dark"><i class="fas fa-info-circle text-primary me-2"></i>Administration Guidelines</h6>
+            </div>
+            <div class="card-body">
+                <p class="small text-muted mb-2"><strong>Tour ID:</strong> <code>@Model.Id</code></p>
+                <hr />
+                <p class="small text-muted mb-2"><i class="fas fa-check-circle text-success me-2"></i>This updates the core properties only.</p>
+                <p class="small text-muted mb-2"><i class="fas fa-check-circle text-success me-2"></i>Use the "Manage" portal to modify deeply nested graphs like daily itinerary items, commercial pricing nodes, and geospatial data.</p>
+                <a asp-action="Manage" asp-route-id="@Model.TourId" class="btn btn-sm btn-soft-primary w-100 mt-2 fw-bold">Open Active Mission Panel</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .btn-white {
+        background-color: #fff;
+        border: 1px solid #e3e6f0;
+        color: #6e707e;
+    }
+    .btn-white:hover {
+        background-color: #f8f9fc;
+    }
+</style>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

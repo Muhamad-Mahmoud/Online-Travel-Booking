@@ -1,4 +1,12 @@
+using Microsoft.AspNetCore.Http;
+using OnlineTravel.Application.Features.Tours.CreateTour;
+
 namespace OnlineTravel.Mvc.Models;
+
+public class TourCreateViewModel : CreateTourCommand
+{
+    public IFormFile? ImageFile { get; set; }
+}
 
 public class ToursManageViewModel
 {
@@ -65,6 +73,9 @@ public class TourEditFormDto
     public string Description { get; set; } = string.Empty;
     public int DurationDays { get; set; }
     public int DurationNights { get; set; }
+    public string? CurrentImageUrl { get; set; }
+    public string? MainImageUrl { get; set; }
+    public IFormFile? ImageFile { get; set; }
 }
 
 public class ActivityFormDto
@@ -74,7 +85,8 @@ public class ActivityFormDto
     public string Title { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
-    public string Image { get; set; } = string.Empty;
+    public string? Image { get; set; }
+    public IFormFile? ImageFile { get; set; }
 }
 
 public class PriceTierFormDto

@@ -1,13 +1,21 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using FluentValidation;
+using OnlineTravel.Mvc.Helpers;
 using OnlineTravel.Application.Features.Hotels.Admin.GetHotels;
-using OnlineTravel.Application.Features.Hotels.Admin.CreateHotelCommand;
+using OnlineTravel.Application.Features.Hotels.Admin.AddRoom;
+using OnlineTravel.Application.Features.Hotels.Admin.DeleteRoom;
+using OnlineTravel.Application.Features.Hotels.Admin.UpdateHotel;
+using OnlineTravel.Application.Features.Hotels.Public.GetHotelDetails;
+using OnlineTravel.Domain.Entities._Shared.ValueObjects;
+using OnlineTravel.Mvc.Models;
+using OnlineTravel.Application.Features.Hotels.Admin.CreateHotelCommand; // This using is needed because HotelsCreateViewModel is sent as a command.
+using System; // For TimeOnly.FromTimeSpan
 
 namespace OnlineTravel.Mvc.Controllers;
 
 public class HotelsController : BaseController
 {
-	public async Task<IActionResult> Index(int pageIndex = 1, int pageSize = 10, string? search = null)
+	public async Task<IActionResult> Index(int pageIndex = 1, int pageSize = 5, string? search = null)
 	{
 		var result = await Mediator.Send(new GetHotelsQuery(pageIndex, pageSize, search));
 		ViewBag.SearchTerm = search;
@@ -16,59 +24,74 @@ public class HotelsController : BaseController
 
 	public IActionResult Create()
 	{
-		return View(new CreateHotelCommand());
+		return View(new HotelsCreateViewModel());
 	}
 
 	[HttpPost]
-	public async Task<IActionResult> Create(CreateHotelCommand command)
+	public async Task<IActionResult> Create(HotelsCreateViewModel model)
 	{
 		if (!ModelState.IsValid)
 		{
-			return View(command);
+			return View(model);
 		}
 
-		var result = await Mediator.Send(command);
+		if (model.ImageFile != null)
+		{
+			model.MainImage = await FileUploadHelper.UploadFileAsync(model.ImageFile, "hotels");
+		}
+
+		var result = await Mediator.Send(model);
 
 		if (result.IsSuccess)
 		{
-			TempData["Success"] = "Hotel created successfully";
+			TempData["Success"] = "Hotel Created Successfully!";
 			return RedirectToAction(nameof(Index));
 		}
 
-		ModelState.AddModelError(string.Empty, result.Error);
-		return View(command);
+		ModelState.AddModelError(string.Empty, result.Error ?? "An error occurred");
+		return View(model);
 	}
 
 	public async Task<IActionResult> Manage(Guid id)
 	{
-		var result = await Mediator.Send(new OnlineTravel.Application.Features.Hotels.Public.GetHotelDetails.GetHotelDetailsQuery { Id = id });
+		var result = await Mediator.Send(new GetHotelDetailsQuery { Id = id });
 		if (!result.IsSuccess) return NotFound();
 
 		var dto = result.Value;
-		var viewModel = new OnlineTravel.Mvc.Models.HotelsManageViewModel
+		if (dto == null) return NotFound();
+
+		var viewModel = new HotelsManageViewModel
 		{
-			Hotel = new OnlineTravel.Mvc.Models.Hotel
+			Hotel = new Hotel
 			{
 				Id = dto.Id,
 				Name = dto.Name,
 				Description = dto.Description,
 				MainImageUrl = dto.MainImage,
-				Address = new OnlineTravel.Mvc.Models.Address { City = dto.City, Country = dto.Country },
-				Rating = new OnlineTravel.Mvc.Models.Rating { Value = dto.Rating },
+				Address = new OnlineTravel.Mvc.Models.Address { 
+					Street = dto.Street,
+					City = dto.City, 
+					State = dto.State,
+					Country = dto.Country,
+					PostalCode = dto.PostalCode,
+					Latitude = dto.Latitude,
+					Longitude = dto.Longitude
+				},
+				Rating = new Rating { Value = dto.Rating },
 				ContactEmail = dto.ContactEmail,
 				ContactPhone = dto.ContactPhone,
 				Website = dto.Website,
 				CancellationPolicy = dto.CancellationPolicy,
-				CheckInTime = new OnlineTravel.Domain.Entities._Shared.ValueObjects.TimeRange(dto.CheckInTime, dto.CheckInTime.AddHours(4)), // Dummy range for display
-				CheckOutTime = new OnlineTravel.Domain.Entities._Shared.ValueObjects.TimeRange(dto.CheckOutTime.AddHours(-4), dto.CheckOutTime),
-				Rooms = dto.Rooms?.Select(r => new OnlineTravel.Mvc.Models.Room 
+				CheckInTime = new TimeRange(dto.CheckInTime, dto.CheckInTime.AddHours(4)), // Dummy range for display
+				CheckOutTime = new TimeRange(dto.CheckOutTime.AddHours(-4), dto.CheckOutTime),
+				Rooms = dto.Rooms.Select(r => new Room 
 				{ 
 					Id = r.Id, 
 					Name = r.Name, 
 					Description = r.Description, 
 					RoomNumber = r.RoomNumber,
-					BasePricePerNight = new OnlineTravel.Domain.Entities._Shared.ValueObjects.Money(r.BasePricePerNight)
-				}).ToList() ?? new List<OnlineTravel.Mvc.Models.Room>()
+					BasePricePerNight = new Money(r.BasePricePerNight)
+				}).ToList()
 			}
 		};
         
@@ -79,11 +102,13 @@ public class HotelsController : BaseController
 
 	public async Task<IActionResult> Edit(Guid id)
 	{
-		var result = await Mediator.Send(new OnlineTravel.Application.Features.Hotels.Public.GetHotelDetails.GetHotelDetailsQuery { Id = id });
+		var result = await Mediator.Send(new GetHotelDetailsQuery { Id = id });
 		if (!result.IsSuccess) return NotFound();
 
 		var dto = result.Value;
-		var viewModel = new OnlineTravel.Mvc.Models.HotelsEditViewModel
+		if (dto == null) return NotFound();
+
+		var viewModel = new HotelsEditViewModel
 		{
 			Id = dto.Id,
 			Name = dto.Name,
@@ -108,9 +133,18 @@ public class HotelsController : BaseController
 	}
 
 	[HttpPost]
-	public async Task<IActionResult> Edit(OnlineTravel.Mvc.Models.HotelsEditViewModel model)
+	public async Task<IActionResult> Edit(HotelsEditViewModel model)
 	{
-		var command = new OnlineTravel.Application.Features.Hotels.Admin.UpdateHotel.UpdateHotelCommand
+		if (model.ImageFile != null)
+		{
+			model.MainImage = await FileUploadHelper.UploadFileAsync(model.ImageFile, "hotels");
+		}
+		else
+		{
+			model.MainImage = model.CurrentImageUrl;
+		}
+
+		var command = new UpdateHotelCommand
 		{
 			Id = model.Id,
 			Name = model.Name,
@@ -122,7 +156,7 @@ public class HotelsController : BaseController
 			PostalCode = model.PostalCode,
 			Latitude = (double)model.Latitude,
 			Longitude = (double)model.Longitude,
-			MainImage = model.MainImage ?? model.CurrentImageUrl,
+			MainImage = model.MainImage,
 			CheckInTime = TimeOnly.FromTimeSpan(model.CheckInTime),
 			CheckOutTime = TimeOnly.FromTimeSpan(model.CheckOutTime),
 			CancellationPolicy = model.CancellationPolicy,
@@ -131,20 +165,32 @@ public class HotelsController : BaseController
 			Website = model.Website
 		};
 
-		var result = await Mediator.Send(command);
-		if (result.IsSuccess)
+		try
 		{
-			TempData["Success"] = "Hotel updated successfully";
-			return RedirectToAction("Manage", new { id = model.Id });
+			var result = await Mediator.Send(command);
+			if (result.IsSuccess)
+			{
+				TempData["Success"] = "Hotel Updated Successfully!";
+				return RedirectToAction("Manage", new { id = model.Id });
+			}
+
+			ModelState.AddModelError(string.Empty, result.Error ?? "An error occurred");
+		}
+		catch (ValidationException ex)
+		{
+			foreach (var error in ex.Errors)
+			{
+				ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+			}
 		}
 
 		return View(model);
 	}
 
 	[HttpPost]
-	public async Task<IActionResult> AddRoom(OnlineTravel.Mvc.Models.HotelsManageViewModel model)
+	public async Task<IActionResult> AddRoom(HotelsManageViewModel model)
 	{
-		var result = await Mediator.Send(new OnlineTravel.Application.Features.Hotels.Admin.AddRoom.AddRoomCommand
+		var result = await Mediator.Send(new AddRoomCommand
 		{
 			HotelId = model.RoomForm.HotelId,
 			RoomNumber = model.RoomForm.RoomNumber,
@@ -153,15 +199,16 @@ public class HotelsController : BaseController
 			BasePricePerNight = model.RoomForm.BasePrice
 		});
 
-		if (result.IsSuccess) TempData["Success"] = "Room added successfully";
+		if (result.IsSuccess) TempData["Success"] = "Room Added Successfully!";
 		return RedirectToAction("Manage", new { id = model.RoomForm.HotelId });
 	}
 
     [HttpPost]
     public async Task<IActionResult> DeleteRoom(Guid id, Guid hotelId)
     {
-        var result = await Mediator.Send(new OnlineTravel.Application.Features.Hotels.Admin.DeleteRoom.DeleteRoomCommand { Id = id });
-        if (result.IsSuccess) TempData["Success"] = "Room deleted successfully";
+        var result = await Mediator.Send(new DeleteRoomCommand { Id = id });
+        if (result.IsSuccess) TempData["Success"] = "Room Deleted Successfully!";
         return RedirectToAction("Manage", new { id = hotelId });
     }
 }
+

@@ -18,3 +18,4 @@ public class DashboardController : BaseController
 		return View(new AdminDashboardResponse()); // Or handle error
 	}
 }
+
