@@ -59,6 +59,7 @@ namespace OnlineTravel.Application.Mapping
 				.ForMember(d => d.Website, opt => opt.MapFrom(s => s.ContactInfo != null && s.ContactInfo.Website != null ? s.ContactInfo.Website.Value : ""))
 				.ForMember(d => d.CheckInTime, opt => opt.MapFrom(s => s.CheckInTime.Start))
 				.ForMember(d => d.CheckOutTime, opt => opt.MapFrom(s => s.CheckOutTime.Start))
+				.ForMember(d => d.Rooms, opt => opt.MapFrom(s => s.Rooms))
 				.ForMember(d => d.Gallery, opt => opt.Ignore());
 
 			CreateMap<Review, ReviewDto>();
@@ -67,6 +68,21 @@ namespace OnlineTravel.Application.Mapping
 			CreateMap<Room, RoomDto>()
 				.ForMember(d => d.BasePricePerNight, opt => opt.MapFrom(s => s.BasePricePerNight.Amount))
 				.ForMember(d => d.Photos, opt => opt.MapFrom(s => s.Photos.Select(p => p.Value).ToList()));
+
+			// Car mappings
+			CreateMap<OnlineTravel.Domain.Entities.Cars.CarBrand, OnlineTravel.Application.Features.CarBrands.Shared.DTOs.CarBrandDto>();
+			
+			CreateMap<OnlineTravel.Domain.Entities.Cars.Car, OnlineTravel.Application.Features.Cars.GetCarById.CarDto>()
+				.ForMember(d => d.BrandName, opt => opt.MapFrom(s => s.Brand.Name))
+				.ForMember(d => d.CategoryTitle, opt => opt.MapFrom(s => s.Category.Title))
+				.ForMember(d => d.Location, opt => opt.MapFrom(s => s.Location));
+
+			CreateMap<OnlineTravel.Domain.Entities._Shared.ValueObjects.DateTimeRange, OnlineTravel.Application.Features.Cars.Shared.DTOs.DateTimeRangeDto>();
+			CreateMap<OnlineTravel.Domain.Entities._Shared.ValueObjects.ImageUrl, OnlineTravel.Application.Features.Cars.Shared.DTOs.ImageUrlDto>()
+				.ForMember(d => d.Url, opt => opt.MapFrom(s => s.Url));
+			CreateMap<NetTopologySuite.Geometries.Point, OnlineTravel.Application.Features.Cars.Shared.DTOs.LocationDto>()
+				.ForMember(d => d.Latitude, opt => opt.MapFrom(s => s.Y))
+				.ForMember(d => d.Longitude, opt => opt.MapFrom(s => s.X));
 		}
 	}
 }

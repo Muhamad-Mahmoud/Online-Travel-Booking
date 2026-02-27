@@ -132,7 +132,7 @@
             </div>
 
             <div class="sidebar-footer">
-                <a href="#" class="menu-link text-danger">
+                <a asp-controller="Account" asp-action="Logout" class="menu-link text-danger">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>Logout</span>
                 </a>
@@ -153,10 +153,10 @@
                     
                     <div class="user-profile">
                         <div class="user-info">
-                            <span class="user-name">Admin User</span>
-                            <span class="user-role">Super Admin</span>
+                            <span class="user-name">@(User.Identity?.Name ?? "Admin User")</span>
+                            <span class="user-role">@(User.IsInRole("Admin") ? "System Administrator" : "Staff")</span>
                         </div>
-                        <img src="https://ui-avatars.com/api/?name=Admin+User&background=4361ee&color=fff" alt="User" class="user-avatar">
+                        <img src="https://ui-avatars.com/api/?name=@(User.Identity?.Name ?? "Admin")&background=4361ee&color=fff" alt="User" class="user-avatar">
                     </div>
                 </div>
             </header>

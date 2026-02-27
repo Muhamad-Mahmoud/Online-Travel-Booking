@@ -4,6 +4,7 @@ using OnlineTravel.Application.Features.Admin.Export;
 using OnlineTravel.Application.Features.Bookings.GetAllBookings;
 using OnlineTravel.Application.Features.Bookings.GetBookingById;
 using OnlineTravel.Application.Features.Bookings.GetBookingStats;
+using OnlineTravel.Application.Features.Bookings.GetUserBookings;
 
 namespace OnlineTravel.Mvc.Controllers;
 
@@ -22,7 +23,7 @@ public class BookingsController : BaseController
 
 		ViewBag.SearchTerm = searchTerm;
 		ViewBag.Status = status;
-		ViewBag.BookingStatuses = new List<string> { "Confirmed", "PendingPayment", "Cancelled", "Paid" };
+		ViewBag.BookingStatuses = (List<string>)["Confirmed", "PendingPayment", "Cancelled", "Paid"];
 
 		return View("~/Views/Admin/Bookings/Index.cshtml", model);
 	}
@@ -45,6 +46,16 @@ public class BookingsController : BaseController
 			return BadRequest();
 		}
 
-		return File(result.Value ?? Array.Empty<byte>(), "text/csv", $"bookings-{DateTime.UtcNow:yyyyMMddHHmmss}.csv");
+		return File(result.Value ?? [], "text/csv", $"bookings-{DateTime.UtcNow:yyyyMMddHHmmss}.csv");
+	}
+
+	public async Task<IActionResult> UserBookings(Guid userId, int pageIndex = 1, int pageSize = 10)
+	{
+		var result = await Mediator.Send(new GetUserBookingsQuery(userId, pageIndex, pageSize));
+		if (result.IsSuccess)
+		{
+			return View("~/Views/Admin/Bookings/UserBookings.cshtml", result.Value);
+		}
+		return NotFound();
 	}
 }

@@ -15,5 +15,6 @@ public class FlightEditViewModel
     public string? Gate { get; set; }
     public string? Terminal { get; set; }
     public string? AircraftType { get; set; }
+    public List<string> BaggageRules { get; set; } = new();
     public string? BaggageRulesText { get; set; }
 }

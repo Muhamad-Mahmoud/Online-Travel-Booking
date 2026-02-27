@@ -57,7 +57,7 @@ public static class ApplicationDbContextSeed
 		}
 	}
 
-	private static async Task SeedUsersAsync(UserManager<AppUser> userManager, OnlineTravelDbContext context)
+	private static async Task SeedUsersAsync(UserManager<AppUser> userManager, OnlineTravelDbContext _)
 	{
 		if (await userManager.FindByEmailAsync("admin@admin.com") == null)
 		{
@@ -93,28 +93,28 @@ public static class ApplicationDbContextSeed
 					Address = new Address("Downtown", city, city, "Egypt", "12345", new Point(31.1, 30.0) { SRID = 4326 }),
 					MainImage = new ImageUrl(img, title),
 					Highlights = highlights,
-					Tags = new List<string> { "Premium", "Cultural", "Recommended" },
+					Tags = ["Premium", "Cultural", "Recommended"],
 					Recommended = true,
 					CreatedAt = DateTime.UtcNow
 				});
 			}
 		}
 
-		AddTour("Giza Pyramids Authority", "Official guided tour of the Great Pyramids and Sphinx.", 1, 0, "Giza", "https://images.unsplash.com/photo-1503177119275-0aa32b3a9368", new List<string> { "Sunset Camel Ride", "Great Pyramid Entry", "Expert Archeologist" });
-		AddTour("Nile Majesty Cruise", "Luxury 5-star cruise from Luxor to Aswan with all excursions.", 4, 3, "Luxor", "https://images.unsplash.com/photo-1544955214-e0e64c12659e", new List<string> { "Valley of the Kings", "Karnak Temple", "Galabeya Party" });
-		AddTour("Red Sea Divers Secret", "Hidden diving spots in Hurghada with professional instructors.", 3, 2, "Hurghada", "https://images.unsplash.com/photo-1544551763-46a013bb70d5", new List<string> { "PADI Certified", "Night Dive", "Coral Reef Photo" });
-		AddTour("Siwa Oasis Nomad Life", "Authentic Berber experience in the heart of the Sahara.", 5, 4, "Siwa", "https://images.unsplash.com/photo-1509316785289-025f5d846b35", new List<string> { "Salt Lakes", "Cleopatra's Bath", "Desert Glamping" });
-		AddTour("Abbott Monastery Peak", "Spiritual hike to the summit of Mt. Sinai.", 1, 1, "Saint Catherine", "https://images.unsplash.com/photo-1548543604-a87c9909abec", new List<string> { "Sunrise Prayer", "St. Catherine Monastery", "Hermit Path" });
-		AddTour("Alexandrian Heritage", "The library, the citadel, and the sunken city.", 2, 1, "Alexandria", "https://images.unsplash.com/photo-1554593453-29f95d52252a", new List<string> { "Library Tour", "Citadel View", "Seafood Dinner" });
+		AddTour("Giza Pyramids Authority", "Official guided tour of the Great Pyramids and Sphinx.", 1, 0, "Giza", "https://images.unsplash.com/photo-1503177119275-0aa32b3a9368", ["Sunset Camel Ride", "Great Pyramid Entry", "Expert Archeologist"]);
+		AddTour("Nile Majesty Cruise", "Luxury 5-star cruise from Luxor to Aswan with all excursions.", 4, 3, "Luxor", "https://images.unsplash.com/photo-1544955214-e0e64c12659e", ["Valley of the Kings", "Karnak Temple", "Galabeya Party"]);
+		AddTour("Red Sea Divers Secret", "Hidden diving spots in Hurghada with professional instructors.", 3, 2, "Hurghada", "https://images.unsplash.com/photo-1544551763-46a013bb70d5", ["PADI Certified", "Night Dive", "Coral Reef Photo"]);
+		AddTour("Siwa Oasis Nomad Life", "Authentic Berber experience in the heart of the Sahara.", 5, 4, "Siwa", "https://images.unsplash.com/photo-1509316785289-025f5d846b35", ["Salt Lakes", "Cleopatra's Bath", "Desert Glamping"]);
+		AddTour("Abbott Monastery Peak", "Spiritual hike to the summit of Mt. Sinai.", 1, 1, "Saint Catherine", "https://images.unsplash.com/photo-1548543604-a87c9909abec", ["Sunrise Prayer", "St. Catherine Monastery", "Hermit Path"]);
+		AddTour("Alexandrian Heritage", "The library, the citadel, and the sunken city.", 2, 1, "Alexandria", "https://images.unsplash.com/photo-1554593453-29f95d52252a", ["Library Tour", "Citadel View", "Seafood Dinner"]);
 
-		if (tours.Any())
+		if (tours.Count > 0)
 		{
 			context.Tours.AddRange(tours);
 			await context.SaveChangesAsync();
 		}
 	}
 
-	private static async Task SeedHotelsAsync(OnlineTravelDbContext context, Guid categoryId)
+	private static async Task SeedHotelsAsync(OnlineTravelDbContext context, Guid _)
 	{
 		if (await context.Hotels.CountAsync() >= 8) return;
 
@@ -150,7 +150,7 @@ public static class ApplicationDbContextSeed
 		AddHotel("Hilton Mediterranean View", "hilton-alex-view", "Modern stay at the Alexandria corniche.", "Alexandria", "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4");
 		AddHotel("Movenpick Island Resort", "movenpick-aswan-resort", "Private Elephantine island experience.", "Aswan", "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b");
 
-		if (hotels.Any())
+		if (hotels.Count > 0)
 		{
 			context.Hotels.AddRange(hotels);
 			await context.SaveChangesAsync();
@@ -192,7 +192,7 @@ public static class ApplicationDbContextSeed
 					Transmission = TransmissionType.Automatic,
 					CategoryId = categoryId,
 					Location = new Point(31.2, 30.0) { SRID = 4326 },
-					PricingTiers = new List<CarPricingTier> { new CarPricingTier { PricePerHour = price, FromHours = 1, ToHours = 168 } }
+					PricingTiers = [new CarPricingTier { PricePerHour = price, FromHours = 1, ToHours = 168 }]
 				});
 			}
 		}
@@ -203,7 +203,7 @@ public static class ApplicationDbContextSeed
 		AddCar("Kia", "Carnival", CarCategory.Van, 8, FuelType.Petrol, new Money(1200, "EGP"));
 		AddCar("Mercedes", "EQS", CarCategory.Luxury, 5, FuelType.Electric, new Money(5000, "EGP"));
 
-		if (cars.Any())
+		if (cars.Count > 0)
 		{
 			context.Cars.AddRange(cars);
 			await context.SaveChangesAsync();
@@ -217,9 +217,9 @@ public static class ApplicationDbContextSeed
 		var rules = new List<FareRule>();
 		if (!await context.FareRules.AnyAsync())
 		{
-			rules.Add(new FareRule { Name = "First Class Elite", Description = "Luxury services, 3x32kg baggage, free seat selection.", CancellationRules = new List<string> { "Full refund anytime", "Free change" } });
-			rules.Add(new FareRule { Name = "Business Flex", Description = "Priority boarding, 2x32kg baggage.", CancellationRules = new List<string> { "Refundable 24h before" } });
-			rules.Add(new FareRule { Name = "Economy Saver", Description = "Basic seat, 1x23kg baggage.", CancellationRules = new List<string> { "No refund", "Change fee applies" } });
+			rules.Add(new FareRule { Name = "First Class Elite", Description = "Luxury services, 3x32kg baggage, free seat selection.", CancellationRules = ["Full refund anytime", "Free change"] });
+			rules.Add(new FareRule { Name = "Business Flex", Description = "Priority boarding, 2x32kg baggage.", CancellationRules = ["Refundable 24h before"] });
+			rules.Add(new FareRule { Name = "Economy Saver", Description = "Basic seat, 1x23kg baggage.", CancellationRules = ["No refund", "Change fee applies"] });
 			context.FareRules.AddRange(rules);
 			await context.SaveChangesAsync();
 		}
@@ -267,7 +267,7 @@ public static class ApplicationDbContextSeed
 					Schedule = new DateTimeRange(DateTime.UtcNow.AddDays(15), DateTime.UtcNow.AddDays(15).AddHours(6)),
 					CategoryId = categoryId,
 					Status = FlightStatus.Scheduled,
-					BaggageRules = new List<string> { "Checked: 2x23kg", "Cabin: 1x7kg" },
+					BaggageRules = ["Checked: 2x23kg", "Cabin: 1x7kg"],
 					Refundable = true
 				};
 
@@ -288,7 +288,7 @@ public static class ApplicationDbContextSeed
 		AddFlight("BA155", "BA", "LHR", "CAI", new Money(550, "USD"));
 		AddFlight("TK001", "TK", "IST", "LHR", new Money(400, "USD"));
 
-		if (flights.Any()) { context.Flights.AddRange(flights); await context.SaveChangesAsync(); }
+		if (flights.Count > 0) { context.Flights.AddRange(flights); await context.SaveChangesAsync(); }
 	}
 
 	private static async Task SeedBookingsAndReviewsAsync(OnlineTravelDbContext context, List<Category> categories)
