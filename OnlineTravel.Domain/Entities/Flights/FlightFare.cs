@@ -5,20 +5,20 @@ namespace OnlineTravel.Domain.Entities.Flights;
 
 public class FlightFare : BaseEntity
 {
-    public Guid FlightId { get; set; }
+	public Guid FlightId { get; set; }
 
-    public Money BasePrice { get; set; } = null!;
+	public Money BasePrice { get; set; } = null!;
 
-    public int SeatsAvailable { get; set; }
+	public int SeatsAvailable { get; set; }
 
-    public Guid? FareRulesId { get; set; }
+	public Guid? FareRulesId { get; set; }
 
 
-    // Navigation Properties
+	// Navigation Properties
 
-    public virtual Flight Flight { get; set; } = null!;
+	public virtual Flight Flight { get; set; } = null!;
 
-    public virtual FareRule? FareRules { get; set; }
+	public virtual FareRule? FareRules { get; set; }
 }
 
 

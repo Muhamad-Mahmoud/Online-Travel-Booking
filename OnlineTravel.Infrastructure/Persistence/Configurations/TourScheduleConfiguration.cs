@@ -6,24 +6,24 @@ namespace OnlineTravel.Infrastructure.Persistence.Configurations;
 
 public class TourScheduleConfiguration : IEntityTypeConfiguration<TourSchedule>
 {
-    public void Configure(EntityTypeBuilder<TourSchedule> builder)
-    {
-        builder.ToTable("TourSchedules", "tours");
-        builder.Property(e => e.RowVersion).IsRowVersion();
+	public void Configure(EntityTypeBuilder<TourSchedule> builder)
+	{
+		builder.ToTable("TourSchedules", "tours");
+		builder.Property(e => e.RowVersion).IsRowVersion();
 
-        builder.OwnsOne(e => e.DateRange, dr =>
-        {
-            dr.Property(p => p.Start).HasColumnName("StartDate");
-            dr.Property(p => p.End).HasColumnName("EndDate");
-        });
+		builder.OwnsOne(e => e.DateRange, dr =>
+		{
+			dr.Property(p => p.Start).HasColumnName("StartDate");
+			dr.Property(p => p.End).HasColumnName("EndDate");
+		});
 
 
 
-        builder.HasOne(e => e.Tour)
-            .WithMany()
-            .HasForeignKey(e => e.TourId)
-            .OnDelete(DeleteBehavior.Restrict);
-    }
+		builder.HasOne(e => e.Tour)
+			.WithMany()
+			.HasForeignKey(e => e.TourId)
+			.OnDelete(DeleteBehavior.Restrict);
+	}
 }
 
 

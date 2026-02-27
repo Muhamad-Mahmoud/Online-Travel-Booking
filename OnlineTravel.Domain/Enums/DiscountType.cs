@@ -2,9 +2,9 @@ namespace OnlineTravel.Domain.Enums;
 
 public enum DiscountType
 {
-    Percentage = 0,
+	Percentage = 0,
 
-    Fixed = 1
+	Fixed = 1
 }
 
 

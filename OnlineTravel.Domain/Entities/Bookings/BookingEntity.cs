@@ -9,112 +9,113 @@ namespace OnlineTravel.Domain.Entities.Bookings;
 
 public class BookingEntity : BaseEntity
 {
-    public BookingReference BookingReference { get; private set; } = null!;
+	public BookingReference BookingReference { get; private set; } = null!;
 
-    public Guid UserId { get; private set; }
-
-
-    public BookingStatus Status { get; private set; } = BookingStatus.PendingPayment;
-
-    public Money TotalPrice { get; private set; } = null!;
+	public Guid UserId { get; private set; }
 
 
-    public PaymentStatus PaymentStatus { get; private set; } = PaymentStatus.Pending;
+	public BookingStatus Status { get; private set; } = BookingStatus.PendingPayment;
 
-    public string? StripeSessionId { get; private set; }
-    public string? PaymentIntentId { get; private set; }
+	public Money TotalPrice { get; private set; } = null!;
 
-    public DateTime BookingDate { get; private set; } = DateTime.UtcNow;
-    
-    public DateTime ExpiresAt { get; private set; }
 
-    public bool IsExpired(DateTime now) => Status == BookingStatus.PendingPayment && now > ExpiresAt;
+	public PaymentStatus PaymentStatus { get; private set; } = PaymentStatus.Pending;
 
-    public virtual AppUser User { get; private set; } = null!;
+	public string? StripeSessionId { get; private set; }
+	public string? PaymentIntentId { get; private set; }
 
-    public virtual ICollection<BookingDetail> Details { get; private set; } = new List<BookingDetail>();
+	public DateTime BookingDate { get; private set; } = DateTime.UtcNow;
 
-    protected BookingEntity() { } // For EF
+	public DateTime ExpiresAt { get; private set; }
 
-    public static BookingEntity Create(Guid userId, Money totalPrice)
-    {
-        var reference = new BookingReference($"BK-{Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper()}");
-        return new BookingEntity
-        {
-            Id = Guid.NewGuid(),
-            UserId = userId,
-            BookingReference = reference,
-            TotalPrice = totalPrice,
-            Status = BookingStatus.PendingPayment,
-            PaymentStatus = PaymentStatus.Pending,
-            BookingDate = DateTime.UtcNow,
-            ExpiresAt = DateTime.UtcNow.AddMinutes(15)
-        };
-    }
+	public bool IsExpired(DateTime now) => Status == BookingStatus.PendingPayment && now > ExpiresAt;
 
-    public void UpdateStripeInfo(string sessionId, string paymentIntentId)
-    {
-        StripeSessionId = sessionId;
-        PaymentIntentId = paymentIntentId;
-    }
+	public virtual AppUser User { get; private set; } = null!;
 
-    public void AddDetail(BookingDetail detail)
-    {
-        Details.Add(detail);
-    }
+	public virtual ICollection<BookingDetail> Details { get; private set; } = new List<BookingDetail>();
 
-    public void Cancel()
-    {
-        if (Status == BookingStatus.Cancelled)
-        {
-            return;
-        }
+	protected BookingEntity() { } // For EF
 
-        if (Status == BookingStatus.Confirmed)
-        {
-            throw new DomainException("Cannot cancel a confirmed booking.");
-        }
+	public static BookingEntity Create(Guid userId, Money totalPrice)
+	{
+		var reference = new BookingReference($"BK-{Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper()}");
+		return new BookingEntity
+		{
+			Id = Guid.NewGuid(),
+			UserId = userId,
+			BookingReference = reference,
+			TotalPrice = totalPrice,
+			Status = BookingStatus.PendingPayment,
+			PaymentStatus = PaymentStatus.Pending,
+			BookingDate = DateTime.UtcNow,
+			ExpiresAt = DateTime.UtcNow.AddMinutes(15)
+		};
+	}
 
-        Status = BookingStatus.Cancelled;
-        PaymentStatus = PaymentStatus.Cancelled;
-    }
+	public void UpdateStripeInfo(string sessionId, string paymentIntentId)
+	{
+		StripeSessionId = sessionId;
+		PaymentIntentId = paymentIntentId;
+	}
 
-    public void MarkAsExpired()
-    {
-        if (Status == BookingStatus.PendingPayment)
-        {
-            Status = BookingStatus.Expired;
-            PaymentStatus = PaymentStatus.Expired;		}
-    }
+	public void AddDetail(BookingDetail detail)
+	{
+		Details.Add(detail);
+	}
 
-    public void ConfirmPayment(string? paymentIntentId = null)
-    {
-        if (Status == BookingStatus.Confirmed)
-        {
-            return;
-        }
+	public void Cancel()
+	{
+		if (Status == BookingStatus.Cancelled)
+		{
+			return;
+		}
 
-        if (Status != BookingStatus.PendingPayment)
-        {
-            throw new DomainException("Only pending payment bookings can be confirmed.");
-        }
+		if (Status == BookingStatus.Confirmed)
+		{
+			throw new DomainException("Cannot cancel a confirmed booking.");
+		}
 
-        // Allow a 5-minute grace period for Stripe webhook latency
-        if (IsExpired(DateTime.UtcNow.AddMinutes(-5)))
-        {
-            Status = BookingStatus.Expired;
-            throw new DomainException("Booking has expired and cannot be confirmed.");
-        }
+		Status = BookingStatus.Cancelled;
+		PaymentStatus = PaymentStatus.Cancelled;
+	}
 
-        if (!string.IsNullOrEmpty(paymentIntentId))
-        {
-            PaymentIntentId = paymentIntentId;
-        }
+	public void MarkAsExpired()
+	{
+		if (Status == BookingStatus.PendingPayment)
+		{
+			Status = BookingStatus.Expired;
+			PaymentStatus = PaymentStatus.Expired;
+		}
+	}
 
-        Status = BookingStatus.Confirmed;
-        PaymentStatus = PaymentStatus.Paid;
-        PaidAt = DateTime.UtcNow;
-    }
+	public void ConfirmPayment(string? paymentIntentId = null)
+	{
+		if (Status == BookingStatus.Confirmed)
+		{
+			return;
+		}
 
-    public DateTime? PaidAt { get; private set; }
+		if (Status != BookingStatus.PendingPayment)
+		{
+			throw new DomainException("Only pending payment bookings can be confirmed.");
+		}
+
+		// Allow a 5-minute grace period for Stripe webhook latency
+		if (IsExpired(DateTime.UtcNow.AddMinutes(-5)))
+		{
+			Status = BookingStatus.Expired;
+			throw new DomainException("Booking has expired and cannot be confirmed.");
+		}
+
+		if (!string.IsNullOrEmpty(paymentIntentId))
+		{
+			PaymentIntentId = paymentIntentId;
+		}
+
+		Status = BookingStatus.Confirmed;
+		PaymentStatus = PaymentStatus.Paid;
+		PaidAt = DateTime.UtcNow;
+	}
+
+	public DateTime? PaidAt { get; private set; }
 }

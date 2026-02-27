@@ -1,0 +1,55 @@
+@model UpdateCarPricingTierFormModel
+@using OnlineTravel.Application.Features.CarPricingTiers.Update
+
+@{
+    ViewData["Title"] = "Edit Pricing Tier";
+}
+
+<h1>Edit Pricing Tier</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="CarId" />
+
+            <div class="form-group">
+                <label asp-for="FromHours" class="control-label"></label>
+                <input asp-for="FromHours" class="form-control" />
+                <span asp-validation-for="FromHours" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ToHours" class="control-label"></label>
+                <input asp-for="ToHours" class="form-control" />
+                <span asp-validation-for="ToHours" class="text-danger"></span>
+            </div>
+
+            <h4>Price Per Hour</h4>
+            <div class="form-group">
+                <label asp-for="PricePerHour.Amount" class="control-label"></label>
+                <input asp-for="PricePerHour.Amount" class="form-control" />
+                <span asp-validation-for="PricePerHour.Amount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PricePerHour.Currency" class="control-label"></label>
+                <input asp-for="PricePerHour.Currency" class="form-control" />
+                <span asp-validation-for="PricePerHour.Currency" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+                <a asp-action="Index" asp-route-carId="@Model.CarId" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

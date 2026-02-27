@@ -1,0 +1,111 @@
+@model IEnumerable<AdminBookingResponse>
+@using OnlineTravel.Api.Helpers
+@{
+    bool showCustomer = ViewData["ShowCustomer"] as bool? ?? true;
+}
+
+<div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+        <thead class="bg-light text-muted small text-uppercase">
+            <tr>
+                <th class="ps-4 py-3 border-0 rounded-start">Reference</th>
+                @if (showCustomer)
+                {
+                    <th class="py-3 border-0">Customer</th>
+                }
+                <th class="py-3 border-0">Service</th>
+                <th class="py-3 border-0">Date & Time</th>
+                <th class="py-3 border-0">Amount</th>
+                <th class="py-3 border-0">Status</th>
+                <th class="py-3 border-0">Payment</th>
+                <th class="pe-4 py-3 border-0 text-end rounded-end">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var booking in Model)
+                {
+                    <tr>
+                        <td class="ps-4 fw-bold text-dark">
+                            <a asp-controller="Bookings" asp-action="Details" asp-route-id="@booking.Id" class="text-decoration-none text-primary">#@booking.BookingReference</a>
+                        </td>
+                        @if (showCustomer)
+                        {
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-circle me-2 bg-primary-light text-primary fw-bold">
+                                        @(string.IsNullOrEmpty(booking.UserName) ? "U" : booking.UserName.Substring(0, 1).ToUpper())
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-dark small">@booking.UserName</div>
+                                        <div class="text-muted x-small d-none d-md-block">ID: @booking.UserId.ToString().Substring(0, 8)...</div>
+                                    </div>
+                                </div>
+                            </td>
+                        }
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="icon-square me-2 @booking.Type.GetTypeColorClass()">
+                                    <i class="fas @booking.Type.GetTypeIconClass()"></i>
+                                </div>
+                                <span class="fw-medium text-dark small">@booking.ItemName</span>
+                            </div>
+                        </td>
+                        <td class="text-muted small">
+                            <div>@booking.BookingDate.ToString("MMM dd, yyyy")</div>
+                            <div class="x-small">@booking.BookingDate.ToString("hh:mm tt")</div>
+                            @if (booking.PaidAt.HasValue)
+                            {
+                                <div class="text-success x-small mt-1 d-none d-lg-block">
+                                    <i class="fas fa-check-double me-1"></i>Paid: @booking.PaidAt.Value.ToString("MMM dd, HH:mm")
+                                </div>
+                            }
+                        </td>
+                        <td class="fw-bold text-dark">@booking.TotalAmount.ToString("N0") <small class="text-muted fw-normal">@booking.Currency</small></td>
+                        <td>
+                            <span class="badge @booking.Status.GetStatusBadgeClass() px-3 py-2 rounded-pill fw-normal">
+                                @booking.Status
+                            </span>
+                        </td>
+                        <td>
+                            <span class="d-inline-flex align-items-center @booking.PaymentStatus.GetPaymentBadgeClass() small fw-bold">
+                                <i class="fas @booking.PaymentStatus.GetPaymentIconClass() me-1"></i> 
+                                @booking.PaymentStatus
+                            </span>
+                        </td>
+                        <td class="pe-4 text-end">
+                            <a asp-controller="Bookings" asp-action="Details" asp-route-id="@booking.Id" class="btn btn-sm btn-icon btn-hover-primary" title="View Details">
+                                <i class="fas fa-chevron-right text-muted"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="@(showCustomer ? 8 : 7)" class="text-center py-5">
+                        <div class="d-flex flex-column align-items-center">
+                            <i class="fas fa-search fa-3x text-muted opacity-25 mb-3"></i>
+                            <h6 class="text-muted">No bookings found</h6>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<style>
+    .avatar-circle { width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+    .icon-square { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+    .btn-icon { width: 32px; height: 32px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s; }
+    .btn-hover-primary:hover { background-color: rgba(67, 97, 238, 0.1); color: #4361ee !important; }
+    .x-small { font-size: 0.75rem; }
+    .bg-primary-light { background-color: rgba(67, 97, 238, 0.1); }
+    .bg-info-light { background-color: rgba(13, 202, 240, 0.1); }
+    .bg-warning-light { background-color: rgba(255, 193, 7, 0.1); }
+    .bg-success-light { background-color: rgba(25, 135, 84, 0.1); }
+</style>
+

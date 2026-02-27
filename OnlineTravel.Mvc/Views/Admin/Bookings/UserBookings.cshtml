@@ -1,0 +1,91 @@
+@model OnlineTravel.Application.Common.PagedResult<OnlineTravel.Application.Features.Bookings.Shared.DTOs.AdminBookingResponse>
+
+@{
+    ViewData["Title"] = "User Bookings";
+    var userName = Model.Data.FirstOrDefault()?.UserName ?? "User";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="page-title mb-1">Bookings for @userName</h1>
+        <p class="text-muted small mb-0">Viewing all reservations made by this customer.</p>
+    </div>
+    <div>
+        <a asp-action="Index" asp-controller="Bookings" class="btn btn-white shadow-sm border rounded-pill px-4">
+            <i class="fas fa-arrow-left me-2"></i> Back to All
+        </a>
+    </div>
+</div>
+
+<!-- Stats Overview for this User -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="stat-card h-100 border-start border-4 border-primary">
+            <div class="stat-header mb-2">
+                <span class="text-uppercase text-muted small fw-bold">User Total</span>
+                <i class="fas fa-calendar-check text-primary opacity-50 fa-lg"></i>
+            </div>
+            <div class="h3 fw-bold mb-0">@Model.TotalCount</div>
+            <span class="small text-muted">All-time bookings</span>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card h-100 border-start border-4 border-success">
+            <div class="stat-header mb-2">
+                <span class="text-uppercase text-muted small fw-bold">Confirmed</span>
+                <i class="fas fa-check-circle text-success opacity-50 fa-lg"></i>
+            </div>
+            <div class="h3 fw-bold mb-0">@Model.Data.Count(b => b.Status == "Confirmed")</div>
+            <span class="small text-success">Successful trips</span>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card h-100 border-start border-4 border-warning">
+            <div class="stat-header mb-2">
+                <span class="text-uppercase text-muted small fw-bold">Active Value</span>
+                <i class="fas fa-dollar-sign text-warning opacity-50 fa-lg"></i>
+            </div>
+            <div class="h3 fw-bold mb-0">@Model.Data.Where(b => b.Status == "Confirmed").Sum(b => b.TotalAmount).ToString("N0") $</div>
+            <span class="small text-muted">Total spent</span>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card h-100 border-start border-4 border-danger">
+            <div class="stat-header mb-2">
+                <span class="text-uppercase text-muted small fw-bold">Cancelled / Expired</span>
+                <i class="fas fa-ban text-danger opacity-50 fa-lg"></i>
+            </div>
+            <div class="h3 fw-bold mb-0">@Model.Data.Count(b => b.Status == "Cancelled" || b.Status == "Expired")</div>
+            <span class="small text-danger">Lost opportunities</span>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+    <div class="card-header bg-white py-3 border-bottom">
+        <h6 class="m-0 fw-bold text-dark">Bookings History</h6>
+    </div>
+    @{ ViewData["ShowCustomer"] = false; }
+    <partial name="~/Views/Admin/Bookings/_BookingList.cshtml" model="Model.Data" />
+    
+    @if (Model.TotalPages > 1)
+    {
+        <div class="card-footer bg-white border-top p-4">
+             <partial name="_Pagination" model="@(PaginationViewModel.Create<OnlineTravel.Application.Features.Bookings.Shared.DTOs.AdminBookingResponse>(Model, "UserBookings", "Bookings"))" />
+        </div>
+    }
+</div>
+
+<style>
+    .stat-card {
+        background: #fff;
+        padding: 1.25rem;
+        border-radius: 0.75rem;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+    .btn-white {
+        background-color: #fff;
+        border: 1px solid #e3e6f0;
+        color: #6e707e;
+    }
+</style>

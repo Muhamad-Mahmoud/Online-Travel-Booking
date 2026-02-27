@@ -1,0 +1,354 @@
+@using OnlineTravel.Application.Features.Cars.UpdateCar
+@using OnlineTravel.Application.Features.CarBrands.Shared.DTOs
+@using OnlineTravel.Application.Features.Categories.Shared.DTOs
+@using OnlineTravel.Domain.Enums
+@model UpdateCarRequest
+
+@{
+    ViewData["Title"] = "Edit Vehicle";
+    var brands = ViewBag.Brands as IEnumerable<CarBrandDto> ?? new List<CarBrandDto>();
+    var categories = ViewBag.Categories as IEnumerable<CategoryDto> ?? new List<CategoryDto>();
+}
+
+<div class="page-title">
+    <span><i class="fas fa-edit me-2 text-warning"></i> Edit Vehicle: @Model.Make @Model.Model</span>
+    <a asp-action="Index" class="btn btn-light shadow-sm rounded-pill px-4">
+        <i class="fas fa-arrow-left me-2"></i> Back to Fleet
+    </a>
+</div>
+
+<form asp-action="Edit" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-4 border-0 shadow-sm mb-4"></div>
+
+    <div class="row g-4">
+        <!-- Left Column: Core Info -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-header bg-transparent border-bottom py-3">
+                    <h5 class="card-title mb-0 fw-bold">Basic Information</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="Make" class="form-label small fw-bold text-muted">MAKE</label>
+                            <input asp-for="Make" class="form-control border-0 bg-light rounded-3" />
+                            <span asp-validation-for="Make" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Model" class="form-label small fw-bold text-muted">MODEL</label>
+                            <input asp-for="Model" class="form-control border-0 bg-light rounded-3" />
+                            <span asp-validation-for="Model" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="BrandId" class="form-label small fw-bold text-muted">BRAND</label>
+                            <select asp-for="BrandId" class="form-select border-0 bg-light rounded-3 shadow-none">
+                                <option value="">Select Brand...</option>
+                                @foreach (var b in brands)
+                                {
+                                    <option value="@b.Id" selected="@(Model.BrandId == b.Id)">@b.Name</option>
+                                }
+                            </select>
+                            <span asp-validation-for="BrandId" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="CategoryId" class="form-label small fw-bold text-muted">CATEGORY / COLLECTION</label>
+                            <select asp-for="CategoryId" class="form-select border-0 bg-light rounded-3 shadow-none">
+                                <option value="">Select Category...</option>
+                                @foreach (var c in categories)
+                                {
+                                    <option value="@c.Id" selected="@(Model.CategoryId == c.Id)">@c.Title</option>
+                                }
+                            </select>
+                            <span asp-validation-for="CategoryId" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="CarType" class="form-label small fw-bold text-muted">CAR TYPE</label>
+                            <select asp-for="CarType" class="form-select border-0 bg-light rounded-3 shadow-none" asp-items="Html.GetEnumSelectList<CarCategory>()"></select>
+                            <span asp-validation-for="CarType" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="SeatsCount" class="form-label small fw-bold text-muted">SEATS COUNT</label>
+                            <div class="input-group bg-light rounded-3 overflow-hidden">
+                                <span class="input-group-text border-0 bg-transparent text-muted"><i class="fas fa-users"></i></span>
+                                <input asp-for="SeatsCount" type="number" class="form-control border-0 bg-transparent" />
+                            </div>
+                            <span asp-validation-for="SeatsCount" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="FuelType" class="form-label small fw-bold text-muted">FUEL TYPE</label>
+                            <select asp-for="FuelType" class="form-select border-0 bg-light rounded-3 shadow-none" asp-items="Html.GetEnumSelectList<FuelType>()"></select>
+                            <span asp-validation-for="FuelType" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="Transmission" class="form-label small fw-bold text-muted">TRANSMISSION</label>
+                            <select asp-for="Transmission" class="form-select border-0 bg-light rounded-3 shadow-none" asp-items="Html.GetEnumSelectList<TransmissionType>()"></select>
+                            <span asp-validation-for="Transmission" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-header bg-transparent border-bottom py-3">
+                    <h5 class="card-title mb-0 fw-bold">Features & Policies</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-4">
+                        <label asp-for="Features" class="form-label small fw-bold text-muted">FEATURES (COMMA SEPARATED)</label>
+                        <textarea asp-for="Features" class="form-control border-0 bg-light rounded-3" rows="2">@string.Join(", ", Model.Features)</textarea>
+                        <span asp-validation-for="Features" class="text-danger small"></span>
+                    </div>
+                    <div>
+                        <label asp-for="CancellationPolicy" class="form-label small fw-bold text-muted">CANCELLATION POLICY</label>
+                        <textarea asp-for="CancellationPolicy" class="form-control border-0 bg-light rounded-3" rows="3">@Model.CancellationPolicy</textarea>
+                        <span asp-validation-for="CancellationPolicy" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-header bg-transparent border-bottom py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0 fw-bold">Available Date Ranges</h5>
+                    <button type="button" id="add-date" class="btn btn-sm btn-soft-primary rounded-pill px-3">
+                        <i class="fas fa-plus me-1"></i> Add Range
+                    </button>
+                </div>
+                <div class="card-body p-4">
+                    <div id="available-dates">
+                        @for (int i = 0; i < Model.AvailableDates.Count; i++)
+                        {
+                            <div class="row g-3 mb-3 border-bottom pb-3 date-range-item">
+                                <div class="col-md-5">
+                                    <label class="form-label small text-muted">Start Date</label>
+                                    <input asp-for="AvailableDates[i].Start" class="form-control border-0 bg-light" type="datetime-local" value="@Model.AvailableDates[i].Start.ToString("yyyy-MM-ddTHH:mm")" />
+                                </div>
+                                <div class="col-md-5">
+                                    <label class="form-label small text-muted">End Date</label>
+                                    <input asp-for="AvailableDates[i].End" class="form-control border-0 bg-light" type="datetime-local" value="@Model.AvailableDates[i].End.ToString("yyyy-MM-ddTHH:mm")" />
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button type="button" class="btn btn-soft-danger w-100" onclick="this.closest('.date-range-item').remove()"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Media & Location -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-header bg-transparent border-bottom py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0 fw-bold">Media (Gallery)</h5>
+                    <button type="button" id="add-image" class="btn btn-sm btn-soft-primary rounded-pill px-3">
+                        <i class="fas fa-plus me-1"></i> Add Image
+                    </button>
+                </div>
+                <div class="card-body p-4">
+                    <div id="images">
+                        @for (int i = 0; i < Model.Images.Count; i++)
+                        {
+                            <div class="mb-4 border-bottom pb-3 image-item">
+                                <div class="mb-2">
+                                    <input asp-for="Images[i].Url" class="form-control border-0 bg-light mb-2" placeholder="Image URL" value="@Model.Images[i].Url" />
+                                    <input asp-for="Images[i].AltText" class="form-control border-0 bg-light" placeholder="Description/Alt Text" value="@Model.Images[i].AltText" />
+                                </div>
+                                <button type="button" class="btn btn-sm btn-soft-danger w-100" onclick="this.closest('.image-item').remove()">Remove Image</button>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-header bg-transparent border-bottom py-3">
+                    <h5 class="card-title mb-0 fw-bold">Location Details</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-3">
+                        <label asp-for="Location.Latitude" class="form-label small fw-bold text-muted">LATITUDE</label>
+                        <input asp-for="Location.Latitude" class="form-control border-0 bg-light rounded-3" step="any" />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Location.Longitude" class="form-label small fw-bold text-muted">LONGITUDE</label>
+                        <input asp-for="Location.Longitude" class="form-control border-0 bg-light rounded-3" step="any" />
+                    </div>
+                    <div class="pro-map-wrapper mt-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+                            <label class="form-label small text-muted mb-0 fw-bold text-uppercase">Map Picker</label>
+                            <div class="input-group shadow-sm" style="max-width: 260px;">
+                                <span class="input-group-text bg-light border-0"><i class="fas fa-search"></i></span>
+                                <input type="text" id="carEditMapSearchInput" class="form-control border-0 bg-light small" placeholder="Search location..." />
+                                <button type="button" class="btn btn-primary btn-sm border-0" id="carEditMapSearchBtn"><i class="fas fa-crosshairs"></i></button>
+                            </div>
+                        </div>
+                        <div class="map-shell">
+                            <div class="map-toolbar">
+                                <button type="button" id="carEditLocateBtn" class="btn btn-map-tool"><i class="fas fa-location-crosshairs"></i> Locate</button>
+                                <button type="button" id="carEditResetMapBtn" class="btn btn-map-tool"><i class="fas fa-rotate-left"></i> Reset</button>
+                                <button type="button" id="carEditStyleStreetBtn" class="btn btn-map-tool active">Street</button>
+                                <button type="button" id="carEditStyleDarkBtn" class="btn btn-map-tool">Dark</button>
+                            </div>
+                            <div id="carEditMap" class="pro-map"></div>
+                            <div class="map-coordinates" id="carEditMapCoordinates">LAT: ---, LNG: ---</div>
+                        </div>
+                        <div id="carEditMapStatus" class="map-status-note x-small fw-bold mt-2">Tip: click map to set coordinates.</div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-warning w-100 py-3 rounded-4 shadow-sm fw-bold text-dark">
+                <i class="fas fa-sync me-2"></i> UPDATE VEHICLE DATA
+            </button>
+            
+            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-link w-100 text-danger mt-2 text-decoration-none small">
+                <i class="fas fa-trash me-1"></i> Delete this vehicle
+            </a>
+        </div>
+    </div>
+</form>
+
+<style>
+    .map-shell { position: relative; border: 1px solid #dbe5f2; border-radius: 16px; overflow: hidden; background: linear-gradient(145deg, #f8fbff 0%, #eef4ff 100%); }
+    .pro-map { height: 320px; z-index: 1; }
+    .map-toolbar { position: absolute; top: 12px; left: 12px; z-index: 800; display: flex; gap: 8px; flex-wrap: wrap; max-width: calc(100% - 24px); }
+    .btn-map-tool { border: 1px solid rgba(15, 23, 42, 0.15); background: rgba(255, 255, 255, 0.92); color: #0f172a; font-size: 0.66rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.35px; padding: 6px 9px; border-radius: 999px; }
+    .btn-map-tool.active, .btn-map-tool:hover { background: #0f172a; border-color: #0f172a; color: #fff; }
+    .map-coordinates { position: absolute; right: 12px; bottom: 12px; z-index: 800; background: rgba(15, 23, 42, 0.86); color: #fff; font-size: 0.64rem; font-weight: 900; letter-spacing: 0.45px; padding: 7px 10px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.15); }
+    .map-status-note { color: #475569; }
+    .map-shell .leaflet-control-zoom a { width: 34px; height: 34px; line-height: 32px; border-radius: 10px; border: 1px solid #d8e2f0; color: #0f172a; font-weight: 700; }
+    .map-shell .leaflet-control-attribution { background: rgba(255,255,255,0.8); border-radius: 8px 0 0 0; padding: 2px 8px; }
+</style>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        document.getElementById('add-date').addEventListener('click', function() {
+            var index = document.querySelectorAll('#available-dates .date-range-item').length;
+            var html = `<div class="row g-3 mb-3 border-bottom pb-3 date-range-item">
+                <div class="col-md-5">
+                    <label class="form-label small text-muted">Start Date</label>
+                    <input type="datetime-local" name="AvailableDates[${index}].Start" class="form-control border-0 bg-light" />
+                </div>
+                <div class="col-md-5">
+                    <label class="form-label small text-muted">End Date</label>
+                    <input type="datetime-local" name="AvailableDates[${index}].End" class="form-control border-0 bg-light" />
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="button" class="btn btn-soft-danger w-100" onclick="this.closest('.date-range-item').remove()"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>`;
+            document.getElementById('available-dates').insertAdjacentHTML('beforeend', html);
+        });
+
+        document.getElementById('add-image').addEventListener('click', function() {
+            var index = document.querySelectorAll('#images .image-item').length;
+            var html = `<div class="mb-4 border-bottom pb-3 image-item">
+                <div class="mb-2">
+                    <input name="Images[${index}].Url" class="form-control border-0 bg-light mb-2" placeholder="Image URL" />
+                    <input name="Images[${index}].AltText" class="form-control border-0 bg-light" placeholder="Description/Alt Text" />
+                </div>
+                <button type="button" class="btn btn-sm btn-soft-danger w-100" onclick="this.closest('.image-item').remove()">Remove Image</button>
+            </div>`;
+            document.getElementById('images').insertAdjacentHTML('beforeend', html);
+        });
+
+        (function () {
+            var latInput = document.getElementById('Location_Latitude');
+            var lngInput = document.getElementById('Location_Longitude');
+            if (!latInput || !lngInput || typeof L === 'undefined') return;
+
+            var defaultCenter = [30.0444, 31.2357];
+            var defaultZoom = 4;
+            var map = L.map('carEditMap', { zoomControl: false }).setView(defaultCenter, defaultZoom);
+            L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+            var streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors', maxZoom: 19, detectRetina: true });
+            var darkLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 19, detectRetina: true });
+            streetLayer.addTo(map);
+
+            var searchInput = document.getElementById('carEditMapSearchInput');
+            var searchBtn = document.getElementById('carEditMapSearchBtn');
+            var mapStatus = document.getElementById('carEditMapStatus');
+            var mapCoordinates = document.getElementById('carEditMapCoordinates');
+            var locateBtn = document.getElementById('carEditLocateBtn');
+            var resetMapBtn = document.getElementById('carEditResetMapBtn');
+            var styleStreetBtn = document.getElementById('carEditStyleStreetBtn');
+            var styleDarkBtn = document.getElementById('carEditStyleDarkBtn');
+            var marker = null;
+
+            function setStatus(text, isError) { mapStatus.textContent = text; mapStatus.style.color = isError ? '#b91c1c' : '#475569'; }
+            function setActiveStyleButton(btn) { styleStreetBtn.classList.remove('active'); styleDarkBtn.classList.remove('active'); btn.classList.add('active'); }
+            function updateCoordinates(lat, lng) { latInput.value = lat.toFixed(6); lngInput.value = lng.toFixed(6); mapCoordinates.textContent = 'LAT: ' + lat.toFixed(6) + ', LNG: ' + lng.toFixed(6); }
+            function placeMarker(lat, lng, focus) {
+                if (marker) map.removeLayer(marker);
+                marker = L.marker([lat, lng], { draggable: true }).addTo(map);
+                marker.bindPopup('<strong>Pickup location</strong><br/>Lat: ' + lat.toFixed(6) + '<br/>Lng: ' + lng.toFixed(6));
+                updateCoordinates(lat, lng);
+                if (focus !== false) map.setView([lat, lng], 14);
+                marker.on('dragend', function (e) {
+                    var pos = e.target.getLatLng();
+                    updateCoordinates(pos.lat, pos.lng);
+                    marker.setPopupContent('<strong>Pickup location</strong><br/>Lat: ' + pos.lat.toFixed(6) + '<br/>Lng: ' + pos.lng.toFixed(6));
+                    setStatus('Pin moved successfully.', false);
+                });
+            }
+            function syncFromInputs() {
+                var lat = parseFloat(latInput.value), lng = parseFloat(lngInput.value);
+                if (!isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) placeMarker(lat, lng, true);
+            }
+            function doSearch() {
+                var q = searchInput.value.trim();
+                if (!q) return;
+                setStatus('Searching location...', false);
+                fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&q=' + encodeURIComponent(q) + '&limit=1', { headers: { 'Accept-Language': 'en' } })
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        if (data.length > 0) {
+                            var lat = parseFloat(data[0].lat), lng = parseFloat(data[0].lon);
+                            placeMarker(lat, lng, true);
+                            marker.openPopup();
+                            setStatus('Location found and pinned.', false);
+                        } else {
+                            setStatus('No result found for this search.', true);
+                        }
+                    })
+                    .catch(function () { setStatus('Search request failed. Check internet connection.', true); });
+            }
+
+            map.on('click', function (e) { placeMarker(e.latlng.lat, e.latlng.lng, false); setStatus('Coordinates selected from map click.', false); });
+            latInput.addEventListener('change', syncFromInputs);
+            lngInput.addEventListener('change', syncFromInputs);
+            searchBtn.addEventListener('click', doSearch);
+            searchInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); doSearch(); } });
+            styleStreetBtn.addEventListener('click', function () { if (!map.hasLayer(streetLayer)) { map.removeLayer(darkLayer); map.addLayer(streetLayer); } setActiveStyleButton(styleStreetBtn); });
+            styleDarkBtn.addEventListener('click', function () { if (!map.hasLayer(darkLayer)) { map.removeLayer(streetLayer); map.addLayer(darkLayer); } setActiveStyleButton(styleDarkBtn); });
+            locateBtn.addEventListener('click', function () {
+                if (!navigator.geolocation) { setStatus('Geolocation is not supported by this browser.', true); return; }
+                setStatus('Detecting your current location...', false);
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    placeMarker(position.coords.latitude, position.coords.longitude, true);
+                    marker.openPopup();
+                    setStatus('Current location pinned successfully.', false);
+                }, function () { setStatus('Could not access your location.', true); }, { enableHighAccuracy: true, timeout: 10000 });
+            });
+            resetMapBtn.addEventListener('click', function () {
+                map.setView(defaultCenter, defaultZoom);
+                if (marker) { map.removeLayer(marker); marker = null; }
+                latInput.value = ''; lngInput.value = '';
+                mapCoordinates.textContent = 'LAT: ---, LNG: ---';
+                setStatus('Map view reset.', false);
+            });
+
+            map.whenReady(function () { map.invalidateSize(); });
+            setTimeout(function () { map.invalidateSize(); syncFromInputs(); }, 200);
+        })();
+    </script>
+}

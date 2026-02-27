@@ -1,0 +1,162 @@
+@model CreateFlightCommand
+
+@{
+    ViewData["Title"] = "Create Flight";
+}
+
+<div class="row g-3 justify-content-between align-items-center mb-4">
+    <div class="col-12 col-lg-auto">
+        <h1 class="h3 fw-bold text-dark mb-1">Create New Flight</h1>
+        <p class="text-muted small mb-0">Schedule a new flight in the system.</p>
+    </div>
+    <div class="col-12 col-lg-auto">
+        <a asp-action="Index" class="btn btn-white shadow-sm">
+            <i class="fas fa-arrow-left me-2 text-muted"></i>Back to Flights
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+            <!-- Flight Info -->
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="m-0 fw-bold text-dark"><i class="fas fa-plane text-primary me-2"></i>Flight Details</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="FlightNumber" class="form-label fw-bold small text-uppercase text-muted">Flight Number</label>
+                            <input asp-for="FlightNumber" class="form-control" placeholder="e.g. MS800" />
+                            <span asp-validation-for="FlightNumber" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="CarrierId" class="form-label fw-bold small text-uppercase text-muted">Carrier (Airline)</label>
+                            <select asp-for="CarrierId" class="form-select" asp-items="ViewBag.Carriers">
+                                <option value="">-- Select Carrier --</option>
+                            </select>
+                            <span asp-validation-for="CarrierId" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="CategoryId" class="form-label fw-bold small text-uppercase text-muted">Category</label>
+                            <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.Categories">
+                                <option value="">-- Select Category --</option>
+                            </select>
+                            <span asp-validation-for="CategoryId" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 d-flex align-items-end">
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" asp-for="Refundable" />
+                                <label class="form-check-label" asp-for="Refundable">
+                                    <i class="fas fa-undo text-success me-1"></i>Refundable Flight
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Route -->
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="m-0 fw-bold text-dark"><i class="fas fa-route text-info me-2"></i>Route</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="OriginAirportId" class="form-label fw-bold small text-uppercase text-muted">Origin Airport</label>
+                            <select asp-for="OriginAirportId" class="form-select" asp-items="ViewBag.Airports">
+                                <option value="">-- Select Origin --</option>
+                            </select>
+                            <span asp-validation-for="OriginAirportId" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="DestinationAirportId" class="form-label fw-bold small text-uppercase text-muted">Destination Airport</label>
+                            <select asp-for="DestinationAirportId" class="form-select" asp-items="ViewBag.Airports">
+                                <option value="">-- Select Destination --</option>
+                            </select>
+                            <span asp-validation-for="DestinationAirportId" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schedule -->
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="m-0 fw-bold text-dark"><i class="fas fa-clock text-warning me-2"></i>Schedule</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="DepartureTime" class="form-label fw-bold small text-uppercase text-muted">Departure Time</label>
+                            <input asp-for="DepartureTime" class="form-control" type="datetime-local" />
+                            <span asp-validation-for="DepartureTime" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="ArrivalTime" class="form-label fw-bold small text-uppercase text-muted">Arrival Time</label>
+                            <input asp-for="ArrivalTime" class="form-control" type="datetime-local" />
+                            <span asp-validation-for="ArrivalTime" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Baggage -->
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="m-0 fw-bold text-dark"><i class="fas fa-suitcase text-success me-2"></i>Baggage & Extras</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="BaggageRulesText" class="form-label fw-bold small text-uppercase text-muted">Baggage Rules</label>
+                        <input asp-for="BaggageRulesText" class="form-control" placeholder="Rule 1, Rule 2, Rule 3 (comma-separated)" />
+                        <div class="form-text">Enter multiple rules separated by commas.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="d-flex gap-2 justify-content-end mb-4">
+                <a asp-action="Index" class="btn btn-white px-4">Cancel</a>
+                <button type="submit" class="btn btn-primary px-4 shadow-sm"><i class="fas fa-save me-2"></i>Create Flight</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Tips Sidebar -->
+    <div class="col-lg-4">
+        <div class="card shadow-sm border-0 rounded-4 overflow-hidden sticky-top" style="top:1rem;">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h6 class="m-0 fw-bold text-dark"><i class="fas fa-lightbulb text-warning me-2"></i>Tips</h6>
+            </div>
+            <div class="card-body">
+                <p class="small text-muted mb-2"><i class="fas fa-check-circle text-success me-2"></i>Use IATA standard flight numbers (e.g. <code>MS800</code>).</p>
+                <p class="small text-muted mb-2"><i class="fas fa-check-circle text-success me-2"></i>Origin and destination airports must be different.</p>
+                <p class="small text-muted mb-2"><i class="fas fa-check-circle text-success me-2"></i>Arrival time must be after departure time.</p>
+                <p class="small text-muted mb-2"><i class="fas fa-check-circle text-success me-2"></i>Add baggage rules as comma-separated values.</p>
+                <p class="small text-muted mb-0"><i class="fas fa-check-circle text-success me-2"></i>You can add seats and fares after creation via the API.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .btn-white {
+        background-color: #fff;
+        border: 1px solid #e3e6f0;
+        color: #6e707e;
+    }
+    .btn-white:hover { background-color: #f8f9fc; }
+</style>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+

@@ -1,10 +1,10 @@
 using MediatR;
-using OnlineTravel.Domain.ErrorHandling;
 using OnlineTravel.Application.Features.Bookings.Shared.DTOs;
+using OnlineTravel.Domain.ErrorHandling;
 
 namespace OnlineTravel.Application.Features.Bookings.CancelBooking;
 
 public sealed record CancelBookingCommand(
-    Guid BookingId,
-    Guid UserId
-    ) : IRequest<Result<CancelBookingResponse>>;
+	Guid BookingId,
+	Guid UserId
+	) : IRequest<Result<CancelBookingResponse>>;

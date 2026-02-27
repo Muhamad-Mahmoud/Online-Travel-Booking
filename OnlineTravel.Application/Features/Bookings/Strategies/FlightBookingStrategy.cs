@@ -42,28 +42,28 @@ public class FlightBookingStrategy : IBookingStrategy
 			return Result<BookingProcessResult>.Failure(Error.NotFound($"Flight for seat {seat.SeatLabel} was not found."));
 		}
 
-        // --- Dynamic Availability Check ---
-        var activeBookingsSpec = new ActiveBookingDetailsByItemSpec(itemId, DateTime.UtcNow);
-        var activeBookings = await _unitOfWork.Repository<BookingDetail>().GetAllWithSpecAsync(activeBookingsSpec, cancellationToken);
-        
-        if (activeBookings.Any())
-        {
-            _logger.LogWarning("Seat {SeatLabel} is already booked or pending payment (within 15 min)", seat.SeatLabel);
-            return Result<BookingProcessResult>.Failure(Error.Validation($"Seat {seat.SeatLabel} is no longer available."));
-        }
+		// --- Dynamic Availability Check ---
+		var activeBookingsSpec = new ActiveBookingDetailsByItemSpec(itemId, DateTime.UtcNow);
+		var activeBookings = await _unitOfWork.Repository<BookingDetail>().GetAllWithSpecAsync(activeBookingsSpec, cancellationToken);
 
-        // Atomic reservation check (updates RowVersion via LastReservedAt)
-        try 
-        {
-            seat.Reserve();
-        }
-        catch (DomainException ex)
-        {
-            _logger.LogWarning("Seat {SeatLabel} reservation failed: {Message}", seat.SeatLabel, ex.Message);
-            return Result<BookingProcessResult>.Failure(Error.Validation(ex.Message));
-        }
+		if (activeBookings.Any())
+		{
+			_logger.LogWarning("Seat {SeatLabel} is already booked or pending payment (within 15 min)", seat.SeatLabel);
+			return Result<BookingProcessResult>.Failure(Error.Validation($"Seat {seat.SeatLabel} is no longer available."));
+		}
 
-        _unitOfWork.Repository<FlightSeat>().Update(seat);
+		// Atomic reservation check (updates RowVersion via LastReservedAt)
+		try
+		{
+			seat.Reserve();
+		}
+		catch (DomainException ex)
+		{
+			_logger.LogWarning("Seat {SeatLabel} reservation failed: {Message}", seat.SeatLabel, ex.Message);
+			return Result<BookingProcessResult>.Failure(Error.Validation(ex.Message));
+		}
+
+		_unitOfWork.Repository<FlightSeat>().Update(seat);
 
 		//  Calculate Price (Fetching fares for the parent flight)
 		var spec = new FlightFareByFlightSpec(seat.FlightId);

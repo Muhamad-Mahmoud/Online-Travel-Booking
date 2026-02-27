@@ -6,11 +6,11 @@ namespace OnlineTravel.Infrastructure.Persistence.Configurations;
 
 public class CarBrandConfiguration : IEntityTypeConfiguration<CarBrand>
 {
-    public void Configure(EntityTypeBuilder<CarBrand> builder)
-    {
-        builder.ToTable("CarBrands", "cars");
-        builder.HasIndex(e => e.Name).IsUnique();
-    }
+	public void Configure(EntityTypeBuilder<CarBrand> builder)
+	{
+		builder.ToTable("CarBrands", "cars");
+		builder.HasIndex(e => e.Name).IsUnique();
+	}
 }
 
 

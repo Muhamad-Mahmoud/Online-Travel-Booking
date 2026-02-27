@@ -4,15 +4,15 @@ namespace OnlineTravel.Domain.Entities.Cars;
 
 public class CarBrand : BaseEntity
 {
-    public string Name { get; set; } = string.Empty;
+	public string Name { get; set; } = string.Empty;
 
-    public string? Logo { get; set; }
+	public string? Logo { get; set; }
 
-    public bool IsActive { get; set; } = true;
+	public bool IsActive { get; set; } = true;
 
-    // Navigation Properties
+	// Navigation Properties
 
-    public virtual ICollection<Car> Cars { get; set; } = new List<Car>();
+	public virtual ICollection<Car> Cars { get; set; } = new List<Car>();
 }
 
 

@@ -1,7 +1,5 @@
 using MediatR;
 using OnlineTravel.Domain.ErrorHandling;
-using System;
-using System.Collections.Generic;
 
 namespace OnlineTravel.Application.Features.CarPricingTiers.GetAll;
 

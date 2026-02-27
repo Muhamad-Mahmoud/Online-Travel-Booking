@@ -1,0 +1,84 @@
+@model PaginationViewModel
+
+@if (Model.TotalPages >= 1)
+{
+    <nav aria-label="Page navigation">
+        <ul class="pagination pagination-sm justify-content-center mb-0 gap-1">
+            @* Previous Button *@
+            <li class="page-item @(!Model.HasPreviousPage ? "disabled" : "")">
+                @{
+                    var prevRouteValues = new RouteValueDictionary(Model.RouteValues);
+                    prevRouteValues["pageIndex"] = Model.PageIndex - 1;
+                }
+                <a class="page-link border-0 rounded-2 bg-light text-dark shadow-sm py-1 px-2" 
+                   href="@Url.Action(Model.ActionName, Model.ControllerName, prevRouteValues)" style="font-size: 0.75rem;">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+            </li>
+
+            @* Page Numbers *@
+            @{
+                int startPage = Math.Max(1, Model.PageIndex - 2);
+                int endPage = Math.Min(Model.TotalPages, Model.PageIndex + 2);
+
+                if (startPage > 1)
+                {
+                    <li class="page-item">
+                        @{
+                            var firstRouteValues = new RouteValueDictionary(Model.RouteValues);
+                            firstRouteValues["pageIndex"] = 1;
+                        }
+                        <a class="page-link border-0 rounded-2 shadow-sm bg-light text-dark fw-bold py-1 px-2" 
+                           href="@Url.Action(Model.ActionName, Model.ControllerName, firstRouteValues)" style="font-size: 0.75rem;">1</a>
+                    </li>
+                    if (startPage > 2)
+                    {
+                        <li class="page-item disabled"><span class="page-link border-0 bg-transparent py-1 px-1" style="font-size: 0.75rem;">...</span></li>
+                    }
+                }
+
+                for (int i = startPage; i <= endPage; i++)
+                {
+                    <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                        @{
+                            var currentRouteValues = new RouteValueDictionary(Model.RouteValues);
+                            currentRouteValues["pageIndex"] = i;
+                        }
+                        <a class="page-link border-0 rounded-2 shadow-sm @(i == Model.PageIndex ? "btn-primary" : "bg-light text-dark") fw-bold py-1 px-2" 
+                           href="@Url.Action(Model.ActionName, Model.ControllerName, currentRouteValues)" style="font-size: 0.75rem;">@i</a>
+                    </li>
+                }
+
+                if (endPage < Model.TotalPages)
+                {
+                    if (endPage < Model.TotalPages - 1)
+                    {
+                        <li class="page-item disabled"><span class="page-link border-0 bg-transparent py-1 px-1" style="font-size: 0.75rem;">...</span></li>
+                    }
+                    <li class="page-item">
+                        @{
+                            var lastRouteValues = new RouteValueDictionary(Model.RouteValues);
+                            lastRouteValues["pageIndex"] = Model.TotalPages;
+                        }
+                        <a class="page-link border-0 rounded-2 shadow-sm bg-light text-dark fw-bold py-1 px-2" 
+                           href="@Url.Action(Model.ActionName, Model.ControllerName, lastRouteValues)" style="font-size: 0.75rem;">@Model.TotalPages</a>
+                    </li>
+                }
+            }
+
+            @* Next Button *@
+            <li class="page-item @(!Model.HasNextPage ? "disabled" : "")">
+                @{
+                    var nextRouteValues = new RouteValueDictionary(Model.RouteValues);
+                    nextRouteValues["pageIndex"] = Model.PageIndex + 1;
+                }
+                <a class="page-link border-0 rounded-2 bg-light text-dark shadow-sm py-1 px-2" 
+                   href="@Url.Action(Model.ActionName, Model.ControllerName, nextRouteValues)" style="font-size: 0.75rem;">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+}
+
+

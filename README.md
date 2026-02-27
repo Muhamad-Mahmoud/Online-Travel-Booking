@@ -15,7 +15,7 @@ The solution follows a 4-layer structure with dependencies flowing inward:
 | **Domain** | `OnlineTravel.Domain` | Entities, Value Objects, Enums, business rules |
 | **Application** | `OnlineTravel.Application` | Use cases (Commands/Queries), Interfaces, Validators |
 | **Infrastructure** | `OnlineTravel.Infrastructure` | Database, Auth, Payments, Email, File Storage |
-| **Presentation** | `OnlineTravelBookingTeamB` | API Controllers + Admin Dashboard (Razor Views) |
+| **Presentation** | `OnlineTravel.Api` + `OnlineTravel.Mvc` | API Controllers + Admin Dashboard (Razor Views) |
 
 Each use case lives in its own feature folder with its Command/Query, Handler, Validator, and DTOs.
 
@@ -132,7 +132,7 @@ Errors follow RFC 7807 Problem Details.
 2. Update `appsettings.json` — connection string, Stripe keys, email settings, JWT secret
 3. Run:
    ```bash
-   cd OnlineTravelBookingTeamB
+   cd OnlineTravel
    dotnet run
    ```
 4. Open:
