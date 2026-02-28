@@ -6,7 +6,6 @@ using OnlineTravel.Application.Features.CarBrands.DeleteCarBrand;
 using OnlineTravel.Application.Features.CarBrands.GetCarBrandById;
 using OnlineTravel.Application.Features.CarBrands.GetCarBrandsPaginated;
 using OnlineTravel.Application.Features.CarBrands.UpdateCarBrand;
-using OnlineTravel.Application.Features.CarBrands.Shared.DTOs;
 
 namespace OnlineTravel.Mvc.Controllers;
 

@@ -3,14 +3,14 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using OnlineTravel.Application.Common;
 using OnlineTravel.Application.Features.Bookings.Helpers;
-using OnlineTravel.Application.Features.Bookings.Shared.DTOs;
+using OnlineTravel.Application.Features.Bookings.Shared;
 using OnlineTravel.Application.Features.Bookings.Specifications.Queries;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities.Bookings;
 
 namespace OnlineTravel.Application.Features.Bookings.GetAllBookings;
 
-public sealed class GetAllBookingsQueryHandler : IRequestHandler<GetAllBookingsQuery, OnlineTravel.Domain.ErrorHandling.Result<PagedResult<AdminBookingResponse>>>
+public sealed class GetAllBookingsQueryHandler : IRequestHandler<GetAllBookingsQuery, OnlineTravel.Application.Common.Result<PagedResult<AdminBookingResponse>>>
 {
 	private readonly IUnitOfWork _unitOfWork;
 	private readonly IMapper _mapper;
@@ -23,7 +23,8 @@ public sealed class GetAllBookingsQueryHandler : IRequestHandler<GetAllBookingsQ
 		_logger = logger;
 	}
 
-	public async Task<OnlineTravel.Domain.ErrorHandling.Result<PagedResult<AdminBookingResponse>>> Handle(GetAllBookingsQuery request, CancellationToken cancellationToken)
+	public async Task<OnlineTravel.Application.Common.Result<PagedResult<AdminBookingResponse>>> Handle(GetAllBookingsQuery request, CancellationToken cancellationToken)
+
 	{
 		_logger.LogDebug("Retrieving all bookings (Page {Page}, Size {Size})", request.PageIndex, request.PageSize);
 
@@ -46,6 +47,8 @@ public sealed class GetAllBookingsQueryHandler : IRequestHandler<GetAllBookingsQ
 		_logger.LogDebug("Retrieved {Count} bookings", bookings.Count);
 
 		var pagedResult = new PagedResult<AdminBookingResponse>(bookingDtos, totalCount, request.PageIndex, request.PageSize);
-		return OnlineTravel.Domain.ErrorHandling.Result<PagedResult<AdminBookingResponse>>.Success(pagedResult);
+		return OnlineTravel.Application.Common.Result<PagedResult<AdminBookingResponse>>.Success(pagedResult);
 	}
 }
+
+

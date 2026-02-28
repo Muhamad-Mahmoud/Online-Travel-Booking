@@ -10,7 +10,7 @@ namespace OnlineTravel.Application.Features.Cars.GetAllCarsSummary
 	{
 		public GetAllCarsSummaryQueryValidator()
 		{
-			RuleFor(x => x.PageIndex)
+			RuleFor(x => x.PageNumber)
 				.GreaterThan(0)
 				.WithMessage("Page index must be greater than 0");
 

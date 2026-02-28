@@ -1,6 +1,7 @@
-@using OnlineTravel.Application.Features.CarBrands.Shared.DTOs
-@using OnlineTravel.Domain.Exceptions
-@model PaginatedResult<CarBrandDto>
+@using OnlineTravel.Application.Features.CarBrands.Shared
+@using OnlineTravel.Application.Common
+@model PagedResult<CarBrandResponse>
+
 
 @{
     ViewData["Title"] = "Car Brands Fleet";
@@ -62,7 +63,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model.Items)
+                    @foreach (var item in Model.Data)
                     {
                         <tr>
                             <td class="ps-4 py-3">
@@ -117,7 +118,7 @@
     <!-- Premium Pagination -->
     <div class="card-footer bg-white p-3 border-top d-flex justify-content-between align-items-center">
         <div class="small text-muted">
-            Showing <span class="fw-bold">@Model.Items.Count</span> of <span class="fw-bold">@Model.TotalCount</span> Manufacturers
+            Showing <span class="fw-bold">@Model.Data.Count</span> of <span class="fw-bold">@Model.TotalCount</span> Manufacturers
         </div>
         @if (Model.TotalPages >= 1)
         {
@@ -125,3 +126,5 @@
         }
     </div>
 </div>
+</div>
+

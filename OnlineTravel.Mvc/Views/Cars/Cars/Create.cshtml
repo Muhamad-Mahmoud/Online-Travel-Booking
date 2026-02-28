@@ -1,13 +1,13 @@
 @using OnlineTravel.Application.Features.Cars.CreateCar
-@using OnlineTravel.Application.Features.CarBrands.Shared.DTOs
+@using OnlineTravel.Application.Features.CarBrands.Shared
 @using OnlineTravel.Application.Features.Categories.Shared.DTOs
 @using OnlineTravel.Domain.Enums
 @model OnlineTravel.Mvc.Models.CarCreateViewModel
 
 @{
     ViewData["Title"] = "Add New Vehicle";
-    var brands = ViewBag.Brands as IEnumerable<CarBrandDto> ?? new List<CarBrandDto>();
-    var categories = ViewBag.Categories as IEnumerable<CategoryDto> ?? new List<CategoryDto>();
+    var brands = ViewBag.Brands as IEnumerable<CarBrandResponse> ?? new List<CarBrandResponse>();
+    var categories = ViewBag.Categories as IEnumerable<CategoryResponse> ?? new List<CategoryResponse>();
 }
 
 <div class="page-title">
@@ -347,3 +347,4 @@
         })();
     </script>
 }
+

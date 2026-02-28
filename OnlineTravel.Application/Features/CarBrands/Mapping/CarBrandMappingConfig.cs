@@ -1,6 +1,7 @@
 using Mapster;
 using OnlineTravel.Application.Features.CarBrands.CreateCarBrand;
-using OnlineTravel.Application.Features.CarBrands.Shared.DTOs;
+using OnlineTravel.Application.Features.CarBrands.Shared;
+
 using OnlineTravel.Application.Features.CarBrands.UpdateCarBrand;
 using OnlineTravel.Domain.Entities.Cars;
 
@@ -11,7 +12,7 @@ namespace OnlineTravel.Application.Features.CarBrands.Mapping
 		public void Register(TypeAdapterConfig config)
 		{
 			// Entity -> DTO
-			config.NewConfig<CarBrand, CarBrandDto>();
+			config.NewConfig<CarBrand, CarBrandResponse>();
 
 			// Request -> Entity
 			config.NewConfig<CreateCarBrandRequest, CarBrand>()

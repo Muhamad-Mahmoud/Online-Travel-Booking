@@ -6,13 +6,13 @@ using OnlineTravel.Application.Features.Flights.Specifications;
 
 namespace OnlineTravel.Application.Features.Flights.Flights.SearchFlights.Handlers
 {
-	public class SearchFlightsHandler : IRequestHandler<SearchFlightsQuery, List<SearchFlightsDto>>
+	public class SearchFlightsHandler : IRequestHandler<SearchFlightsQuery, List<SearchFlightsResponse>>
 	{
 		private readonly IUnitOfWork _unitOfWork;
 
 		public SearchFlightsHandler(IUnitOfWork unitOfWork) => _unitOfWork = unitOfWork;
 
-		public async Task<List<SearchFlightsDto>> Handle(SearchFlightsQuery request, CancellationToken cancellationToken)
+		public async Task<List<SearchFlightsResponse>> Handle(SearchFlightsQuery request, CancellationToken cancellationToken)
 		{
 			// 1. Create the specification
 			var spec = new FlightSearchSpecification(
@@ -25,7 +25,7 @@ namespace OnlineTravel.Application.Features.Flights.Flights.SearchFlights.Handle
 				.GetAllWithSpecAsync(spec, cancellationToken);
 
 			// 3. Map to DTO
-			return flights.Select(f => new SearchFlightsDto
+			return flights.Select(f => new SearchFlightsResponse
 			{
 				FlightId = f.Id,
 				FlightNumber = f.FlightNumber.Value,

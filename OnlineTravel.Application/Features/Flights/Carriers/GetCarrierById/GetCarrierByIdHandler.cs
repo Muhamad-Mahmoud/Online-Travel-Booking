@@ -4,7 +4,7 @@ using OnlineTravel.Domain.ErrorHandling;
 
 namespace OnlineTravel.Application.Features.Flights.Carrier.GetCarrierById
 {
-	public class GetCarrierByIdHandler : IRequestHandler<GetCarrierByIdQuery, Result<GetCarrierByIdDto>>
+	public class GetCarrierByIdHandler : IRequestHandler<GetCarrierByIdQuery, Result<GetCarrierByIdResponse>>
 	{
 		private readonly IUnitOfWork _unitOfWork;
 
@@ -13,15 +13,15 @@ namespace OnlineTravel.Application.Features.Flights.Carrier.GetCarrierById
 			_unitOfWork = unitOfWork;
 		}
 
-		public async Task<Result<GetCarrierByIdDto>> Handle(GetCarrierByIdQuery request, CancellationToken cancellationToken)
+		public async Task<Result<GetCarrierByIdResponse>> Handle(GetCarrierByIdQuery request, CancellationToken cancellationToken)
 		{
 			var carrier = await _unitOfWork.Repository<OnlineTravel.Domain.Entities.Flights.Carrier>().GetByIdAsync(request.Id);
 			if (carrier == null)
 			{
-				return Result<GetCarrierByIdDto>.Failure(Error.NotFound($"Carrier with id '{request.Id}' was not found."));
+				return Result<GetCarrierByIdResponse>.Failure(Error.NotFound($"Carrier with id '{request.Id}' was not found."));
 			}
 
-			return Result<GetCarrierByIdDto>.Success(new GetCarrierByIdDto
+			return Result<GetCarrierByIdResponse>.Success(new GetCarrierByIdResponse
 			{
 				Id = carrier.Id,
 				Name = carrier.Name,

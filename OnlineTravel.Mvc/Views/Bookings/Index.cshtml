@@ -165,7 +165,7 @@
         @if (Model.Bookings.TotalPages >= 1)
         {
             <div class="card-footer bg-white border-top p-3 text-center">
-                <partial name="_Pagination" model="@(PaginationViewModel.Create((OnlineTravel.Application.Common.PagedResult<OnlineTravel.Application.Features.Bookings.Shared.DTOs.AdminBookingResponse>)Model.Bookings, "Index", "Bookings", new { searchTerm = (object?)search, status = (object?)currentStatus }))" />
+                <partial name="_Pagination" model="@(PaginationViewModel.Create((OnlineTravel.Application.Common.PagedResult<OnlineTravel.Application.Features.Bookings.Shared.AdminBookingResponse>)Model.Bookings, "Index", "Bookings", new { searchTerm = (object?)search, status = (object?)currentStatus }))" />
             </div>
         }
     </div>

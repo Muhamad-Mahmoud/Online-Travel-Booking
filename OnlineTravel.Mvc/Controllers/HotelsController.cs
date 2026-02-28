@@ -37,7 +37,7 @@ public class HotelsController : BaseController
 
 		if (model.ImageFile != null)
 		{
-			model.MainImage = await FileUploadHelper.UploadFileAsync(model.ImageFile, "hotels");
+			model.MainImage = await FileUploadHelper.UploadFileAsync(model.ImageFile, "hotels") ?? string.Empty;
 		}
 
 		var result = await Mediator.Send(model);
@@ -60,6 +60,9 @@ public class HotelsController : BaseController
 		var dto = result.Value;
 		if (dto == null) return NotFound();
 
+		var checkInParsed = TimeOnly.TryParse(dto.CheckInTime, out var ci) ? ci : new TimeOnly(14, 0);
+		var checkOutParsed = TimeOnly.TryParse(dto.CheckOutTime, out var co) ? co : new TimeOnly(12, 0);
+
 		var viewModel = new HotelsManageViewModel
 		{
 			Hotel = new Hotel
@@ -74,16 +77,16 @@ public class HotelsController : BaseController
 					State = dto.State,
 					Country = dto.Country,
 					PostalCode = dto.PostalCode,
-					Latitude = dto.Latitude,
-					Longitude = dto.Longitude
+					Latitude = (double)dto.Latitude,
+					Longitude = (double)dto.Longitude
 				},
-				Rating = new Rating { Value = dto.Rating },
+				Rating = new Rating { Value = (decimal)dto.Rating },
 				ContactEmail = dto.ContactEmail,
 				ContactPhone = dto.ContactPhone,
 				Website = dto.Website,
 				CancellationPolicy = dto.CancellationPolicy,
-				CheckInTime = new TimeRange(dto.CheckInTime, dto.CheckInTime.AddHours(4)), // Dummy range for display
-				CheckOutTime = new TimeRange(dto.CheckOutTime.AddHours(-4), dto.CheckOutTime),
+				CheckInTime = new TimeRange(checkInParsed, checkInParsed.AddHours(4)), // Dummy range for display
+				CheckOutTime = new TimeRange(checkOutParsed.AddHours(-4), checkOutParsed),
 				Rooms = dto.Rooms.Select(r => new Room 
 				{ 
 					Id = r.Id, 
@@ -95,7 +98,7 @@ public class HotelsController : BaseController
 			}
 		};
         
-        // Correcting room mapping - I need to check if HotelDetailsDto has rooms.
+        // Correcting room mapping - I need to check if HotelDetailsResponse has rooms.
         // It doesn't seem to have rooms in the file view. Let me check GetHotelRoomsQuery.
 		return View(viewModel);
 	}
@@ -107,6 +110,9 @@ public class HotelsController : BaseController
 
 		var dto = result.Value;
 		if (dto == null) return NotFound();
+
+		var checkInSpan = TimeSpan.TryParse(dto.CheckInTime, out var ciSpan) ? ciSpan : new TimeSpan(14, 0, 0);
+		var checkOutSpan = TimeSpan.TryParse(dto.CheckOutTime, out var coSpan) ? coSpan : new TimeSpan(12, 0, 0);
 
 		var viewModel = new HotelsEditViewModel
 		{
@@ -121,8 +127,8 @@ public class HotelsController : BaseController
 			PostalCode = dto.PostalCode,
 			Latitude = (decimal)dto.Latitude,
 			Longitude = (decimal)dto.Longitude,
-			CheckInTime = dto.CheckInTime.ToTimeSpan(),
-			CheckOutTime = dto.CheckOutTime.ToTimeSpan(),
+			CheckInTime = checkInSpan,
+			CheckOutTime = checkOutSpan,
 			ContactPhone = dto.ContactPhone,
 			ContactEmail = dto.ContactEmail,
 			Website = dto.Website,
@@ -137,11 +143,11 @@ public class HotelsController : BaseController
 	{
 		if (model.ImageFile != null)
 		{
-			model.MainImage = await FileUploadHelper.UploadFileAsync(model.ImageFile, "hotels");
+			model.MainImage = await FileUploadHelper.UploadFileAsync(model.ImageFile, "hotels") ?? string.Empty;
 		}
 		else
 		{
-			model.MainImage = model.CurrentImageUrl;
+			model.MainImage = model.CurrentImageUrl ?? string.Empty;
 		}
 
 		var command = new UpdateHotelCommand
@@ -211,4 +217,5 @@ public class HotelsController : BaseController
         return RedirectToAction("Manage", new { id = hotelId });
     }
 }
+
 

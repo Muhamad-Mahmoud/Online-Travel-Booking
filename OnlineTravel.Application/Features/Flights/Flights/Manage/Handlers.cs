@@ -7,29 +7,27 @@ using OnlineTravel.Domain.Enums;
 
 namespace OnlineTravel.Application.Features.Flights.Flights.Manage;
 
-public class ManageFlightHandlers : 
-    IRequestHandler<AddSeatCommand, Result<Guid>>,
-    IRequestHandler<DeleteSeatCommand, Result<bool>>,
-    IRequestHandler<AddFareCommand, Result<Guid>>,
-    IRequestHandler<DeleteFareCommand, Result<bool>>
+public class ManageFlightHandlers(IUnitOfWork unitOfWork) : 
+    IRequestHandler<AddSeatCommand, OnlineTravel.Application.Common.Result<Guid>>,
+    IRequestHandler<DeleteSeatCommand, OnlineTravel.Application.Common.Result<bool>>,
+    IRequestHandler<AddFareCommand, OnlineTravel.Application.Common.Result<Guid>>,
+    IRequestHandler<DeleteFareCommand, OnlineTravel.Application.Common.Result<bool>>
 {
-    private readonly IUnitOfWork _unitOfWork;
 
-    public ManageFlightHandlers(IUnitOfWork unitOfWork)
-    {
-        _unitOfWork = unitOfWork;
-    }
 
-    public async Task<Result<Guid>> Handle(AddSeatCommand request, CancellationToken cancellationToken)
+    public async Task<OnlineTravel.Application.Common.Result<Guid>> Handle(AddSeatCommand request, CancellationToken cancellationToken)
+
     {
-        var flight = await _unitOfWork.Repository<OnlineTravel.Domain.Entities.Flights.Flight>()
+        var flight = await unitOfWork.Repository<OnlineTravel.Domain.Entities.Flights.Flight>()
             .Query()
             .FirstOrDefaultAsync(f => f.Id == request.FlightId, cancellationToken);
 
-        if (flight == null) return Result<Guid>.Failure(Error.NotFound("Flight not found."));
+        if (flight == null) return OnlineTravel.Application.Common.Result<Guid>.Failure("Flight not found.");
+
 
         if (!Enum.TryParse<CabinClass>(request.CabinClass, out var cabinClass))
-            return Result<Guid>.Failure(Error.Validation("Invalid cabin class."));
+            return OnlineTravel.Application.Common.Result<Guid>.Failure("Invalid cabin class.");
+
 
         var seat = new FlightSeat
         {
@@ -40,29 +38,34 @@ public class ManageFlightHandlers :
             IsAvailable = true
         };
 
-        await _unitOfWork.Repository<FlightSeat>().AddAsync(seat);
-        await _unitOfWork.Complete();
+        await unitOfWork.Repository<FlightSeat>().AddAsync(seat);
+        await unitOfWork.Complete();
 
-        return Result<Guid>.Success(seat.Id);
+        return OnlineTravel.Application.Common.Result<Guid>.Success(seat.Id);
     }
 
-    public async Task<Result<bool>> Handle(DeleteSeatCommand request, CancellationToken cancellationToken)
-    {
-        var seat = await _unitOfWork.Repository<FlightSeat>().GetByIdAsync(request.Id);
-        if (seat == null) return Result<bool>.Failure(Error.NotFound("Seat not found."));
 
-        _unitOfWork.Repository<FlightSeat>().Delete(seat);
-        var affected = await _unitOfWork.Complete();
-        return Result<bool>.Success(affected > 0);
+    public async Task<OnlineTravel.Application.Common.Result<bool>> Handle(DeleteSeatCommand request, CancellationToken cancellationToken)
+
+    {
+        var seat = await unitOfWork.Repository<FlightSeat>().GetByIdAsync(request.Id);
+        if (seat == null) return OnlineTravel.Application.Common.Result<bool>.Failure("Seat not found.");
+
+        unitOfWork.Repository<FlightSeat>().Delete(seat);
+        var affected = await unitOfWork.Complete();
+        return OnlineTravel.Application.Common.Result<bool>.Success(affected > 0);
     }
 
-    public async Task<Result<Guid>> Handle(AddFareCommand request, CancellationToken cancellationToken)
+
+    public async Task<OnlineTravel.Application.Common.Result<Guid>> Handle(AddFareCommand request, CancellationToken cancellationToken)
+
     {
-        var flight = await _unitOfWork.Repository<OnlineTravel.Domain.Entities.Flights.Flight>()
+        var flight = await unitOfWork.Repository<OnlineTravel.Domain.Entities.Flights.Flight>()
             .Query()
             .FirstOrDefaultAsync(f => f.Id == request.FlightId, cancellationToken);
 
-        if (flight == null) return Result<Guid>.Failure(Error.NotFound("Flight not found."));
+        if (flight == null) return OnlineTravel.Application.Common.Result<Guid>.Failure("Flight not found.");
+
 
         var fare = new FlightFare
         {
@@ -71,19 +74,22 @@ public class ManageFlightHandlers :
             SeatsAvailable = request.SeatsAvailable
         };
 
-        await _unitOfWork.Repository<FlightFare>().AddAsync(fare);
-        await _unitOfWork.Complete();
+        await unitOfWork.Repository<FlightFare>().AddAsync(fare);
+        await unitOfWork.Complete();
 
-        return Result<Guid>.Success(fare.Id);
+        return OnlineTravel.Application.Common.Result<Guid>.Success(fare.Id);
     }
 
-    public async Task<Result<bool>> Handle(DeleteFareCommand request, CancellationToken cancellationToken)
+
+    public async Task<OnlineTravel.Application.Common.Result<bool>> Handle(DeleteFareCommand request, CancellationToken cancellationToken)
+
     {
-        var fare = await _unitOfWork.Repository<FlightFare>().GetByIdAsync(request.Id);
-        if (fare == null) return Result<bool>.Failure(Error.NotFound("Fare not found."));
+        var fare = await unitOfWork.Repository<FlightFare>().GetByIdAsync(request.Id);
+        if (fare == null) return OnlineTravel.Application.Common.Result<bool>.Failure("Fare not found.");
 
-        _unitOfWork.Repository<FlightFare>().Delete(fare);
-        var affected = await _unitOfWork.Complete();
-        return Result<bool>.Success(affected > 0);
+        unitOfWork.Repository<FlightFare>().Delete(fare);
+        var affected = await unitOfWork.Complete();
+        return OnlineTravel.Application.Common.Result<bool>.Success(affected > 0);
     }
+
 }

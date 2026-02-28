@@ -4,7 +4,7 @@ using OnlineTravel.Domain.ErrorHandling;
 
 namespace OnlineTravel.Application.Features.Flights.Airport.GetAllAirports
 {
-	public class GetAllAirportsHandler : IRequestHandler<GetAllAirportsQuery, Result<List<GetAllAirportsDto>>>
+	public class GetAllAirportsHandler : IRequestHandler<GetAllAirportsQuery, Result<List<GetAllAirportsResponse>>>
 	{
 		private readonly IUnitOfWork _unitOfWork;
 
@@ -13,13 +13,13 @@ namespace OnlineTravel.Application.Features.Flights.Airport.GetAllAirports
 			_unitOfWork = unitOfWork;
 		}
 
-		public async Task<Result<List<GetAllAirportsDto>>> Handle(GetAllAirportsQuery request, CancellationToken cancellationToken)
+		public async Task<Result<List<GetAllAirportsResponse>>> Handle(GetAllAirportsQuery request, CancellationToken cancellationToken)
 		{
 			var airports = await _unitOfWork.Repository<OnlineTravel.Domain.Entities.Flights.Airport>().GetAllAsync();
 			var items = airports
 				.Skip(request.PageSize * (request.PageIndex - 1))
 				.Take(request.PageSize)
-				.Select(a => new GetAllAirportsDto
+				.Select(a => new GetAllAirportsResponse
 				{
 					Id = a.Id,
 					Name = a.Name,
@@ -29,7 +29,7 @@ namespace OnlineTravel.Application.Features.Flights.Airport.GetAllAirports
 				})
 				.ToList();
 
-			return Result<List<GetAllAirportsDto>>.Success(items);
+			return Result<List<GetAllAirportsResponse>>.Success(items);
 		}
 	}
 }

@@ -7,7 +7,7 @@ using OnlineTravel.Domain.ErrorHandling;
 
 namespace OnlineTravel.Application.Features.Favorites.GetUserFavorites;
 
-public sealed class GetUserFavoritesQueryHandler : IRequestHandler<GetUserFavoritesQuery, Result<List<FavoriteDto>>>
+public sealed class GetUserFavoritesQueryHandler : IRequestHandler<GetUserFavoritesQuery, Result<List<FavoriteResponse>>>
 {
 	private readonly IUnitOfWork _unitOfWork;
 
@@ -16,7 +16,7 @@ public sealed class GetUserFavoritesQueryHandler : IRequestHandler<GetUserFavori
 		_unitOfWork = unitOfWork;
 	}
 
-	public async Task<Result<List<FavoriteDto>>> Handle(GetUserFavoritesQuery request, CancellationToken cancellationToken)
+	public async Task<Result<List<FavoriteResponse>>> Handle(GetUserFavoritesQuery request, CancellationToken cancellationToken)
 	{
 		// Use a specification so the WHERE UserId = @id filter runs on the database,
 		// not in C# memory after loading the entire Favorites table.
@@ -25,7 +25,7 @@ public sealed class GetUserFavoritesQueryHandler : IRequestHandler<GetUserFavori
 			.GetAllWithSpecAsync(spec, cancellationToken);
 
 		var dtos = favorites
-			.Select(f => new FavoriteDto(f.Id, f.ItemId, f.ItemType.ToString(), f.AddedAt))
+			.Select(f => new FavoriteResponse(f.Id, f.ItemId, f.ItemType.ToString(), f.AddedAt))
 			.ToList();
 
 		return Result.Success(dtos);

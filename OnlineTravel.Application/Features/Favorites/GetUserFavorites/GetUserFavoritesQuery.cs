@@ -6,4 +6,4 @@ namespace OnlineTravel.Application.Features.Favorites.GetUserFavorites;
 
 public sealed record GetUserFavoritesQuery(
 	Guid UserId
-) : IRequest<Result<List<FavoriteDto>>>;
+) : IRequest<Result<List<FavoriteResponse>>>;

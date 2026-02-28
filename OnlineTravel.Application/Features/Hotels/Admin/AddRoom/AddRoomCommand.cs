@@ -11,7 +11,7 @@ namespace OnlineTravel.Application.Features.Hotels.Admin.AddRoom
 		public string Name { get; set; } = string.Empty;
 		public string Description { get; set; } = string.Empty;
 		public decimal BasePricePerNight { get; set; }
-		public List<PhotoDto>? Photos { get; set; }
+		public List<PhotoResponse>? Photos { get; set; }
 	}
 
 }

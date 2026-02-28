@@ -4,7 +4,7 @@ using OnlineTravel.Domain.ErrorHandling;
 
 namespace OnlineTravel.Application.Features.Flights.Airport.GetAirportById
 {
-	public class GetAirportByIdHandler : IRequestHandler<GetAirportByIdQuery, Result<GetAirportByIdDto>>
+	public class GetAirportByIdHandler : IRequestHandler<GetAirportByIdQuery, Result<GetAirportByIdResponse>>
 	{
 		private readonly IUnitOfWork _unitOfWork;
 
@@ -13,15 +13,15 @@ namespace OnlineTravel.Application.Features.Flights.Airport.GetAirportById
 			_unitOfWork = unitOfWork;
 		}
 
-		public async Task<Result<GetAirportByIdDto>> Handle(GetAirportByIdQuery request, CancellationToken cancellationToken)
+		public async Task<Result<GetAirportByIdResponse>> Handle(GetAirportByIdQuery request, CancellationToken cancellationToken)
 		{
 			var airport = await _unitOfWork.Repository<OnlineTravel.Domain.Entities.Flights.Airport>().GetByIdAsync(request.Id);
 			if (airport == null)
 			{
-				return Result<GetAirportByIdDto>.Failure(Error.NotFound($"Airport with id '{request.Id}' was not found."));
+				return Result<GetAirportByIdResponse>.Failure(Error.NotFound($"Airport with id '{request.Id}' was not found."));
 			}
 
-			return Result<GetAirportByIdDto>.Success(new GetAirportByIdDto
+			return Result<GetAirportByIdResponse>.Success(new GetAirportByIdResponse
 			{
 				Id = airport.Id,
 				Name = airport.Name,

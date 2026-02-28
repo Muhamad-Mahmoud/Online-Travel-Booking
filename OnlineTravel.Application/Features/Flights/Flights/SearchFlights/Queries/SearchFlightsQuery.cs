@@ -3,7 +3,7 @@ using OnlineTravel.Application.Features.Flights.Flights.SearchFlights.DTOs;
 
 namespace OnlineTravel.Application.Features.Flights.Flights.SearchFlights.Queries
 {
-	public class SearchFlightsQuery : IRequest<List<SearchFlightsDto>>
+	public class SearchFlightsQuery : IRequest<List<SearchFlightsResponse>>
 	{
 		public Guid OriginAirportId { get; set; }
 		public Guid DestinationAirportId { get; set; }

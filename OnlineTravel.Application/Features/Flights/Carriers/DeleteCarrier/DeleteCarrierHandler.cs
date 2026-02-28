@@ -1,32 +1,28 @@
 using MediatR;
+using OnlineTravel.Application.Common;
 using OnlineTravel.Application.Interfaces.Persistence;
-using OnlineTravel.Domain.ErrorHandling;
+using OnlineTravel.Domain.Entities.Flights;
 
-namespace OnlineTravel.Application.Features.Flights.Carrier.DeleteCarrier
+namespace OnlineTravel.Application.Features.Flights.Carriers.DeleteCarrier
 {
-    public class DeleteCarrierHandler : IRequestHandler<DeleteCarrierCommand, Result<bool>>
-    {
-        private readonly IUnitOfWork _unitOfWork;
+	public class DeleteCarrierHandler : IRequestHandler<DeleteCarrierCommand, OnlineTravel.Application.Common.Result<bool>>
+	{
+		private readonly IUnitOfWork _unitOfWork;
 
-        public DeleteCarrierHandler(IUnitOfWork unitOfWork)
-        {
-            _unitOfWork = unitOfWork;
-        }
+		public DeleteCarrierHandler(IUnitOfWork unitOfWork)
+		{
+			_unitOfWork = unitOfWork;
+		}
 
-        public async Task<Result<bool>> Handle(DeleteCarrierCommand request, CancellationToken cancellationToken)
-        {
-            var repository = _unitOfWork.Repository<OnlineTravel.Domain.Entities.Flights.Carrier>();
-            var carrier = await repository.GetByIdAsync(request.Id);
+		public async Task<OnlineTravel.Application.Common.Result<bool>> Handle(DeleteCarrierCommand request, CancellationToken cancellationToken)
+		{
+			var carrier = await _unitOfWork.Repository<OnlineTravel.Domain.Entities.Flights.Carrier>().GetByIdAsync(request.Id);
+			if (carrier == null) return OnlineTravel.Application.Common.Result<bool>.Failure("Carrier not found");
 
-            if (carrier == null)
-            {
-                return Result<bool>.Failure(Error.NotFound("Carrier not found"));
-            }
-
-            repository.Delete(carrier);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-            return Result<bool>.Success(true);
-        }
-    }
+			_unitOfWork.Repository<OnlineTravel.Domain.Entities.Flights.Carrier>().Delete(carrier);
+			await _unitOfWork.Complete();
+			return OnlineTravel.Application.Common.Result<bool>.Success(true);
+		}
+	}
 }
+

@@ -7,28 +7,28 @@ using OnlineTravel.Domain.ErrorHandling;
 
 namespace OnlineTravel.Application.Features.Tours.GetTourById;
 
-public class GetTourByIdHandler : IRequestHandler<GetTourByIdQuery, Result<TourDetailsResponse>>
+public class GetTourByIdHandler(IUnitOfWork unitOfWork) : IRequestHandler<GetTourByIdQuery, OnlineTravel.Application.Common.Result<TourDetailsResponse>>
 {
-	private readonly IUnitOfWork _unitOfWork;
 
-	public GetTourByIdHandler(IUnitOfWork unitOfWork)
-	{
-		_unitOfWork = unitOfWork;
-	}
 
-	public async Task<Result<TourDetailsResponse>> Handle(GetTourByIdQuery request, CancellationToken cancellationToken)
+	public async Task<OnlineTravel.Application.Common.Result<TourDetailsResponse>> Handle(GetTourByIdQuery request, CancellationToken cancellationToken)
+
 	{
 		var spec = new TourWithDetailsSpecification(request.Id);
-		var tour = await _unitOfWork.Repository<Tour>().GetEntityWithAsync(spec);
+		var tour = await unitOfWork.Repository<Tour>().GetEntityWithAsync(spec, cancellationToken);
+
 		if (tour == null)
 		{
-			return Result<TourDetailsResponse>.Failure(Error.NotFound($"Tour with id '{request.Id}' was not found."));
+			return OnlineTravel.Application.Common.Result<TourDetailsResponse>.Failure("Tour not found");
 		}
+
+
 
 		var lowestPrice = tour.PriceTiers.OrderBy(p => p.Price.Amount).FirstOrDefault()?.Price;
 
-		return Result<TourDetailsResponse>.Success(new TourDetailsResponse
-		{
+		return OnlineTravel.Application.Common.Result<TourDetailsResponse>.Success(new TourDetailsResponse
+{
+
 			Id = tour.Id,
 			Title = tour.Title,
 			Category = tour.Category.Title,
@@ -37,20 +37,22 @@ public class GetTourByIdHandler : IRequestHandler<GetTourByIdQuery, Result<TourD
 			Location = tour.Address,
 			DurationDays = tour.DurationDays,
 			DurationNights = tour.DurationNights,
-			Rating = tour.Reviews.Any() ? (double)tour.Reviews.Average(r => r.Rating.Value) : 0,
+			Rating = tour.Reviews.Count > 0 ? (double)tour.Reviews.Average(r => r.Rating.Value) : 0,
+
 			ReviewCount = tour.Reviews.Count,
 			MainImageUrl = tour.MainImage?.Url ?? string.Empty,
 			Description = tour.Description ?? string.Empty,
-			Activities = tour.Activities.Select(a => new TourActivityDto
+			Activities = [.. tour.Activities.Select(a => new TourActivityResponse
 			{
 				Title = a.Title,
 				Description = a.Description,
 				ImageUrl = a.Image.Url
-			}).ToList(),
+			})],
 			BestTimeToVisit = tour.BestTimeToVisit ?? "Year-round",
-			Images = tour.Images.Select(i => new TourImageDto { Id = i.Id, Url = i.Url, AltText = i.AltText }).ToList(),
-			PriceTiers = tour.PriceTiers.Select(p => new TourPriceTierDto { Id = p.Id, Name = p.Name, Price = p.Price, Description = p.Description }).ToList(),
-			Price = lowestPrice != null ? new PriceDto { Amount = lowestPrice.Amount, Currency = lowestPrice.Currency } : null
+			Images = [.. tour.Images.Select(i => new TourImageResponse { Id = i.Id, Url = i.Url, AltText = i.AltText })],
+			PriceTiers = [.. tour.PriceTiers.Select(p => new TourPriceTierResponse { Id = p.Id, Name = p.Name, Price = p.Price, Description = p.Description })],
+			Price = lowestPrice != null ? new PriceResponse { Amount = lowestPrice.Amount, Currency = lowestPrice.Currency } : null
 		});
+
 	}
 }

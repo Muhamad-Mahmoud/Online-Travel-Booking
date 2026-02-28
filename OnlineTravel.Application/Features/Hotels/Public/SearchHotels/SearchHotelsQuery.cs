@@ -3,7 +3,7 @@ using OnlineTravel.Application.Common;
 
 namespace OnlineTravel.Application.Features.Hotels.Public.SearchHotels
 {
-	public class SearchHotelsQuery : IRequest<Result<PagedResult<HotelSearchDto>>>
+	public class SearchHotelsQuery : IRequest<Result<PagedResult<HotelSearchResponse>>>
 	{
 		public string City { get; set; }
 		public DateOnly? CheckIn { get; set; }

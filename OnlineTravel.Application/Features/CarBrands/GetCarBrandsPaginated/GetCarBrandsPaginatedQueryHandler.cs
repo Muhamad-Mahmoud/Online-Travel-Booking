@@ -1,14 +1,14 @@
 using Mapster;
 using MediatR;
-using OnlineTravel.Application.Features.CarBrands.Shared.DTOs;
+using OnlineTravel.Application.Common;
+using OnlineTravel.Application.Features.CarBrands.Shared;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities.Cars;
-using OnlineTravel.Domain.ErrorHandling;
-using OnlineTravel.Domain.Exceptions;
 
 namespace OnlineTravel.Application.Features.CarBrands.GetCarBrandsPaginated
 {
-	public class GetCarBrandsPaginatedQueryHandler : IRequestHandler<GetCarBrandsPaginatedQuery, Result<PaginatedResult<CarBrandDto>>>
+	public class GetCarBrandsPaginatedQueryHandler : IRequestHandler<GetCarBrandsPaginatedQuery, Result<PagedResult<CarBrandResponse>>>
+
 	{
 		private readonly IUnitOfWork _unitOfWork;
 
@@ -17,7 +17,7 @@ namespace OnlineTravel.Application.Features.CarBrands.GetCarBrandsPaginated
 			_unitOfWork = unitOfWork;
 		}
 
-		public async Task<Result<PaginatedResult<CarBrandDto>>> Handle(GetCarBrandsPaginatedQuery request, CancellationToken cancellationToken)
+		public async Task<Result<PagedResult<CarBrandResponse>>> Handle(GetCarBrandsPaginatedQuery request, CancellationToken cancellationToken)
 		{
 			var repo = _unitOfWork.Repository<CarBrand>();
 			var query = repo.Query();
@@ -34,10 +34,11 @@ namespace OnlineTravel.Application.Features.CarBrands.GetCarBrandsPaginated
 				.Take(request.PageSize)
 				.ToList();
 
-			var dtos = items.Adapt<IReadOnlyList<CarBrandDto>>();
-			var result = new PaginatedResult<CarBrandDto>(request.PageIndex, request.PageSize, totalCount, dtos);
+			var dtos = items.Adapt<IReadOnlyList<CarBrandResponse>>();
+			var result = new PagedResult<CarBrandResponse>(dtos, totalCount, request.PageIndex, request.PageSize);
 
-			return Result<PaginatedResult<CarBrandDto>>.Success(result);
+			return Result<PagedResult<CarBrandResponse>>.Success(result);
 		}
+
 	}
 }

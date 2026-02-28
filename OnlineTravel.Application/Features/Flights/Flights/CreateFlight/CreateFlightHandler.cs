@@ -29,7 +29,7 @@ namespace OnlineTravel.Application.Features.Flights.Flights.CreateFlight
 				OriginAirportId = request.OriginAirportId,
 				DestinationAirportId = request.DestinationAirportId,
 				Schedule = schedule,
-				BaggageRules = request.BaggageRules,
+				BaggageRules = request.BaggageRules != null ? new List<string> { request.BaggageRules } : new List<string>(),
 				Refundable = request.Refundable,
 				CategoryId = request.CategoryId,
 				Status = OnlineTravel.Domain.Enums.FlightStatus.Scheduled

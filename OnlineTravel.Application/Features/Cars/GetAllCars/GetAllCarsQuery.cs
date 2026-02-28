@@ -12,4 +12,4 @@ public sealed record GetAllCarsQuery(
 	Guid? BrandId = null,
 	Guid? CategoryId = null,
 	CarCategory? CarType = null
-) : IRequest<Result<PaginatedResult<CarDto>>>;
+) : IRequest<Result<PaginatedResult<GetCarByIdResponse>>>;

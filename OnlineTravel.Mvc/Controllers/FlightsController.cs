@@ -8,7 +8,7 @@ using OnlineTravel.Application.Features.Flights.Airport.GetAllAirports;
 using OnlineTravel.Application.Features.Flights.Airport.GetAirportById;
 using OnlineTravel.Application.Features.Flights.Airport.UpdateAirport;
 using OnlineTravel.Application.Features.Flights.CreateAirport;
-using OnlineTravel.Application.Features.Flights.Carrier.DeleteCarrier;
+using OnlineTravel.Application.Features.Flights.Carriers.DeleteCarrier;
 using OnlineTravel.Application.Features.Flights.Carrier.GetAllCarriers;
 using OnlineTravel.Application.Features.Flights.Carrier.CreateCarrier;
 using OnlineTravel.Application.Features.Flights.Flights.GetFlightById;
@@ -160,13 +160,12 @@ public class FlightsController : BaseController
 	[HttpPost]
 	public async Task<IActionResult> AddSeat(FlightManageViewModel model)
 	{
-		var result = await Mediator.Send(new AddSeatCommand
-		{
-			FlightId = model.SeatForm.FlightId,
-			SeatLabel = model.SeatForm.SeatLabel,
-			CabinClass = model.SeatForm.CabinClass,
-			ExtraCharge = model.SeatForm.ExtraCharge
-		});
+		var result = await Mediator.Send(new AddSeatCommand(
+			model.SeatForm.FlightId,
+			model.SeatForm.SeatLabel,
+			model.SeatForm.CabinClass,
+			model.SeatForm.ExtraCharge
+		));
 
 		if (result.IsSuccess) TempData["Success"] = "Seat Added Successfully!";
 		return RedirectToAction("Manage", new { id = model.SeatForm.FlightId });
@@ -175,7 +174,7 @@ public class FlightsController : BaseController
 	[HttpPost]
 	public async Task<IActionResult> DeleteSeat(Guid id, Guid flightId)
 	{
-		var result = await Mediator.Send(new DeleteSeatCommand { Id = id });
+		var result = await Mediator.Send(new DeleteSeatCommand(id));
 		if (result.IsSuccess) TempData["Success"] = "Seat Deleted Successfully!";
 		return RedirectToAction("Manage", new { id = flightId });
 	}
@@ -183,12 +182,14 @@ public class FlightsController : BaseController
 	[HttpPost]
 	public async Task<IActionResult> AddFare(FlightManageViewModel model)
 	{
-		var result = await Mediator.Send(new AddFareCommand
-		{
-			FlightId = model.FareForm.FlightId,
-			Amount = model.FareForm.Amount,
-			SeatsAvailable = model.FareForm.SeatsAvailable
-		});
+		var result = await Mediator.Send(new AddFareCommand(
+			model.FareForm.FlightId,
+			"Standard", // FareName
+			"Standard Fare", // Description
+			model.FareForm.Amount,
+			"USD", // Currency
+			model.FareForm.SeatsAvailable
+		));
 
 		if (result.IsSuccess) TempData["Success"] = "Fare Added Successfully!";
 		return RedirectToAction("Manage", new { id = model.FareForm.FlightId });
@@ -197,7 +198,7 @@ public class FlightsController : BaseController
 	[HttpPost]
 	public async Task<IActionResult> DeleteFare(Guid id, Guid flightId)
 	{
-		var result = await Mediator.Send(new DeleteFareCommand { Id = id });
+		var result = await Mediator.Send(new DeleteFareCommand(id));
 		if (result.IsSuccess) TempData["Success"] = "Fare Deleted Successfully!";
 		return RedirectToAction("Manage", new { id = flightId });
 	}

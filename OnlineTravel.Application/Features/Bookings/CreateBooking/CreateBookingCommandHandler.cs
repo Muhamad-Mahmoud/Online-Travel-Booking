@@ -2,8 +2,9 @@ using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
-using OnlineTravel.Application.Features.Bookings.Shared.DTOs;
+using OnlineTravel.Application.Features.Bookings.Shared;
 using OnlineTravel.Application.Features.Bookings.Strategies;
+
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Application.Interfaces.Services;
 using OnlineTravel.Domain.Entities.Bookings;
@@ -131,7 +132,9 @@ public sealed class CreateBookingCommandHandler : IRequestHandler<CreateBookingC
 			_logger.LogError(ex, "Failed to update Booking {BookingId} with Stripe IDs, but session was created.", booking.Id);
 		}
 
-		var bookingResponse = _mapper.Map<BookingResponse>(booking) with { PaymentUrl = paymentData.PaymentUrl };
+		var bookingResponse = _mapper.Map<BookingResponse>(booking);
+		bookingResponse.PaymentUrl = paymentData.PaymentUrl;
+
 		return Result<CreateBookingResponse>.Success(new CreateBookingResponse
 		{
 			Booking = bookingResponse

@@ -1,6 +1,7 @@
 using AutoMapper;
 using OnlineTravel.Application.Features.Admin.Dashboard;
-using OnlineTravel.Application.Features.Bookings.Shared.DTOs;
+using OnlineTravel.Application.Features.Bookings.Shared;
+
 using OnlineTravel.Domain.Entities.Bookings;
 
 namespace OnlineTravel.Application.Features.Bookings.Mappings;

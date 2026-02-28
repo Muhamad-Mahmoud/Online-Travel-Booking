@@ -4,10 +4,11 @@ using OnlineTravel.Application.Features.Cars.CreateCar;
 using OnlineTravel.Application.Features.Cars.GetAllCarsSummary;
 using OnlineTravel.Application.Features.Cars.GetCarById;
 using OnlineTravel.Application.Features.Cars.GetCarByIdWithDetails;
-using OnlineTravel.Application.Features.Cars.Shared.DTOs;
+using OnlineTravel.Application.Features.Cars.Shared;
 using OnlineTravel.Application.Features.Cars.UpdateCar;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 using OnlineTravel.Domain.Entities.Cars;
+
 
 namespace OnlineTravel.Application.Features.Cars.Mapping
 {
@@ -15,27 +16,28 @@ namespace OnlineTravel.Application.Features.Cars.Mapping
 	{
 		public void Register(TypeAdapterConfig config)
 		{
-			// DateTimeRange <-> DateTimeRangeDto
-			config.NewConfig<DateTimeRange, DateTimeRangeDto>();
-			config.NewConfig<DateTimeRangeDto, DateTimeRange>()
+			// DateTimeRange <-> DateTimeRangeResponse
+			config.NewConfig<DateTimeRange, DateTimeRangeResponse>();
+			config.NewConfig<DateTimeRangeResponse, DateTimeRange>()
 				.ConstructUsing(src => new DateTimeRange(src.Start, src.End));
 
-			// ImageUrl <-> ImageUrlDto
-			config.NewConfig<ImageUrl, ImageUrlDto>();
-			config.NewConfig<ImageUrlDto, ImageUrl>()
+			// ImageUrl <-> ImageUrlResponse
+			config.NewConfig<ImageUrl, ImageUrlResponse>();
+			config.NewConfig<ImageUrlResponse, ImageUrl>()
 				.ConstructUsing(src => new ImageUrl(src.Url, src.AltText));
 
-			// LocationDto -> Point
-			config.NewConfig<LocationDto, Point>()
+			// LocationResponse -> Point
+			config.NewConfig<LocationResponse, Point>()
 				.ConstructUsing(src => new Point(src.Longitude, src.Latitude) { SRID = 4326 });
 
-			// Point -> LocationDto (???????????)
-			config.NewConfig<Point, LocationDto>()
+			// Point -> LocationResponse
+			config.NewConfig<Point, LocationResponse>()
 				.Map(dest => dest.Latitude, src => src.Y)
 				.Map(dest => dest.Longitude, src => src.X);
 
-			// Car -> CarDto
-			config.NewConfig<Car, CarDto>()
+
+			// Car -> GetCarByIdResponse
+			config.NewConfig<Car, GetCarByIdResponse>()
 				.Map(dest => dest.BrandName, src => src.Brand.Name)
 				.Map(dest => dest.CategoryTitle, src => src.Category.Title)
 				.Map(dest => dest.AvailableDates, src => src.AvailableDates)
@@ -63,8 +65,8 @@ namespace OnlineTravel.Application.Features.Cars.Mapping
 				.Ignore(dest => dest.PricingTiers)
 				.Ignore(dest => dest.RowVersion);
 
-			// Car -> CarSummaryDto
-			config.NewConfig<Car, CarSummaryDto>()
+			// Car -> CarSummaryResponse
+			config.NewConfig<Car, CarSummaryResponse>()
 				.Map(dest => dest.BrandName, src => src.Brand == null ? null : src.Brand.Name)
 				.Map(dest => dest.CategoryTitle, src => src.Category == null ? null : src.Category.Title)
 				.Map(dest => dest.MainImage, src => src.Images == null || !src.Images.Any() ? null : src.Images.First().Url)
@@ -80,8 +82,8 @@ namespace OnlineTravel.Application.Features.Cars.Mapping
 				.Map(dest => dest.FuelType, src => src.FuelType)
 				.Map(dest => dest.Transmission, src => src.Transmission);
 
-			// Car -> CarDetailsDto
-			config.NewConfig<Car, CarDetailsDto>()
+			// Car -> CarDetailsResponse
+			config.NewConfig<Car, CarDetailsResponse>()
 				.Map(dest => dest.BrandName, src => src.Brand == null ? null : src.Brand.Name)
 				.Map(dest => dest.CategoryTitle, src => src.Category == null ? null : src.Category.Title)
 				.Map(dest => dest.MainImage, src => src.Images == null || !src.Images.Any() ? null : src.Images.First().Url)

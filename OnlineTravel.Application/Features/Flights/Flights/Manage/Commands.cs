@@ -1,30 +1,10 @@
 using MediatR;
-using OnlineTravel.Domain.ErrorHandling;
-using OnlineTravel.Domain.Enums;
+using OnlineTravel.Application.Common;
 
-namespace OnlineTravel.Application.Features.Flights.Flights.Manage;
-
-public class AddSeatCommand : IRequest<Result<Guid>>
+namespace OnlineTravel.Application.Features.Flights.Flights.Manage
 {
-    public Guid FlightId { get; set; }
-    public string SeatLabel { get; set; } = string.Empty;
-    public string CabinClass { get; set; } = string.Empty;
-    public decimal ExtraCharge { get; set; }
-}
-
-public class DeleteSeatCommand : IRequest<Result<bool>>
-{
-    public Guid Id { get; set; }
-}
-
-public class AddFareCommand : IRequest<Result<Guid>>
-{
-    public Guid FlightId { get; set; }
-    public decimal Amount { get; set; }
-    public int SeatsAvailable { get; set; }
-}
-
-public class DeleteFareCommand : IRequest<Result<bool>>
-{
-    public Guid Id { get; set; }
+	public record AddSeatCommand(Guid FlightId, string SeatLabel, string CabinClass, decimal ExtraCharge) : IRequest<Result<Guid>>;
+	public record DeleteSeatCommand(Guid Id) : IRequest<Result<bool>>;
+	public record AddFareCommand(Guid FlightId, string FareName, string Description, decimal Amount, string Currency, int SeatsAvailable) : IRequest<Result<Guid>>;
+	public record DeleteFareCommand(Guid Id) : IRequest<Result<bool>>;
 }

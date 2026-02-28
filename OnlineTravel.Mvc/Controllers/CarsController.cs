@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using OnlineTravel.Mvc.Helpers;
 using OnlineTravel.Mvc.Models;
-using OnlineTravel.Application.Features.Cars.Shared.DTOs;
+using OnlineTravel.Application.Features.Cars.Shared;
 using OnlineTravel.Application.Features.Cars.GetAllCarsSummary;
 using OnlineTravel.Application.Features.CarBrands.GetCarBrands;
 using OnlineTravel.Application.Features.Cars.CreateCar;
@@ -69,7 +69,7 @@ public class CarsController : BaseController
 				var path = await FileUploadHelper.UploadFileAsync(file, "cars");
 				if (path != null)
 				{
-					command.Images.Add(new ImageUrlDto { Url = path });
+					command.Images.Add(new ImageUrlResponse { Url = path });
 				}
 			}
 		}
@@ -96,6 +96,7 @@ public class CarsController : BaseController
 		if (!result.IsSuccess) return NotFound();
 
 		var car = result.Value;
+		if (car == null) return NotFound();
 		
 		var updateRequest = new CarEditViewModel
 		{
@@ -134,7 +135,7 @@ public class CarsController : BaseController
 				var path = await FileUploadHelper.UploadFileAsync(file, "cars");
 				if (path != null)
 				{
-					command.Images.Add(new ImageUrlDto { Url = path });
+					command.Images.Add(new ImageUrlResponse { Url = path });
 				}
 			}
 		}

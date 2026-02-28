@@ -1,28 +1,28 @@
 using MediatR;
 using OnlineTravel.Application.Common;
-using OnlineTravel.Application.Features.Tours.Specifications;
 using OnlineTravel.Application.Interfaces.Persistence;
+using OnlineTravel.Application.Features.Tours.Specifications;
 using OnlineTravel.Domain.Entities.Tours;
+using OnlineTravel.Application.Features.Tours.GetTourById.DTOs;
+using OnlineTravel.Domain.ErrorHandling;
+
 
 namespace OnlineTravel.Application.Features.Tours.GetAllTours;
 
-public class GetAllToursHandler : IRequestHandler<GetAllToursQuery, PagedResult<TourResponse>>
+public class GetAllToursHandler(IUnitOfWork unitOfWork) : IRequestHandler<GetAllToursQuery, OnlineTravel.Application.Common.Result<PagedResult<TourResponse>>>
 {
-	private readonly IUnitOfWork _unitOfWork;
 
-	public GetAllToursHandler(IUnitOfWork unitOfWork)
-	{
-		_unitOfWork = unitOfWork;
-	}
 
-	public async Task<PagedResult<TourResponse>> Handle(GetAllToursQuery request, CancellationToken cancellationToken)
+	public async Task<OnlineTravel.Application.Common.Result<PagedResult<TourResponse>>> Handle(GetAllToursQuery request, CancellationToken cancellationToken)
+
 	{
 		var countSpec = new AllToursWithPricingSpecification(request.Search, request.Lat, request.Lon, request.RadiusKm, request.MinPrice, request.MaxPrice, request.Rating, request.City, request.Country, request.SortOrder);
-		var totalCount = await _unitOfWork.Repository<Tour>().GetCountAsync(countSpec);
+		var totalCount = await unitOfWork.Repository<Tour>().GetCountAsync(countSpec, cancellationToken);
 
 		var dataSpec = new AllToursWithPricingSpecification(request.Search, request.Lat, request.Lon, request.RadiusKm, request.MinPrice, request.MaxPrice, request.Rating, request.City, request.Country, request.SortOrder);
 		dataSpec.ApplyPagination(request.PageSize * (request.PageIndex - 1), request.PageSize);
-		var tours = await _unitOfWork.Repository<Tour>().GetAllWithSpecAsync(dataSpec);
+		var tours = await unitOfWork.Repository<Tour>().GetAllWithSpecAsync(dataSpec, cancellationToken);
+
 
 		var data = tours.Select(tour =>
 		{
@@ -46,6 +46,8 @@ public class GetAllToursHandler : IRequestHandler<GetAllToursQuery, PagedResult<
 			};
 		}).ToList();
 
-		return new PagedResult<TourResponse>(data, totalCount, request.PageIndex, request.PageSize);
+		var result = new PagedResult<TourResponse>(data, totalCount, request.PageIndex, request.PageSize);
+		return OnlineTravel.Application.Common.Result<PagedResult<TourResponse>>.Success(result);
 	}
 }
+
