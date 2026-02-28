@@ -1,5 +1,3 @@
 namespace OnlineTravel.Application.Features.Favorites.DTOs;
 
-public record AddFavoriteRequest(
-	Guid ItemId
-);
+public record AddFavoriteRequest(Guid ItemId);

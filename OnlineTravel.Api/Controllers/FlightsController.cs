@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OnlineTravel.Application.Features.Flight.Flights.CreateFlight;
-using OnlineTravel.Application.Features.Flight.Flights.SearchFlights.Queries;
+using OnlineTravel.Application.Features.Flights.Flights.CreateFlight;
+using OnlineTravel.Application.Features.Flights.Flights.SearchFlights.Queries;
 
 namespace OnlineTravel.Api.Controllers;
 

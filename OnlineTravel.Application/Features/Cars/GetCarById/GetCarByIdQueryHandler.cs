@@ -1,13 +1,13 @@
 using Mapster;
 using MediatR;
+using OnlineTravel.Application.Common;
 using OnlineTravel.Application.Interfaces.Persistence;
-using OnlineTravel.Application.Specifications.Carspec;
+using OnlineTravel.Application.Features.Cars.Specifications;
 using OnlineTravel.Domain.Entities.Cars;
-using OnlineTravel.Domain.ErrorHandling;
 
 namespace OnlineTravel.Application.Features.Cars.GetCarById;
 
-public sealed class GetCarByIdQueryHandler : IRequestHandler<GetCarByIdQuery, Result<CarDto>>
+public sealed class GetCarByIdQueryHandler : IRequestHandler<GetCarByIdQuery, Result<GetCarByIdResponse>>
 {
 	private readonly IUnitOfWork _unitOfWork;
 
@@ -16,7 +16,7 @@ public sealed class GetCarByIdQueryHandler : IRequestHandler<GetCarByIdQuery, Re
 		_unitOfWork = unitOfWork;
 	}
 
-	public async Task<Result<CarDto>> Handle(GetCarByIdQuery request, CancellationToken cancellationToken)
+	public async Task<Result<GetCarByIdResponse>> Handle(GetCarByIdQuery request, CancellationToken cancellationToken)
 	{
 		var spec = new CarSpecification()
 			.WithId(request.Id)
@@ -25,9 +25,10 @@ public sealed class GetCarByIdQueryHandler : IRequestHandler<GetCarByIdQuery, Re
 		var car = await _unitOfWork.Repository<Car>().GetEntityWithAsync(spec, cancellationToken);
 
 		if (car == null)
-			return Result<CarDto>.Failure(Error.NotFound($"Car with Id {request.Id} not found."));
+			return Result<GetCarByIdResponse>.Failure($"Car with Id {request.Id} not found.");
 
-		var dto = car.Adapt<CarDto>();
-		return Result<CarDto>.Success(dto);
+		var dto = car.Adapt<GetCarByIdResponse>();
+		return Result<GetCarByIdResponse>.Success(dto);
 	}
 }
+

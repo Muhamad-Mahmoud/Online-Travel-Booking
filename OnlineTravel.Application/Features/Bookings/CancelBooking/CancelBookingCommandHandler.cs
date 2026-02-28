@@ -1,7 +1,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using OnlineTravel.Application.Features.Bookings.Shared.DTOs;
 using OnlineTravel.Application.Features.Bookings.Specifications.Queries;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities.Bookings;

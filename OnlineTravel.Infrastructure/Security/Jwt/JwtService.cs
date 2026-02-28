@@ -4,7 +4,7 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using OnlineTravel.Application.Features.Auth.Dtos;
+using OnlineTravel.Application.Features.Auth.Shared;
 using OnlineTravel.Domain.Entities.Users;
 
 namespace OnlineTravel.Infrastructure.Security.Jwt

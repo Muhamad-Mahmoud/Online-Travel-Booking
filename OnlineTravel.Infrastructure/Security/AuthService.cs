@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
 using OnlineTravel.Application.Features.Auth.ConfirmEmail;
-using OnlineTravel.Application.Features.Auth.Dtos;
+using OnlineTravel.Application.Features.Auth.Shared;
 using OnlineTravel.Application.Features.Auth.Login;
 using OnlineTravel.Application.Features.Auth.Password;
 using OnlineTravel.Application.Features.Auth.Register;
@@ -96,8 +96,8 @@ public class AuthService : IAuthService
 			return new AuthResponse { IsSuccess = false, Message = "Please confirm your email first" };
 
 		var jwt = await _jwtService.GenerateToken(user);
-		var userDto = _mapper.Map<UserDto>(user);
-		userDto.Roles = (await _userManager.GetRolesAsync(user)).ToList();
+		var userResponse = _mapper.Map<UserResponse>(user);
+		userResponse.Roles = (await _userManager.GetRolesAsync(user)).ToList();
 
 		return new AuthResponse
 		{
@@ -105,7 +105,7 @@ public class AuthService : IAuthService
 			Token = jwt.Token,
 			ExpiresAt = jwt.ExpiresAt,
 			Message = "Login successful",
-			User = userDto
+			User = userResponse
 		};
 	}
 
@@ -228,8 +228,8 @@ public class AuthService : IAuthService
 		}
 
 		var jwt = await _jwtService.GenerateToken(user);
-		var userDto = _mapper.Map<UserDto>(user);
-		userDto.Roles = (await _userManager.GetRolesAsync(user)).ToList();
+		var userResponse = _mapper.Map<UserResponse>(user);
+		userResponse.Roles = (await _userManager.GetRolesAsync(user)).ToList();
 
 		return new AuthResponse
 		{
@@ -237,7 +237,7 @@ public class AuthService : IAuthService
 			Token = jwt.Token,
 			ExpiresAt = jwt.ExpiresAt,
 			Message = "Google login successful",
-			User = userDto
+			User = userResponse
 		};
 	}
 

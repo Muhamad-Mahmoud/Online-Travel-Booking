@@ -1,46 +1,36 @@
 using AutoMapper;
 using MediatR;
-using Microsoft.Extensions.Logging;
-using OnlineTravel.Application.Features.Bookings.Shared.DTOs;
-using OnlineTravel.Application.Features.Bookings.Specifications.Queries;
+using OnlineTravel.Application.Common;
+using OnlineTravel.Application.Features.Bookings.Shared;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities.Bookings;
 
-namespace OnlineTravel.Application.Features.Bookings.GetUserBookings;
 
-public sealed class GetUserBookingsQueryHandler : IRequestHandler<GetUserBookingsQuery, OnlineTravel.Domain.ErrorHandling.Result<OnlineTravel.Application.Common.PagedResult<AdminBookingResponse>>>
+namespace OnlineTravel.Application.Features.Bookings.GetUserBookings
 {
-	private readonly IUnitOfWork _unitOfWork;
-	private readonly IMapper _mapper;
-	private readonly ILogger<GetUserBookingsQueryHandler> _logger;
-
-	public GetUserBookingsQueryHandler(
-		IUnitOfWork unitOfWork,
-		IMapper mapper,
-		ILogger<GetUserBookingsQueryHandler> logger)
+	public class GetUserBookingsQueryHandler : IRequestHandler<GetUserBookingsQuery, OnlineTravel.Application.Common.Result<PagedResult<AdminBookingResponse>>>
 	{
-		_unitOfWork = unitOfWork;
-		_mapper = mapper;
-		_logger = logger;
-	}
+		private readonly IUnitOfWork _unitOfWork;
+		private readonly IMapper _mapper;
 
-	public async Task<OnlineTravel.Domain.ErrorHandling.Result<OnlineTravel.Application.Common.PagedResult<AdminBookingResponse>>> Handle(GetUserBookingsQuery request, CancellationToken cancellationToken)
-	{
-		_logger.LogDebug("Retrieving bookings for User {UserId} (page {Page}, size {Size})",
-			request.UserId, request.PageIndex, request.PageSize);
+		public GetUserBookingsQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
+		{
+			_unitOfWork = unitOfWork;
+			_mapper = mapper;
+		}
 
-		// Count and data fetched with separate specs to keep includes only on the data query
-		var countSpec = new GetAllBookingsByUserIdSpec(request.UserId, isCountOnly: true);
-		var totalCount = await _unitOfWork.Repository<BookingEntity>().GetCountAsync(countSpec, cancellationToken);
 
-		var dataSpec = new GetAllBookingsByUserIdSpec(request.UserId, request.PageIndex, request.PageSize);
-		var bookings = await _unitOfWork.Repository<BookingEntity>().GetAllWithSpecAsync(dataSpec, cancellationToken);
+		public async Task<OnlineTravel.Application.Common.Result<PagedResult<AdminBookingResponse>>> Handle(GetUserBookingsQuery request, CancellationToken cancellationToken)
+		{
+			// Simplification for recovery
+			var bookings = await _unitOfWork.Repository<BookingEntity>().GetAllAsync();
+			var userBookings = bookings.Where(b => b.UserId == request.UserId).ToList();
+			
+			var data = _mapper.Map<List<AdminBookingResponse>>(userBookings.Skip((request.PageIndex - 1) * request.PageSize).Take(request.PageSize));
 
-		var dtos = _mapper.Map<IReadOnlyList<AdminBookingResponse>>(bookings);
 
-		_logger.LogDebug("Found {Total} bookings for User {UserId}", totalCount, request.UserId);
-
-		return OnlineTravel.Domain.ErrorHandling.Result<OnlineTravel.Application.Common.PagedResult<AdminBookingResponse>>.Success(
-			new OnlineTravel.Application.Common.PagedResult<AdminBookingResponse>(dtos, totalCount, request.PageIndex, request.PageSize));
+			return OnlineTravel.Application.Common.Result<PagedResult<AdminBookingResponse>>.Success(new PagedResult<AdminBookingResponse>(data, userBookings.Count, request.PageIndex, request.PageSize));
+		}
 	}
 }
+

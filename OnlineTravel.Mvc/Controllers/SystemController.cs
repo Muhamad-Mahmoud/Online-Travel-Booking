@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnlineTravel.Application.Features.Admin.System.TriggerSeed;
 
@@ -19,7 +18,7 @@ public class SystemController : BaseController
 		var result = await Mediator.Send(new TriggerSeedCommand());
 		if (result.IsSuccess)
 		{
-			TempData["Success"] = "Database seeding completed successfully.";
+			TempData["Success"] = "Database Seeding Completed Successfully!";
 		}
 		else
 		{
@@ -28,3 +27,4 @@ public class SystemController : BaseController
 		return RedirectToAction(nameof(SeedData));
 	}
 }
+

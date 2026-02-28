@@ -15,8 +15,13 @@ public static class DependencyInjection
 		// Register MediatR for CQRS pattern
 		services.AddMediatR(cfg =>
 			cfg.RegisterServicesFromAssemblies(typeof(DependencyInjection).Assembly));
-		services.AddMapster();
+		// Register Mapster
+		var config = TypeAdapterConfig.GlobalSettings;
+		config.Scan(typeof(DependencyInjection).Assembly);
+		services.AddSingleton(config);
+		services.AddScoped<IMapper, ServiceMapper>();
 
+		// Register AutoMapper
 		services.AddAutoMapper(typeof(DependencyInjection).Assembly);
 
 		// Register FluentValidation validators manually
@@ -39,8 +44,6 @@ public static class DependencyInjection
 
 		// Register Pipeline Behaviors for automatic validation
 		services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-		services.AddSingleton(TypeAdapterConfig.GlobalSettings);
-		services.AddScoped<IMapper, ServiceMapper>();
 		services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
 
 

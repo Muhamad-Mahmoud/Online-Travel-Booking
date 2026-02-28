@@ -2,14 +2,14 @@ using Mapster;
 using MediatR;
 using OnlineTravel.Application.Features.Cars.GetCarById;
 using OnlineTravel.Application.Interfaces.Persistence;
-using OnlineTravel.Application.Specifications.Carspec;
+using OnlineTravel.Application.Features.Cars.Specifications;
 using OnlineTravel.Domain.Entities.Cars;
 using OnlineTravel.Domain.ErrorHandling;
 using OnlineTravel.Domain.Exceptions;
 
 namespace OnlineTravel.Application.Features.Cars.GetAllCars;
 
-public sealed class GetAllCarsQueryHandler : IRequestHandler<GetAllCarsQuery, Result<PaginatedResult<CarDto>>>
+public sealed class GetAllCarsQueryHandler : IRequestHandler<GetAllCarsQuery, Result<PaginatedResult<GetCarByIdResponse>>>
 {
 	private readonly IUnitOfWork _unitOfWork;
 
@@ -18,7 +18,7 @@ public sealed class GetAllCarsQueryHandler : IRequestHandler<GetAllCarsQuery, Re
 		_unitOfWork = unitOfWork;
 	}
 
-	public async Task<Result<PaginatedResult<CarDto>>> Handle(GetAllCarsQuery request, CancellationToken cancellationToken)
+	public async Task<Result<PaginatedResult<GetCarByIdResponse>>> Handle(GetAllCarsQuery request, CancellationToken cancellationToken)
 	{
 		var spec = new CarSpecification(request.BrandId)
 			.IncludeBrandAndCategory();
@@ -40,9 +40,9 @@ public sealed class GetAllCarsQueryHandler : IRequestHandler<GetAllCarsQuery, Re
 
 		var totalCount = await _unitOfWork.Repository<Car>().GetCountAsync(countSpec, cancellationToken);
 
-		var dtos = items.Adapt<IReadOnlyList<CarDto>>();
-		var paginated = new PaginatedResult<CarDto>(request.PageIndex, request.PageSize, totalCount, dtos);
+		var dtos = items.Adapt<IReadOnlyList<GetCarByIdResponse>>();
+		var paginated = new PaginatedResult<GetCarByIdResponse>(request.PageIndex, request.PageSize, totalCount, dtos);
 
-		return Result<PaginatedResult<CarDto>>.Success(paginated);
+		return Result<PaginatedResult<GetCarByIdResponse>>.Success(paginated);
 	}
 }

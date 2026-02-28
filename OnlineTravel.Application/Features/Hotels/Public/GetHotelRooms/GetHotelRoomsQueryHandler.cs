@@ -1,14 +1,14 @@
 using AutoMapper;
 using MediatR;
 using OnlineTravel.Application.Common;
-using OnlineTravel.Application.Features.Hotels.Dtos;
+using OnlineTravel.Application.Features.Hotels.Shared;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 using OnlineTravel.Domain.Entities.Hotels;
 
 namespace OnlineTravel.Application.Features.Hotels.Public.GetHotelRooms
 {
-	public class GetHotelRoomsQueryHandler : IRequestHandler<GetHotelRoomsQuery, Result<List<RoomDto>>>
+	public class GetHotelRoomsQueryHandler : IRequestHandler<GetHotelRoomsQuery, Result<List<RoomResponse>>>
 	{
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly IMapper _mapper;
@@ -19,15 +19,15 @@ namespace OnlineTravel.Application.Features.Hotels.Public.GetHotelRooms
 			_mapper = mapper;
 		}
 
-		public async Task<Result<List<RoomDto>>> Handle(GetHotelRoomsQuery request, CancellationToken cancellationToken)
+		public async Task<Result<List<RoomResponse>>> Handle(GetHotelRoomsQuery request, CancellationToken cancellationToken)
 		{
 			var rooms = await _unitOfWork.Rooms.GetHotelRoomsAsync(request.HotelId);
 			if (rooms == null || rooms.Count == 0)
 			{
 				var hotel = await _unitOfWork.Repository<Hotel>().GetByIdAsync(request.HotelId, cancellationToken);
 				if (hotel == null)
-					return Result<List<RoomDto>>.Failure("Hotel not found");
-				return Result<List<RoomDto>>.Success(new List<RoomDto>());
+					return Result<List<RoomResponse>>.Failure("Hotel not found");
+				return Result<List<RoomResponse>>.Success(new List<RoomResponse>());
 			}
 
 			var roomList = rooms.ToList();
@@ -37,7 +37,7 @@ namespace OnlineTravel.Application.Features.Hotels.Public.GetHotelRooms
 				roomList = roomList.Where(r => r.IsAvailable(dateRange)).ToList();
 			}
 
-			var dtos = _mapper.Map<List<RoomDto>>(roomList);
+			var dtos = _mapper.Map<List<RoomResponse>>(roomList);
 			if (request.CheckIn.HasValue && request.CheckOut.HasValue && request.CheckOut > request.CheckIn)
 			{
 				var dateRange = new DateRange(request.CheckIn.Value, request.CheckOut.Value);
@@ -47,7 +47,7 @@ namespace OnlineTravel.Application.Features.Hotels.Public.GetHotelRooms
 					dto.TotalPrice = room.CalculateTotalPrice(dateRange).Amount;
 				}
 			}
-			return Result<List<RoomDto>>.Success(dtos);
+			return Result<List<RoomResponse>>.Success(dtos);
 		}
 	}
 }

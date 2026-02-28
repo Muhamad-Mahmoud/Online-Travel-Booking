@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 using NetTopologySuite.Geometries;
-using OnlineTravel.Application.Specifications;
+using OnlineTravel.Application.Common.Specifications;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 using OnlineTravel.Domain.Entities.Hotels;
 

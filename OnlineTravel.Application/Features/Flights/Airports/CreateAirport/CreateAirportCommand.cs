@@ -1,0 +1,20 @@
+using MediatR;
+using OnlineTravel.Application.Features.Flights.Airport.CreateAirport;
+using OnlineTravel.Domain.ErrorHandling;
+
+namespace OnlineTravel.Application.Features.Flights.CreateAirport
+{
+	public class CreateAirportCommand : IRequest<Result<CreateAirportResponse>>
+	{
+		public string Code { get; set; }
+		public string Name { get; set; }
+		public string Street { get; set; }
+		public string City { get; set; }
+		public string State { get; set; }
+		public string Country { get; set; }
+		public string ZipCode { get; set; }
+		public List<string> Facilities { get; set; }
+		public string? FacilitiesText { get; set; }
+	}
+}
+

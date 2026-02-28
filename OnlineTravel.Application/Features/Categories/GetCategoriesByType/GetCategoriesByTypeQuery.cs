@@ -5,5 +5,5 @@ using OnlineTravel.Domain.ErrorHandling;
 
 namespace OnlineTravel.Application.Features.Categories.GetCategoriesByType
 {
-	public record GetCategoriesByTypeQuery(CategoryType Type) : IRequest<Result<List<CategoryDto>>>;
+	public record GetCategoriesByTypeQuery(CategoryType Type) : IRequest<Result<List<CategoryResponse>>>;
 }

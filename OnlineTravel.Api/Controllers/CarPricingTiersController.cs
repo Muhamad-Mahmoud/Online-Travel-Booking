@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OnlineTravel.Application.Features.CarPricingTiers.Create;
+using OnlineTravel.Application.Features.CarPricingTiers.CreateCarPricingTiers;
 using OnlineTravel.Application.Features.CarPricingTiers.Delete;
-using OnlineTravel.Application.Features.CarPricingTiers.GetAll;
-using OnlineTravel.Application.Features.CarPricingTiers.GetById;
-using OnlineTravel.Application.Features.CarPricingTiers.Update;
+using OnlineTravel.Application.Features.CarPricingTiers.GetAllCarPricingTiers;
+using OnlineTravel.Application.Features.CarPricingTiers.GetCarPricingTiersById;
+using OnlineTravel.Application.Features.CarPricingTiers.UpdateCarPricingTier;
 
 namespace OnlineTravel.Api.Controllers;
 

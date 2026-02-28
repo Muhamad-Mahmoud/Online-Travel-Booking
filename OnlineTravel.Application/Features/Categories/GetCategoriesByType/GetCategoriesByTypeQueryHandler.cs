@@ -7,7 +7,7 @@ using OnlineTravel.Domain.ErrorHandling;
 
 namespace OnlineTravel.Application.Features.Categories.GetCategoriesByType
 {
-	public class GetCategoriesByTypeQueryHandler : IRequestHandler<GetCategoriesByTypeQuery, Result<List<CategoryDto>>>
+	public class GetCategoriesByTypeQueryHandler : IRequestHandler<GetCategoriesByTypeQuery, Result<List<CategoryResponse>>>
 	{
 		private readonly IUnitOfWork _unitOfWork;
 
@@ -16,15 +16,15 @@ namespace OnlineTravel.Application.Features.Categories.GetCategoriesByType
 			_unitOfWork = unitOfWork;
 		}
 
-		public async Task<Result<List<CategoryDto>>> Handle(GetCategoriesByTypeQuery request, CancellationToken cancellationToken)
+		public async Task<Result<List<CategoryResponse>>> Handle(GetCategoriesByTypeQuery request, CancellationToken cancellationToken)
 		{
 			var categories = await _unitOfWork.Repository<Category>()
 				.GetAllAsync(cancellationToken);
 
 			var filtered = categories.Where(c => c.Type == request.Type).ToList();
-			var dtos = filtered.Adapt<List<CategoryDto>>();
+			var dtos = filtered.Adapt<List<CategoryResponse>>();
 
-			return Result<List<CategoryDto>>.Success(dtos);
+			return Result<List<CategoryResponse>>.Success(dtos);
 		}
 	}
 }

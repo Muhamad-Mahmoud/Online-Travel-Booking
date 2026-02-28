@@ -1,7 +1,7 @@
 using MediatR;
-using OnlineTravel.Application.Features.CarBrands.Shared.DTOs;
+using OnlineTravel.Application.Features.CarBrands.Shared;
 using OnlineTravel.Domain.ErrorHandling;
 
 namespace OnlineTravel.Application.Features.CarBrands.GetCarBrandById;
 
-public sealed record GetCarBrandByIdQuery(Guid Id) : IRequest<Result<CarBrandDto>>;
+public sealed record GetCarBrandByIdQuery(Guid Id) : IRequest<Result<CarBrandResponse>>;

@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OnlineTravel.Application.Features.Flight.Airport.GetAirportById;
-using OnlineTravel.Application.Features.Flight.Airport.GetAllAirports;
-using OnlineTravel.Application.Features.Flight.Airport.UpdateAirport;
-using OnlineTravel.Application.Features.Flight.CreateAirport;
+using OnlineTravel.Application.Features.Flights.Airport.GetAirportById;
+using OnlineTravel.Application.Features.Flights.Airport.GetAllAirports;
+using OnlineTravel.Application.Features.Flights.Airport.UpdateAirport;
+using OnlineTravel.Application.Features.Flights.CreateAirport;
 
 namespace OnlineTravel.Api.Controllers;
 

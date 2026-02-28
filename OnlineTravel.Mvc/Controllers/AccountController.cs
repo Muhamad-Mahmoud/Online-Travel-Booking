@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OnlineTravel.Application.Interfaces.Services.Auth;
-using OnlineTravel.Mvc.Models.Account;
 using System.Security.Claims;
+using OnlineTravel.Application.Features.Auth;
 using OnlineTravel.Application.Features.Auth.Login;
+using OnlineTravel.Application.Interfaces.Services.Auth;
+using OnlineTravel.Mvc.Models;
+using OnlineTravel.Mvc.Models.Account;
 
 namespace OnlineTravel.Mvc.Controllers;
 
@@ -101,3 +103,4 @@ public class AccountController(IAuthService authService) : BaseController
         return View();
     }
 }
+

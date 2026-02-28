@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using OnlineTravel.Application.Features.Payments.DTOs;
+using OnlineTravel.Application.Features.Payments.Shared;
 using OnlineTravel.Application.Interfaces.Services;
 using OnlineTravel.Domain.Entities.Bookings;
 using OnlineTravel.Domain.ErrorHandling;

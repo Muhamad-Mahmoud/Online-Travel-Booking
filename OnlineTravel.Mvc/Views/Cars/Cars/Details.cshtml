@@ -1,5 +1,6 @@
-@using OnlineTravel.Application.Features.Cars.GetCarByIdWithDetails
-@model CarDetailsDto
+@using OnlineTravel.Application.Features.Cars.Shared
+
+@model CarDetailsResponse
 
 @{
     ViewData["Title"] = $"{Model.Make} {Model.Model} Details";
@@ -185,3 +186,4 @@
         </div>
     </div>
 </div>
+

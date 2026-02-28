@@ -1,11 +1,12 @@
 using MediatR;
 using OnlineTravel.Application.Interfaces.Persistence;
-using OnlineTravel.Application.Specifications.Carspec;
+using OnlineTravel.Application.Features.Cars.Specifications;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 using OnlineTravel.Domain.Entities.Cars;
 using OnlineTravel.Domain.ErrorHandling;
+using OnlineTravel.Application.Features.CarPricingTiers.UpdateCarPricingTier;
 
-namespace OnlineTravel.Application.Features.CarPricingTiers.Update
+namespace OnlineTravel.Application.Features.CarPricingTiers.UpdateCarPricingTierCarPricingTier
 {
 	public class UpdateCarPricingTierCommandHandler : IRequestHandler<UpdateCarPricingTierCommand, Result<UpdateCarPricingTierResponse>>
 	{

@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
-using OnlineTravel.Application.Features.Cars.Shared.DTOs;
+using OnlineTravel.Application.Features.Cars.Shared;
+
 using OnlineTravel.Domain.Enums;
 
 namespace OnlineTravel.Application.Features.Cars.UpdateCar
@@ -34,7 +35,7 @@ namespace OnlineTravel.Application.Features.Cars.UpdateCar
 
 		public List<string> Features { get; set; } = new();
 
-		public List<DateTimeRangeDto> AvailableDates { get; set; } = new();
+		public List<DateTimeRangeResponse> AvailableDates { get; set; } = new();
 
 		[StringLength(500)]
 		public string? CancellationPolicy { get; set; }
@@ -43,8 +44,9 @@ namespace OnlineTravel.Application.Features.Cars.UpdateCar
 		public Guid CategoryId { get; set; }
 
 		[Required]
-		public LocationDto Location { get; set; } = null!;
+		public LocationResponse Location { get; set; } = null!;
 
-		public List<ImageUrlDto> Images { get; set; } = new();
+		public List<ImageUrlResponse> Images { get; set; } = new();
 	}
 }
+

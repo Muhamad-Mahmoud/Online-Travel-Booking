@@ -1,4 +1,4 @@
-using OnlineTravel.Application.Features.Auth.Dtos;
+using OnlineTravel.Application.Features.Auth.Shared;
 
 namespace OnlineTravel.Application.Features.Auth.Login
 {
@@ -10,7 +10,7 @@ namespace OnlineTravel.Application.Features.Auth.Login
 		public string? Token { get; set; }
 		public DateTime? ExpiresAt { get; set; }
 
-		public UserDto? User { get; set; }
+		public UserResponse? User { get; set; }
 	}
 
 }

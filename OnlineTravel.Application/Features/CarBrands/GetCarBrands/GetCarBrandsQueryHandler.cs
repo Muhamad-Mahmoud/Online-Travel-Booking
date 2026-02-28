@@ -2,7 +2,7 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using OnlineTravel.Application.Features.CarBrands.Shared.DTOs;
+using OnlineTravel.Application.Features.CarBrands.Shared;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.ErrorHandling;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace OnlineTravel.Application.Features.CarBrands.GetCarBrands;
 
-public sealed class GetCarBrandsQueryHandler : IRequestHandler<GetCarBrandsQuery, Result<List<CarBrandDto>>>
+public sealed class GetCarBrandsQueryHandler : IRequestHandler<GetCarBrandsQuery, Result<List<CarBrandResponse>>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -22,13 +22,13 @@ public sealed class GetCarBrandsQueryHandler : IRequestHandler<GetCarBrandsQuery
         _mapper = mapper;
     }
 
-    public async Task<Result<List<CarBrandDto>>> Handle(GetCarBrandsQuery request, CancellationToken cancellationToken)
+    public async Task<Result<List<CarBrandResponse>>> Handle(GetCarBrandsQuery request, CancellationToken cancellationToken)
     {
         var brands = await _unitOfWork.Repository<OnlineTravel.Domain.Entities.Cars.CarBrand>()
             .Query()
-            .ProjectTo<CarBrandDto>(_mapper.ConfigurationProvider)
+            .ProjectTo<CarBrandResponse>(_mapper.ConfigurationProvider)
             .ToListAsync(cancellationToken);
 
-        return Result<List<CarBrandDto>>.Success(brands);
+        return Result<List<CarBrandResponse>>.Success(brands);
     }
 }

@@ -1,5 +1,6 @@
-@using OnlineTravel.Application.Features.CarBrands.Shared.DTOs
-@model CarBrandDto
+@using OnlineTravel.Application.Features.CarBrands.Shared
+
+@model CarBrandResponse
 @{
     ViewData["Title"] = "Delete Car Brand";
 }
@@ -49,3 +50,4 @@
     <button type="submit" class="btn btn-danger">Delete</button>
     <a asp-action="Index" class="btn btn-secondary">Cancel</a>
 </form>
+

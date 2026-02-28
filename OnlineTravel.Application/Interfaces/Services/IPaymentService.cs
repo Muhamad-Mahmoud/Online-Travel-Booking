@@ -1,4 +1,4 @@
-using OnlineTravel.Application.Features.Payments.DTOs;
+using OnlineTravel.Application.Features.Payments.Shared;
 using OnlineTravel.Domain.Entities.Bookings;
 using OnlineTravel.Domain.ErrorHandling;
 

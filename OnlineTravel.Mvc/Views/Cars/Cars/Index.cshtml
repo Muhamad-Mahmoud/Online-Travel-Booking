@@ -1,13 +1,16 @@
-@using OnlineTravel.Application.Features.Cars.GetAllCarsSummary
+@using OnlineTravel.Application.Features.Admin.GetCategoriesByType
 @using OnlineTravel.Domain.Enums
-@using OnlineTravel.Application.Features.CarBrands.Shared.DTOs
-@using OnlineTravel.Application.Features.Categories.Shared.DTOs
-@model OnlineTravel.Domain.Exceptions.PaginatedResult<CarSummaryDto>
+@using OnlineTravel.Application.Features.CarBrands.Shared
+@using OnlineTravel.Application.Features.Cars.Shared
+@using OnlineTravel.Application.Features.Categories.Shared
+@using OnlineTravel.Application.Common
+@model PagedResult<CarSummaryResponse>
+
 @{
     ViewData["Title"] = "Car Fleet";
     var search = ViewBag.SearchTerm as string;
-    var brands = ViewBag.Brands as List<CarBrandDto> ?? new List<CarBrandDto>();
-    var categories = ViewBag.Categories as List<CategoryDto> ?? new List<CategoryDto>();
+    var brands = ViewBag.Brands as List<CarBrandResponse> ?? new List<CarBrandResponse>();
+    var categories = ViewBag.Categories as List<CategoryResponse> ?? new List<CategoryResponse>();
 }
 
 <div class="container-fluid py-4">
@@ -76,7 +79,7 @@
         <div class="col-6 col-md-3">
             <partial name="_AdminStatCard" model='new AdminStatCardViewModel {
                 Title = "Electric Ready",
-                Value = Model.Items.Count(c => c.FuelType == FuelType.Electric).ToString(),
+                Value = Model.Data.Count(c => c.FuelType == FuelType.Electric).ToString(),
                 IconClass = "fas fa-gas-pump",
                 IconBgClass = "bg-danger-light",
                 IconTextClass = "text-danger"
@@ -102,7 +105,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if (!Model.Items.Any())
+                    @if (!Model.Data.Any())
                     {
                         <tr>
                             <td colspan="5" class="text-center py-5 text-muted">
@@ -112,7 +115,7 @@
                             </td>
                         </tr>
                     }
-                    @foreach (var car in Model.Items)
+                    @foreach (var car in Model.Data)
                     {
                         <tr>
                             <td class="ps-4">
@@ -189,3 +192,4 @@
         }
     </div>
 </div>
+

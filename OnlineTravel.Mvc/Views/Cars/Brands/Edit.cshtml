@@ -1,5 +1,5 @@
 @using OnlineTravel.Application.Features.CarBrands.UpdateCarBrand
-@model UpdateCarBrandRequest
+@model OnlineTravel.Mvc.Models.BrandEditViewModel
 @{
     ViewData["Title"] = "Edit Car Brand";
 }
@@ -26,7 +26,7 @@
                 <h6 class="m-0 fw-bold text-dark"><i class="fas fa-industry text-primary me-2"></i>Brand Configuration</h6>
             </div>
             <div class="card-body p-4">
-                <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+                <form asp-action="Edit" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data">
                     @Html.AntiForgeryToken()
                     <input type="hidden" asp-for="Id" />
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger border-0 rounded-3"></div>
@@ -38,12 +38,19 @@
                     </div>
 
                     <div class="mb-3">
-                        <label asp-for="Logo" class="form-label fw-bold small text-uppercase text-muted"></label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0"><i class="fas fa-image text-muted"></i></span>
-                            <input asp-for="Logo" class="form-control border-start-0 rounded-end-3" placeholder="logo url or file name" />
+                        <label asp-for="LogoFile" class="form-label fw-bold small text-uppercase text-muted">Brand Logo</label>
+                        @if (!string.IsNullOrEmpty(Model.Logo))
+                        {
+                            <div class="mb-2">
+                                <img src="@Model.Logo" alt="Current Logo" class="admin-thumb-40 admin-logo-contain border rounded p-1" />
+                                <span class="small text-muted ms-2">Current Logo</span>
+                            </div>
+                        }
+                        <input type="hidden" asp-for="Logo" />
+                        <div class="premium-file-upload">
+                            <input asp-for="LogoFile" class="form-control" type="file" accept="image/*" />
                         </div>
-                        <span asp-validation-for="Logo" class="text-danger small"></span>
+                        <span asp-validation-for="LogoFile" class="text-danger small"></span>
                     </div>
 
                     <div class="form-check form-switch mb-4">

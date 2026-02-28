@@ -1,4 +1,4 @@
-@model OnlineTravel.Application.Common.PagedResult<OnlineTravel.Application.Features.Bookings.Shared.DTOs.AdminBookingResponse>
+@model OnlineTravel.Application.Common.PagedResult<OnlineTravel.Application.Features.Bookings.Shared.AdminBookingResponse>
 
 @{
     ViewData["Title"] = "User Bookings";
@@ -71,7 +71,7 @@
     @if (Model.TotalPages > 1)
     {
         <div class="card-footer bg-white border-top p-4">
-             <partial name="_Pagination" model="@(PaginationViewModel.Create<OnlineTravel.Application.Features.Bookings.Shared.DTOs.AdminBookingResponse>(Model, "UserBookings", "Bookings"))" />
+             <partial name="_Pagination" model="@(PaginationViewModel.Create<OnlineTravel.Application.Features.Bookings.Shared.AdminBookingResponse>(Model, "UserBookings", "Bookings"))" />
         </div>
     }
 </div>

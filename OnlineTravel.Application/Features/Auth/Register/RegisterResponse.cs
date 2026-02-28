@@ -1,4 +1,5 @@
-using OnlineTravel.Application.Features.Auth.Dtos;
+
+using OnlineTravel.Application.Features.Auth.Shared;
 
 namespace OnlineTravel.Application.Features.Auth.Register
 {
@@ -11,7 +12,7 @@ namespace OnlineTravel.Application.Features.Auth.Register
 
 		public string? ConfirmationLink { get; set; }
 
-		public UserDto? User { get; set; }
+		public UserResponse? User { get; set; }
 	}
 
 }

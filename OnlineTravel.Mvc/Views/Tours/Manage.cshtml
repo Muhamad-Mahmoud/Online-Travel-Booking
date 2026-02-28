@@ -123,26 +123,35 @@
                     </div>
                     <form asp-action="Update" method="post" enctype="multipart/form-data">
                         <input type="hidden" asp-for="EditForm.TourId" value="@tour.Id" />
+                        <input type="hidden" asp-for="EditForm.CurrentImageUrl" value="@tour.MainImageUrl" />
                         <div class="row g-3">
                             <div class="col-12">
-                                <label class="premium-meta-label">MISSION DESIGNATOR</label>
-                                <input asp-for="EditForm.Title" class="form-control premium-control" value="@tour.Title" />
+                                <label asp-for="EditForm.Title" class="form-label small fw-bold text-muted text-uppercase">MISSION DESIGNATOR</label>
+                                <input asp-for="EditForm.Title" class="form-control border-0 bg-light rounded-3" value="@tour.Title" />
+                                <span asp-validation-for="EditForm.Title" class="text-danger small"></span>
                             </div>
                             <div class="col-12">
-                                <label class="premium-meta-label">MISSION BRIEFING</label>
-                                <textarea asp-for="EditForm.Description" class="form-control premium-control" rows="3">@tour.Description</textarea>
+                                <label asp-for="EditForm.Description" class="form-label small fw-bold text-muted text-uppercase">MISSION BRIEFING</label>
+                                <textarea asp-for="EditForm.Description" class="form-control border-0 bg-light rounded-3" rows="3">@tour.Description</textarea>
+                                <span asp-validation-for="EditForm.Description" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-12">
+                                <label asp-for="EditForm.ImageFile" class="form-label small fw-bold text-muted text-uppercase">REPLACE HERO IMAGE</label>
+                                <input asp-for="EditForm.ImageFile" type="file" class="form-control border-0 bg-light rounded-3" accept="image/*" />
                             </div>
                             <div class="col-md-6">
-                                <label class="premium-meta-label">DURATION (DAYS)</label>
-                                <input asp-for="EditForm.DurationDays" type="number" class="form-control premium-control" value="@tour.DurationDays" />
+                                <label asp-for="EditForm.DurationDays" class="form-label small fw-bold text-muted text-uppercase">DURATION (DAYS)</label>
+                                <input asp-for="EditForm.DurationDays" type="number" class="form-control border-0 bg-light rounded-3" value="@tour.DurationDays" />
+                                <span asp-validation-for="EditForm.DurationDays" class="text-danger small"></span>
                             </div>
                             <div class="col-md-6">
-                                <label class="premium-meta-label">DURATION (NIGHTS)</label>
-                                <input asp-for="EditForm.DurationNights" type="number" class="form-control premium-control" value="@tour.DurationNights" />
+                                <label asp-for="EditForm.DurationNights" class="form-label small fw-bold text-muted text-uppercase">DURATION (NIGHTS)</label>
+                                <input asp-for="EditForm.DurationNights" type="number" class="form-control border-0 bg-light rounded-3" value="@tour.DurationNights" />
+                                <span asp-validation-for="EditForm.DurationNights" class="text-danger small"></span>
                             </div>
                             <div class="col-12 text-end pt-3">
                                 <button type="button" class="btn btn-outline-secondary border-0 fw-bold px-4 me-2" data-bs-toggle="collapse" data-bs-target="#editTourSection">Discard</button>
-                                <button type="submit" class="btn btn-premium-dark px-4 rounded-3 shadow-sm">Commit Mission Update</button>
+                                <button type="submit" class="btn btn-primary px-4 rounded-3 shadow-sm"><i class="fas fa-save me-2"></i>Commit Mission Update</button>
                             </div>
                         </div>
                     </form>
@@ -373,7 +382,7 @@
                     </div>
                     <div class="mb-0">
                         <label class="form-label x-small fw-bold text-muted text-uppercase">Primary Visual</label>
-                        <input asp-for="ActivityForm.Image" type="file" class="form-control border-0 bg-light py-2 rounded-3" />
+                        <input name="ActivityForm.ImageFile" type="file" class="form-control border-0 bg-light py-2 rounded-3" accept="image/*" />
                     </div>
                 </div>
                 <div class="modal-footer border-0 p-4 pt-0">

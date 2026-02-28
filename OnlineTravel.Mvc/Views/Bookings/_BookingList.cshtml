@@ -1,5 +1,8 @@
-@model IEnumerable<AdminBookingResponse>
+@using OnlineTravel.Application.Features.Bookings.Shared
 @using OnlineTravel.Api.Helpers
+
+@model IEnumerable<AdminBookingResponse>
+
 @{
     bool showCustomer = ViewData["ShowCustomer"] as bool? ?? true;
 }

@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OnlineTravel.Application.Features.Favorites.Commands.AddFavorite;
+using OnlineTravel.Application.Features.Favorites.AddFavorite;
 using OnlineTravel.Application.Features.Favorites.DTOs;
-using OnlineTravel.Application.Features.Favorites.Queries.GetUserFavorites;
+using OnlineTravel.Application.Features.Favorites.GetUserFavorites;
 
 namespace OnlineTravel.Api.Controllers;
 

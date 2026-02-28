@@ -1,4 +1,4 @@
-using OnlineTravel.Application.Features.Auth.Dtos;
+using OnlineTravel.Application.Features.Auth.Shared;
 using OnlineTravel.Domain.Entities.Users;
 
 namespace OnlineTravel.Infrastructure.Security.Jwt

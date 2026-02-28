@@ -1,13 +1,20 @@
+using OnlineTravel.Application.Features.Hotels.Admin.CreateHotel;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 
 namespace OnlineTravel.Mvc.Models;
+
+public class HotelsCreateViewModel : CreateHotelCommand
+{
+    public IFormFile? ImageFile { get; set; }
+}
 
 public class HotelsEditViewModel
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
-    public string MainImage { get; set; } = string.Empty;
+    public string? MainImage { get; set; }
+    public IFormFile? ImageFile { get; set; }
     public string CurrentImageUrl { get; set; } = string.Empty;
     public string Street { get; set; } = string.Empty;
     public string City { get; set; } = string.Empty;
@@ -49,7 +56,7 @@ public class Hotel
     public string MainImageUrl { get; set; } = string.Empty;
     public Address? Address { get; set; }
     public Rating? Rating { get; set; }
-    public List<Room> Rooms { get; set; } = new();
+    public List<Room> Rooms { get; set; } = [];
     public string ContactEmail { get; set; } = string.Empty;
     public string ContactPhone { get; set; } = string.Empty;
     public string Website { get; set; } = string.Empty;
@@ -61,8 +68,13 @@ public class Hotel
 
 public class Address
 {
+    public string Street { get; set; } = string.Empty;
     public string City { get; set; } = string.Empty;
+    public string State { get; set; } = string.Empty;
     public string Country { get; set; } = string.Empty;
+    public string PostalCode { get; set; } = string.Empty;
+    public double Latitude { get; set; }
+    public double Longitude { get; set; }
 }
 
 public class Rating

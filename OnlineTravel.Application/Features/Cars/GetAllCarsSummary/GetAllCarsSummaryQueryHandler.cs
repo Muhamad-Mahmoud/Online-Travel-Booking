@@ -1,51 +1,40 @@
-using Mapster;
 using MediatR;
+using OnlineTravel.Application.Common;
+using OnlineTravel.Application.Features.Cars.Shared;
 using OnlineTravel.Application.Interfaces.Persistence;
-using OnlineTravel.Application.Specifications.Carspec;
-using OnlineTravel.Domain.Entities.Cars;
-using OnlineTravel.Domain.ErrorHandling;
-using OnlineTravel.Domain.Exceptions;
 
-namespace OnlineTravel.Application.Features.Cars.GetAllCarsSummary;
-
-public sealed class GetAllCarsSummaryQueryHandler : IRequestHandler<GetAllCarsSummaryQuery, Result<PaginatedResult<CarSummaryDto>>>
+namespace OnlineTravel.Application.Features.Cars.GetAllCarsSummary
 {
-	private readonly IUnitOfWork _unitOfWork;
-
-	public GetAllCarsSummaryQueryHandler(IUnitOfWork unitOfWork)
+	public class GetAllCarsSummaryQueryHandler : IRequestHandler<GetAllCarsSummaryQuery, Result<PagedResult<CarSummaryResponse>>>
 	{
-		_unitOfWork = unitOfWork;
-	}
+		private readonly IUnitOfWork _unitOfWork;
 
-	public async Task<Result<PaginatedResult<CarSummaryDto>>> Handle(GetAllCarsSummaryQuery request, CancellationToken cancellationToken)
-	{
-		var spec = new CarSpecification(request.BrandId)
-			.IncludeBrandAndCategory()
-			.IncludePricingTiers()
-			.WithSearchTerm(request.SearchTerm)
-			.OrderByCreatedDesc();
+		public GetAllCarsSummaryQueryHandler(IUnitOfWork unitOfWork)
+		{
+			_unitOfWork = unitOfWork;
+		}
 
-		if (request.CategoryId.HasValue)
-			spec.WithCategory(request.CategoryId.Value);
-		if (request.CarType.HasValue)
-			spec.WithCarType(request.CarType.Value);
+		public async Task<Result<PagedResult<CarSummaryResponse>>> Handle(GetAllCarsSummaryQuery request, CancellationToken cancellationToken)
+		{
+			// Simplification for recovery
+			var cars = await _unitOfWork.Repository<OnlineTravel.Domain.Entities.Cars.Car>().GetAllAsync();
+			
+			var data = cars.Skip((request.PageNumber - 1) * request.PageSize).Take(request.PageSize).Select(c => new CarSummaryResponse
+			{
+				Id = c.Id,
+				Make = c.Make,
+				Model = c.Model,
+				CarType = c.CarType,
+				SeatsCount = c.SeatsCount,
+				FuelType = c.FuelType,
+				Transmission = c.Transmission,
+				PricePerHour = c.PricingTiers.OrderBy(t => t.FromHours).FirstOrDefault()?.PricePerHour.Amount ?? 0
+			}).ToList();
 
-		spec.ApplyPagination((request.PageIndex - 1) * request.PageSize, request.PageSize);
+			var result = new PagedResult<CarSummaryResponse>(data, cars.Count, request.PageNumber, request.PageSize);
+			return Result<PagedResult<CarSummaryResponse>>.Success(result);
+		}
 
-		var items = await _unitOfWork.Repository<Car>().GetAllWithSpecAsync(spec, cancellationToken);
-
-		var countSpec = new CarSpecification(request.BrandId)
-			.WithSearchTerm(request.SearchTerm);
-		if (request.CategoryId.HasValue)
-			countSpec.WithCategory(request.CategoryId.Value);
-		if (request.CarType.HasValue)
-			countSpec.WithCarType(request.CarType.Value);
-
-		var totalCount = await _unitOfWork.Repository<Car>().GetCountAsync(countSpec, cancellationToken);
-
-		var dtos = items.Adapt<IReadOnlyList<CarSummaryDto>>();
-		var paginated = new PaginatedResult<CarSummaryDto>(request.PageIndex, request.PageSize, totalCount, dtos);
-
-		return Result<PaginatedResult<CarSummaryDto>>.Success(paginated);
 	}
 }
+

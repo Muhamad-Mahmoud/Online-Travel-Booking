@@ -19,7 +19,7 @@
 <div class="row">
     <div class="col-lg-8">
         <form asp-action="Edit" method="post">
-            <input type="hidden" name="Id" />
+            <input type="hidden" name="Id" value="@Model.Id" />
 
             <!-- Flight Info -->
             <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
@@ -31,12 +31,14 @@
                         <div class="col-md-4">
                             <label asp-for="FlightNumber" class="form-label fw-bold small text-uppercase text-muted">Flight Number</label>
                             <input asp-for="FlightNumber" class="form-control" />
+                            <span asp-validation-for="FlightNumber" class="text-danger small"></span>
                         </div>
                         <div class="col-md-4">
                             <label asp-for="CarrierId" class="form-label fw-bold small text-uppercase text-muted">Carrier</label>
                             <select asp-for="CarrierId" class="form-select" asp-items="ViewBag.Carriers">
                                 <option value="">-- Select --</option>
                             </select>
+                            <span asp-validation-for="CarrierId" class="text-danger small"></span>
                         </div>
                         <div class="col-md-4">
                             <label asp-for="CategoryId" class="form-label fw-bold small text-uppercase text-muted">Category</label>
@@ -53,7 +55,7 @@
                         <div class="col-md-4 d-flex align-items-end">
                             <div class="form-check mb-3">
                                 <input class="form-check-input" type="checkbox" asp-for="Refundable" />
-                                <label class="form-check-label">
+                                <label class="form-check-label text-muted fw-bold small">
                                     <i class="fas fa-undo text-success me-1"></i>Refundable
                                 </label>
                             </div>
@@ -65,7 +67,7 @@
             <!-- Route -->
             <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
                 <div class="card-header bg-white py-3 border-bottom">
-                    <h6 class="m-0 fw-bold text-dark"><i class="fas fa-route text-info me-2"></i>Route</h6>
+                    <h6 class="m-0 fw-bold text-dark"><i class="fas fa-map-marker-alt text-danger me-2"></i>Route Information</h6>
                 </div>
                 <div class="card-body">
                     <div class="row mb-3">
@@ -74,12 +76,14 @@
                             <select asp-for="OriginAirportId" class="form-select" asp-items="ViewBag.Airports">
                                 <option value="">-- Select --</option>
                             </select>
+                            <span asp-validation-for="OriginAirportId" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6">
                             <label asp-for="DestinationAirportId" class="form-label small text-muted">Destination Airport</label>
                             <select asp-for="DestinationAirportId" class="form-select" asp-items="ViewBag.Airports">
                                 <option value="">-- Select --</option>
                             </select>
+                            <span asp-validation-for="DestinationAirportId" class="text-danger small"></span>
                         </div>
                     </div>
                 </div>
@@ -88,17 +92,19 @@
             <!-- Schedule -->
             <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
                 <div class="card-header bg-white py-3 border-bottom">
-                    <h6 class="m-0 fw-bold text-dark"><i class="fas fa-clock text-warning me-2"></i>Schedule</h6>
+                    <h6 class="m-0 fw-bold text-dark"><i class="fas fa-clock text-warning me-2"></i>Schedule Info</h6>
                 </div>
                 <div class="card-body">
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label asp-for="DepartureTime" class="form-label small text-muted">Departure</label>
+                            <label asp-for="DepartureTime" class="form-label small text-muted">Departure Date & Time</label>
                             <input asp-for="DepartureTime" class="form-control" type="datetime-local" />
+                            <span asp-validation-for="DepartureTime" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6">
-                            <label asp-for="ArrivalTime" class="form-label small text-muted">Arrival</label>
+                            <label asp-for="ArrivalTime" class="form-label small text-muted">Arrival Date & Time</label>
                             <input asp-for="ArrivalTime" class="form-control" type="datetime-local" />
+                            <span asp-validation-for="ArrivalTime" class="text-danger small"></span>
                         </div>
                     </div>
                 </div>
@@ -107,7 +113,7 @@
             <!-- Metadata & Baggage -->
             <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
                 <div class="card-header bg-white py-3 border-bottom">
-                    <h6 class="m-0 fw-bold text-dark"><i class="fas fa-cogs text-secondary me-2"></i>Metadata & Baggage</h6>
+                    <h6 class="m-0 fw-bold text-dark"><i class="fas fa-suitcase text-info me-2"></i>Metadata & Baggage</h6>
                 </div>
                 <div class="card-body">
                     <div class="row mb-3">
@@ -125,8 +131,8 @@
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label asp-for="BaggageRulesText" class="form-label small text-muted">Baggage Rules</label>
-                        <input asp-for="BaggageRulesText" class="form-control" placeholder="Rule 1, Rule 2 (comma-separated)" />
+                        <label asp-for="BaggageRulesText" class="form-label small fw-bold text-uppercase text-muted">Baggage Rules</label>
+                        <textarea asp-for="BaggageRulesText" class="form-control" rows="3" placeholder="Rule 1, Rule 2 (comma-separated)"></textarea>
                     </div>
                 </div>
             </div>
@@ -139,7 +145,7 @@
         </form>
     </div>
 
-    <!-- Sidebar -->
+    <!-- Sidebar Info -->
     <div class="col-lg-4">
         <div class="card shadow-sm border-0 rounded-4 overflow-hidden sticky-top" style="top:1rem;">
             <div class="card-header bg-white py-3 border-bottom">
@@ -157,12 +163,22 @@
 </div>
 
 <style>
-    .btn-white { background-color: #fff; border: 1px solid #e3e6f0; color: #6e707e; }
-    .btn-white:hover { background-color: #f8f9fc; }
+    .btn-white {
+        background-color: #fff;
+        border: 1px solid #e3e6f0;
+        color: #6e707e;
+    }
+    .btn-white:hover {
+        background-color: #f8f9fc;
+    }
+    .x-small {
+        font-size: 0.75rem;
+    }
 </style>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+
 
 

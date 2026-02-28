@@ -1,5 +1,5 @@
-@model OnlineTravel.Application.Common.PagedResult<OnlineTravel.Application.Features.Tours.GetAllTours.DTOs.TourResponse>
-@using OnlineTravel.Application.Features.Tours.GetAllTours.DTOs
+@model OnlineTravel.Application.Common.PagedResult<OnlineTravel.Application.Features.Tours.GetAllTours.TourResponse>
+@using OnlineTravel.Application.Features.Tours.GetAllTours
 @using System.Linq
 @{
     ViewData["Title"] = "Tours Management";
@@ -163,7 +163,7 @@
                     </table>
                 </div>
 
-                @if (Model.TotalPages >= 1)
+                @if (Model != null && Model.TotalPages >= 1)
                 {
                     <div class="card-footer bg-white border-top p-3 text-center">
                         <partial name="_Pagination" model="@(PaginationViewModel.Create(Model, "Index", "Tours", new { search = (object?)search }))" />

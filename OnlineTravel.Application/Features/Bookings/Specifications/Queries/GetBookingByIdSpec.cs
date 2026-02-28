@@ -1,4 +1,4 @@
-using OnlineTravel.Application.Specifications;
+using OnlineTravel.Application.Common.Specifications;
 using OnlineTravel.Domain.Entities.Bookings;
 
 namespace OnlineTravel.Application.Features.Bookings.Specifications.Queries

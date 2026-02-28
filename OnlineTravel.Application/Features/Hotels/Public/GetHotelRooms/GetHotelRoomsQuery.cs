@@ -1,10 +1,10 @@
 using MediatR;
 using OnlineTravel.Application.Common;
-using OnlineTravel.Application.Features.Hotels.Dtos;
+using OnlineTravel.Application.Features.Hotels.Shared;
 
 namespace OnlineTravel.Application.Features.Hotels.Public.GetHotelRooms
 {
-	public class GetHotelRoomsQuery : IRequest<Result<List<RoomDto>>>
+	public class GetHotelRoomsQuery : IRequest<Result<List<RoomResponse>>>
 	{
 		public Guid HotelId { get; set; }
 		public DateOnly? CheckIn { get; set; }

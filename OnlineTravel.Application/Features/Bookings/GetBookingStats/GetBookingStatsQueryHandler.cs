@@ -1,6 +1,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using OnlineTravel.Application.Features.Bookings.Shared.DTOs;
+using OnlineTravel.Application.Features.Bookings.Shared;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities.Bookings;
 using OnlineTravel.Domain.Enums;
@@ -8,7 +8,7 @@ using OnlineTravel.Domain.ErrorHandling;
 
 namespace OnlineTravel.Application.Features.Bookings.GetBookingStats;
 
-public sealed class GetBookingStatsQueryHandler : IRequestHandler<GetBookingStatsQuery, Result<BookingStatsDto>>
+public sealed class GetBookingStatsQueryHandler : IRequestHandler<GetBookingStatsQuery, Result<BookingStatsResponse>>
 {
 	private readonly IUnitOfWork _unitOfWork;
 
@@ -17,13 +17,13 @@ public sealed class GetBookingStatsQueryHandler : IRequestHandler<GetBookingStat
 		_unitOfWork = unitOfWork;
 	}
 
-	public async Task<Result<BookingStatsDto>> Handle(GetBookingStatsQuery request, CancellationToken cancellationToken)
+	public async Task<Result<BookingStatsResponse>> Handle(GetBookingStatsQuery request, CancellationToken cancellationToken)
 	{
 		var query = _unitOfWork.Repository<BookingEntity>().Query();
 
 		var stats = await query
 			.GroupBy(x => 1)
-			.Select(g => new BookingStatsDto
+			.Select(g => new BookingStatsResponse
 			{
 				TotalBookings = g.Count(),
 				PendingBookings = g.Count(b => b.Status == BookingStatus.PendingPayment),
@@ -32,6 +32,6 @@ public sealed class GetBookingStatsQueryHandler : IRequestHandler<GetBookingStat
 			})
 			.FirstOrDefaultAsync(cancellationToken);
 
-		return Result<BookingStatsDto>.Success(stats ?? new BookingStatsDto());
+		return Result<BookingStatsResponse>.Success(stats ?? new BookingStatsResponse());
 	}
 }
