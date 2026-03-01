@@ -1,6 +1,6 @@
 using Mapster;
 using MediatR;
-using OnlineTravel.Application.Features.Categories.Shared.DTOs;
+using OnlineTravel.Application.Features.Categories.Shared;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities.Core;
 using OnlineTravel.Domain.ErrorHandling;

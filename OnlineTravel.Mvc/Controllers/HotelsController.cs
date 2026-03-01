@@ -48,7 +48,7 @@ public class HotelsController : BaseController
 			return RedirectToAction(nameof(Index));
 		}
 
-		ModelState.AddModelError(string.Empty, result.Error ?? "An error occurred");
+		ModelState.AddModelError(string.Empty, result.Error.Description ?? "An error occurred");
 		return View(model);
 	}
 
@@ -87,14 +87,14 @@ public class HotelsController : BaseController
 				CancellationPolicy = dto.CancellationPolicy,
 				CheckInTime = new TimeRange(checkInParsed, checkInParsed.AddHours(4)), // Dummy range for display
 				CheckOutTime = new TimeRange(checkOutParsed.AddHours(-4), checkOutParsed),
-				Rooms = dto.Rooms.Select(r => new Room 
+				Rooms = [.. dto.Rooms.Select(r => new Room 
 				{ 
 					Id = r.Id, 
 					Name = r.Name, 
 					Description = r.Description, 
 					RoomNumber = r.RoomNumber,
 					BasePricePerNight = new Money(r.BasePricePerNight)
-				}).ToList()
+				})]
 			}
 		};
         
@@ -180,7 +180,7 @@ public class HotelsController : BaseController
 				return RedirectToAction("Manage", new { id = model.Id });
 			}
 
-			ModelState.AddModelError(string.Empty, result.Error ?? "An error occurred");
+			ModelState.AddModelError(string.Empty, result.Error.Description ?? "An error occurred");
 		}
 		catch (ValidationException ex)
 		{
