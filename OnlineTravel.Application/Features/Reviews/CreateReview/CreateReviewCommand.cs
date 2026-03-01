@@ -2,7 +2,7 @@ using MediatR;
 using OnlineTravel.Application.Common;
 using OnlineTravel.Domain.ErrorHandling;
 
-namespace OnlineTravel.Application.Features.Reviews.Commands;
+namespace OnlineTravel.Application.Features.Reviews.CreateReview;
 
 public record CreateReviewCommand(
 	Guid TourId,

@@ -14,6 +14,9 @@ namespace OnlineTravel.Api.Controllers;
 [Route("api/v1/bookings")]
 public class BookingsController : BaseApiController
 {
+	/// <summary>
+	/// Create a new travel booking.
+	/// </summary>
 	[HttpPost]
 	public async Task<ActionResult> Create([FromBody] CreateBookingCommand command)
 	{
@@ -22,6 +25,9 @@ public class BookingsController : BaseApiController
 		return HandleResult(result);
 	}
 
+	/// <summary>
+	/// Get the authenticated user's booking history.
+	/// </summary>
 	[HttpGet]
 	public async Task<ActionResult> GetMyBookings([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
 	{
@@ -30,6 +36,9 @@ public class BookingsController : BaseApiController
 		return HandleResult(result);
 	}
 
+	/// <summary>
+	/// Cancel an existing booking.
+	/// </summary>
 	[HttpPost("cancel")]
 	public async Task<ActionResult> Cancel([FromBody] CancelBookingCommand command)
 	{
@@ -38,6 +47,9 @@ public class BookingsController : BaseApiController
 		return HandleResult(result);
 	}
 
+	/// <summary>
+	/// List all bookings across the system with filters (Admin only).
+	/// </summary>
 	[Authorize(Roles = "Admin")]
 	[HttpGet("admin")]
 	public async Task<ActionResult> GetAll([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10, [FromQuery] string? searchTerm = null, [FromQuery] string? status = null)
@@ -46,6 +58,9 @@ public class BookingsController : BaseApiController
 		return HandleResult(result);
 	}
 
+	/// <summary>
+	/// Get high-level statistics for all bookings (Admin only).
+	/// </summary>
 	[Authorize(Roles = "Admin")]
 	[HttpGet("admin/stats")]
 	public async Task<ActionResult> GetStats()
@@ -54,6 +69,9 @@ public class BookingsController : BaseApiController
 		return HandleResult(result);
 	}
 
+	/// <summary>
+	/// Get details of a specific booking by ID (Admin only).
+	/// </summary>
 	[Authorize(Roles = "Admin")]
 	[HttpGet("admin/{id:guid}")]
 	public async Task<ActionResult> GetById(Guid id)
@@ -62,6 +80,9 @@ public class BookingsController : BaseApiController
 		return HandleResult(result);
 	}
 
+	/// <summary>
+	/// Get bookings for a specific user ID (Admin only).
+	/// </summary>
 	[Authorize(Roles = "Admin")]
 	[HttpGet("admin/users/{userId:guid}")]
 	public async Task<ActionResult> GetByUserId(Guid userId, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
@@ -70,6 +91,9 @@ public class BookingsController : BaseApiController
 		return HandleResult(result);
 	}
 
+	/// <summary>
+	/// Export all booking records as a CSV file (Admin only).
+	/// </summary>
 	[Authorize(Roles = "Admin")]
 	[HttpGet("admin/export")]
 	public async Task<ActionResult> Export()

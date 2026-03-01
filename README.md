@@ -1,135 +1,112 @@
 # 🌐 Online Travel Booking System
 
-> A scalable, multi-tenant travel booking platform developed in **ASP.NET Core 9**. It provides a unified reservation engine for **Hotels, Flights, Tours, and Car Rentals**. The system exposes a **RESTful Client API** alongside an integrated **Razor Pages Admin Dashboard** for comprehensive entity management.
+> A travel booking platform built with **ASP.NET Core 9**, providing a unified system for **Hotels, Flights, Tours, and Car Rentals**. It features a **RESTful Client API** and a **Razor Pages Admin Dashboard** for managing business operations.
 
-Engineered with **Domain-Driven Design (DDD)** and **Clean Architecture**, the solution implements CQRS principles and relies on decentralized state management. It ensures transactional safety, data integrity, and deterministic execution flow.
+Built on **Clean Architecture**, the solution follows CQRS principles to ensure a maintainable and scalable codebase. It focuses on transactional safety and clear separation of concerns.
 
 ---
 
-## 🎯 Domain Capabilities
+## 🎯 System Features
 
-The architecture isolates category-specific domain logic across four heavily-modeled verticals beneath a single abstract booking system.
+The system manages different booking categories through a shared core, while allowing for category-specific logic where needed.
 
-<br>
-
-### ⚙️ The Booking Engine
-- **Unified Abstraction:** Handles diverse reservation types seamlessly while executing context-specific validation.
-- **Strategy Pattern Execution:** Injects dynamic pricing and allocation logic at runtime depending on the reservation category.
-- **Lazy Expiration Lifecycle:** State transitions (Pending → Confirmed / Cancelled / Expired) are evaluated deterministically on-read, eliminating the need for volatile background polling jobs.
-- **Invariant Enforcement:** Strict domain rules physically prevent invalid state transitions, such as double-booking physical resources.
-
-<br>
+### ⚙️ Booking Engine
+- **Unified Processing:** Handles different reservation types through a consistent workflow.
+- **Dynamic Pricing:** Implements pricing strategies that adjust based on reservation category and timing.
+- **Automated Expiration:** Automatically handles booking lifecycles (Pending, Confirmed, Cancelled, Expired) without complex background jobs.
 
 ### 🏤 Hotels & Accommodations
-- **Granular Inventory Control:** Management over individual room availability and seasonal capacity fluctuations.
-- **Dynamic Pricing Matrices:** Algorithm-driven rate adjustments based on tier, capacity, and seasonality.
-- **Automated Aggregation:** In-memory calculations for aggregate review scores and metadata relationships.
+- **Inventory Control:** Manage room availability and seasonal capacity.
+- **Flexible Pricing:** Set rates based on room types, demand, and seasonality.
+- **Reviews & Ratings:** Automated calculation of average scores and customer feedback management.
 
-<br>
-
-### 🛫 Flight Integration
-- **Relational Flight Scheduling:** Granular dependencies mapping flights to airports, aircraft, gates, and standard IATA codes.
-- **Multi-Class Allocation:** Deep inventory separation across cabin classifications (Economy, Business, First).
-- **Flexible Ancillaries:** Dynamic application of baggage rules and variable cancellation fee structures.
-
-<br>
+### 🛫 Flight Management
+- **Scheduling:** Links flights to airports, carriers, and aircraft using standard industry codes.
+- **Cabin Classes:** Support for Economy, Business, and First-class seat allocation.
+- **Baggage & Fees:** Dynamic management of baggage rules and cancellation policies.
 
 ### 🧭 Tours & Itineraries
-- **Geospatial Tracking:** Uses **NetTopologySuite** to map precise coordinates for multi-day travel routes and starting locations.
-- **Tiered Profit Logic:** Highly segmented demographic pricing models (e.g., Adult, Child).
+- **Location Mapping:** Uses **NetTopologySuite** for accurate GPS coordinates of tour routes and meeting points.
+- **Tiered Pricing:** Support for different price points for adults, children, and other groups.
 
-<br>
-
-### 🚘 Fleet Operations
-- **Geospatial Depot Management:** Distance and availability tracking for car rentals based on pick-up metadata.
-- **Time-Matrix Pricing:** Scalable daily cost functions governed by vehicle classification and required durations.
+### 🚘 Car Rentals
+- **Depot Management:** Track vehicle availability across different pick-up locations.
+- **Duration-Based Pricing:** Calculate rental costs based on vehicle class and time period.
 
 ---
 
-## 🏗️ Architecture & Core Infrastructure
+## 🏗️ Technical Architecture
 
-The solution enforces strict dependency inversion across 4 decoupled layers:
+The project is structured into four layers, enforcing a clear separation of business logic from infrastructure.
 
-| Layer | Responsibility | Details |
-|-------|----------------|---------|
-| **Domain** | Core Business Logic | Entities, Value Objects (`Money`, `DateTimeRange`), Enums, Exceptions |
-| **Application** | Use Cases & Orchestration | CQRS (MediatR), Fluent Validation, Interfaces, Service Contracts |
-| **Infrastructure** | Implementations | EF Core, NetTopologySuite, SMTP, Stripe Webhooks, Identity |
-| **Presentation** | External Interfaces | REST Controllers, Identity Endpoints, MVC Razor Views |
+| Layer | Responsibility | Key Components |
+|-------|----------------|----------------|
+| **Domain** | Business Core | Entities, Value Objects, Enums, Domain Exceptions |
+| **Application** | Use Cases | MediatR Handlers, Validators, Service Interfaces |
+| **Infrastructure** | Implementations | EF Core, NetTopologySuite, SMTP, Stripe, Identity |
+| **Presentation** | API & UI | REST Controllers, Identity Endpoints, Razor Pages |
 
-<br>
+### 🧠 Key Patterns
 
-### 🧠 Advanced Architectural Capabilities
+- **Vertical Feature Slicing:** 
+  The Application layer is organized by feature rather than type. Each feature encapsulates its own logic, DTOs, and mappings, making the system easier to navigate and maintain.
 
-- **Vertical Slice & Polymorphic Feature Models:** 
-  The `Application` layer discards traditional horizontal slicing in favor of cohesive **Feature Verticals** (e.g., `Features/Bookings`). Instead of scattering anemic DTOs, each slice encapsulates rich, inheritance-driven **Feature Models** tailored exactly to the request context (e.g., polymorphism between `BookingResponse` and `AdminBookingResponse`). This ensures tight aggregation, strict encapsulation, and zero cross-boundary DTO leakage.
+- **Pipeline Validation:** 
+  Validation rules are automatically executed using MediatR behaviors, ensuring only valid data reaches the business handlers.
 
-- **Pre-Execution Pipeline Validation:** 
-  A MediatR `ValidationBehavior` automatically intercepts and evaluates injected `FluentValidation` rules before any command/query reaches its designated handler.
+- **Specification Pattern:** 
+  Queries are abstracted into reusable Specification classes, keeping the repository clean and avoiding duplicate query logic across the application.
 
-- **Specification-Driven Repository:** 
-  An `IGenericRepository<T>` built on the **Specification Pattern**. It encapsulates highly-complex, chainable LINQ trees independently of the database context, removing query duplication.
+- **Standardized Error Handling:** 
+  A global middleware handles exceptions and returns consistent error responses across all API endpoints.
 
-- **Global Error Standardization (RFC 7807):** 
-  A centralized `ExceptionMiddleware` catches domain violations and unhandled errors, stripping stack traces and returning predictable `ProblemDetails` objects.
-
-- **Result Pattern Determinism:** 
-  Execution flow strictly relies on robust `Result<T>` mapping rather than volatile `try/catch` closures inside controllers.
+- **Result Pattern:** 
+  Uses a `Result<T>` pattern for internal communication, making error handling more explicit and reducing the need for exception-based flow control.
 
 ---
 
-## ⚡ Key System Components
+## ⚡ Core Integration
 
-### 💳 Stripe Infrastructure
-- **Webhook Resiliency:** Strict payload and event signature verification.
-- **Concurrency Protection:** Real-time event deduplication prevents race conditions during overlapping network latency.
-- **Fault-Tolerant Persistence:** Ensures initial payment intents and responses are asynchronously logged securely.
+### 💳 Payment Processing (Stripe)
+- **Secure Webhooks:** Verified event processing to handle payments reliably.
+- **Race Condition Protection:** Handles overlapping events to ensure data consistency.
+- **Audit Logging:** Asynchronous logging of all payment attempts and responses.
 
-<br>
+### 🔒 Security & Identity
+- **Flexible Authentication:** Combines ASP.NET Identity with JWT for API access and Google OAuth for social login.
+- **Role-Based Access:** Distinct permissions for clients and administrators.
+- **Soft Deletion:** Safely manage data removal without losing historical records.
 
-### 🔒 Access Control & Identity
-- **Hybrid Auth Standard:** Fuses stateful ASP.NET Identity with stateless JWT integration (HMAC-SHA256) and automated Google OAuth 2.0 mapping.
-- **Role-Based Execution (RBAC):** Restrictive operation boundaries dividing client interactions from the Admin Dashboard.
-- **Data Preservation:** Critical operational data is protected by global Soft Deletion rules, maintaining historical audit accuracy.
-
-<br>
-
-### 📈 Administrative Operations (Razor MVC)
-- **High-Performance Reporting:** Parallelized background querying for aggregate transaction and distribution analytics.
-- **Batched Generation:** Efficient memory streaming for large-scale CSV log exports.
+### 📈 Admin Dashboard
+- **Performance Analytics:** Real-time reporting on bookings and revenue distribution.
+- **Data Export:** Support for exporting operational logs and reports to CSV.
 
 ---
 
-## 🛠 Tech Stack Overview
+## 🛠 Technology Stack
 
-- **SDK/Runtime:** .NET 9
-- **Data Persistence:** Entity Framework Core 9 (SQL Server) + NetTopologySuite
-- **Orchestration:** MediatR 12 + FluentValidation 12
-- **Mapping:** Mapster
-- **External Dependencies:** Stripe API, MailKit (SMTP), Serilog (Structured Logging)
+- **Framework:** .NET 9
+- **Database:** SQL Server + Entity Framework Core 9
+- **Libraries:** MediatR, FluentValidation, Mapster
+- **External:** Stripe API, MailKit, Serilog
 
 ---
 
-## 🚀 Environment Setup
+## 🚀 Getting Started
 
-1. **Clone & Setup:**
+1. **Clone the project:**
    ```bash
    git clone https://github.com/yourusername/OnlineTravel.git
-   cd OnlineTravel
    ```
 
-2. **Configuration:**
-   Update the `appsettings.json` within the Application Entry points:
-   - Provide the SQL Server Connection String.
-   - Insert Stripe Webhook/Secret keys.
-   - Configure SMTP credentials and JWT generation secrets.
+2. **Configure:**
+   Update `appsettings.json` with your:
+   - SQL Server Connection String
+   - Stripe API Keys
+   - SMTP and JWT settings
 
-3. **Database Initialization & Execution:**
+3. **Run:**
    ```bash
    dotnet run --project OnlineTravel.Mvc
    ```
-   > *The system relies on EF Core Migrations to automatically build, seed, and map standard admin roles on first execution.*
-
----
-
-**Engineered for scale, consistency, and absolute integrity.**
+   The database will be automatically created and seeded on the first run.

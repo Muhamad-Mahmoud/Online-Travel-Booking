@@ -10,6 +10,9 @@ namespace OnlineTravel.Api.Controllers;
 [Route("api/v1/flights/carriers")]
 public class CarriersController : BaseApiController
 {
+	/// <summary>
+	/// Create a new airline or travel carrier (Admin only).
+	/// </summary>
 	[Authorize(Roles = "Admin")]
 	[HttpPost]
 	public async Task<ActionResult> Create([FromBody] CreateCarrierCommand command)
@@ -21,6 +24,9 @@ public class CarriersController : BaseApiController
 		return CreatedAtAction(nameof(GetById), new { id = result.Value }, new { id = result.Value });
 	}
 
+	/// <summary>
+	/// Get details for a specific carrier by ID (Admin only).
+	/// </summary>
 	[Authorize(Roles = "Admin")]
 	[HttpGet("{id:guid}")]
 	public async Task<ActionResult> GetById(Guid id)
@@ -29,6 +35,9 @@ public class CarriersController : BaseApiController
 		return HandleResult(result);
 	}
 
+	/// <summary>
+	/// Get a list of all registered carriers (Admin only).
+	/// </summary>
 	[Authorize(Roles = "Admin")]
 	[HttpGet]
 	public async Task<ActionResult> GetAll()
@@ -37,6 +46,9 @@ public class CarriersController : BaseApiController
 		return HandleResult(result);
 	}
 
+	/// <summary>
+	/// Delete a carrier by ID (Admin only).
+	/// </summary>
 	[Authorize(Roles = "Admin")]
 	[HttpDelete("{id:guid}")]
 	public async Task<ActionResult> Delete(Guid id)

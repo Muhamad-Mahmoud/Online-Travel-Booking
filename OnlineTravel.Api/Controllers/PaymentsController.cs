@@ -19,6 +19,9 @@ public class PaymentsController : BaseApiController
 		_logger = logger;
 	}
 
+	/// <summary>
+	/// Handle Stripe payment webhooks for booking confirmations.
+	/// </summary>
 	[HttpPost("webhook")]
 	public async Task<IActionResult> StripeWebhook()
 	{

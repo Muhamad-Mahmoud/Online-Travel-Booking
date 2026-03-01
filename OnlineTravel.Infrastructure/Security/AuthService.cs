@@ -222,6 +222,8 @@ public class AuthService : IAuthService
 
 			if (!createResult.Succeeded)
 				return new AuthResponse { IsSuccess = false, Message = "User creation failed" };
+
+			await _userManager.AddToRoleAsync(user, "User");
 		}
 
 		var jwt = await _jwtService.GenerateToken(user);

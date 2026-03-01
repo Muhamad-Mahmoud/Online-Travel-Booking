@@ -18,6 +18,9 @@ namespace OnlineTravel.Api.Controllers
 			_context = context;
 		}
 
+		/// <summary>
+		/// Get sample seed data for development purposes (Admin only).
+		/// </summary>
 		[HttpGet("seed-data")]
 		public async Task<IActionResult> GetSeedData()
 		{

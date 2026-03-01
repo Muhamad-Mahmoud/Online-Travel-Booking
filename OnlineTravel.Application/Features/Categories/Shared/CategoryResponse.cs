@@ -1,6 +1,6 @@
 using OnlineTravel.Domain.Enums;
 
-namespace OnlineTravel.Application.Features.Categories.Shared.DTOs
+namespace OnlineTravel.Application.Features.Categories.Shared
 {
 	public class CategoryResponse
 	{

@@ -12,6 +12,9 @@ namespace OnlineTravel.Api.Controllers;
 [Route("api/v1/flights")]
 public class FlightsController : BaseApiController
 {
+	/// <summary>
+	/// Search for available flights based on origin, destination, and dates.
+	/// </summary>
 	[HttpGet]
 	public async Task<ActionResult> Search([FromQuery] SearchFlightsQuery query)
 	{
@@ -19,6 +22,9 @@ public class FlightsController : BaseApiController
 		return Ok(result);
 	}
 
+	/// <summary>
+	/// Create a new flight schedule (Admin only).
+	/// </summary>
 	[Authorize(Roles = "Admin")]
 	[HttpPost]
 	public async Task<ActionResult> Create([FromBody] CreateFlightCommand command)
@@ -30,6 +36,9 @@ public class FlightsController : BaseApiController
 		return Ok(new { id = result.Value });
 	}
 
+	/// <summary>
+	/// List all flights with pagination and search/status filters (Admin only).
+	/// </summary>
 	[Authorize(Roles = "Admin")]
 	[HttpGet("admin")]
 	public async Task<ActionResult> GetAll([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10, [FromQuery] string? search = null, [FromQuery] string? status = null)
@@ -38,6 +47,9 @@ public class FlightsController : BaseApiController
 		return HandleResult(result);
 	}
 
+	/// <summary>
+	/// Get detailed information for a specific flight by ID (Admin only).
+	/// </summary>
 	[Authorize(Roles = "Admin")]
 	[HttpGet("admin/{id:guid}")]
 	public async Task<ActionResult> GetById(Guid id)
@@ -46,6 +58,9 @@ public class FlightsController : BaseApiController
 		return HandleResult(result);
 	}
 
+	/// <summary>
+	/// Update an existing flight's details (Admin only).
+	/// </summary>
 	[Authorize(Roles = "Admin")]
 	[HttpPut("{id:guid}")]
 	public async Task<ActionResult> Update(Guid id, [FromBody] UpdateFlightCommand command)
@@ -55,6 +70,9 @@ public class FlightsController : BaseApiController
 		return HandleResult(result);
 	}
 
+	/// <summary>
+	/// Add seats to a specific flight (Admin only).
+	/// </summary>
 	[Authorize(Roles = "Admin")]
 	[HttpPost("{id:guid}/seats")]
 	public async Task<ActionResult> AddSeat(Guid id, [FromBody] AddSeatCommand command)
@@ -64,6 +82,9 @@ public class FlightsController : BaseApiController
 		return HandleResult(result);
 	}
 
+	/// <summary>
+	/// Remove a seat from a specific flight (Admin only).
+	/// </summary>
 	[Authorize(Roles = "Admin")]
 	[HttpDelete("{id:guid}/seats/{seatId:guid}")]
 	public async Task<ActionResult> DeleteSeat(Guid id, Guid seatId)
@@ -72,6 +93,9 @@ public class FlightsController : BaseApiController
 		return HandleResult(result);
 	}
 
+	/// <summary>
+	/// Add a fare option to a specific flight (Admin only).
+	/// </summary>
 	[Authorize(Roles = "Admin")]
 	[HttpPost("{id:guid}/fares")]
 	public async Task<ActionResult> AddFare(Guid id, [FromBody] AddFareCommand command)
@@ -81,6 +105,9 @@ public class FlightsController : BaseApiController
 		return HandleResult(result);
 	}
 
+	/// <summary>
+	/// Remove a fare option from a specific flight (Admin only).
+	/// </summary>
 	[Authorize(Roles = "Admin")]
 	[HttpDelete("{id:guid}/fares/{fareId:guid}")]
 	public async Task<ActionResult> DeleteFare(Guid id, Guid fareId)

@@ -7,6 +7,9 @@ namespace OnlineTravel.Api.Controllers;
 [Route("api/v1/categories")]
 public class CategoriesController : BaseApiController
 {
+	/// <summary>
+	/// Get a list of categories filtered by their type (e.g., Flight, Hotel).
+	/// </summary>
 	[HttpGet("by-type")]
 	public async Task<ActionResult> GetByType([FromQuery] CategoryType type)
 	{

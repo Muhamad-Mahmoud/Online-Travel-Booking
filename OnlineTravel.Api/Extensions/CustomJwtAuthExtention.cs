@@ -11,9 +11,55 @@ namespace OnlineTravel.Api.Extensions
 		{
 			services.AddSwaggerGen(options =>
 			{
-				// Use fully qualified type names to avoid schema ID collisions
-				// (e.g., Create.MoneyFormModel vs Update.MoneyFormModel).
-				options.CustomSchemaIds(type => (type.FullName ?? type.Name).Replace("+", "."));
+				// Use unified request names (replace internal "Command" with public "Request")
+				options.CustomSchemaIds(type => type.Name.Replace("Command", "Request"));
+
+				// Order endpoints by business flow, then by HTTP method
+				options.OrderActionsBy(apiDesc =>
+				{
+					var controllerOrder = new Dictionary<string, int>
+					{
+						{ "Auth", 1 },
+						{ "Bookings", 2 },
+						{ "Payments", 3 },
+						{ "Flights", 4 },
+						{ "Hotels", 5 },
+						{ "Tours", 6 },
+						{ "TourReviews", 7 },
+						{ "Cars", 8 },
+						{ "CarBrands", 9 },
+						{ "CarPricingTiers", 10 },
+						{ "Carriers", 11 },
+						{ "Airports", 12 },
+						{ "Categories", 13 },
+						{ "Favorites", 14 },
+						{ "AdminDashboard", 15 },
+						{ "Upload", 16 },
+						{ "Dev", 17 },
+					};
+
+					var methodOrder = new Dictionary<string, int>
+					{
+						{ "POST", 1 },
+						{ "GET", 2 },
+						{ "PUT", 3 },
+						{ "PATCH", 4 },
+						{ "DELETE", 5 },
+					};
+
+					var controller = apiDesc.ActionDescriptor.RouteValues["controller"] ?? "";
+					var action = apiDesc.ActionDescriptor.RouteValues["action"] ?? "";
+					var method = apiDesc.HttpMethod ?? "GET";
+
+					var cOrder = controllerOrder.TryGetValue(controller, out var co) ? co : 999;
+					var mOrder = methodOrder.TryGetValue(method, out var mo) ? mo : 9;
+
+					return $"{cOrder:D3}_{mOrder}_{action}";
+				});
+
+				var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+				var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+				options.IncludeXmlComments(xmlPath);
 
 				options.SwaggerDoc("v1", new OpenApiInfo
 				{

@@ -12,6 +12,9 @@ namespace OnlineTravel.Api.Controllers;
 [Authorize(Roles = "Admin")]
 public class CarPricingTiersController : BaseApiController
 {
+	/// <summary>
+	/// List pricing tiers for cars (Admin only).
+	/// </summary>
 	[HttpGet]
 	public async Task<ActionResult> GetAll([FromQuery] Guid? carId = null)
 	{
@@ -19,6 +22,9 @@ public class CarPricingTiersController : BaseApiController
 		return HandleResult(result);
 	}
 
+	/// <summary>
+	/// Get a specific car pricing tier by ID (Admin only).
+	/// </summary>
 	[HttpGet("{id:guid}")]
 	public async Task<ActionResult> GetById(Guid id)
 	{
@@ -26,6 +32,9 @@ public class CarPricingTiersController : BaseApiController
 		return HandleResult(result);
 	}
 
+	/// <summary>
+	/// Create a new car pricing tier (Admin only).
+	/// </summary>
 	[HttpPost]
 	public async Task<ActionResult> Create([FromBody] CreateCarPricingTierCommand command)
 	{
@@ -33,6 +42,9 @@ public class CarPricingTiersController : BaseApiController
 		return HandleResult(result);
 	}
 
+	/// <summary>
+	/// Update an existing car pricing tier (Admin only).
+	/// </summary>
 	[HttpPut("{id:guid}")]
 	public async Task<ActionResult> Update(Guid id, [FromBody] UpdateCarPricingTierCommand command)
 	{
@@ -41,6 +53,9 @@ public class CarPricingTiersController : BaseApiController
 		return HandleResult(result);
 	}
 
+	/// <summary>
+	/// Delete a car pricing tier (Admin only).
+	/// </summary>
 	[HttpDelete("{id:guid}")]
 	public async Task<ActionResult> Delete(Guid id)
 	{
