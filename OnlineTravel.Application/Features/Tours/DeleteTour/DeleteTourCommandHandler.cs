@@ -23,7 +23,7 @@ namespace OnlineTravel.Application.Features.Tours.DeleteTour
 			}
 
 			_unitOfWork.Repository<Tour>().Delete(tour);
-			var affectedRows = await _unitOfWork.Complete();
+			var affectedRows = await _unitOfWork.SaveChangesAsync();
 			if (affectedRows <= 0)
 			{
 				return Result<bool>.Failure(Error.InternalServer("Failed to delete tour."));

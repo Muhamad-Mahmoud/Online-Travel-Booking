@@ -1,50 +1,49 @@
-using AutoMapper;
+using Mapster;
 using OnlineTravel.Application.Features.Hotels.Shared;
-using OnlineTravel.Application.Features.Reviews.Shared;
 using OnlineTravel.Application.Features.Hotels.Public.SearchHotels;
+using OnlineTravel.Application.Features.Reviews.Shared;
 using OnlineTravel.Domain.Entities.Hotels;
 using OnlineTravel.Domain.Entities.Reviews;
 
-namespace OnlineTravel.Application.Features.Hotels.Mapping
+namespace OnlineTravel.Application.Features.Hotels.Mapping;
+
+public class HotelMappingConfig : IRegister
 {
-    public class HotelMappingProfile : Profile
-    {
-        public HotelMappingProfile()
-        {
-            CreateMap<Hotel, HotelSearchResponse>()
-                .ForMember(d => d.Latitude, opt => opt.MapFrom(s => s.Address != null && s.Address.Coordinates != null ? s.Address.Coordinates.Y : 0))
-                .ForMember(d => d.Longitude, opt => opt.MapFrom(s => s.Address != null && s.Address.Coordinates != null ? s.Address.Coordinates.X : 0))
-                .ForMember(d => d.MinPrice, opt => opt.MapFrom(s => s.Rooms.Any() ? s.Rooms.Min(r => r.BasePricePerNight.Amount) : 0m))
-                .ForMember(d => d.TotalRooms, opt => opt.MapFrom(s => s.Rooms.Count))
-                .ForMember(d => d.City, opt => opt.MapFrom(s => s.Address != null ? s.Address.City ?? "" : ""))
-                .ForMember(d => d.Country, opt => opt.MapFrom(s => s.Address != null ? s.Address.Country ?? "" : ""))
-                .ForMember(d => d.MainImage, opt => opt.MapFrom(s => s.MainImageUrl ?? ""))
-                .ForMember(d => d.Rating, opt => opt.MapFrom(s => s.Rating != null ? s.Rating.Value : 0m));
+	public void Register(TypeAdapterConfig config)
+	{
+		config.NewConfig<Hotel, HotelSearchResponse>()
+			.Map(d => d.Latitude, s => s.Address != null && s.Address.Coordinates != null ? s.Address.Coordinates.Y : 0)
+			.Map(d => d.Longitude, s => s.Address != null && s.Address.Coordinates != null ? s.Address.Coordinates.X : 0)
+			.Map(d => d.MinPrice, s => s.Rooms.Any() ? s.Rooms.Min(r => r.BasePricePerNight.Amount) : 0m)
+			.Map(d => d.TotalRooms, s => s.Rooms.Count)
+			.Map(d => d.City, s => s.Address != null ? s.Address.City ?? "" : "")
+			.Map(d => d.Country, s => s.Address != null ? s.Address.Country ?? "" : "")
+			.Map(d => d.MainImage, s => s.MainImageUrl ?? "")
+			.Map(d => d.Rating, s => s.Rating != null ? s.Rating.Value : 0m);
 
-            CreateMap<Hotel, HotelDetailsResponse>()
-                .ForMember(d => d.Latitude, opt => opt.MapFrom(s => s.Address != null && s.Address.Coordinates != null ? s.Address.Coordinates.Y : 0))
-                .ForMember(d => d.Longitude, opt => opt.MapFrom(s => s.Address != null && s.Address.Coordinates != null ? s.Address.Coordinates.X : 0))
-                .ForMember(d => d.ReviewCount, opt => opt.MapFrom(s => s.Reviews.Count))
-                .ForMember(d => d.MainImage, opt => opt.MapFrom(s => s.MainImageUrl ?? ""))
-                .ForMember(d => d.Rating, opt => opt.MapFrom(s => s.Rating != null ? s.Rating.Value : 0m))
-                .ForMember(d => d.Street, opt => opt.MapFrom(s => s.Address != null ? s.Address.Street ?? "" : ""))
-                .ForMember(d => d.City, opt => opt.MapFrom(s => s.Address != null ? s.Address.City ?? "" : ""))
-                .ForMember(d => d.State, opt => opt.MapFrom(s => s.Address != null ? s.Address.State ?? "" : ""))
-                .ForMember(d => d.Country, opt => opt.MapFrom(s => s.Address != null ? s.Address.Country ?? "" : ""))
-                .ForMember(d => d.PostalCode, opt => opt.MapFrom(s => s.Address != null ? s.Address.PostalCode ?? "" : ""))
-                .ForMember(d => d.ContactPhone, opt => opt.MapFrom(s => s.ContactInfo != null && s.ContactInfo.Phone != null ? s.ContactInfo.Phone.Value : ""))
-                .ForMember(d => d.ContactEmail, opt => opt.MapFrom(s => s.ContactInfo != null && s.ContactInfo.Email != null ? s.ContactInfo.Email.Value : ""))
-                .ForMember(d => d.Website, opt => opt.MapFrom(s => s.ContactInfo != null && s.ContactInfo.Website != null ? s.ContactInfo.Website.Value : ""))
-                .ForMember(d => d.CheckInTime, opt => opt.MapFrom(s => s.CheckInTime.ToString()))
-                .ForMember(d => d.CheckOutTime, opt => opt.MapFrom(s => s.CheckOutTime.ToString()))
-                .ForMember(d => d.Rooms, opt => opt.MapFrom(s => s.Rooms))
-                .ForMember(d => d.Gallery, opt => opt.Ignore());
+		config.NewConfig<Hotel, HotelDetailsResponse>()
+			.Map(d => d.Latitude, s => s.Address != null && s.Address.Coordinates != null ? s.Address.Coordinates.Y : 0)
+			.Map(d => d.Longitude, s => s.Address != null && s.Address.Coordinates != null ? s.Address.Coordinates.X : 0)
+			.Map(d => d.ReviewCount, s => s.Reviews.Count)
+			.Map(d => d.MainImage, s => s.MainImageUrl ?? "")
+			.Map(d => d.Rating, s => s.Rating != null ? s.Rating.Value : 0m)
+			.Map(d => d.Street, s => s.Address != null ? s.Address.Street ?? "" : "")
+			.Map(d => d.City, s => s.Address != null ? s.Address.City ?? "" : "")
+			.Map(d => d.State, s => s.Address != null ? s.Address.State ?? "" : "")
+			.Map(d => d.Country, s => s.Address != null ? s.Address.Country ?? "" : "")
+			.Map(d => d.PostalCode, s => s.Address != null ? s.Address.PostalCode ?? "" : "")
+			.Map(d => d.ContactPhone, s => s.ContactInfo != null && s.ContactInfo.Phone != null ? s.ContactInfo.Phone.Value : "")
+			.Map(d => d.ContactEmail, s => s.ContactInfo != null && s.ContactInfo.Email != null ? s.ContactInfo.Email.Value : "")
+			.Map(d => d.Website, s => s.ContactInfo != null && s.ContactInfo.Website != null ? s.ContactInfo.Website.Value : "")
+			.Map(d => d.CheckInTime, s => s.CheckInTime.ToString())
+			.Map(d => d.CheckOutTime, s => s.CheckOutTime.ToString())
+			.Map(d => d.Rooms, s => s.Rooms)
+			.Ignore(d => d.Gallery);
 
-            CreateMap<Review, OnlineTravel.Application.Features.Hotels.Shared.ReviewResponse>();
+		config.NewConfig<Review, OnlineTravel.Application.Features.Hotels.Shared.ReviewResponse>();
 
-            CreateMap<Room, RoomResponse>()
-                .ForMember(d => d.BasePricePerNight, opt => opt.MapFrom(s => s.BasePricePerNight.Amount))
-                .ForMember(d => d.Photos, opt => opt.MapFrom(s => s.Photos.Select(p => p.Value).ToList()));
-        }
-    }
+		config.NewConfig<Room, RoomResponse>()
+			.Map(d => d.BasePricePerNight, s => s.BasePricePerNight.Amount)
+			.Map(d => d.Photos, s => s.Photos.Select(p => p.Value).ToList());
+	}
 }

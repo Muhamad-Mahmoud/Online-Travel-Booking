@@ -38,5 +38,6 @@ namespace OnlineTravel.Domain.ErrorHandling
 
 		public static Result<TValue> Success(TValue value) => new(value, true, Error.None);
 		public static new Result<TValue> Failure(Error error) => new(default, false, error);
+		public static Result<TValue> Failure(string description) => new(default, false, Error.Validation(description));
 	}
 }

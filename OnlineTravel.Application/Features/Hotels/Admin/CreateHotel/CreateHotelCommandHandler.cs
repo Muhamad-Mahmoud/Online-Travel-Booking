@@ -1,6 +1,7 @@
 using MediatR;
 using NetTopologySuite.Geometries;
 using OnlineTravel.Application.Common;
+using OnlineTravel.Domain.ErrorHandling;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 using OnlineTravel.Domain.Entities.Hotels;
@@ -41,7 +42,7 @@ namespace OnlineTravel.Application.Features.Hotels.Admin.CreateHotel
 			);
 
 			await _unitOfWork.Hotels.AddAsync(hotel);
-			await _unitOfWork.Complete();
+			await _unitOfWork.SaveChangesAsync();
 
 			var response = new CreateHotelResponse
 			{

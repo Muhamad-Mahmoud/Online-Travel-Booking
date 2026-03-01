@@ -1,20 +1,19 @@
-using AutoMapper;
+using Mapster;
 using OnlineTravel.Application.Features.Tours.GetAllTours;
 using OnlineTravel.Application.Features.Tours.GetTourById;
 using OnlineTravel.Application.Features.Tours.GetTourById.DTOs;
 using OnlineTravel.Domain.Entities.Tours;
 
-namespace OnlineTravel.Application.Features.Tours.Mapping
+namespace OnlineTravel.Application.Features.Tours.Mapping;
+
+public class TourMappingConfig : IRegister
 {
-	public class TourMappingProfile : Profile
+	public void Register(TypeAdapterConfig config)
 	{
-		public TourMappingProfile()
-		{
-			CreateMap<Tour, TourResponse>();
-			CreateMap<Tour, TourDetailsResponse>();
-			CreateMap<TourActivity, TourActivityResponse>();
-			CreateMap<TourImage, TourImageResponse>();
-			CreateMap<TourPriceTier, TourPriceTierResponse>();
-		}
+		config.NewConfig<Tour, TourResponse>();
+		config.NewConfig<Tour, TourDetailsResponse>();
+		config.NewConfig<TourActivity, TourActivityResponse>();
+		config.NewConfig<TourImage, TourImageResponse>();
+		config.NewConfig<TourPriceTier, TourPriceTierResponse>();
 	}
 }

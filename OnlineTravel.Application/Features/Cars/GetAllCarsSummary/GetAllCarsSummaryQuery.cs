@@ -1,6 +1,7 @@
 using MediatR;
 using OnlineTravel.Domain.Enums;
 using OnlineTravel.Application.Common;
+using OnlineTravel.Domain.ErrorHandling;
 using OnlineTravel.Application.Features.Cars.Shared;
 
 namespace OnlineTravel.Application.Features.Cars.GetAllCarsSummary;

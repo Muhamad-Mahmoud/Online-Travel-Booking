@@ -21,6 +21,7 @@ using OnlineTravel.Domain.Entities.Flights;
 using OnlineTravel.Domain.Entities;
 using OnlineTravel.Domain.Enums;
 using OnlineTravel.Mvc.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace OnlineTravel.Mvc.Controllers;
 
@@ -211,8 +212,8 @@ public class FlightsController : BaseController
 		{ 
 			Id = dto.Id, 
 			Name = dto.Name, 
-			Code = OnlineTravel.Domain.Entities.Flights.ValueObjects.IataCode.Create(dto.Code),
-			Address = new OnlineTravel.Domain.Entities._Shared.ValueObjects.Address(null, dto.City, null, dto.Country, null, null)
+			Code = Domain.Entities.Flights.ValueObjects.IataCode.Create(dto.Code),
+			Address = new Domain.Entities._Shared.ValueObjects.Address(null, dto.City, null, dto.Country, null, null)
 		}).ToList();
 
 		var totalCount = airports.Count; 
@@ -280,7 +281,7 @@ public class FlightsController : BaseController
 	{
 		var result = await Mediator.Send(new GetAllCarriersQuery());
 		var carriers = result.Value ?? [];
-		var paginatedResult = new PaginatedResult<OnlineTravel.Domain.Entities.Flights.Carrier>(pageIndex, pageSize, carriers.Count, [.. carriers.Skip((pageIndex - 1) * pageSize).Take(pageSize)]);
+		var paginatedResult = new PaginatedResult<Carrier>(pageIndex, pageSize, carriers.Count, [.. carriers.Skip((pageIndex - 1) * pageSize).Take(pageSize)]);
 
 		return View("~/Views/Flights/Carriers/Index.cshtml", paginatedResult);
 	}
@@ -329,14 +330,14 @@ public class FlightsController : BaseController
 
 	private async Task PopulateEditViewBags()
 	{
-		var carriers = await Mediator.Send(new OnlineTravel.Application.Features.Flights.Carrier.GetAllCarriers.GetAllCarriersQuery());
-		var airports = await Mediator.Send(new OnlineTravel.Application.Features.Flights.Airport.GetAllAirports.GetAllAirportsQuery());
+		var carriers = await Mediator.Send(new GetAllCarriersQuery());
+		var airports = await Mediator.Send(new GetAllAirportsQuery());
 		var categories = await Mediator.Send(new GetCategoriesByTypeQuery(CategoryType.Flight));
 
-		ViewBag.Carriers = carriers.IsSuccess ? new Microsoft.AspNetCore.Mvc.Rendering.SelectList(carriers.Value, "Id", "Name") : null;
-		ViewBag.Airports = airports.IsSuccess ? new Microsoft.AspNetCore.Mvc.Rendering.SelectList(airports.Value, "Id", "Name") : null;
-		ViewBag.Categories = categories.IsSuccess ? new Microsoft.AspNetCore.Mvc.Rendering.SelectList(categories.Value, "Id", "Title") : null;
-		ViewBag.Statuses = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(Enum.GetValues<FlightStatus>());
+		ViewBag.Carriers = carriers.IsSuccess ? new SelectList(carriers.Value, "Id", "Name") : null;
+		ViewBag.Airports = airports.IsSuccess ? new SelectList(airports.Value, "Id", "Name") : null;
+		ViewBag.Categories = categories.IsSuccess ? new SelectList(categories.Value, "Id", "Title") : null;
+		ViewBag.Statuses = new SelectList(Enum.GetValues<FlightStatus>());
 	}
 }
 

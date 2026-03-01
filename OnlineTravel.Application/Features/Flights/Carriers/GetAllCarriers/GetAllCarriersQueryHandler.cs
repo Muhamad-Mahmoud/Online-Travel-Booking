@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using OnlineTravel.Application.Common;
+using OnlineTravel.Domain.ErrorHandling;
 using OnlineTravel.Application.Interfaces.Persistence;
 
 namespace OnlineTravel.Application.Features.Flights.Carrier.GetAllCarriers;

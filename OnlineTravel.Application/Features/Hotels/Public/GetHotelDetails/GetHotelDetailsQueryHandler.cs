@@ -1,6 +1,7 @@
-using AutoMapper;
+using Mapster;
 using MediatR;
 using OnlineTravel.Application.Common;
+using OnlineTravel.Domain.ErrorHandling;
 using OnlineTravel.Application.Features.Hotels.Dtos;
 using OnlineTravel.Application.Features.Hotels.Shared;
 using OnlineTravel.Application.Interfaces.Persistence;
@@ -11,12 +12,10 @@ namespace OnlineTravel.Application.Features.Hotels.Public.GetHotelDetails
 	public class GetHotelDetailsQueryHandler : IRequestHandler<GetHotelDetailsQuery, Result<HotelDetailsResponse>>
 	{
 		private readonly IUnitOfWork _unitOfWork;
-		private readonly IMapper _mapper;
 
-		public GetHotelDetailsQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
+		public GetHotelDetailsQueryHandler(IUnitOfWork unitOfWork)
 		{
 			_unitOfWork = unitOfWork;
-			_mapper = mapper;
 		}
 
 		public async Task<Result<HotelDetailsResponse>> Handle(GetHotelDetailsQuery request, CancellationToken cancellationToken)
@@ -26,7 +25,7 @@ namespace OnlineTravel.Application.Features.Hotels.Public.GetHotelDetails
 			if (hotel == null)
 				return Result<HotelDetailsResponse>.Failure("Hotel not found");
 
-			var dto = _mapper.Map<HotelDetailsResponse>(hotel);
+			var dto = hotel.Adapt<HotelDetailsResponse>();
 
 			return Result<HotelDetailsResponse>.Success(dto);
 		}

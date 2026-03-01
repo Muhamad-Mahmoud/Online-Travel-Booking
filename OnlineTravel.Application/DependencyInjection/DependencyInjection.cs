@@ -21,30 +21,9 @@ public static class DependencyInjection
 		services.AddSingleton(config);
 		services.AddScoped<IMapper, ServiceMapper>();
 
-		// Register AutoMapper
-		services.AddAutoMapper(typeof(DependencyInjection).Assembly);
-
-		// Register FluentValidation validators manually
-		var assembly = typeof(DependencyInjection).Assembly;
-		var validatorType = typeof(IValidator<>);
-
-		var validators = assembly.GetTypes()
-			.Where(t => t.GetInterfaces().Any(i =>
-				i.IsGenericType &&
-				i.GetGenericTypeDefinition() == validatorType))
-			.ToList();
-
-		foreach (var validator in validators)
-		{
-			var validatorInterface = validator.GetInterfaces()
-				.First(i => i.IsGenericType &&
-					i.GetGenericTypeDefinition() == validatorType);
-			services.AddScoped(validatorInterface, validator);
-		}
-
-		// Register Pipeline Behaviors for automatic validation
-		services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+		// Register FluentValidation + Pipeline Behavior
 		services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
+		services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
 
 		// Register Business Services

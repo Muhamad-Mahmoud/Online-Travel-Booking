@@ -50,7 +50,7 @@ namespace OnlineTravel.Application.Features.Tours.CreateTour
 			}
 
 			await _unitOfWork.Repository<Tour>().AddAsync(tour, cancellationToken);
-			var affectedRows = await _unitOfWork.Complete();
+			var affectedRows = await _unitOfWork.SaveChangesAsync();
 			if (affectedRows <= 0)
 			{
 				return Result<Guid>.Failure(Error.InternalServer("Failed to create tour."));

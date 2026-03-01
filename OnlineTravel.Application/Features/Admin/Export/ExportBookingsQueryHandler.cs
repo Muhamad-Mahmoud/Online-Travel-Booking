@@ -1,6 +1,7 @@
 using System.Text;
 using MediatR;
 using OnlineTravel.Application.Common;
+using OnlineTravel.Domain.ErrorHandling;
 using OnlineTravel.Application.Features.Bookings.Helpers;
 using OnlineTravel.Application.Features.Bookings.Specifications.Queries;
 using OnlineTravel.Application.Interfaces.Persistence;
@@ -40,7 +41,7 @@ public class ExportBookingsQueryHandler : IRequestHandler<ExportBookingsQuery, R
 			// Handle lazy expiration for this batch
 			if (BookingExpirationHelper.MarkExpiredBookings(batch))
 			{
-				await _unitOfWork.Complete();
+				await _unitOfWork.SaveChangesAsync();
 			}
 
 			foreach (var b in batch)

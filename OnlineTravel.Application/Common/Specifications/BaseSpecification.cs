@@ -23,11 +23,6 @@ namespace OnlineTravel.Application.Common.Specifications
 			Criteria = criteria;
 		}
 
-		//protected void AddCriteria(Expression<Func<T, bool>> criteria)
-		//{
-		//    Criteria = criteria;
-		//}
-
 
 		protected void AddIncludes(Expression<Func<T, object>> includeExpression)
 		{
@@ -51,11 +46,6 @@ namespace OnlineTravel.Application.Common.Specifications
 		}
 
 		public void AddOrderByDesc(Expression<Func<T, object>> orderByDescExpression)
-		{
-			OrderByDescending = orderByDescExpression;
-		}
-
-		protected void ApplyOrderByDescending(Expression<Func<T, object>> orderByDescExpression)
 		{
 			OrderByDescending = orderByDescExpression;
 		}

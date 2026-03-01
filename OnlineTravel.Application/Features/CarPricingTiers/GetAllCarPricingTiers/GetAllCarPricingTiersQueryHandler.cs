@@ -22,10 +22,10 @@ namespace OnlineTravel.Application.Features.CarPricingTiers.GetAllCarPricingTier
 			GetAllCarPricingTiersQuery request,
 			CancellationToken cancellationToken)
 		{
-			// بناء الـ Specification مع الفلترة
+			// Build specification with filters
 			var spec = new CarPricingTierSpecification(request.CarId);
 
-			// جلب العناصر بدون Pagination
+			// Fetch items without pagination
 			var items = await _unitOfWork.Repository<CarPricingTier>()
 				.GetAllWithSpecAsync(spec, cancellationToken);
 

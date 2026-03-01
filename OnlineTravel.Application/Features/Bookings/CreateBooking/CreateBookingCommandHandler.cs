@@ -1,15 +1,12 @@
-using AutoMapper;
+using Mapster;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using OnlineTravel.Application.Features.Bookings.Shared;
 using OnlineTravel.Application.Features.Bookings.Strategies;
-
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Application.Interfaces.Services;
 using OnlineTravel.Domain.Entities.Bookings;
 using OnlineTravel.Domain.Entities.Core;
-using OnlineTravel.Domain.Entities.Users;
 using OnlineTravel.Domain.ErrorHandling;
 
 namespace OnlineTravel.Application.Features.Bookings.CreateBooking;
@@ -17,24 +14,21 @@ namespace OnlineTravel.Application.Features.Bookings.CreateBooking;
 public sealed class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand, Result<CreateBookingResponse>>
 {
 	private readonly IUnitOfWork _unitOfWork;
-	private readonly UserManager<AppUser> _userManager;
+	private readonly IUserService _userService;
 	private readonly IEnumerable<IBookingStrategy> _bookingStrategies;
-	private readonly IMapper _mapper;
 	private readonly IPaymentService _paymentService;
 	private readonly ILogger<CreateBookingCommandHandler> _logger;
 
 	public CreateBookingCommandHandler(
 		IUnitOfWork unitOfWork,
-		UserManager<AppUser> userManager,
+		IUserService userService,
 		IEnumerable<IBookingStrategy> bookingStrategies,
-		IMapper mapper,
 		IPaymentService paymentService,
 		ILogger<CreateBookingCommandHandler> logger)
 	{
 		_unitOfWork = unitOfWork;
-		_userManager = userManager;
+		_userService = userService;
 		_bookingStrategies = bookingStrategies;
-		_mapper = mapper;
 		_paymentService = paymentService;
 		_logger = logger;
 	}
@@ -50,8 +44,7 @@ public sealed class CreateBookingCommandHandler : IRequestHandler<CreateBookingC
 			await using var transaction = await _unitOfWork.BeginTransactionAsync();
 
 			// Validate User
-			var user = await _userManager.FindByIdAsync(request.UserId.ToString());
-			if (user == null)
+			if (!await _userService.UserExistsAsync(request.UserId))
 			{
 				_logger.LogWarning("Booking failed: User {UserId} not found", request.UserId);
 				return Result<CreateBookingResponse>.Failure(Error.NotFound($"User {request.UserId} was not found."));
@@ -92,10 +85,10 @@ public sealed class CreateBookingCommandHandler : IRequestHandler<CreateBookingC
 
 			// Save and Finalize DB Work
 			await _unitOfWork.Repository<BookingEntity>().AddAsync(booking);
-			await _unitOfWork.Complete();
-			await transaction.CommitAsync();
+			await _unitOfWork.SaveChangesAsync();
+			await _unitOfWork.CommitTransactionAsync();
 		}
-		catch (Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException ex)
+		catch (Exception ex) when (ex.GetType().Name == "DbUpdateConcurrencyException")
 		{
 			_logger.LogError(ex, "Concurrency conflict during booking creation for Item {ItemId}", request.ItemId);
 			return Result<CreateBookingResponse>.Failure(Error.Validation("The item is no longer available. Someone else might have booked it just now. Please try again."));
@@ -123,7 +116,7 @@ public sealed class CreateBookingCommandHandler : IRequestHandler<CreateBookingC
 		try
 		{
 			booking.UpdateStripeInfo(paymentData.StripeSessionId!, paymentData.PaymentIntentId!);
-			await _unitOfWork.Complete();
+			await _unitOfWork.SaveChangesAsync();
 
 			_logger.LogInformation("Booking {BookingId} metadata updated with Stripe Session {SessionId}", booking.Id, paymentData.StripeSessionId);
 		}
@@ -132,7 +125,7 @@ public sealed class CreateBookingCommandHandler : IRequestHandler<CreateBookingC
 			_logger.LogError(ex, "Failed to update Booking {BookingId} with Stripe IDs, but session was created.", booking.Id);
 		}
 
-		var bookingResponse = _mapper.Map<BookingResponse>(booking);
+		var bookingResponse = booking.Adapt<BookingResponse>();
 		bookingResponse.PaymentUrl = paymentData.PaymentUrl;
 
 		return Result<CreateBookingResponse>.Success(new CreateBookingResponse

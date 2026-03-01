@@ -48,7 +48,7 @@ namespace OnlineTravel.Application.Features.Flights.Flights.CreateFlight
 
 			// 3. Persist via Unit of Work
 			await _unitOfWork.Repository<OnlineTravel.Domain.Entities.Flights.Flight>().AddAsync(flight);
-			var affectedRows = await _unitOfWork.Complete();
+			var affectedRows = await _unitOfWork.SaveChangesAsync();
 			if (affectedRows <= 0)
 			{
 				return Result<Guid>.Failure(Error.InternalServer("Failed to create flight."));

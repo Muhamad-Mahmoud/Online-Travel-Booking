@@ -5,6 +5,8 @@ using OnlineTravel.Application.Features.Hotels.Admin.ConfigureSeasonalPricing;
 using OnlineTravel.Application.Features.Hotels.Admin.CreateHotel;
 using OnlineTravel.Application.Features.Hotels.Admin.EditRoom;
 using OnlineTravel.Application.Features.Hotels.Admin.ManageAvailability;
+using OnlineTravel.Application.Features.Hotels.Admin.GetHotels;
+using OnlineTravel.Application.Features.Hotels.Admin.DeleteRoom;
 using OnlineTravel.Application.Features.Hotels.Admin.UpdateHotel;
 using OnlineTravel.Application.Features.Hotels.Public.AddReview;
 using OnlineTravel.Application.Features.Hotels.Public.GetHotelDetails;
@@ -68,6 +70,14 @@ public class HotelsController : BaseApiController
 	}
 
 	[Authorize(Roles = "Admin")]
+	[HttpGet("admin")]
+	public async Task<IActionResult> GetAllAdmin([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10, [FromQuery] string? search = null)
+	{
+		var result = await Mediator.Send(new GetHotelsQuery(pageIndex, pageSize, search));
+		return HandleResult(result);
+	}
+
+	[Authorize(Roles = "Admin")]
 	[HttpPost("{id:guid}/rooms")]
 	public async Task<IActionResult> AddRoom(Guid id, [FromBody] AddRoomCommand command)
 	{
@@ -100,6 +110,14 @@ public class HotelsController : BaseApiController
 	{
 		command.RoomId = roomId;
 		var result = await Mediator.Send(command);
+		return HandleResult(result);
+	}
+
+	[Authorize(Roles = "Admin")]
+	[HttpDelete("rooms/{roomId:guid}")]
+	public async Task<IActionResult> DeleteRoom(Guid roomId)
+	{
+		var result = await Mediator.Send(new DeleteRoomCommand { Id = roomId });
 		return HandleResult(result);
 	}
 }

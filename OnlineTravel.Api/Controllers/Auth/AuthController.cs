@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 using OnlineTravel.Application.Features.Auth.Account;
 using OnlineTravel.Application.Features.Auth.Login;
 using OnlineTravel.Application.Features.Auth.Password;
@@ -95,14 +96,17 @@ namespace OnlineTravel.Api.Controllers.Auth
 		[HttpGet("google-response")]
 		public async Task<IActionResult> GoogleResponse()
 		{
-			var result = await HttpContext.AuthenticateAsync("Google");
+			var result = await HttpContext.AuthenticateAsync(IdentityConstants.ExternalScheme);
 
 			if (!result.Succeeded)
-				return BadRequest("Google authentication failed");
+				return BadRequest(new { Message = "Google authentication failed" });
 
 			var email = result.Principal.FindFirst(ClaimTypes.Email)?.Value;
 
-			var response = await _authService.GoogleLoginAsync(email!);
+			if (string.IsNullOrEmpty(email))
+				return BadRequest(new { Message = "Email claim not found from Google" });
+
+			var response = await _authService.GoogleLoginAsync(email);
 
 			if (!response.IsSuccess)
 				return BadRequest(response);
@@ -110,8 +114,6 @@ namespace OnlineTravel.Api.Controllers.Auth
 			var frontendUrl = _configuration["AppSettings:FrontendBaseUrl"];
 
 			return Redirect($"{frontendUrl}/auth/google-success#token={response.Token}");
-
-
 		}
 
 		[Authorize]

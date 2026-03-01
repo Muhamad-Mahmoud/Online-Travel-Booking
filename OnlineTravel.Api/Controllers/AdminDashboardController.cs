@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnlineTravel.Application.Features.Admin.Dashboard;
 using OnlineTravel.Domain.Enums;
-using AdminGetCategoriesByTypeQuery = OnlineTravel.Application.Features.Admin.GetCategoriesByType.GetCategoriesByTypeQuery;
+using AdminGetCategoriesByTypeQuery = OnlineTravel.Application.Features.Categories.GetCategoriesByType.GetCategoriesByTypeQuery;
 
 namespace OnlineTravel.Api.Controllers;
 

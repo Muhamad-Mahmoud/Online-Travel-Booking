@@ -1,4 +1,4 @@
-using OnlineTravel.Application.Features.Auth.ConfirmEmail;
+using OnlineTravel.Application.Features.Auth.Email;
 using OnlineTravel.Application.Features.Auth.Login;
 using OnlineTravel.Application.Features.Auth.Password;
 using OnlineTravel.Application.Features.Auth.Register;

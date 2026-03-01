@@ -1,4 +1,4 @@
-namespace OnlineTravel.Application.Features.Auth.ConfirmEmail
+namespace OnlineTravel.Application.Features.Auth.Email
 {
 	public class ConfirmEmailResponse
 	{

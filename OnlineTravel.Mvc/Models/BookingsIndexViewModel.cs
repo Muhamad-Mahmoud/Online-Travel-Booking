@@ -1,6 +1,7 @@
 namespace OnlineTravel.Mvc.Models;
 
 using OnlineTravel.Application.Common;
+using OnlineTravel.Domain.ErrorHandling;
 using OnlineTravel.Application.Features.Bookings.Shared;
 
 

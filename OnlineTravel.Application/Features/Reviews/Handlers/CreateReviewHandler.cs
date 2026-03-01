@@ -1,5 +1,6 @@
 using MediatR;
 using OnlineTravel.Application.Common;
+using OnlineTravel.Domain.ErrorHandling;
 using OnlineTravel.Application.Features.Reviews.Commands;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities.Reviews;
@@ -49,7 +50,7 @@ public class CreateReviewHandler : IRequestHandler<CreateReviewCommand, Result<G
 		};
 
 		await _unitOfWork.Repository<Review>().AddAsync(review);
-		await _unitOfWork.Complete();
+		await _unitOfWork.SaveChangesAsync();
 
 		return Result<Guid>.Success(review.Id);
 	}

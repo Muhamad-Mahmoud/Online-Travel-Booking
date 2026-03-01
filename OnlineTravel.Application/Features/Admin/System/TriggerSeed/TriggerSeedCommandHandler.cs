@@ -1,10 +1,11 @@
 using MediatR;
 using OnlineTravel.Application.Common;
+using OnlineTravel.Domain.ErrorHandling;
 using OnlineTravel.Application.Interfaces.Persistence;
 
 namespace OnlineTravel.Application.Features.Admin.System.TriggerSeed
 {
-	public class TriggerSeedCommandHandler : IRequestHandler<TriggerSeedCommand, OnlineTravel.Application.Common.Result<bool>>
+	public class TriggerSeedCommandHandler : IRequestHandler<TriggerSeedCommand, Result<bool>>
 	{
 		private readonly IUnitOfWork _unitOfWork;
 
@@ -13,11 +14,11 @@ namespace OnlineTravel.Application.Features.Admin.System.TriggerSeed
 			_unitOfWork = unitOfWork;
 		}
 
-		public async Task<OnlineTravel.Application.Common.Result<bool>> Handle(TriggerSeedCommand request, CancellationToken cancellationToken)
+		public async Task<Result<bool>> Handle(TriggerSeedCommand request, CancellationToken cancellationToken)
 		{
 			// Logic to trigger seed
 			await Task.CompletedTask;
-			return OnlineTravel.Application.Common.Result<bool>.Success(true);
+			return Result<bool>.Success(true);
 		}
 	}
 }

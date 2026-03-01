@@ -21,13 +21,13 @@ namespace OnlineTravel.Application.Features.CarPricingTiers.UpdateCarPricingTier
 		{
 			try
 			{
-				// 1. البحث عن الكيان
+				// 1. Find the existing entity
 				var entity = await _unitOfWork.Repository<CarPricingTier>()
 					.GetByIdAsync(request.Id, cancellationToken);
 				if (entity is null)
 					return EntityError<CarPricingTier>.NotFound();
 
-				// 2. إذا تغير CarId، تحقق من وجود السيارة الجديدة
+				// 2. If CarId changed, verify the new Car exists
 				if (entity.CarId != request.CarId)
 				{
 					var car = await _unitOfWork.Repository<Car>()
@@ -36,16 +36,16 @@ namespace OnlineTravel.Application.Features.CarPricingTiers.UpdateCarPricingTier
 						return EntityError<Car>.NotFound($"Car with ID {request.CarId} not found");
 				}
 
-				// 3. التحقق من صحة النطاق
+				// 3. Validate the hour range 
 				if (request.FromHours >= request.ToHours)
 					return EntityError<CarPricingTier>.InvalidData("FromHours must be less than ToHours");
 
-				// 4. التحقق من عدم التداخل مع النطاقات الأخرى (باستثناء نفس الكيان)
+				// 4. Check for overlaps with other tiers (excluding self)
 				var overlapSpec = CarPricingTierSpecification.OverlapSpec(
 					request.CarId,
 					request.FromHours,
 					request.ToHours,
-					request.Id); // استبعاد نفس Id
+					request.Id); // exclude self
 
 				var overlapping = await _unitOfWork.Repository<CarPricingTier>()
 					.GetAllWithSpecAsync(overlapSpec, cancellationToken);
@@ -53,7 +53,7 @@ namespace OnlineTravel.Application.Features.CarPricingTiers.UpdateCarPricingTier
 				if (overlapping.Any())
 					return EntityError<CarPricingTier>.InvalidData("This time range overlaps with an existing pricing tier");
 
-				// 5. تحديث البيانات
+				// 5. Update data
 				entity.CarId = request.CarId;
 				entity.FromHours = request.FromHours;
 				entity.ToHours = request.ToHours;
@@ -61,7 +61,7 @@ namespace OnlineTravel.Application.Features.CarPricingTiers.UpdateCarPricingTier
 				entity.UpdatedAt = DateTime.UtcNow;
 
 				_unitOfWork.Repository<CarPricingTier>().Update(entity);
-				await _unitOfWork.Complete();
+				await _unitOfWork.SaveChangesAsync();
 
 				// 6. Return response
 				var response = new UpdateCarPricingTierResponse

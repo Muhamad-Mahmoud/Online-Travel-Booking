@@ -1,5 +1,6 @@
 using MediatR;
 using OnlineTravel.Application.Common;
+using OnlineTravel.Domain.ErrorHandling;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 using OnlineTravel.Domain.Entities.Hotels;
@@ -32,7 +33,7 @@ namespace OnlineTravel.Application.Features.Hotels.Admin.ManageAvailability
 			foreach (var existing in toRemove)
 				_unitOfWork.Repository<RoomAvailability>().Delete(existing);
 			await _unitOfWork.Repository<RoomAvailability>().AddAsync(availability, cancellationToken);
-			await _unitOfWork.Complete();
+			await _unitOfWork.SaveChangesAsync();
 
 			return Result<ManageAvailabilityResponse>.Success(new ManageAvailabilityResponse
 			{

@@ -1,5 +1,6 @@
 using MediatR;
 using OnlineTravel.Application.Common;
+using OnlineTravel.Domain.ErrorHandling;
 
 namespace OnlineTravel.Application.Features.Hotels.Public.SearchHotels
 {

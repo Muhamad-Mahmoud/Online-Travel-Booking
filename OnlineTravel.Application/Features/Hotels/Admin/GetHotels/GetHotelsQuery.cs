@@ -1,5 +1,6 @@
 using MediatR;
 using OnlineTravel.Application.Common;
+using OnlineTravel.Domain.ErrorHandling;
 using OnlineTravel.Domain.Entities.Hotels;
 using OnlineTravel.Domain.Exceptions;
 

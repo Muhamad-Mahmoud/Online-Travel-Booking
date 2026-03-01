@@ -7,11 +7,11 @@ using OnlineTravel.Domain.ErrorHandling;
 
 namespace OnlineTravel.Application.Features.Tours.GetTourById;
 
-public class GetTourByIdHandler(IUnitOfWork unitOfWork) : IRequestHandler<GetTourByIdQuery, OnlineTravel.Application.Common.Result<TourDetailsResponse>>
+public class GetTourByIdHandler(IUnitOfWork unitOfWork) : IRequestHandler<GetTourByIdQuery, Result<TourDetailsResponse>>
 {
 
 
-	public async Task<OnlineTravel.Application.Common.Result<TourDetailsResponse>> Handle(GetTourByIdQuery request, CancellationToken cancellationToken)
+	public async Task<Result<TourDetailsResponse>> Handle(GetTourByIdQuery request, CancellationToken cancellationToken)
 
 	{
 		var spec = new TourWithDetailsSpecification(request.Id);
@@ -19,14 +19,14 @@ public class GetTourByIdHandler(IUnitOfWork unitOfWork) : IRequestHandler<GetTou
 
 		if (tour == null)
 		{
-			return OnlineTravel.Application.Common.Result<TourDetailsResponse>.Failure("Tour not found");
+			return Result<TourDetailsResponse>.Failure("Tour not found");
 		}
 
 
 
 		var lowestPrice = tour.PriceTiers.OrderBy(p => p.Price.Amount).FirstOrDefault()?.Price;
 
-		return OnlineTravel.Application.Common.Result<TourDetailsResponse>.Success(new TourDetailsResponse
+		return Result<TourDetailsResponse>.Success(new TourDetailsResponse
 {
 
 			Id = tour.Id,

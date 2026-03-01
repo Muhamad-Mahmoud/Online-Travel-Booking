@@ -1,6 +1,7 @@
-using AutoMapper;
+using Mapster;
 using MediatR;
 using OnlineTravel.Application.Common;
+using OnlineTravel.Domain.ErrorHandling;
 using OnlineTravel.Application.Features.Hotels.Shared;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
@@ -11,12 +12,10 @@ namespace OnlineTravel.Application.Features.Hotels.Public.GetHotelRooms
 	public class GetHotelRoomsQueryHandler : IRequestHandler<GetHotelRoomsQuery, Result<List<RoomResponse>>>
 	{
 		private readonly IUnitOfWork _unitOfWork;
-		private readonly IMapper _mapper;
 
-		public GetHotelRoomsQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
+		public GetHotelRoomsQueryHandler(IUnitOfWork unitOfWork)
 		{
 			_unitOfWork = unitOfWork;
-			_mapper = mapper;
 		}
 
 		public async Task<Result<List<RoomResponse>>> Handle(GetHotelRoomsQuery request, CancellationToken cancellationToken)
@@ -37,7 +36,7 @@ namespace OnlineTravel.Application.Features.Hotels.Public.GetHotelRooms
 				roomList = roomList.Where(r => r.IsAvailable(dateRange)).ToList();
 			}
 
-			var dtos = _mapper.Map<List<RoomResponse>>(roomList);
+			var dtos = roomList.Adapt<List<RoomResponse>>();
 			if (request.CheckIn.HasValue && request.CheckOut.HasValue && request.CheckOut > request.CheckIn)
 			{
 				var dateRange = new DateRange(request.CheckIn.Value, request.CheckOut.Value);

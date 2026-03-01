@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnlineTravel.Application.Features.Flights.Carrier.CreateCarrier;
 using OnlineTravel.Application.Features.Flights.Carrier.GetCarrierById;
+using OnlineTravel.Application.Features.Flights.Carrier.GetAllCarriers;
+using OnlineTravel.Application.Features.Flights.Carriers.DeleteCarrier;
 
 namespace OnlineTravel.Api.Controllers;
 
@@ -24,6 +26,22 @@ public class CarriersController : BaseApiController
 	public async Task<ActionResult> GetById(Guid id)
 	{
 		var result = await Mediator.Send(new GetCarrierByIdQuery(id));
+		return HandleResult(result);
+	}
+
+	[Authorize(Roles = "Admin")]
+	[HttpGet]
+	public async Task<ActionResult> GetAll()
+	{
+		var result = await Mediator.Send(new GetAllCarriersQuery());
+		return HandleResult(result);
+	}
+
+	[Authorize(Roles = "Admin")]
+	[HttpDelete("{id:guid}")]
+	public async Task<ActionResult> Delete(Guid id)
+	{
+		var result = await Mediator.Send(new DeleteCarrierCommand(id));
 		return HandleResult(result);
 	}
 }

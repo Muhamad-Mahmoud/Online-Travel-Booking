@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore.Storage;
 using OnlineTravel.Domain.Entities._Base;
 
 namespace OnlineTravel.Application.Interfaces.Persistence
@@ -9,8 +8,7 @@ namespace OnlineTravel.Application.Interfaces.Persistence
 		IRoomRepository Rooms { get; }
 		IGenericRepository<T> Repository<T>() where T : BaseEntity;
 		Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
-		Task<int> Complete();
-		Task<IDbContextTransaction> BeginTransactionAsync();
+		Task<IAsyncDisposable> BeginTransactionAsync();
 		Task CommitTransactionAsync();
 		Task RollbackTransactionAsync();
 

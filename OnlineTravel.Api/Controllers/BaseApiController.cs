@@ -2,7 +2,6 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using OnlineTravel.Api.Extensions;
 using OnlineTravel.Domain.ErrorHandling;
-using AppResult = OnlineTravel.Application.Common;
 
 namespace OnlineTravel.Api.Controllers;
 
@@ -31,7 +30,6 @@ public abstract class BaseApiController : ControllerBase
 
 	protected ActionResult HandleResult(Result result) => result.ToResponse();
 	protected ActionResult HandleResult<T>(Result<T> result) => result.ToResponse();
-	protected ActionResult HandleResult<T>(AppResult.Result<T> result) => result.ToResponse();
 
 }
 
