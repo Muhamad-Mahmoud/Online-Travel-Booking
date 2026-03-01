@@ -1,6 +1,7 @@
 using System.Text;
 using MediatR;
 using OnlineTravel.Application.Common;
+using OnlineTravel.Domain.ErrorHandling;
 using OnlineTravel.Application.Features.Bookings.Helpers;
 using OnlineTravel.Application.Features.Bookings.Specifications.Queries;
 using OnlineTravel.Application.Interfaces.Persistence;

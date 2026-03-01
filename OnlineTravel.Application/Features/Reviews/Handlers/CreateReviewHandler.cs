@@ -1,5 +1,6 @@
 using MediatR;
 using OnlineTravel.Application.Common;
+using OnlineTravel.Domain.ErrorHandling;
 using OnlineTravel.Application.Features.Reviews.Commands;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities.Reviews;

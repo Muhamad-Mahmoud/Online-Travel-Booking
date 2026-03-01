@@ -1,6 +1,7 @@
 using Mapster;
 using MediatR;
 using OnlineTravel.Application.Common;
+using OnlineTravel.Domain.ErrorHandling;
 using OnlineTravel.Application.Features.Bookings.Shared;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities.Bookings;
@@ -8,7 +9,7 @@ using OnlineTravel.Domain.Entities.Bookings;
 
 namespace OnlineTravel.Application.Features.Bookings.GetUserBookings
 {
-	public class GetUserBookingsQueryHandler : IRequestHandler<GetUserBookingsQuery, OnlineTravel.Application.Common.Result<PagedResult<AdminBookingResponse>>>
+	public class GetUserBookingsQueryHandler : IRequestHandler<GetUserBookingsQuery, Result<PagedResult<AdminBookingResponse>>>
 	{
 		private readonly IUnitOfWork _unitOfWork;
 
@@ -18,7 +19,7 @@ namespace OnlineTravel.Application.Features.Bookings.GetUserBookings
 		}
 
 
-		public async Task<OnlineTravel.Application.Common.Result<PagedResult<AdminBookingResponse>>> Handle(GetUserBookingsQuery request, CancellationToken cancellationToken)
+		public async Task<Result<PagedResult<AdminBookingResponse>>> Handle(GetUserBookingsQuery request, CancellationToken cancellationToken)
 		{
 			// Simplification for recovery
 			var bookings = await _unitOfWork.Repository<BookingEntity>().GetAllAsync();
@@ -27,7 +28,7 @@ namespace OnlineTravel.Application.Features.Bookings.GetUserBookings
 			var data = userBookings.Skip((request.PageIndex - 1) * request.PageSize).Take(request.PageSize).Adapt<List<AdminBookingResponse>>();
 
 
-			return OnlineTravel.Application.Common.Result<PagedResult<AdminBookingResponse>>.Success(new PagedResult<AdminBookingResponse>(data, userBookings.Count, request.PageIndex, request.PageSize));
+			return Result<PagedResult<AdminBookingResponse>>.Success(new PagedResult<AdminBookingResponse>(data, userBookings.Count, request.PageIndex, request.PageSize));
 		}
 	}
 }

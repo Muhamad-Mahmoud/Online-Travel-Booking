@@ -1,6 +1,7 @@
 using Mapster;
 using MediatR;
 using OnlineTravel.Application.Common;
+using OnlineTravel.Domain.ErrorHandling;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Application.Features.Cars.Specifications;
 using OnlineTravel.Domain.Entities.Cars;

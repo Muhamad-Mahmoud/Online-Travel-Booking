@@ -10,7 +10,7 @@ using OnlineTravel.Domain.ErrorHandling;
 
 namespace OnlineTravel.Application.Features.Bookings.GetBookingById;
 
-public sealed class GetBookingByIdQueryHandler : IRequestHandler<GetBookingByIdQuery, OnlineTravel.Application.Common.Result<AdminBookingResponse>>
+public sealed class GetBookingByIdQueryHandler : IRequestHandler<GetBookingByIdQuery, Result<AdminBookingResponse>>
 {
 	private readonly IUnitOfWork _unitOfWork;
 	private readonly ILogger<GetBookingByIdQueryHandler> _logger;
@@ -23,7 +23,7 @@ public sealed class GetBookingByIdQueryHandler : IRequestHandler<GetBookingByIdQ
 		_logger = logger;
 	}
 
-	public async Task<OnlineTravel.Application.Common.Result<AdminBookingResponse>> Handle(GetBookingByIdQuery request, CancellationToken cancellationToken)
+	public async Task<Result<AdminBookingResponse>> Handle(GetBookingByIdQuery request, CancellationToken cancellationToken)
 	{
 		_logger.LogDebug("Fetching booking details for BookingId {BookingId}", request.BookingId);
 
@@ -34,12 +34,12 @@ public sealed class GetBookingByIdQueryHandler : IRequestHandler<GetBookingByIdQ
 		if (booking is null)
 		{
 			_logger.LogWarning("Booking {BookingId} not found", request.BookingId);
-			return OnlineTravel.Application.Common.Result<AdminBookingResponse>.Failure("The specified booking does not exist.");
+			return Result<AdminBookingResponse>.Failure("The specified booking does not exist.");
 		}
 
 
 		var response = booking.Adapt<AdminBookingResponse>();
 
-		return OnlineTravel.Application.Common.Result<AdminBookingResponse>.Success(response);
+		return Result<AdminBookingResponse>.Success(response);
 	}
 }

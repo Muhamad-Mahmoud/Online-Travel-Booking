@@ -9,11 +9,11 @@ using OnlineTravel.Domain.ErrorHandling;
 
 namespace OnlineTravel.Application.Features.Tours.GetAllTours;
 
-public class GetAllToursHandler(IUnitOfWork unitOfWork) : IRequestHandler<GetAllToursQuery, OnlineTravel.Application.Common.Result<PagedResult<TourResponse>>>
+public class GetAllToursHandler(IUnitOfWork unitOfWork) : IRequestHandler<GetAllToursQuery, Result<PagedResult<TourResponse>>>
 {
 
 
-	public async Task<OnlineTravel.Application.Common.Result<PagedResult<TourResponse>>> Handle(GetAllToursQuery request, CancellationToken cancellationToken)
+	public async Task<Result<PagedResult<TourResponse>>> Handle(GetAllToursQuery request, CancellationToken cancellationToken)
 
 	{
 		var countSpec = new AllToursWithPricingSpecification(request.Search, request.Lat, request.Lon, request.RadiusKm, request.MinPrice, request.MaxPrice, request.Rating, request.City, request.Country, request.SortOrder);
@@ -47,7 +47,7 @@ public class GetAllToursHandler(IUnitOfWork unitOfWork) : IRequestHandler<GetAll
 		}).ToList();
 
 		var result = new PagedResult<TourResponse>(data, totalCount, request.PageIndex, request.PageSize);
-		return OnlineTravel.Application.Common.Result<PagedResult<TourResponse>>.Success(result);
+		return Result<PagedResult<TourResponse>>.Success(result);
 	}
 }
 

@@ -1,6 +1,7 @@
 using Mapster;
 using MediatR;
 using OnlineTravel.Application.Common;
+using OnlineTravel.Domain.ErrorHandling;
 using OnlineTravel.Application.Features.Hotels.Shared;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;

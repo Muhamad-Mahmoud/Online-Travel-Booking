@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using OnlineTravel.Api.Errors;
 using OnlineTravel.Domain.ErrorHandling;
-using AppResult = OnlineTravel.Application.Common;
 
 namespace OnlineTravel.Api.Extensions;
 
@@ -42,24 +41,7 @@ public static class ResultExtension
 			? new ObjectResult(new ApiResponse(statusCode, isSuccess: true)) { StatusCode = statusCode }
 			: result.ToProblem();
 	}
-
-	public static ActionResult ToResponse<T>(this AppResult.Result<T> result, int statusCode = 200)
-	{
-		if (result.IsSuccess)
-		{
-			return new ObjectResult(new ApiResponse<T>(statusCode, result.Value)) { StatusCode = statusCode };
-		}
-
-		var problemDetails = new ProblemDetails
-		{
-			Status = 400,
-			Title = "Bad Request",
-			Detail = result.Error,
-			Extensions = { ["errors"] = result.ValidationErrors ?? [] }
-		};
-
-		return new ObjectResult(problemDetails) { StatusCode = 400 };
-	}
 }
+
 
 

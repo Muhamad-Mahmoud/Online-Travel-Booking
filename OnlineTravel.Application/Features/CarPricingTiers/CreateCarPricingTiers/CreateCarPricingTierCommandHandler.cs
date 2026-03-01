@@ -1,4 +1,5 @@
 using MediatR;
+using OnlineTravel.Domain.ErrorHandling;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Application.Features.CarPricingTiers.Common;
 using OnlineTravel.Domain.Entities.Cars;
@@ -6,7 +7,7 @@ using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 
 namespace OnlineTravel.Application.Features.CarPricingTiers.CreateCarPricingTiers
 {
-	public class CreateCarPricingTierCommandHandler : IRequestHandler<CreateCarPricingTierCommand, OnlineTravel.Application.Common.Result<CreateCarPricingTierResponse>>
+	public class CreateCarPricingTierCommandHandler : IRequestHandler<CreateCarPricingTierCommand, Result<CreateCarPricingTierResponse>>
 	{
 		private readonly IUnitOfWork _unitOfWork;
 
@@ -15,7 +16,7 @@ namespace OnlineTravel.Application.Features.CarPricingTiers.CreateCarPricingTier
 			_unitOfWork = unitOfWork;
 		}
 
-		public async Task<OnlineTravel.Application.Common.Result<CreateCarPricingTierResponse>> Handle(CreateCarPricingTierCommand request, CancellationToken cancellationToken)
+		public async Task<Result<CreateCarPricingTierResponse>> Handle(CreateCarPricingTierCommand request, CancellationToken cancellationToken)
 		{
 			var tier = new CarPricingTier
 			{
@@ -28,7 +29,7 @@ namespace OnlineTravel.Application.Features.CarPricingTiers.CreateCarPricingTier
 			await _unitOfWork.Repository<CarPricingTier>().AddAsync(tier);
 			await _unitOfWork.Complete();
 
-			return OnlineTravel.Application.Common.Result<CreateCarPricingTierResponse>.Success(new CreateCarPricingTierResponse
+			return Result<CreateCarPricingTierResponse>.Success(new CreateCarPricingTierResponse
 			{
 				Id = tier.Id,
 				CarId = tier.CarId,

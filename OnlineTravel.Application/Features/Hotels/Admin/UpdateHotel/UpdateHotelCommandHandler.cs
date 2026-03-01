@@ -1,6 +1,7 @@
 using MediatR;
 using NetTopologySuite.Geometries;
 using OnlineTravel.Application.Common;
+using OnlineTravel.Domain.ErrorHandling;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities._Shared.ValueObjects;
 using OnlineTravel.Domain.Entities.Hotels;

@@ -1,5 +1,6 @@
 using MediatR;
 using OnlineTravel.Application.Common;
+using OnlineTravel.Domain.ErrorHandling;
 using OnlineTravel.Application.Features.Reviews.Queries;
 using OnlineTravel.Application.Features.Reviews.Shared;
 using OnlineTravel.Application.Features.Reviews.Specifications;
@@ -9,11 +10,11 @@ using OnlineTravel.Domain.Enums;
 
 namespace OnlineTravel.Application.Features.Reviews.Handlers;
 
-public class GetTourReviewsHandler(IUnitOfWork unitOfWork) : IRequestHandler<GetTourReviewsQuery, OnlineTravel.Application.Common.Result<List<ReviewResponse>>>
+public class GetTourReviewsHandler(IUnitOfWork unitOfWork) : IRequestHandler<GetTourReviewsQuery, Result<List<ReviewResponse>>>
 {
 
 
-	public async Task<OnlineTravel.Application.Common.Result<List<ReviewResponse>>> Handle(GetTourReviewsQuery request, CancellationToken cancellationToken)
+	public async Task<Result<List<ReviewResponse>>> Handle(GetTourReviewsQuery request, CancellationToken cancellationToken)
 
 	{
 		// 1. Get Tour Category Id
@@ -22,7 +23,7 @@ public class GetTourReviewsHandler(IUnitOfWork unitOfWork) : IRequestHandler<Get
 
 
 		if (tourCategory == null)
-			return OnlineTravel.Application.Common.Result<List<ReviewResponse>>.Failure("Tour category not found");
+			return Result<List<ReviewResponse>>.Failure("Tour category not found");
 
 
 		// 2. Query Reviews
@@ -39,7 +40,7 @@ public class GetTourReviewsHandler(IUnitOfWork unitOfWork) : IRequestHandler<Get
 			CreatedAt = r.CreatedAt
 		}).ToList();
 
-		return OnlineTravel.Application.Common.Result<List<ReviewResponse>>.Success(response);
+		return Result<List<ReviewResponse>>.Success(response);
 
 	}
 }

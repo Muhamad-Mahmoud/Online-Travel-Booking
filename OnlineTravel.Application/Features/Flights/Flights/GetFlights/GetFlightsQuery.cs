@@ -1,5 +1,6 @@
 using MediatR;
 using OnlineTravel.Application.Common;
+using OnlineTravel.Domain.ErrorHandling;
 using OnlineTravel.Domain.Exceptions;
 
 namespace OnlineTravel.Application.Features.Flights.Flights.GetFlights;
