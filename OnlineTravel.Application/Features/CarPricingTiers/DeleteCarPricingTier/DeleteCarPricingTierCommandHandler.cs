@@ -24,7 +24,7 @@ namespace OnlineTravel.Application.Features.CarPricingTiers.Delete
 					return Result.Failure(EntityError<CarPricingTier>.NotFound());
 
 				_unitOfWork.Repository<CarPricingTier>().Delete(entity);
-				await _unitOfWork.Complete();
+				await _unitOfWork.SaveChangesAsync();
 
 				return Result.Success();
 			}

@@ -39,7 +39,7 @@ public class ManageFlightHandlers(IUnitOfWork unitOfWork) :
         };
 
         await unitOfWork.Repository<FlightSeat>().AddAsync(seat);
-        await unitOfWork.Complete();
+        await unitOfWork.SaveChangesAsync();
 
         return Result<Guid>.Success(seat.Id);
     }
@@ -52,7 +52,7 @@ public class ManageFlightHandlers(IUnitOfWork unitOfWork) :
         if (seat == null) return Result<bool>.Failure("Seat not found.");
 
         unitOfWork.Repository<FlightSeat>().Delete(seat);
-        var affected = await unitOfWork.Complete();
+        var affected = await unitOfWork.SaveChangesAsync();
         return Result<bool>.Success(affected > 0);
     }
 
@@ -75,7 +75,7 @@ public class ManageFlightHandlers(IUnitOfWork unitOfWork) :
         };
 
         await unitOfWork.Repository<FlightFare>().AddAsync(fare);
-        await unitOfWork.Complete();
+        await unitOfWork.SaveChangesAsync();
 
         return Result<Guid>.Success(fare.Id);
     }
@@ -88,7 +88,7 @@ public class ManageFlightHandlers(IUnitOfWork unitOfWork) :
         if (fare == null) return Result<bool>.Failure("Fare not found.");
 
         unitOfWork.Repository<FlightFare>().Delete(fare);
-        var affected = await unitOfWork.Complete();
+        var affected = await unitOfWork.SaveChangesAsync();
         return Result<bool>.Success(affected > 0);
     }
 

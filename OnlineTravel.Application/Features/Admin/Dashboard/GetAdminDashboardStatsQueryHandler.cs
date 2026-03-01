@@ -75,7 +75,7 @@ public sealed class GetAdminDashboardStatsQueryHandler : IRequestHandler<GetAdmi
 		// Handle lazy expiration
 		if (BookingExpirationHelper.MarkExpiredBookings(recentBookingsRaw))
 		{
-			await _unitOfWork.Complete();
+			await _unitOfWork.SaveChangesAsync();
 		}
 
 		var recentBookings = recentBookingsRaw.Adapt<List<RecentBookingDto>>();

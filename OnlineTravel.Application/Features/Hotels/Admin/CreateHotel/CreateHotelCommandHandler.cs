@@ -42,7 +42,7 @@ namespace OnlineTravel.Application.Features.Hotels.Admin.CreateHotel
 			);
 
 			await _unitOfWork.Hotels.AddAsync(hotel);
-			await _unitOfWork.Complete();
+			await _unitOfWork.SaveChangesAsync();
 
 			var response = new CreateHotelResponse
 			{

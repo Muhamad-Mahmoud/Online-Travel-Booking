@@ -28,7 +28,7 @@ namespace OnlineTravel.Application.Features.Hotels.Admin.ConfigureSeasonalPricin
 			room.AddSeasonalPrice(seasonalPrice);
 
 			await _unitOfWork.Repository<SeasonalPrice>().AddAsync(seasonalPrice, cancellationToken);
-			await _unitOfWork.Complete();
+			await _unitOfWork.SaveChangesAsync();
 
 			return Result<ConfigureSeasonalPricingResponse>.Success(new ConfigureSeasonalPricingResponse
 			{

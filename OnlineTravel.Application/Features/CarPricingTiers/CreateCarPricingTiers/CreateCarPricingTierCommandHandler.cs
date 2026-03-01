@@ -27,7 +27,7 @@ namespace OnlineTravel.Application.Features.CarPricingTiers.CreateCarPricingTier
 			};
 
 			await _unitOfWork.Repository<CarPricingTier>().AddAsync(tier);
-			await _unitOfWork.Complete();
+			await _unitOfWork.SaveChangesAsync();
 
 			return Result<CreateCarPricingTierResponse>.Success(new CreateCarPricingTierResponse
 			{

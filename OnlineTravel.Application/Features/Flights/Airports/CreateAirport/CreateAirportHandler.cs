@@ -42,7 +42,7 @@ namespace OnlineTravel.Application.Features.Flights.Airport.CreateAirport
 			await _unitOfWork.Repository<OnlineTravel.Domain.Entities.Flights.Airport>().AddAsync(airport);
 
 			// Persist changes to the database (Commit)
-			var result = await _unitOfWork.Complete();
+			var result = await _unitOfWork.SaveChangesAsync();
 
 			if (result <= 0)
 			{

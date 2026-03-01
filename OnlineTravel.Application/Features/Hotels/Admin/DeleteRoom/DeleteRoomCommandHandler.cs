@@ -21,7 +21,7 @@ public class DeleteRoomCommandHandler : IRequestHandler<DeleteRoomCommand, Resul
         if (room == null) return Result<bool>.Failure("Room not found");
 
         _unitOfWork.Repository<Room>().Delete(room);
-        var affected = await _unitOfWork.Complete();
+        var affected = await _unitOfWork.SaveChangesAsync();
         return Result<bool>.Success(affected > 0);
     }
 }

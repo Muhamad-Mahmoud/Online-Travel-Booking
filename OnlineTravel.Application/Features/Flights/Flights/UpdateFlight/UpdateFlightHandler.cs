@@ -47,7 +47,7 @@ public class UpdateFlightHandler : IRequestHandler<UpdateFlightCommand, Result<b
         );
 
         _unitOfWork.Repository<OnlineTravel.Domain.Entities.Flights.Flight>().Update(flight);
-        var affectedRows = await _unitOfWork.Complete();
+        var affectedRows = await _unitOfWork.SaveChangesAsync();
         
         return Result<bool>.Success(affectedRows > 0);
     }

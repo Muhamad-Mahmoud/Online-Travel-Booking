@@ -28,7 +28,7 @@ namespace OnlineTravel.Application.Features.Flights.Carrier.CreateCarrier
 
 			// 2. Add and Save
 			await _unitOfWork.Repository<OnlineTravel.Domain.Entities.Flights.Carrier>().AddAsync(carrier);
-			var affectedRows = await _unitOfWork.Complete();
+			var affectedRows = await _unitOfWork.SaveChangesAsync();
 			if (affectedRows <= 0)
 			{
 				return Result<Guid>.Failure(Error.InternalServer("Failed to create carrier."));

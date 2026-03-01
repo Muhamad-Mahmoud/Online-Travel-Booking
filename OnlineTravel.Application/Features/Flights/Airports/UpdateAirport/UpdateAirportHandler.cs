@@ -29,7 +29,7 @@ namespace OnlineTravel.Application.Features.Flights.Airport.UpdateAirport
 			airport.Facilities = request.Facilities;
 
 			_unitOfWork.Repository<OnlineTravel.Domain.Entities.Flights.Airport>().Update(airport);
-			var affectedRows = await _unitOfWork.Complete();
+			var affectedRows = await _unitOfWork.SaveChangesAsync();
 			if (affectedRows <= 0)
 			{
 				return Result<UpdateAirportResponse>.Failure(Error.InternalServer("Failed to update airport."));

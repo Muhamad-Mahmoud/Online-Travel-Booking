@@ -41,7 +41,7 @@ public class ExportBookingsQueryHandler : IRequestHandler<ExportBookingsQuery, R
 			// Handle lazy expiration for this batch
 			if (BookingExpirationHelper.MarkExpiredBookings(batch))
 			{
-				await _unitOfWork.Complete();
+				await _unitOfWork.SaveChangesAsync();
 			}
 
 			foreach (var b in batch)

@@ -48,7 +48,7 @@ namespace OnlineTravel.Application.Features.Hotels.Admin.UpdateHotel
 				hotel.SetMainImage(request.MainImage);
 
 			_unitOfWork.Repository<Hotel>().Update(hotel);
-			await _unitOfWork.Complete();
+			await _unitOfWork.SaveChangesAsync();
 
 			return Result<UpdateHotelResponse>.Success(new UpdateHotelResponse
 			{

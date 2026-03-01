@@ -38,7 +38,7 @@ public sealed class GetAllBookingsQueryHandler : IRequestHandler<GetAllBookingsQ
 		// Handle lazy expiration
 		if (BookingExpirationHelper.MarkExpiredBookings(bookings))
 		{
-			await _unitOfWork.Complete();
+			await _unitOfWork.SaveChangesAsync();
 		}
 
 		var bookingDtos = bookings.Adapt<IReadOnlyList<AdminBookingResponse>>();

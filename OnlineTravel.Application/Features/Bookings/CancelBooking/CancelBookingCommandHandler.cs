@@ -44,7 +44,7 @@ public sealed class CancelBookingCommandHandler : IRequestHandler<CancelBookingC
 
 			_unitOfWork.Repository<BookingEntity>().Update(booking);
 
-			await _unitOfWork.Complete();
+			await _unitOfWork.SaveChangesAsync();
 			_logger.LogInformation("Booking {BookingId} cancelled successfully", request.BookingId);
 
 			return Result<CancelBookingResponse>.Success(new CancelBookingResponse(booking.BookingReference.Value, booking.Status.ToString()));

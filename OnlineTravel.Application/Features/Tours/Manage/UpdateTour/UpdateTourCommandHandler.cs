@@ -41,7 +41,7 @@ public class UpdateTourCommandHandler : IRequestHandler<UpdateTourCommand, Resul
 		}
 
 		_unitOfWork.Repository<Tour>().Update(tour);
-		var affectedRows = await _unitOfWork.Complete();
+		var affectedRows = await _unitOfWork.SaveChangesAsync();
 		if (affectedRows <= 0)
 		{
 			return Result<bool>.Failure(Error.InternalServer("Failed to update tour."));

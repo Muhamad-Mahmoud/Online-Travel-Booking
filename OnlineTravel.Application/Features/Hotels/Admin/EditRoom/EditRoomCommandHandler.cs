@@ -23,7 +23,7 @@ namespace OnlineTravel.Application.Features.Hotels.Admin.EditRoom
 
 			room.UpdateDetails(request.Name, request.Description, new Money(request.BasePricePerNight, "USD"));
 
-			await _unitOfWork.Complete();
+			await _unitOfWork.SaveChangesAsync();
 			return Result<EditRoomResponse>.Success(new EditRoomResponse { Id = room.Id });
 		}
 	}

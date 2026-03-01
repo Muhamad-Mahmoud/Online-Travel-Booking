@@ -3,7 +3,7 @@ using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
-using OnlineTravel.Application.Features.Auth.ConfirmEmail;
+using OnlineTravel.Application.Features.Auth.Email;
 using OnlineTravel.Application.Features.Auth.Shared;
 using OnlineTravel.Application.Features.Auth.Login;
 using OnlineTravel.Application.Features.Auth.Password;

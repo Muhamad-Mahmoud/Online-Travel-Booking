@@ -63,7 +63,7 @@ public sealed class ConfirmPaymentCommandHandler : IRequestHandler<ConfirmPaymen
 			// Confirm Payment (Updates status and payment status)
 			booking.ConfirmPayment(request.PaymentIntentId);
 
-			await _unitOfWork.Complete();
+			await _unitOfWork.SaveChangesAsync();
 			await _unitOfWork.CommitTransactionAsync();
 
 			_logger.LogInformation("Booking {BookingId} confirmed successfully via payment confirmation", request.BookingId);

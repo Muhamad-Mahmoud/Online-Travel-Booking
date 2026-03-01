@@ -41,7 +41,7 @@ namespace OnlineTravel.Application.Features.Hotels.Admin.AddRoom
 
 			hotel.AddRoom(room);
 			await _unitOfWork.Repository<Room>().AddAsync(room, cancellationToken);
-			await _unitOfWork.Complete();
+			await _unitOfWork.SaveChangesAsync();
 
 			return Result<AddRoomResponse>.Success(new AddRoomResponse
 			{

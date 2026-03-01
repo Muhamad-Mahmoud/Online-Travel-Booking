@@ -41,7 +41,7 @@ public class UpdateTourCoordinatesCommandHandler : IRequestHandler<UpdateTourCoo
 			newCoordinates);
 
 		tour.UpdateAddress(newAddress);
-		var affectedRows = await _unitOfWork.Complete();
+		var affectedRows = await _unitOfWork.SaveChangesAsync();
 		if (affectedRows <= 0)
 		{
 			return Result<bool>.Failure(Error.InternalServer("Failed to update tour coordinates."));

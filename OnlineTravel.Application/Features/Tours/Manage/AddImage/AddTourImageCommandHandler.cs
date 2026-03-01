@@ -30,7 +30,7 @@ public class AddTourImageCommandHandler : IRequestHandler<AddTourImageCommand, R
 		};
 
 		await _unitOfWork.Repository<TourImage>().AddAsync(image, cancellationToken);
-		var affectedRows = await _unitOfWork.Complete();
+		var affectedRows = await _unitOfWork.SaveChangesAsync();
 		if (affectedRows <= 0)
 		{
 			return Result<Guid>.Failure(Error.InternalServer("Failed to add tour image."));

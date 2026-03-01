@@ -61,7 +61,7 @@ namespace OnlineTravel.Application.Features.CarPricingTiers.UpdateCarPricingTier
 				entity.UpdatedAt = DateTime.UtcNow;
 
 				_unitOfWork.Repository<CarPricingTier>().Update(entity);
-				await _unitOfWork.Complete();
+				await _unitOfWork.SaveChangesAsync();
 
 				// 6. Return response
 				var response = new UpdateCarPricingTierResponse

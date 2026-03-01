@@ -33,7 +33,7 @@ public class AddTourPriceTierCommandHandler : IRequestHandler<AddTourPriceTierCo
 		};
 
 		await _unitOfWork.Repository<TourPriceTier>().AddAsync(priceTier, cancellationToken);
-		var affectedRows = await _unitOfWork.Complete();
+		var affectedRows = await _unitOfWork.SaveChangesAsync();
 		if (affectedRows <= 0)
 		{
 			return Result<Guid>.Failure(Error.InternalServer("Failed to add tour price tier."));

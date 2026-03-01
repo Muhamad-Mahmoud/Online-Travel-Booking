@@ -53,6 +53,7 @@ public static class DependencyInjection
 
 		//Register Auth Services
 		services.AddScoped<IAuthService, AuthService>();
+		services.AddScoped<IUserService, UserService>();
 		services.AddScoped<IJwtService, JwtService>();
 
 		//Email

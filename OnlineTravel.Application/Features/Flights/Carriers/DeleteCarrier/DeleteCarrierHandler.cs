@@ -21,7 +21,7 @@ namespace OnlineTravel.Application.Features.Flights.Carriers.DeleteCarrier
 			if (carrier == null) return Result<bool>.Failure("Carrier not found");
 
 			_unitOfWork.Repository<OnlineTravel.Domain.Entities.Flights.Carrier>().Delete(carrier);
-			await _unitOfWork.Complete();
+			await _unitOfWork.SaveChangesAsync();
 			return Result<bool>.Success(true);
 		}
 	}

@@ -39,10 +39,6 @@ namespace OnlineTravel.Infrastructure.Persistence.UnitOfWork
 			return _repositories[type] as GenericRepository<T>;
 
 		}
-		public async Task<int> Complete()
-		{
-			return await _dbContext.SaveChangesAsync();
-		}
 
 		public void Dispose()
 		{
@@ -56,7 +52,7 @@ namespace OnlineTravel.Infrastructure.Persistence.UnitOfWork
 
 
 		//public async Task BeginTransactionAsync()
-		public async Task<IDbContextTransaction> BeginTransactionAsync()
+		public async Task<IAsyncDisposable> BeginTransactionAsync()
 		{
 			_transaction = await _dbContext.Database.BeginTransactionAsync();
 			return _transaction;

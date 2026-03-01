@@ -43,7 +43,7 @@ public class AddReviewCommandHandler : IRequestHandler<AddReviewCommand, Result<
 		hotel.AddReview(review);
 		await _unitOfWork.Repository<Review>().AddAsync(review, cancellationToken);
 		_unitOfWork.Hotels.Update(hotel);
-		await _unitOfWork.Complete();
+		await _unitOfWork.SaveChangesAsync();
 
 		return Result<ReviewAddedResponse>.Success(new ReviewAddedResponse
 		{
