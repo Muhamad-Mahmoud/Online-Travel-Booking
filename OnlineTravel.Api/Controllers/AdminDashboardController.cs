@@ -10,6 +10,9 @@ namespace OnlineTravel.Api.Controllers;
 [Route("api/v1/admin")]
 public class AdminDashboardController : BaseApiController
 {
+	/// <summary>
+	/// Get high-level administrative statistics for the dashboard.
+	/// </summary>
 	[HttpGet("dashboard")]
 	public async Task<ActionResult> GetStats()
 	{
@@ -17,6 +20,9 @@ public class AdminDashboardController : BaseApiController
 		return HandleResult(result);
 	}
 
+	/// <summary>
+	/// Get categories filtered by type for administrative tasks.
+	/// </summary>
 	[HttpGet("categories/by-type")]
 	public async Task<ActionResult> GetCategoriesByType([FromQuery] CategoryType type)
 	{

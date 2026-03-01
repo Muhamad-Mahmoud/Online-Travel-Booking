@@ -1,4 +1,4 @@
-namespace OnlineTravel.Application.Features.Payments.Shared
+namespace OnlineTravel.Application.Features.Payments.ConfirmPayment
 {
 	public class PaymentResponse
 	{

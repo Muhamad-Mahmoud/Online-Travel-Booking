@@ -1,6 +1,6 @@
 using OnlineTravel.Domain.Entities.Reviews;
 
-namespace OnlineTravel.Application.Features.Reviews.Shared
+namespace OnlineTravel.Application.Features.Reviews.GetTourReviews
 {
 	public class ReviewResponse
 	{

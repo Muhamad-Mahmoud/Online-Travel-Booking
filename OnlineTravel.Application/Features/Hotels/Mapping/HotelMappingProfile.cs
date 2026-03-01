@@ -1,7 +1,6 @@
 using Mapster;
 using OnlineTravel.Application.Features.Hotels.Shared;
 using OnlineTravel.Application.Features.Hotels.Public.SearchHotels;
-using OnlineTravel.Application.Features.Reviews.Shared;
 using OnlineTravel.Domain.Entities.Hotels;
 using OnlineTravel.Domain.Entities.Reviews;
 

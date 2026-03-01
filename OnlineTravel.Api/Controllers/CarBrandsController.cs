@@ -12,6 +12,9 @@ namespace OnlineTravel.Api.Controllers;
 [Authorize(Roles = "Admin")]
 public class CarBrandsController : BaseApiController
 {
+	/// <summary>
+	/// List car brands with pagination (Admin only).
+	/// </summary>
 	[HttpGet]
 	public async Task<ActionResult> GetAll([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10, [FromQuery] string? searchTerm = null)
 	{
@@ -19,6 +22,9 @@ public class CarBrandsController : BaseApiController
 		return HandleResult(result);
 	}
 
+	/// <summary>
+	/// Get a car brand's details by ID (Admin only).
+	/// </summary>
 	[HttpGet("{id:guid}")]
 	public async Task<ActionResult> GetById(Guid id)
 	{
@@ -26,6 +32,9 @@ public class CarBrandsController : BaseApiController
 		return HandleResult(result);
 	}
 
+	/// <summary>
+	/// Create a new car brand (Admin only).
+	/// </summary>
 	[HttpPost]
 	public async Task<ActionResult> Create([FromBody] CreateCarBrandRequest request)
 	{
@@ -33,6 +42,9 @@ public class CarBrandsController : BaseApiController
 		return HandleResult(result);
 	}
 
+	/// <summary>
+	/// Update an existing car brand (Admin only).
+	/// </summary>
 	[HttpPut("{id:guid}")]
 	public async Task<ActionResult> Update(Guid id, [FromBody] UpdateCarBrandRequest request)
 	{
@@ -41,6 +53,9 @@ public class CarBrandsController : BaseApiController
 		return HandleResult(result);
 	}
 
+	/// <summary>
+	/// Delete a car brand (Admin only).
+	/// </summary>
 	[HttpDelete("{id:guid}")]
 	public async Task<ActionResult> Delete(Guid id)
 	{

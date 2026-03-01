@@ -10,6 +10,9 @@ namespace OnlineTravel.Api.Controllers
 	[ApiExplorerSettings(IgnoreApi = true)]
 	public class ErrorsController : ControllerBase
 	{
+		/// <summary>
+		/// Catch-all endpoint for returning structured error responses.
+		/// </summary>
 		public IActionResult Error(int code)
 		{
 			return new ObjectResult(new ApiResponse(code)) { StatusCode = code };

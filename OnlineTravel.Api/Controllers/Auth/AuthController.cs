@@ -24,6 +24,9 @@ namespace OnlineTravel.Api.Controllers.Auth
 			_configuration = configuration;
 		}
 
+		/// <summary>
+		/// Register a new user account.
+		/// </summary>
 		[HttpPost("register")]
 		public async Task<IActionResult> Register(
 			[FromBody] RegisterRequest request)
@@ -36,6 +39,9 @@ namespace OnlineTravel.Api.Controllers.Auth
 			return Ok(result);
 		}
 
+		/// <summary>
+		/// Authenticate a user and return a JWT token.
+		/// </summary>
 		[HttpPost("login")]
 		public async Task<IActionResult> Login(
 			[FromBody] LoginRequest request)
@@ -48,6 +54,9 @@ namespace OnlineTravel.Api.Controllers.Auth
 			return Ok(result);
 		}
 
+		/// <summary>
+		/// Confirm a user's email address using a token.
+		/// </summary>
 		[HttpGet("confirm-email")]
 		public async Task<IActionResult> ConfirmEmail([FromQuery] string userId,
 													  [FromQuery] string token)
@@ -60,6 +69,9 @@ namespace OnlineTravel.Api.Controllers.Auth
 			return Ok(result);
 		}
 
+		/// <summary>
+		/// Send a password reset link to a user's email.
+		/// </summary>
 		[HttpPost("forgot-password")]
 		public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
 		{
@@ -71,6 +83,9 @@ namespace OnlineTravel.Api.Controllers.Auth
 			return Ok(result);
 		}
 
+		/// <summary>
+		/// Reset a user's password using a reset token.
+		/// </summary>
 		[HttpPost("reset-password")]
 		public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
 		{
@@ -82,6 +97,9 @@ namespace OnlineTravel.Api.Controllers.Auth
 			return Ok(result);
 		}
 
+		/// <summary>
+		/// Initiate Google OAuth2 login flow.
+		/// </summary>
 		[HttpGet("google-login")]
 		public IActionResult GoogleLogin()
 		{
@@ -93,6 +111,9 @@ namespace OnlineTravel.Api.Controllers.Auth
 			return Challenge(properties, "Google");
 		}
 
+		/// <summary>
+		/// Handle the callback from Google OAuth2.
+		/// </summary>
 		[HttpGet("google-response")]
 		public async Task<IActionResult> GoogleResponse()
 		{
@@ -116,6 +137,9 @@ namespace OnlineTravel.Api.Controllers.Auth
 			return Redirect($"{frontendUrl}/auth/google-success#token={response.Token}");
 		}
 
+		/// <summary>
+		/// Permanently delete the authenticated user's account.
+		/// </summary>
 		[Authorize]
 		[HttpDelete("delete-account")]
 		public async Task<IActionResult> DeleteAccount([FromBody] DeleteAccountRequest request)
@@ -133,6 +157,9 @@ namespace OnlineTravel.Api.Controllers.Auth
 			return Ok(result.Message);
 		}
 
+		/// <summary>
+		/// Restore a previously deleted account.
+		/// </summary>
 		[HttpPost("restore-account")]
 		public async Task<IActionResult> RestoreAccount([FromBody] RestoreAccountRequest request)
 		{
@@ -145,6 +172,9 @@ namespace OnlineTravel.Api.Controllers.Auth
 		}
 
 
+		/// <summary>
+		/// List of current user's session logout.
+		/// </summary>
 		[Authorize]
 		[HttpPost("logout")]
 		public async Task<IActionResult> Logout()

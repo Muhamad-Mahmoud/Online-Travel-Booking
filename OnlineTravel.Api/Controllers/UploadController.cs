@@ -25,6 +25,9 @@ namespace OnlineTravel.Api.Controllers
 			_logger = logger;
 		}
 
+		/// <summary>
+		/// Upload an image for a hotel (Admin only).
+		/// </summary>
 		[HttpPost("hotel-image")]
 		[Consumes("multipart/form-data")]
 		[RequestSizeLimit(MaxFileSizeBytes)]
@@ -47,6 +50,9 @@ namespace OnlineTravel.Api.Controllers
 			}
 		}
 
+		/// <summary>
+		/// Upload an image for a hotel room (Admin only).
+		/// </summary>
 		[HttpPost("room-image")]
 		[Consumes("multipart/form-data")]
 		[RequestSizeLimit(MaxFileSizeBytes)]

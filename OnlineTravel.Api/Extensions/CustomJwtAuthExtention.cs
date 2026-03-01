@@ -11,9 +11,12 @@ namespace OnlineTravel.Api.Extensions
 		{
 			services.AddSwaggerGen(options =>
 			{
-				// Use fully qualified type names to avoid schema ID collisions
-				// (e.g., Create.MoneyFormModel vs Update.MoneyFormModel).
-				options.CustomSchemaIds(type => (type.FullName ?? type.Name).Replace("+", "."));
+				// Use unified request names (replace internal "Command" with public "Request")
+				options.CustomSchemaIds(type => type.Name.Replace("Command", "Request"));
+
+				var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+				var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+				options.IncludeXmlComments(xmlPath);
 
 				options.SwaggerDoc("v1", new OpenApiInfo
 				{

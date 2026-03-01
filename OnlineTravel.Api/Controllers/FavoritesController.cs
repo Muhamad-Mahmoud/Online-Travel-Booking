@@ -10,6 +10,9 @@ namespace OnlineTravel.Api.Controllers;
 [Route("api/v1/favorites")]
 public class FavoritesController : BaseApiController
 {
+	/// <summary>
+	/// Add a destination or item to the user's favorites.
+	/// </summary>
 	[HttpPost]
 	public async Task<ActionResult> Add([FromBody] AddFavoriteRequest request)
 	{
@@ -18,6 +21,9 @@ public class FavoritesController : BaseApiController
 		return HandleResult(result);
 	}
 
+	/// <summary>
+	/// Get the list of items favorited by the authenticated user.
+	/// </summary>
 	[HttpGet]
 	public async Task<ActionResult> Get()
 	{

@@ -1,14 +1,12 @@
 using MediatR;
 using OnlineTravel.Application.Common;
 using OnlineTravel.Domain.ErrorHandling;
-using OnlineTravel.Application.Features.Reviews.Queries;
-using OnlineTravel.Application.Features.Reviews.Shared;
 using OnlineTravel.Application.Features.Reviews.Specifications;
 using OnlineTravel.Application.Interfaces.Persistence;
 using OnlineTravel.Domain.Entities.Reviews;
 using OnlineTravel.Domain.Enums;
 
-namespace OnlineTravel.Application.Features.Reviews.Handlers;
+namespace OnlineTravel.Application.Features.Reviews.GetTourReviews;
 
 public class GetTourReviewsHandler(IUnitOfWork unitOfWork) : IRequestHandler<GetTourReviewsQuery, Result<List<ReviewResponse>>>
 {
@@ -17,8 +15,8 @@ public class GetTourReviewsHandler(IUnitOfWork unitOfWork) : IRequestHandler<Get
 	public async Task<Result<List<ReviewResponse>>> Handle(GetTourReviewsQuery request, CancellationToken cancellationToken)
 
 	{
-		// 1. Get Tour Category Id
-		var tourCategory = await unitOfWork.Repository<OnlineTravel.Domain.Entities.Core.Category>()
+		// Get Tour Category Id
+		var tourCategory = await unitOfWork.Repository<Domain.Entities.Core.Category>()
 			.FindAsync(c => c.Type == CategoryType.Tour, cancellationToken);
 
 
@@ -26,7 +24,7 @@ public class GetTourReviewsHandler(IUnitOfWork unitOfWork) : IRequestHandler<Get
 			return Result<List<ReviewResponse>>.Failure("Tour category not found");
 
 
-		// 2. Query Reviews
+		// Query Reviews
 		var spec = new TourReviewsSpecification(request.TourId, tourCategory.Id);
 		var reviews = await unitOfWork.Repository<Review>().GetAllWithSpecAsync(spec, cancellationToken);
 
