@@ -9,6 +9,6 @@ public class TourReviewsSpecification : BaseSpecification<Review>
 		: base(r => r.ItemId == tourId && r.CategoryId == categoryId)
 	{
 		AddIncludes(r => r.User);
-		ApplyOrderByDescending(r => r.CreatedAt);
+		AddOrderByDesc(r => r.CreatedAt);
 	}
 }

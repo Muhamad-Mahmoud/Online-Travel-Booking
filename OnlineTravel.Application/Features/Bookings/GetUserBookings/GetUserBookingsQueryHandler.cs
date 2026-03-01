@@ -1,4 +1,4 @@
-using AutoMapper;
+using Mapster;
 using MediatR;
 using OnlineTravel.Application.Common;
 using OnlineTravel.Application.Features.Bookings.Shared;
@@ -11,12 +11,10 @@ namespace OnlineTravel.Application.Features.Bookings.GetUserBookings
 	public class GetUserBookingsQueryHandler : IRequestHandler<GetUserBookingsQuery, OnlineTravel.Application.Common.Result<PagedResult<AdminBookingResponse>>>
 	{
 		private readonly IUnitOfWork _unitOfWork;
-		private readonly IMapper _mapper;
 
-		public GetUserBookingsQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
+		public GetUserBookingsQueryHandler(IUnitOfWork unitOfWork)
 		{
 			_unitOfWork = unitOfWork;
-			_mapper = mapper;
 		}
 
 
@@ -26,11 +24,10 @@ namespace OnlineTravel.Application.Features.Bookings.GetUserBookings
 			var bookings = await _unitOfWork.Repository<BookingEntity>().GetAllAsync();
 			var userBookings = bookings.Where(b => b.UserId == request.UserId).ToList();
 			
-			var data = _mapper.Map<List<AdminBookingResponse>>(userBookings.Skip((request.PageIndex - 1) * request.PageSize).Take(request.PageSize));
+			var data = userBookings.Skip((request.PageIndex - 1) * request.PageSize).Take(request.PageSize).Adapt<List<AdminBookingResponse>>();
 
 
 			return OnlineTravel.Application.Common.Result<PagedResult<AdminBookingResponse>>.Success(new PagedResult<AdminBookingResponse>(data, userBookings.Count, request.PageIndex, request.PageSize));
 		}
 	}
 }
-

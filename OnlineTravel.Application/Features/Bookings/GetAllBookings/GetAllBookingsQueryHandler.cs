@@ -1,4 +1,4 @@
-using AutoMapper;
+using Mapster;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using OnlineTravel.Application.Common;
@@ -13,13 +13,11 @@ namespace OnlineTravel.Application.Features.Bookings.GetAllBookings;
 public sealed class GetAllBookingsQueryHandler : IRequestHandler<GetAllBookingsQuery, OnlineTravel.Application.Common.Result<PagedResult<AdminBookingResponse>>>
 {
 	private readonly IUnitOfWork _unitOfWork;
-	private readonly IMapper _mapper;
 	private readonly ILogger<GetAllBookingsQueryHandler> _logger;
 
-	public GetAllBookingsQueryHandler(IUnitOfWork unitOfWork, IMapper mapper, ILogger<GetAllBookingsQueryHandler> logger)
+	public GetAllBookingsQueryHandler(IUnitOfWork unitOfWork, ILogger<GetAllBookingsQueryHandler> logger)
 	{
 		_unitOfWork = unitOfWork;
-		_mapper = mapper;
 		_logger = logger;
 	}
 
@@ -42,7 +40,7 @@ public sealed class GetAllBookingsQueryHandler : IRequestHandler<GetAllBookingsQ
 			await _unitOfWork.Complete();
 		}
 
-		var bookingDtos = _mapper.Map<IReadOnlyList<AdminBookingResponse>>(bookings);
+		var bookingDtos = bookings.Adapt<IReadOnlyList<AdminBookingResponse>>();
 
 		_logger.LogDebug("Retrieved {Count} bookings", bookings.Count);
 
@@ -50,5 +48,3 @@ public sealed class GetAllBookingsQueryHandler : IRequestHandler<GetAllBookingsQ
 		return OnlineTravel.Application.Common.Result<PagedResult<AdminBookingResponse>>.Success(pagedResult);
 	}
 }
-
-

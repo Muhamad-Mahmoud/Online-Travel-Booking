@@ -61,8 +61,6 @@ public static class DependencyInjection
 
 		services.AddScoped<IEmailService, EmailService>();
 
-
-		//Add AutoMapper
 		// Add UnitOfWork
 		services.AddScoped<IUnitOfWork, UnitOfWork>();
 

@@ -1,4 +1,4 @@
-using AutoMapper;
+using Mapster;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using OnlineTravel.Application.Common;
@@ -11,20 +11,15 @@ using OnlineTravel.Domain.ErrorHandling;
 namespace OnlineTravel.Application.Features.Bookings.GetBookingById;
 
 public sealed class GetBookingByIdQueryHandler : IRequestHandler<GetBookingByIdQuery, OnlineTravel.Application.Common.Result<AdminBookingResponse>>
-
-
 {
 	private readonly IUnitOfWork _unitOfWork;
-	private readonly IMapper _mapper;
 	private readonly ILogger<GetBookingByIdQueryHandler> _logger;
 
 	public GetBookingByIdQueryHandler(
 		IUnitOfWork unitOfWork,
-		IMapper mapper,
 		ILogger<GetBookingByIdQueryHandler> logger)
 	{
 		_unitOfWork = unitOfWork;
-		_mapper = mapper;
 		_logger = logger;
 	}
 
@@ -43,9 +38,8 @@ public sealed class GetBookingByIdQueryHandler : IRequestHandler<GetBookingByIdQ
 		}
 
 
-		var response = _mapper.Map<AdminBookingResponse>(booking);
+		var response = booking.Adapt<AdminBookingResponse>();
 
 		return OnlineTravel.Application.Common.Result<AdminBookingResponse>.Success(response);
 	}
 }
-

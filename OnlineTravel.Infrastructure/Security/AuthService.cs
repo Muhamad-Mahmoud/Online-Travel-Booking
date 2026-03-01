@@ -1,5 +1,5 @@
 using System.Text;
-using AutoMapper;
+using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
@@ -17,20 +17,17 @@ public class AuthService : IAuthService
 {
 	private readonly UserManager<AppUser> _userManager;
 	private readonly IJwtService _jwtService;
-	private readonly IMapper _mapper;
 	private readonly IEmailService _emailService;
 	private readonly IConfiguration _configuration;
 
 	public AuthService(
 		UserManager<AppUser> userManager,
 		IJwtService jwtService,
-		IMapper mapper,
 		IEmailService emailService,
 		IConfiguration configuration)
 	{
 		_userManager = userManager;
 		_jwtService = jwtService;
-		_mapper = mapper;
 		_emailService = emailService;
 		_configuration = configuration;
 	}
@@ -41,7 +38,7 @@ public class AuthService : IAuthService
 		if (await _userManager.FindByEmailAsync(request.Email) != null)
 			return new RegisterResponse { IsSuccess = false, Message = "Email already exists" };
 
-		var user = _mapper.Map<AppUser>(request);
+		var user = request.Adapt<AppUser>();
 
 		var result = await _userManager.CreateAsync(user, request.Password);
 
@@ -96,7 +93,7 @@ public class AuthService : IAuthService
 			return new AuthResponse { IsSuccess = false, Message = "Please confirm your email first" };
 
 		var jwt = await _jwtService.GenerateToken(user);
-		var userResponse = _mapper.Map<UserResponse>(user);
+		var userResponse = user.Adapt<UserResponse>();
 		userResponse.Roles = (await _userManager.GetRolesAsync(user)).ToList();
 
 		return new AuthResponse
@@ -228,7 +225,7 @@ public class AuthService : IAuthService
 		}
 
 		var jwt = await _jwtService.GenerateToken(user);
-		var userResponse = _mapper.Map<UserResponse>(user);
+		var userResponse = user.Adapt<UserResponse>();
 		userResponse.Roles = (await _userManager.GetRolesAsync(user)).ToList();
 
 		return new AuthResponse

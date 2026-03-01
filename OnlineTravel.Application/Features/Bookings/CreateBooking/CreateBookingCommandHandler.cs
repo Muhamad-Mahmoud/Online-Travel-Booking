@@ -1,4 +1,4 @@
-using AutoMapper;
+using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -19,7 +19,7 @@ public sealed class CreateBookingCommandHandler : IRequestHandler<CreateBookingC
 	private readonly IUnitOfWork _unitOfWork;
 	private readonly UserManager<AppUser> _userManager;
 	private readonly IEnumerable<IBookingStrategy> _bookingStrategies;
-	private readonly IMapper _mapper;
+
 	private readonly IPaymentService _paymentService;
 	private readonly ILogger<CreateBookingCommandHandler> _logger;
 
@@ -27,14 +27,12 @@ public sealed class CreateBookingCommandHandler : IRequestHandler<CreateBookingC
 		IUnitOfWork unitOfWork,
 		UserManager<AppUser> userManager,
 		IEnumerable<IBookingStrategy> bookingStrategies,
-		IMapper mapper,
 		IPaymentService paymentService,
 		ILogger<CreateBookingCommandHandler> logger)
 	{
 		_unitOfWork = unitOfWork;
 		_userManager = userManager;
 		_bookingStrategies = bookingStrategies;
-		_mapper = mapper;
 		_paymentService = paymentService;
 		_logger = logger;
 	}
@@ -132,7 +130,7 @@ public sealed class CreateBookingCommandHandler : IRequestHandler<CreateBookingC
 			_logger.LogError(ex, "Failed to update Booking {BookingId} with Stripe IDs, but session was created.", booking.Id);
 		}
 
-		var bookingResponse = _mapper.Map<BookingResponse>(booking);
+		var bookingResponse = booking.Adapt<BookingResponse>();
 		bookingResponse.PaymentUrl = paymentData.PaymentUrl;
 
 		return Result<CreateBookingResponse>.Success(new CreateBookingResponse

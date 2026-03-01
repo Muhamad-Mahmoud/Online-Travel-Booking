@@ -1,4 +1,4 @@
-using AutoMapper;
+using Mapster;
 using MediatR;
 using OnlineTravel.Application.Features.Admin.Shared.Specifications;
 using OnlineTravel.Application.Features.Bookings.Helpers;
@@ -12,12 +12,10 @@ namespace OnlineTravel.Application.Features.Admin.Dashboard;
 public sealed class GetAdminDashboardStatsQueryHandler : IRequestHandler<GetAdminDashboardStatsQuery, Result<AdminDashboardResponse>>
 {
 	private readonly IUnitOfWork _unitOfWork;
-	private readonly IMapper _mapper;
 
-	public GetAdminDashboardStatsQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
+	public GetAdminDashboardStatsQueryHandler(IUnitOfWork unitOfWork)
 	{
 		_unitOfWork = unitOfWork;
-		_mapper = mapper;
 	}
 
 	public async Task<Result<AdminDashboardResponse>> Handle(GetAdminDashboardStatsQuery request, CancellationToken cancellationToken)
@@ -80,7 +78,7 @@ public sealed class GetAdminDashboardStatsQueryHandler : IRequestHandler<GetAdmi
 			await _unitOfWork.Complete();
 		}
 
-		var recentBookings = _mapper.Map<List<RecentBookingDto>>(recentBookingsRaw);
+		var recentBookings = recentBookingsRaw.Adapt<List<RecentBookingDto>>();
 
 		return new AdminDashboardResponse
 		{
@@ -93,6 +91,4 @@ public sealed class GetAdminDashboardStatsQueryHandler : IRequestHandler<GetAdmi
 			RecentBookings = recentBookings
 		};
 	}
-
-
 }

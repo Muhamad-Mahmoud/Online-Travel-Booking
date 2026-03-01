@@ -48,5 +48,13 @@ public class AirportsController : BaseApiController
 		var result = await Mediator.Send(command);
 		return HandleResult(result);
 	}
+
+	[Authorize(Roles = "Admin")]
+	[HttpDelete("{id:guid}")]
+	public async Task<ActionResult> Delete(Guid id)
+	{
+		var result = await Mediator.Send(new OnlineTravel.Application.Features.Flights.Airport.DeleteAirport.DeleteAirportCommand(id));
+		return HandleResult(result);
+	}
 }
 
